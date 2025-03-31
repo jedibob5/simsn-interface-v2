@@ -207,7 +207,7 @@ export const TeamMatchUp = ({ team, week, league, ts, matchUp,
       gameScore = `${matchUp[0].HomeTeamScore} - ${matchUp[0].AwayTeamScore}`;
     } else {
       resultColor = matchUp[0].AwayTeamWin ? "text-green-500" : "text-red-500";
-      gameScore = `${matchUp[0].AwayTeamScore} - ${matchUp[0].HomeTeamScore}`;
+      gameScore = `${matchUp[0].HomeTeamScore} - ${matchUp[0].AwayTeamScore}`;
     }
   }
 
