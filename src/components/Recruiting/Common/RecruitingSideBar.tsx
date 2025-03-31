@@ -30,12 +30,30 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
 }) => {
   let teamLabel = "";
   let classRank = 0;
+  let programDevelopment = 0;
+  let profDev = 0;
+  let trad = 0;
+  let fac = 0;
+  let atm = 0;
+  let aca = 0;
+  let conf = 0;
+  let coach = 0;
+  let season = 0;
   switch (league) {
     case SimCHL:
       const tp = TeamProfile as HockeyTeamProfile;
       const t = Team as HockeyTeam;
       teamLabel = t.TeamName;
       classRank = tp.RecruitingClassRank;
+      programDevelopment = t.ProgramPrestige;
+      profDev = t.ProfessionalPrestige;
+      trad = t.Traditions;
+      fac = t.Facilities;
+      atm = t.Atmosphere;
+      aca = t.Academics;
+      conf = t.ConferencePrestige;
+      coach = t.CoachRating;
+      season = t.SeasonMomentum;
       break;
     case SimCBB:
       break;
@@ -56,23 +74,36 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
           <Text variant="h6">{teamLabel}</Text>
-          <Text variant="h6">Recruiter: {TeamProfile?.Recruiter}</Text>
-          <Text variant="h6">State: {Team?.State}</Text>
-          <Text variant="h6">
+          <Text variant="body-small">Recruiter: {TeamProfile?.Recruiter}</Text>
+          <Text variant="body-small">State: {Team?.State}</Text>
+          <Text variant="body-small">
             Scholarships: {TeamProfile?.ScholarshipsAvailable}
           </Text>
-          <Text variant="h6">
+          <Text variant="body-small">
             Spots Remaining:{" "}
             {TeamProfile!.RecruitClassSize - TeamProfile!.TotalCommitments}
           </Text>
         </div>
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start">
           <Text variant="h6">Recruiting Needs</Text>
-          <Text variant="h6">Rank: {classRank}</Text>
-          <Text variant="h6">Five Stars: {TeamProfile?.FiveStars}</Text>
-          <Text variant="h6">Four Stars: {TeamProfile?.FourStars}</Text>
-          <Text variant="h6">Three Stars: {TeamProfile?.ThreeStars}</Text>
+          <Text variant="body-small">Rank: {classRank}</Text>
+          <Text variant="body-small">Five Stars: {TeamProfile?.FiveStars}</Text>
+          <Text variant="body-small">Four Stars: {TeamProfile?.FourStars}</Text>
+          <Text variant="body-small">Three Stars: {TeamProfile?.ThreeStars}</Text>
         </div>
+        {league === SimCHL && 
+          <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
+            <Text variant="h6">Team Values</Text>
+            <Text variant="body-small">Program Development: {programDevelopment}</Text>
+            <Text variant="body-small">Professional Development: {profDev}</Text>
+            <Text variant="body-small">Traditions: {trad}</Text>
+            <Text variant="body-small">Facilities: {fac}</Text>
+            <Text variant="body-small">Atmosphere: {atm}</Text>
+            <Text variant="body-small">Academics: {aca}</Text>
+            <Text variant="body-small">Conf. Prestige: {conf}</Text>
+            <Text variant="body-small">Coach Rating: {coach}</Text>
+            <Text variant="body-small">Season Momentum: {season}</Text>
+          </div>}
       </Border>
     </div>
   );

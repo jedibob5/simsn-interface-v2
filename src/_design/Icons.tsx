@@ -8,6 +8,7 @@ import {
   UserIcon,
   InformationCircleIcon,
   IdentificationIcon,
+  PlusIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -86,4 +87,13 @@ export const Info: React.FC<LockIconProps> = ({
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
   return <IdentificationIcon className="size-5" />;
+};
+
+export const Plus: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <PlusIcon className="size-5" />;
 };

@@ -5,6 +5,7 @@ import {
   League,
   ModalAction,
   Preferences,
+  RecruitInfoType,
   SimCHL,
 } from "../../../_constants/constants";
 import { useMobile } from "../../../_hooks/useMobile";
@@ -14,7 +15,7 @@ import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
 import { getCHLCrootAttributes } from "../../Team/TeamPageUtils";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
-import { Info } from "../../../_design/Icons";
+import { Info, Plus } from "../../../_design/Icons";
 import { Table } from "../../../_design/Table";
 
 const getRecruitingColumns = (league: League, category: string) => {
@@ -24,10 +25,10 @@ const getRecruitingColumns = (league: League, category: string) => {
     { header: "ID", accessor: "" },
     { header: "Name", accessor: "LastName" },
     { header: "Pos", accessor: "Position" },
-    { header: "Archetype", accessor: "Archetype" },
-    { header: "Stars", accessor: "Stars" },
+    { header: "Arch.", accessor: "Archetype" },
+    { header: "⭐", accessor: "Stars" },
     { header: "Ht", accessor: "Height" },
-    { header: "Wt (lbs)", accessor: "Weight" },
+    { header: "Wt", accessor: "Weight" },
     { header: "Country", accessor: "Country" },
     { header: "Region", accessor: "State" },
     { header: "Ovr", accessor: "OverallGrade" },
@@ -118,25 +119,25 @@ export const RecruitTable: FC<RecruitTableProps> = ({
     return (
       <div
         key={item.ID}
-        className="flex border-b dark:border-gray-700 text-start"
+        className="table-row border-b dark:border-gray-700 text-left"
         style={{ backgroundColor }}
       >
         {selection.map((attr, idx) => (
-          <div key={idx} className="px-2 py-1 whitespace-nowrap">
+          <div key={idx} className="table-cell px-2 py-1 whitespace-nowrap">
             <span className="text-sm">{attr.value}</span>
           </div>
         ))}
-        <div className="px-2 py-1 whitespace-nowrap">
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
           {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
         </div>
-        <div className="px-2 py-1 whitespace-nowrap">None</div>
-        <div className="px-2 py-1 whitespace-nowrap">
-          <ButtonGroup>
-            <Button size="sm" onClick={() => openModal(InfoType, item)}>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">None</div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <ButtonGroup classes="flex-nowrap">
+            <Button size="xs" onClick={() => openModal(RecruitInfoType, item)}>
               <Info />
             </Button>
-            <Button size="sm" onClick={() => openModal(InfoType, item)}>
-              Plus
+            <Button variant="success" size="xs" onClick={() => openModal(InfoType, item as HockeyCroot)}>
+              <Plus/>
             </Button>
           </ButtonGroup>
         </div>

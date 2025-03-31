@@ -38,6 +38,7 @@ import {
   Stamina,
   Injury,
 } from "../../_constants/constants";
+import { annotateCountry, annotateRegion } from "../../_helper/StateAbbreviationHelper";
 
 export const getCHLAttributes = (
   player: CHLPlayer,
@@ -75,8 +76,8 @@ export const getCHLCrootAttributes = (
     { label: "Stars", value: player.Stars },
     { label: "Ht", value: `${heightObj.feet}' ${heightObj.inches}"` },
     { label: "Wt (lbs)", value: player.Weight },
-    { label: "Ct", value: player.Country },
-    { label: "Re", value: player.State },
+    { label: "Ct", value: annotateCountry(player.Country) },
+    { label: "Re", value: annotateRegion(player.State) },
     { label: "Ovr", value: player.OverallGrade },
   ];
   if (!isMobile && category === Attributes) {

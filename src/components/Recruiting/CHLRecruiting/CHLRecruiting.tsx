@@ -20,10 +20,11 @@ import {
 } from "../../../_constants/constants";
 import { RecruitingCategoryDropdown } from "../Common/RecruitingCategoryDropdown";
 import { RecruitTable } from "../Common/RecruitTable";
+import { ActionModal } from "../../Common/ActionModal";
 
 export const CHLRecruiting = () => {
   const hkStore = useSimHCKStore();
-  const { teamProfileMap, chlTeam, chlTeamMap } = hkStore;
+  const { recruits, teamProfileMap, chlTeam, chlTeamMap } = hkStore;
   const {
     teamProfile,
     recruitMap,
@@ -43,6 +44,12 @@ export const CHLRecruiting = () => {
     tableViewType,
     setTableViewType,
     filteredRecruits,
+    PreviousPage,
+    NextPage,
+    pageIndex,
+    openModal,
+    modalAction,
+    modalPlayer
   } = useCHLRecruiting();
   const teamColors = useTeamColors(
     chlTeam?.ColorOne,
@@ -79,6 +86,18 @@ export const CHLRecruiting = () => {
   console.log({ filteredRecruits });
   return (
     <>
+          {modalPlayer && (
+            <ActionModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              playerID={modalPlayer.ID}
+              playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+              teamID={modalPlayer.TeamID}
+              league={SimCHL}
+              modalAction={modalAction}
+              player={modalPlayer}
+            />
+          )}
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <RecruitingSideBar
           Team={chlTeam!!}
@@ -253,7 +272,7 @@ export const CHLRecruiting = () => {
                 </ButtonGroup>
               </Border>
               <Border
-                direction="row"
+                direction="col"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
                 styles={{
                   backgroundColor: teamColors.One,
@@ -269,8 +288,19 @@ export const CHLRecruiting = () => {
                   category={tableViewType}
                   league={SimCHL}
                   team={chlTeam}
-                  openModal={() => {}}
+                  openModal={openModal}
                 />
+                <div className="flex flex-row justify-center py-2">
+                    <ButtonGroup>
+                        <Button onClick={PreviousPage} disabled={pageIndex === 0}>
+                            Prev
+                        </Button>
+                        <Text variant="body-small" className="flex items-center">{pageIndex + 1}</Text>
+                        <Button onClick={NextPage} disabled={pageIndex >= recruits.length -1}>
+                            Next
+                        </Button>
+                    </ButtonGroup>
+                </div>
               </Border>
             </>
           )}

@@ -31,6 +31,10 @@ export const Cut = "Cut";
 export const Promise = "Promise";
 export const Redshirt = "Redshirt";
 export const InfoType = "Info";
+export const RecruitInfoType = "Recruit Info";
+export const AddRecruitType = "Add Recruit";
+export const RemoveRecruitType = "Remove Recruit";
+export const ToggleScholarshipType = "Toggle Scholarship";
 export const PracticeSquad = "Practice Squad";
 export const Affiliate = "Affiliate";
 export const Help1 = "Help1";
@@ -42,6 +46,10 @@ export type ModalAction =
   | typeof Promise
   | typeof Redshirt
   | typeof InfoType
+  | typeof RecruitInfoType
+  | typeof AddRecruitType
+  | typeof RemoveRecruitType
+  | typeof ToggleScholarshipType
   | typeof PracticeSquad
   | typeof Affiliate
   | typeof Help1
