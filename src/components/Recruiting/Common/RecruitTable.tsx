@@ -11,14 +11,8 @@ import { useMobile } from "../../../_hooks/useMobile";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
-import {
-  CollegePlayer,
-  Croot as HockeyCroot,
-} from "../../../models/hockeyModels";
-import {
-  getCHLAttributes,
-  getCHLCrootAttributes,
-} from "../../Team/TeamPageUtils";
+import { Croot as HockeyCroot } from "../../../models/hockeyModels";
+import { getCHLCrootAttributes } from "../../Team/TeamPageUtils";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Info } from "../../../_design/Icons";
 import { Table } from "../../../_design/Table";
@@ -28,48 +22,48 @@ const getRecruitingColumns = (league: League, category: string) => {
 
   let columns: { header: string; accessor: string }[] = [
     { header: "ID", accessor: "" },
-    { header: "Name", accessor: "Name" },
-    { header: "Pos", accessor: "pos" },
-    { header: "Archetype", accessor: "arch" },
-    { header: "Stars", accessor: "stars" },
-    { header: "Ht", accessor: "ht" },
-    { header: "Wt (lbs)", accessor: "wt" },
-    { header: "Country", accessor: "ct" },
-    { header: "Region", accessor: "re" },
-    { header: "Ovr", accessor: "ovr" },
+    { header: "Name", accessor: "LastName" },
+    { header: "Pos", accessor: "Position" },
+    { header: "Archetype", accessor: "Archetype" },
+    { header: "Stars", accessor: "Stars" },
+    { header: "Ht", accessor: "Height" },
+    { header: "Wt (lbs)", accessor: "Weight" },
+    { header: "Country", accessor: "Country" },
+    { header: "Region", accessor: "State" },
+    { header: "Ovr", accessor: "OverallGrade" },
   ];
 
   if (category === Attributes) {
     columns = columns.concat([
-      { header: "Agi", accessor: "agi" },
-      { header: "FO", accessor: "fo" },
-      { header: "LSA", accessor: "lsa" },
-      { header: "LSP", accessor: "lsp" },
-      { header: "CSA", accessor: "csa" },
-      { header: "CSP", accessor: "csp" },
-      { header: "Pass", accessor: "pass" },
-      { header: "PH", accessor: "ph" },
-      { header: "Str", accessor: "str" },
-      { header: "BChk", accessor: "bchk" },
-      { header: "SChk", accessor: "schk" },
-      { header: "SB", accessor: "sb" },
-      { header: "GK", accessor: "gk" },
-      { header: "GV", accessor: "gv" },
+      { header: "Agi", accessor: "Agility" },
+      { header: "FO", accessor: "Faceoffs" },
+      { header: "LSA", accessor: "LongShotAccuracy" },
+      { header: "LSP", accessor: "LongShotPower" },
+      { header: "CSA", accessor: "CloseShotAccuracy" },
+      { header: "CSP", accessor: "CloseShotPower" },
+      { header: "Pass", accessor: "Passing" },
+      { header: "PH", accessor: "PuckHandling" },
+      { header: "Str", accessor: "Strength" },
+      { header: "BChk", accessor: "BodyChecking" },
+      { header: "SChk", accessor: "StickChecking" },
+      { header: "SB", accessor: "ShotBlocking" },
+      { header: "GK", accessor: "Goalkeeping" },
+      { header: "GV", accessor: "GoalieVision" },
     ]);
   } else if (category === Preferences) {
     columns = columns.concat([
-      { header: "Program", accessor: "pro" },
-      { header: "Prof. Dev.", accessor: "prd" },
-      { header: "Trad.", accessor: "tra" },
-      { header: "Fac.", accessor: "fac" },
-      { header: "Atm.", accessor: "atm" },
-      { header: "Aca.", accessor: "aca" },
-      { header: "Conf.", accessor: "con" },
-      { header: "Coach", accessor: "coa" },
-      { header: "Season", accessor: "sea" },
+      { header: "Program", accessor: "ProgramPref" },
+      { header: "Prof. Dev.", accessor: "ProfDevPref" },
+      { header: "Trad.", accessor: "TraditionsPref" },
+      { header: "Fac.", accessor: "FacilitiesPref" },
+      { header: "Atm.", accessor: "AtmospherePref" },
+      { header: "Aca.", accessor: "AcademicsPref" },
+      { header: "Conf.", accessor: "ConferencePref" },
+      { header: "Coach", accessor: "CoachPref" },
+      { header: "Season", accessor: "SeasonMomentumPref" },
     ]);
   }
-  columns.push({ header: "Status", accessor: "status" });
+  columns.push({ header: "Status", accessor: "RecruitingStatus" });
   columns.push({ header: "Leaders", accessor: "lead" });
   columns.push({ header: "Actions", accessor: "actions" });
 
@@ -124,19 +118,19 @@ export const RecruitTable: FC<RecruitTableProps> = ({
     return (
       <div
         key={item.ID}
-        className="table-row border-b dark:border-gray-700 text-start"
+        className="flex border-b dark:border-gray-700 text-start"
         style={{ backgroundColor }}
       >
         {selection.map((attr, idx) => (
-          <div key={idx} className="table-cell px-2 py-1 whitespace-nowrap">
+          <div key={idx} className="px-2 py-1 whitespace-nowrap">
             <span className="text-sm">{attr.value}</span>
           </div>
         ))}
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        <div className="px-2 py-1 whitespace-nowrap">
           {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
         </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">GUAM</div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        <div className="px-2 py-1 whitespace-nowrap">None</div>
+        <div className="px-2 py-1 whitespace-nowrap">
           <ButtonGroup>
             <Button size="sm" onClick={() => openModal(InfoType, item)}>
               <Info />
@@ -164,7 +158,6 @@ export const RecruitTable: FC<RecruitTableProps> = ({
       columns={columns}
       data={croots as HockeyCroot[]}
       rowRenderer={rowRenderer(SimCHL)}
-      backgroundColor={backgroundColor}
       team={team}
     />
   );
