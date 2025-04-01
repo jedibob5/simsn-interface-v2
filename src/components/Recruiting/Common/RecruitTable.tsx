@@ -18,7 +18,11 @@ import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Info, Plus } from "../../../_design/Icons";
 import { Table } from "../../../_design/Table";
 
-const getRecruitingColumns = (league: League, category: string) => {
+const getRecruitingColumns = (
+  league: League,
+  category: string,
+  isMobile: boolean
+) => {
   if (league !== SimCHL) return [];
 
   let columns: { header: string; accessor: string }[] = [
@@ -34,7 +38,7 @@ const getRecruitingColumns = (league: League, category: string) => {
     { header: "Ovr", accessor: "OverallGrade" },
   ];
 
-  if (category === Attributes) {
+  if (!isMobile && category === Attributes) {
     columns = columns.concat([
       { header: "Agi", accessor: "Agility" },
       { header: "FO", accessor: "Faceoffs" },
@@ -51,7 +55,7 @@ const getRecruitingColumns = (league: League, category: string) => {
       { header: "GK", accessor: "Goalkeeping" },
       { header: "GV", accessor: "GoalieVision" },
     ]);
-  } else if (category === Preferences) {
+  } else if (!isMobile && category === Preferences) {
     columns = columns.concat([
       { header: "Program", accessor: "ProgramPref" },
       { header: "Prof. Dev.", accessor: "ProfDevPref" },
@@ -84,6 +88,7 @@ interface RecruitTableProps {
     player: HockeyCroot | FootballCroot | BasketballCroot
   ) => void;
   league: League;
+  isMobile?: boolean;
 }
 
 export const RecruitTable: FC<RecruitTableProps> = ({
@@ -96,13 +101,13 @@ export const RecruitTable: FC<RecruitTableProps> = ({
   category,
   openModal,
   league,
+  isMobile = false,
 }) => {
   const backgroundColor = colorOne;
   const borderColor = colorTwo;
   const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const [isMobile] = useMobile();
-  const columns = getRecruitingColumns(league, category);
+  const columns = getRecruitingColumns(league, category, isMobile);
 
   const CFBRowRenderer = (
     item: FootballCroot,
@@ -136,8 +141,12 @@ export const RecruitTable: FC<RecruitTableProps> = ({
             <Button size="xs" onClick={() => openModal(RecruitInfoType, item)}>
               <Info />
             </Button>
-            <Button variant="success" size="xs" onClick={() => openModal(InfoType, item as HockeyCroot)}>
-              <Plus/>
+            <Button
+              variant="success"
+              size="xs"
+              onClick={() => openModal(InfoType, item as HockeyCroot)}
+            >
+              <Plus />
             </Button>
           </ButtonGroup>
         </div>

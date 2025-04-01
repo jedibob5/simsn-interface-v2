@@ -21,6 +21,7 @@ import {
 import { RecruitingCategoryDropdown } from "../Common/RecruitingCategoryDropdown";
 import { RecruitTable } from "../Common/RecruitTable";
 import { ActionModal } from "../../Common/ActionModal";
+import { useMobile } from "../../../_hooks/useMobile";
 
 export const CHLRecruiting = () => {
   const hkStore = useSimHCKStore();
@@ -43,19 +44,21 @@ export const CHLRecruiting = () => {
     SelectStatusOptions,
     tableViewType,
     setTableViewType,
-    filteredRecruits,
-    PreviousPage,
-    NextPage,
-    pageIndex,
+    pagedRecruits,
+    goToPreviousPage,
+    goToNextPage,
+    currentPage,
+    totalPages,
     openModal,
     modalAction,
-    modalPlayer
+    modalPlayer,
   } = useCHLRecruiting();
   const teamColors = useTeamColors(
     chlTeam?.ColorOne,
     chlTeam?.ColorTwo,
     chlTeam?.ColorThree
   );
+  const [isMobile] = useMobile();
 
   /* 
         Will also need to add player profiles to bootstrap call.
@@ -83,21 +86,20 @@ export const CHLRecruiting = () => {
 
         This is for the overview alone.
     */
-  console.log({ filteredRecruits });
   return (
     <>
-          {modalPlayer && (
-            <ActionModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              playerID={modalPlayer.ID}
-              playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
-              teamID={modalPlayer.TeamID}
-              league={SimCHL}
-              modalAction={modalAction}
-              player={modalPlayer}
-            />
-          )}
+      {modalPlayer && (
+        <ActionModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          playerID={modalPlayer.ID}
+          playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+          teamID={modalPlayer.TeamID}
+          league={SimCHL}
+          modalAction={modalAction}
+          player={modalPlayer}
+        />
+      )}
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <RecruitingSideBar
           Team={chlTeam!!}
@@ -106,7 +108,7 @@ export const CHLRecruiting = () => {
           league={SimCHL}
         />
         <div className="flex flex-col w-full max-[1024px]:gap-y-2">
-          <div className="flex flex-row gap-x-2">
+          <div className="flex flex-col sm:flex-row gap-x-2">
             <Border
               direction="row"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
@@ -115,7 +117,7 @@ export const CHLRecruiting = () => {
                 borderColor: teamColors.Two,
               }}
             >
-              <ButtonGroup classes="flex flex-auto flex-1">
+              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
                 <Button
                   type="button"
                   variant={
@@ -150,7 +152,7 @@ export const CHLRecruiting = () => {
                   Rankings
                 </Button>
               </ButtonGroup>
-              <ButtonGroup classes="flex flex-auto flex-row justify-end">
+              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
                 <Button
                   type="button"
                   variant={
@@ -179,8 +181,8 @@ export const CHLRecruiting = () => {
                 borderColor: teamColors.Two,
               }}
             >
-              <div className="grid grid-cols-2 w-full">
-                <div className="flex flex-row w-full gap-x-6">
+              <div className="sm:grid sm:grid-cols-2 w-full">
+                <div className="flex flex-row w-full gap-x-6 justify-center sm:justify-normal">
                   <div className="flex flex-col">
                     <Text variant="h6" classes="text-nowrap">
                       AI Active
@@ -206,7 +208,7 @@ export const CHLRecruiting = () => {
                     </Text>
                   </div>
                 </div>
-                <ButtonGroup classes="flex flex-row w-full justify-end">
+                <ButtonGroup classes="flex flex-row w-full justify-center sm:justify-end">
                   <Button type="button" variant="primary">
                     Help
                   </Button>
@@ -230,24 +232,27 @@ export const CHLRecruiting = () => {
                   borderColor: teamColors.Two,
                 }}
               >
-                <ButtonGroup classes="w-full">
+                <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                   <RecruitingCategoryDropdown
                     label="Positions"
                     options={HockeyPositionOptions}
                     change={SelectPositionOptions}
                     isMulti={true}
+                    isMobile={isMobile}
                   />
                   <RecruitingCategoryDropdown
                     label="Archetype"
                     options={HockeyArchetypeOptions}
                     change={SelectArchetypeOptions}
                     isMulti={true}
+                    isMobile={isMobile}
                   />
                   <RecruitingCategoryDropdown
                     label="Country"
                     options={CountryOptions}
                     change={SelectCountryOption}
                     isMulti={false}
+                    isMobile={isMobile}
                   />
                   {regionOptions.length > 0 && (
                     <RecruitingCategoryDropdown
@@ -255,6 +260,7 @@ export const CHLRecruiting = () => {
                       options={regionOptions}
                       change={SelectRegionOptions}
                       isMulti={false}
+                      isMobile={isMobile}
                     />
                   )}
                   <RecruitingCategoryDropdown
@@ -262,14 +268,16 @@ export const CHLRecruiting = () => {
                     options={StarOptions}
                     change={SelectStarOptions}
                     isMulti={true}
+                    isMobile={isMobile}
                   />
                   <RecruitingCategoryDropdown
                     label="Status"
                     options={StatusOptions}
                     change={SelectStatusOptions}
                     isMulti={true}
+                    isMobile={isMobile}
                   />
-                </ButtonGroup>
+                </div>
               </Border>
               <Border
                 direction="col"
@@ -280,7 +288,7 @@ export const CHLRecruiting = () => {
                 }}
               >
                 <RecruitTable
-                  croots={filteredRecruits}
+                  croots={pagedRecruits}
                   colorOne={teamColors.One}
                   colorTwo={teamColors.Two}
                   colorThree={teamColors.Three}
@@ -289,17 +297,26 @@ export const CHLRecruiting = () => {
                   league={SimCHL}
                   team={chlTeam}
                   openModal={openModal}
+                  isMobile={isMobile}
                 />
                 <div className="flex flex-row justify-center py-2">
-                    <ButtonGroup>
-                        <Button onClick={PreviousPage} disabled={pageIndex === 0}>
-                            Prev
-                        </Button>
-                        <Text variant="body-small" className="flex items-center">{pageIndex + 1}</Text>
-                        <Button onClick={NextPage} disabled={pageIndex >= recruits.length -1}>
-                            Next
-                        </Button>
-                    </ButtonGroup>
+                  <ButtonGroup>
+                    <Button
+                      onClick={goToPreviousPage}
+                      disabled={currentPage === 0}
+                    >
+                      Prev
+                    </Button>
+                    <Text variant="body-small" className="flex items-center">
+                      {currentPage + 1}
+                    </Text>
+                    <Button
+                      onClick={goToNextPage}
+                      disabled={currentPage >= totalPages - 1}
+                    >
+                      Next
+                    </Button>
+                  </ButtonGroup>
                 </div>
               </Border>
             </>
