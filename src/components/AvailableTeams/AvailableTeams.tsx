@@ -21,7 +21,6 @@ import { SelectDropdown } from "../../_design/Select";
 import { useAuthStore } from "../../context/AuthContext";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
-import { NFLRequest } from "../../models/footballModels";
 import { useLeagueStore } from "../../context/LeagueContext";
 
 export const AvailableTeams = () => {
@@ -104,6 +103,8 @@ export const AvailableTeams = () => {
         selectedTeams.length > 0 ? selectedTeams.includes(x.ID) : true;
       return matchesConference && matchesTeams;
     });
+
+    console.log({ conferences, selectedTeams });
 
     setFilteredTeams(filtered);
     setIsLoading(false);
@@ -221,12 +222,12 @@ export const AvailableTeams = () => {
   };
 
   const ChangeConference = (options: any) => {
-    const opts = [...options.map((x: any) => x.value)];
+    const opts = [...options.map((x: any) => Number(x.value))];
     setConferences(() => opts);
   };
 
   const ChangeTeams = (options: any) => {
-    const opts = [...options.map((x: any) => x.value)];
+    const opts = [...options.map((x: any) => Number(x.value))];
     setSelectedTeams(() => opts);
   };
 

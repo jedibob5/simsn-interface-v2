@@ -30,7 +30,8 @@ import {
   CollegeShootoutLineup,
   ProfessionalLineup,
   ProfessionalShootoutLineup,
-  FaceDataResponse
+  RecruitPlayerProfile,
+  FaceDataResponse,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -64,6 +65,7 @@ interface SimHCKContextProps {
   phlLineups: ProfessionalLineup[];
   phlShootoutLineup: ProfessionalShootoutLineup;
   recruits: Croot[]; // Replace with a more specific type if available
+  recruitProfiles: RecruitPlayerProfile[];
   teamProfileMap: Record<number, RecruitingTeamProfile>;
   portalPlayers: CollegePlayer[]; // Replace with a more specific type if available
   collegeInjuryReport: CollegePlayer[];
@@ -123,6 +125,7 @@ const defaultContext: SimHCKContextProps = {
   phlLineups: [],
   phlShootoutLineup: {} as ProfessionalShootoutLineup,
   recruits: [],
+  recruitProfiles: [],
   teamProfileMap: {},
   portalPlayers: [],
   collegeInjuryReport: [],
@@ -202,6 +205,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [phlShootoutLineup, setPHLShootoutLineup] =
     useState<CollegeShootoutLineup>({} as ProfessionalShootoutLineup);
   const [recruits, setRecruits] = useState<Croot[]>([]);
+  const [recruitProfiles, setRecruitProfiles] = useState<
+    RecruitPlayerProfile[]
+  >([]);
   const [teamProfileMap, setTeamProfileMap] = useState<
     Record<number, RecruitingTeamProfile>
   >({});
@@ -297,8 +303,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setFreeAgency(res.FreeAgency);
     setPortalPlayers(res.PortalPlayers);
     setRecruits(res.Recruits);
+    setRecruitProfiles(res.RecruitProfiles);
     setProNotifications(res.ProNotifications);
-    setPlayerFaces(res.FaceData)
+    setPlayerFaces(res.FaceData);
 
     if (res.AllCollegeGames.length > 0 && hck_Timestamp) {
       const currentSeasonGames = res.AllCollegeGames.filter(
@@ -533,6 +540,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         phlLineups,
         phlShootoutLineup,
         recruits,
+        recruitProfiles,
         teamProfileMap,
         portalPlayers,
         collegeInjuryReport,
@@ -568,7 +576,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         updateCHLRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
-        playerFaces
+        playerFaces,
       }}
     >
       {children}

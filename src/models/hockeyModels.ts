@@ -2901,6 +2901,7 @@ export class LeadingTeams {
   }
 }
 export class Croot {
+  [key: string]: any;
   ID: number;
   TeamID: number;
   College: string;
@@ -2919,6 +2920,7 @@ export class Croot {
   HighSchool: string;
   City: string;
   State: string;
+  Country: string;
   AffinityOne: string;
   AffinityTwo: string;
   RecruitingStatus: string;
@@ -2927,6 +2929,21 @@ export class Croot {
   CustomCrootFor: string;
   IsSigned: boolean;
   OverallGrade: string;
+  Agility: number;
+  Faceoffs: number;
+  LongShotAccuracy: number;
+  LongShotPower: number;
+  CloseShotAccuracy: number;
+  CloseShotPower: number;
+  OneTimer: number;
+  Passing: number;
+  PuckHandling: number;
+  Strength: number;
+  BodyChecking: number;
+  StickChecking: number;
+  ShotBlocking: number;
+  Goalkeeping: number;
+  GoalieVision: number;
   TotalRank: number;
   AgilityGrade: string;
   FaceoffsGrade: string;
@@ -2943,6 +2960,15 @@ export class Croot {
   GoalkeepingGrade: string;
   GoalieVisionGrade: string;
   GoalieReboundGrade: string;
+  ProgramPref: number;
+  ProfDevPref: number;
+  TraditionsPref: number;
+  FacilitiesPref: number;
+  AtmospherePref: number;
+  AcademicsPref: number;
+  ConferencePref: number;
+  CoachPref: number;
+  SeasonMomentumPref: number;
   LeadingTeams: LeadingTeams[];
 
   constructor(source: any = {}) {
@@ -2965,6 +2991,7 @@ export class Croot {
     this.HighSchool = source["HighSchool"];
     this.City = source["City"];
     this.State = source["State"];
+    this.Country = source["Country"];
     this.AffinityOne = source["AffinityOne"];
     this.AffinityTwo = source["AffinityTwo"];
     this.RecruitingStatus = source["RecruitingStatus"];
@@ -2973,6 +3000,21 @@ export class Croot {
     this.CustomCrootFor = source["CustomCrootFor"];
     this.IsSigned = source["IsSigned"];
     this.OverallGrade = source["OverallGrade"];
+    this.Agility = source["Agility"];
+    this.Faceoffs = source["Faceoffs"];
+    this.LongShotAccuracy = source["LongShotAccuracy"];
+    this.LongShotPower = source["LongShotPower"];
+    this.CloseShotAccuracy = source["CloseShotAccuracy"];
+    this.CloseShotPower = source["CloseShotPower"];
+    this.OneTimer = source["OneTimer"];
+    this.Passing = source["Passing"];
+    this.PuckHandling = source["PuckHandling"];
+    this.Strength = source["Strength"];
+    this.BodyChecking = source["BodyChecking"];
+    this.StickChecking = source["StickChecking"];
+    this.ShotBlocking = source["ShotBlocking"];
+    this.Goalkeeping = source["Goalkeeping"];
+    this.GoalieVision = source["GoalieVision"];
     this.TotalRank = source["TotalRank"];
     this.AgilityGrade = source["AgilityGrade"];
     this.FaceoffsGrade = source["FaceoffsGrade"];
@@ -2989,6 +3031,15 @@ export class Croot {
     this.GoalkeepingGrade = source["GoalkeepingGrade"];
     this.GoalieVisionGrade = source["GoalieVisionGrade"];
     this.GoalieReboundGrade = source["GoalieReboundGrade"];
+    this.ProgramPref = source["ProgramPref"];
+    this.ProfDevPref = source["ProfDevPref"];
+    this.TraditionsPref = source["TraditionsPref"];
+    this.FacilitiesPref = source["FacilitiesPref"];
+    this.AtmospherePref = source["AtmospherePref"];
+    this.AcademicsPref = source["AcademicsPref"];
+    this.ConferencePref = source["ConferencePref"];
+    this.CoachPref = source["CoachPref"];
+    this.SeasonMomentumPref = source["SeasonMomentumPref"];
     this.LeadingTeams = this.convertValues(
       source["LeadingTeams"],
       LeadingTeams
@@ -3105,6 +3156,7 @@ export class BootstrapData {
   CollegeStandings: CollegeStandings[];
   CollegeRosterMap: { [key: number]: CollegePlayer[] };
   Recruits: Croot[];
+  RecruitProfiles: RecruitPlayerProfile[];
   TeamProfileMap: { [key: number]: RecruitingTeamProfile };
   PortalPlayers: CollegePlayer[];
   CollegeInjuryReport: CollegePlayer[];
@@ -3125,7 +3177,7 @@ export class BootstrapData {
   AllProGames: ProfessionalGame[];
   ProTeamLineups: ProfessionalLineup[];
   ProTeamShootoutLineup: ProfessionalShootoutLineup;
-  FaceData: {[key: number]: FaceDataResponse};
+  FaceData: { [key: number]: FaceDataResponse };
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -3140,6 +3192,11 @@ export class BootstrapData {
     );
     this.CollegeRosterMap = source["CollegeRosterMap"];
     this.Recruits = this.convertValues(source["Recruits"], Croot);
+    this.RecruitProfiles = this.convertValues(
+      source["RecruitProfiles"],
+      RecruitPlayerProfile
+    );
+
     this.TeamProfileMap = this.convertValues(
       source["TeamProfileMap"],
       RecruitingTeamProfile,
@@ -3210,7 +3267,11 @@ export class BootstrapData {
       source["ProTeamShootoutLineup"],
       ProfessionalShootoutLineup
     );
-    this.FaceData = this.convertValues(source["FaceData"], FaceDataResponse, true);
+    this.FaceData = this.convertValues(
+      source["FaceData"],
+      FaceDataResponse,
+      true
+    );
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -5216,37 +5277,37 @@ export class FaceDataResponse {
   HairColor: string;
 
   constructor(source: any = {}) {
-      if ('string' === typeof source) source = JSON.parse(source);
-      this.PlayerID = source["PlayerID"];
-      this.Accessories = source["Accessories"];
-      this.Body = source["Body"];
-      this.Ear = source["Ear"];
-      this.Eye = source["Eye"];
-      this.EyeLine = source["EyeLine"];
-      this.Eyebrow = source["Eyebrow"];
-      this.FacialHair = source["FacialHair"];
-      this.Glasses = source["Glasses"];
-      this.Hair = source["Hair"];
-      this.HairBG = source["HairBG"];
-      this.HairFlip = source["HairFlip"];
-      this.Head = source["Head"];
-      this.Jersey = source["Jersey"];
-      this.MiscLine = source["MiscLine"];
-      this.Mouth = source["Mouth"];
-      this.MouthFlip = source["MouthFlip"];
-      this.Nose = source["Nose"];
-      this.NoseFlip = source["NoseFlip"];
-      this.SmileLine = source["SmileLine"];
-      this.BodySize = source["BodySize"];
-      this.EarSize = source["EarSize"];
-      this.EyeAngle = source["EyeAngle"];
-      this.EyeBrowAngle = source["EyeBrowAngle"];
-      this.FaceSize = source["FaceSize"];
-      this.FacialHairShave = source["FacialHairShave"];
-      this.NoseSize = source["NoseSize"];
-      this.SmileLineSize = source["SmileLineSize"];
-      this.SkinColor = source["SkinColor"];
-      this.HairColor = source["HairColor"];
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.PlayerID = source["PlayerID"];
+    this.Accessories = source["Accessories"];
+    this.Body = source["Body"];
+    this.Ear = source["Ear"];
+    this.Eye = source["Eye"];
+    this.EyeLine = source["EyeLine"];
+    this.Eyebrow = source["Eyebrow"];
+    this.FacialHair = source["FacialHair"];
+    this.Glasses = source["Glasses"];
+    this.Hair = source["Hair"];
+    this.HairBG = source["HairBG"];
+    this.HairFlip = source["HairFlip"];
+    this.Head = source["Head"];
+    this.Jersey = source["Jersey"];
+    this.MiscLine = source["MiscLine"];
+    this.Mouth = source["Mouth"];
+    this.MouthFlip = source["MouthFlip"];
+    this.Nose = source["Nose"];
+    this.NoseFlip = source["NoseFlip"];
+    this.SmileLine = source["SmileLine"];
+    this.BodySize = source["BodySize"];
+    this.EarSize = source["EarSize"];
+    this.EyeAngle = source["EyeAngle"];
+    this.EyeBrowAngle = source["EyeBrowAngle"];
+    this.FaceSize = source["FaceSize"];
+    this.FacialHairShave = source["FacialHairShave"];
+    this.NoseSize = source["NoseSize"];
+    this.SmileLineSize = source["SmileLineSize"];
+    this.SkinColor = source["SkinColor"];
+    this.HairColor = source["HairColor"];
   }
 }
 

@@ -50,39 +50,43 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   const [isMobile] = useMobile();
 
   let rosterColumns = [
-    { header: "Name", accessor: "Name" },
-    { header: "Pos", accessor: "pos" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "arch" },
-    { header: "Yr", accessor: "yr" },
-    { header: "⭐", accessor: "stars" },
-    { header: "Ovr", accessor: "ovr" },
+    { header: "Name", accessor: "LastName" },
+    { header: "Pos", accessor: "Position" },
+    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+    { header: "Yr", accessor: "Year" },
+    { header: "⭐", accessor: "Stars" },
+    { header: "Ovr", accessor: "Overall" },
   ];
 
   if (!isMobile) {
     rosterColumns = rosterColumns.concat([
-      { header: "Agi", accessor: "agi" },
-      { header: "FO", accessor: "fo" },
-      { header: "LSA", accessor: "lsa" },
-      { header: "LSP", accessor: "lsp" },
-      { header: "CSA", accessor: "csa" },
-      { header: "CSP", accessor: "csp" },
-      { header: "Pass", accessor: "pass" },
-      { header: "PH", accessor: "ph" },
-      { header: "Str", accessor: "str" },
-      { header: "BChk", accessor: "bchk" },
-      { header: "SChk", accessor: "schk" },
-      { header: "SB", accessor: "sb" },
-      { header: "GK", accessor: "gk" },
-      { header: "GV", accessor: "gv" },
-      { header: "Sta", accessor: "sta" },
-      { header: "Inj", accessor: "inj" },
+      { header: "Agi", accessor: "Agility" },
+      { header: "FO", accessor: "Faceoffs" },
+      { header: "LSA", accessor: "LongShotAccuracy" },
+      { header: "LSP", accessor: "LongShotPower" },
+      { header: "CSA", accessor: "CloseShotAccuracy" },
+      { header: "CSP", accessor: "CloseShotPower" },
+      { header: "Pass", accessor: "Passing" },
+      { header: "PH", accessor: "PuckHandling" },
+      { header: "Str", accessor: "Strength" },
+      { header: "BChk", accessor: "BodyChecking" },
+      { header: "SChk", accessor: "StickChecking" },
+      { header: "SB", accessor: "ShotBlocking" },
+      { header: "GK", accessor: "Goalkeeping" },
+      { header: "GV", accessor: "GoalieVision" },
+      { header: "Sta", accessor: "Stamina" },
+      { header: "Inj", accessor: "Injury" },
     ]);
   }
   rosterColumns.push({ header: "Actions", accessor: "actions" });
 
   const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
 
-  const rowRenderer = (item: CHLPlayer, index: number, backgroundColor: string) => {
+  const rowRenderer = (
+    item: CHLPlayer,
+    index: number,
+    backgroundColor: string
+  ) => {
     const attributes = getCHLAttributes(item, isMobile, category!);
     return (
       <div
@@ -91,16 +95,16 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
-          <div key={idx} 
-          className={
-            `table-cell 
+          <div
+            key={idx}
+            className={`table-cell 
             align-middle 
             min-[360px]:max-w-[5em] min-[380px]:max-w-[7em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${idx === 4 ? 'text-center' : ''}`
-            }>
-            <Text variant="small">
-                {attr.value}
-            </Text>
+            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+              idx === 4 ? "text-center" : ""
+            }`}
+          >
+            <Text variant="small">{attr.value}</Text>
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
@@ -168,19 +172,19 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
-  console.log(team)
+  console.log(team);
   let rosterColumns = [
-    { header: "Name", accessor: "Name" },
-    { header: "Pos", accessor: "pos" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "arch" },
-    { header: "Yr", accessor: "yr" },
-    { header: "⭐", accessor: "stars" },
-    { header: "Ovr", accessor: "ovr" },
+    { header: "Name", accessor: "LastName" },
+    { header: "Pos", accessor: "Position" },
+    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+    { header: "Yr", accessor: "Year" },
+    { header: "⭐", accessor: "Stars" },
+    { header: "Ovr", accessor: "Overall" },
   ];
 
   if (!isMobile) {
     rosterColumns = rosterColumns.concat([
-      { header: "Pot", accessor: "pot"},
+      { header: "Pot", accessor: "PotentialGrade" },
       { header: "FIQ", accessor: "FootballIQ" },
       { header: "SPD", accessor: "Speed" },
       { header: "AGI", accessor: "Agility" },
@@ -209,7 +213,11 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
 
   const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
 
-  const rowRenderer = (item: CollegePlayer, index: number, backgroundColor: string) => {
+  const rowRenderer = (
+    item: CollegePlayer,
+    index: number,
+    backgroundColor: string
+  ) => {
     const attributes = getCFBAttributes(item, isMobile, category!);
     return (
       <div
@@ -218,16 +226,16 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
-          <div key={idx} 
-          className={
-            `table-cell 
+          <div
+            key={idx}
+            className={`table-cell 
             align-middle 
             min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${idx === 4 ? 'text-center' : ''}`
-            }>
-            <Text variant="small">
-              {attr.value}
-            </Text>
+            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+              idx === 4 ? "text-center" : ""
+            }`}
+          >
+            <Text variant="small">{attr.value}</Text>
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">

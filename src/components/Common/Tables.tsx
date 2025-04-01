@@ -31,11 +31,11 @@ export const StandingsTable = ({
   }
   const columns = [
     { header: "Rank", accessor: "rank" },
-    { header: "Team", accessor: "team" },
-    { header: "C.W", accessor: "coconfwins" },
-    { header: "C.L", accessor: "conflosses" },
-    { header: "T.W", accessor: "ovrwins" },
-    { header: "T.L", accessor: "ovrlosses" },
+    { header: "Team", accessor: "TeamName" },
+    { header: "C.W", accessor: "ConferenceWins" },
+    { header: "C.L", accessor: "ConferenceLosses" },
+    { header: "T.W", accessor: "TotalWins" },
+    { header: "T.L", accessor: "TotalLosses" },
   ];
   const rowRenderer = (item: any, index: number, backgroundColor: string) => {
     const logoUrl = getLogo(league, item.TeamID, currentUser.isRetro);
@@ -45,9 +45,7 @@ export const StandingsTable = ({
         className="table-row border-b dark:border-gray-700 text-left"
         style={{ backgroundColor }}
       >
-        <div className="table-cell px-2 align-middle w-[16%]">
-          {item.Rank}
-        </div>
+        <div className="table-cell px-2 align-middle w-[16%]">{item.Rank}</div>
         <div className="table-cell align-middle w-[18%]">
           <Logo
             variant="normal"
@@ -62,8 +60,12 @@ export const StandingsTable = ({
         <div className="table-cell px-2 align-middle w-[16%]">
           {item.ConferenceLosses}
         </div>
-        <div className="table-cell px-2 align-middle w-[16%]">{item.TotalWins}</div>
-        <div className="table-cell px-1 align-middle w-[16%]">{item.TotalLosses}</div>
+        <div className="table-cell px-2 align-middle w-[16%]">
+          {item.TotalWins}
+        </div>
+        <div className="table-cell px-1 align-middle w-[16%]">
+          {item.TotalLosses}
+        </div>
       </div>
     );
   };
@@ -97,10 +99,10 @@ export const GamesTable = ({
   const columns = [
     { header: "", accessor: "" },
     { header: "Opponent", accessor: "opp" },
-    { header: "Week", accessor: "week" },
-    { header: "Day", accessor: "day" },
-    { header: "Home", accessor: "home" },
-    { header: "Away", accessor: "away" },
+    { header: "Week", accessor: "Week" },
+    { header: "Day", accessor: "Day" },
+    { header: "Home", accessor: "Home" },
+    { header: "Away", accessor: "Away" },
   ];
   const { ID } = team;
   const rowRenderer = (item: any, index: number) => {

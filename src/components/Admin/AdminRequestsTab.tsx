@@ -131,14 +131,14 @@ export const PHLRequestCard: React.FC<PHLRequestCardProps> = ({
   );
   const backgroundColor = teamColors.One;
   const borderColor = teamColors.Two;
-  const textColorClass = teamColors.TextColorOne;
   const { acceptPHLRequest, rejectPHLRequest } = useAdminPage();
   const accept = async () => {
-    await acceptPHLRequest(request);
     const payload = {
-      PHLTeamID: request.TeamID
+      PHLTeamID: request.TeamID,
+      PHLRole: request.Role,
     }
     await updateUserByUsername(request.Username, payload);
+    await acceptPHLRequest(request);
   };
   const reject = async () => {
     await rejectPHLRequest(request);

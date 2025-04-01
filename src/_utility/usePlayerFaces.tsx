@@ -60,11 +60,19 @@ export default PlayerPicture;
 
 const getPlayerFace = (playerFaceData: FaceDataResponse, team: any) => {
     
-    const teamColors: [string, string, string] = [
-        team.ColorOne || "#000000",
-        team.ColorTwo || "#FFFFFF",
-        team.ColorThree || "#000000"
+    let teamColors: [string, string, string] = [
+        "#000000",
+        "#FFFFFF",
+        "#000000"
       ];
+
+      if (team) {
+        teamColors = [
+          team.ColorOne || "#000000",
+          team.ColorTwo || "#FFFFFF",
+          team.ColorThree || "#000000"
+        ];
+      }
   
     return {
         accessories: { id: playerFaceData.Accessories },

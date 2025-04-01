@@ -6,20 +6,20 @@ import {
   SimCHL,
   SimPHL,
   SimCFB,
-  SimNFL
+  SimNFL,
+  Attributes
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
 import { useAuthStore } from "../../context/AuthContext";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
-import { ActionModal, CapsheetInfo, TeamInfo } from "./TeamPageComponents";
+import {  CapsheetInfo, TeamInfo } from "./TeamPageComponents";
 import { CHLRosterTable, CFBRosterTable } from "./TeamPageTables";
-import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { SelectDropdown } from "../../_design/Select";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../_hooks/useSelectStyles";
-import { Button, ButtonGroup } from "../../_design/Buttons";
+import { Button } from "../../_design/Buttons";
 import { Text } from "../../_design/Typography";
 import { useModal } from "../../_hooks/useModal";
 import {
@@ -33,6 +33,7 @@ import {
 import { useTeamColors } from "../../_hooks/useTeamColors";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
+import { ActionModal } from "../Common/ActionModal";
 
 interface TeamPageProps {
   league: League;
@@ -94,7 +95,7 @@ const CHLTeamPage = () => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Attributes);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -117,7 +118,7 @@ const CHLTeamPage = () => {
     const value = Number(opts?.value);
     const nextTeam = chlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Attributes);
   };
   const openModal = (action: ModalAction, player: CHLPlayer) => {
     handleOpenModal();

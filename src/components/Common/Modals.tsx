@@ -2,6 +2,7 @@ import { FC } from "react";
 import { League, SimCHL, SimPHL, SimCFB, SimNFL } from "../../_constants/constants";
 import {
   CollegePlayer as CHLPlayer,
+  Croot as CHLCroot,
   ProfessionalPlayer as PHLPlayer,
 } from "../../models/hockeyModels";
 import {
@@ -448,6 +449,255 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
           </div>
       ))}
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const RecruitInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
+  player,
+  league,
+}) => {
+  if (league === SimCHL) {
+    return <CHLCrootInfoModalBody player={player as CHLCroot} />;
+  }
+
+  return <>Unsupported League.</>;
+};
+
+interface CHLCrootInfoModalBodyProps {
+  player: CHLCroot;
+}
+
+export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { chlTeamMap } = useSimHCKStore();
+  const team = chlTeamMap[player.TeamID];
+  const teamLogo = getLogo(SimCHL, player.TeamID, currentUser?.isRetro);
+  const heightObj = HeightToFeetAndInches(player.Height);
+
+  return (
+    <div className="w-full grid grid-cols-4 gap-2 overflow-y-auto">
+      <div className="flex flex-col items-center px-1">
+        <div className={`flex my-1 items-center justify-center 
+                         px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`} 
+                         style={{ backgroundColor: "white" }}>
+          <PlayerPicture playerID={player.ID} 
+                           league="SimCHL" 
+                           team={team}/>
+        </div>
+          {team && player.IsSigned && (
+            <Logo
+            url={teamLogo}
+            label={team.Abbreviation}
+            classes="h-[5rem] max-h-[5rem]"
+            textClass="text-small"
+          />)}
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Origin
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+          {player.Country.length > 0 && `${player.Country}`}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Height
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {heightObj.feet}'{heightObj.inches}"
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Overall
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.OverallGrade}
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+            <Text variant="h6" classes="mb-1 whitespace-nowrap">
+              Youth
+            </Text>
+            <Text variant="body-small" classes="">
+              {player.HighSchool && player.HighSchool.trim() !== "" ? player.HighSchool : "Unknown"}
+            </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Weight
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.Weight} lbs
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Personality
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.Personality}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4 pb-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Stars
+          </Text>
+          <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+            {player.Stars > 0
+              ? Array(player.Stars).fill("⭐").join("")
+              : player.Stars}
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-2">
+        <div className="grid grid-cols-4 gap-3">
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Agility
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.Agility, 1)}
+            </Text>
+          </div>
+      {player.Position !== "G" && (
+        <>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Faceoffs
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.Faceoffs, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col gap-1 px-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Long Shot
+            </Text>
+            <div className="flex justify-around">
+              <div className="flex flex-col items-center justify-center align-center">
+                <Text variant="small">
+                {getHockeyLetterGrade(player.LongShotPower, 1)}
+                </Text>
+                <Text variant="xs">
+                  Pow
+                </Text>
+              </div>
+              <div className="flex flex-col">
+                <Text variant="small">
+                {getHockeyLetterGrade(player.LongShotAccuracy, 1)}
+                </Text>
+                <Text variant="xs">
+                  Acc
+                </Text>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1 px-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Close Shot
+            </Text>
+            <div className="flex justify-around">
+              <div className="flex flex-col items-center justify-center align-center">
+                <Text variant="small" classes="text-center">
+                {getHockeyLetterGrade(player.CloseShotPower, 1)}
+                </Text>
+                <Text variant="xs">
+                  Pow
+                </Text>
+              </div>
+              <div className="flex flex-col">
+                <Text variant="small">
+                {getHockeyLetterGrade(player.CloseShotAccuracy, 1)}
+                </Text>
+                <Text variant="xs">
+                  Acc
+                </Text>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Passing
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.Passing, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Puck Handling
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.PuckHandling, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Strength
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.Strength, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Body Checks
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.BodyChecking, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Stick Checks
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.StickChecking, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Shot Blocks
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.ShotBlocking, 1)}
+            </Text>
+          </div>
+        </>
+      )}
+
+      {player.Position === "G" && (
+        <>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Goalkeeping
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.Goalkeeping, 1)}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Goalie Vision
+            </Text>
+            <Text variant="small">
+              {getHockeyLetterGrade(player.GoalieVision, 1)}
+            </Text>
+          </div>
+        </>
+      )}
+    </div>
       </div>
     </div>
   );
