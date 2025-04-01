@@ -39,8 +39,9 @@ export const useCHLRecruiting = () => {
   const [archetype, setArchetype] = useState<string[]>([]);
   const [regions, setRegions] = useState<string[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
-  const {pageIndex, setPageIndex, PreviousPage, NextPage} = usePagination(recruits.length - 1);
-  const [modalPlayer, setModalPlayer] = useState<HockeyCroot | FootballCroot | BasketballCroot>({} as HockeyCroot);
+  const [modalPlayer, setModalPlayer] = useState<
+    HockeyCroot | FootballCroot | BasketballCroot
+  >({} as HockeyCroot);
   const [modalAction, setModalAction] = useState<ModalAction>(RecruitInfoType);
 
   const regionOptions = useMemo(() => {
@@ -76,65 +77,92 @@ export const useCHLRecruiting = () => {
 
   const filteredRecruits = useMemo(() => {
     // Single-pass filter
-    return recruits.slice(pageIndex, pageIndex +100).filter((r) => {
-      if (country.length > 0 && !country.includes(r.Country)) {
-        return false;
+    return recruits.filter((r) => {
+      if (
+        country.length === 0 &&
+        positions.length === 0 &&
+        archetype.length === 0 &&
+        regions.length === 0 &&
+        statuses.length === 0
+      ) {
+        return true;
       }
-      if (positions.length > 0 && !positions.includes(r.Position)) {
-        return false;
+      if (country.length > 0 && country.includes(r.Country)) {
+        return true;
       }
-      if (archetype.length > 0 && !archetype.includes(r.Archetype)) {
-        return false;
+      if (positions.length > 0 && positions.includes(r.Position)) {
+        return true;
       }
-      if (regions.length > 0 && !regions.includes(r.State)) {
-        return false;
+      if (archetype.length > 0 && archetype.includes(r.Archetype)) {
+        return true;
+      }
+      if (regions.length > 0 && regions.includes(r.State)) {
+        return true;
       }
       // Finally, recruiting status
-      if (statuses.length > 0 && !statuses.includes(r.RecruitingStatus)) {
-        return false;
+      if (statuses.length > 0 && statuses.includes(r.RecruitingStatus)) {
+        return true;
       }
-      return true;
+      return false;
     });
-  }, [recruits, country, positions, archetype, regions, statuses, pageIndex]);
+  }, [recruits, country, positions, archetype, regions, statuses]);
+
+  const pageSize = 100;
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    goToPreviousPage,
+    goToNextPage,
+  } = usePagination(filteredRecruits.length, pageSize);
+
+  const pagedRecruits = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredRecruits.slice(start, start + pageSize);
+  }, [filteredRecruits, currentPage, pageSize]);
 
   const SelectPositionOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setPositions(options);
-    setPageIndex(0);
+    setCurrentPage(0);
   };
 
   const SelectArchetypeOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setArchetype(options);
-    setPageIndex(0);
+    setCurrentPage(0);
   };
 
   const SelectStarOptions = (opts: any) => {
     const options = [...opts.map((x: any) => Number(x.value))];
     setStars(options);
-    setPageIndex(0);
+    setCurrentPage(0);
   };
   const SelectCountryOption = (opts: SingleValue<SelectOption>) => {
     const value = opts?.value;
     if (value) {
       setCountry(value);
-      setPageIndex(0);
+      setCurrentPage(0);
     }
   };
 
   const SelectRegionOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setRegions(options);
-    setPageIndex(0);
+    setCurrentPage(0);
   };
 
   const SelectStatusOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setStatuses(options);
-    setPageIndex(0);
+    setCurrentPage(0);
   };
 
-  const openModal = (action: ModalAction, player: HockeyCroot | FootballCroot | BasketballCroot) => {
+  const openModal = (
+    action: ModalAction,
+    player: HockeyCroot | FootballCroot | BasketballCroot
+  ) => {
     handleOpenModal();
     setModalAction(action);
     setModalPlayer(player);
@@ -161,9 +189,10 @@ export const useCHLRecruiting = () => {
     SelectStatusOptions,
     tableViewType,
     setTableViewType,
-    filteredRecruits,
-    PreviousPage,
-    NextPage,
-    pageIndex,
+    goToPreviousPage,
+    goToNextPage,
+    currentPage,
+    totalPages,
+    pagedRecruits,
   };
 };

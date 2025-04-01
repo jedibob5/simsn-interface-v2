@@ -1,28 +1,22 @@
 import { useState } from "react";
 
+export const usePagination = (totalItems: number, pageSize: number = 100) => {
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const totalPages = Math.ceil(totalItems / pageSize);
 
-export const usePagination = (len: number) => {
-  const [pageIndex, setPageIndex] = useState<number>(0);
+  const goToPreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 0));
+  };
 
-    const PreviousPage = () => {
-        setPageIndex((idx) => {
-          const prev = idx - 100;
-          if (prev < -1) {
-            return 0;
-          }
-          return prev;
-        });
-      }
-    
-      const NextPage = () => {
-        setPageIndex((idx: number) => {
-          const next = idx + 100
-          if (next >= len) {
-            return len;
-          }
-          return next;
-        });
-      }
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
+  };
 
-    return {pageIndex, setPageIndex, PreviousPage, NextPage};
-}
+  return {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    goToPreviousPage,
+    goToNextPage,
+  };
+};

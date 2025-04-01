@@ -8,11 +8,12 @@ interface RecruitingCategoryDropdownProps {
   options: { label: string; value: string }[];
   change: (opts: any) => void;
   isMulti: boolean;
+  isMobile?: boolean;
 }
 
 export const RecruitingCategoryDropdown: FC<
   RecruitingCategoryDropdownProps
-> = ({ label, options, change, isMulti }) => {
+> = ({ label, options, change, isMulti, isMobile = false }) => {
   return (
     <div className="flex flex-col">
       <Text variant="h6" classes="text-start">
@@ -29,7 +30,7 @@ export const RecruitingCategoryDropdown: FC<
             backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
             borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
             color: "#ffffff",
-            width: "13rem",
+            width: isMobile ? "11rem" : "13rem",
             maxWidth: "300px",
             padding: "0.3rem",
             boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",

@@ -88,48 +88,48 @@ export const Table = <T,>({
 
   return (
     <div className="overflow-x-auto rounded-lg mt-2 w-full">
-    <div
-      className={`table table-auto w-full border-b-2 ${textColorClass}`}
-      style={{ backgroundColor, borderColor }}
-    >
-      {/* Header */}
-      <div className="table-header-group sticky top-0">
-        <div
-          className={`table-row text-left ${textColorClass}`}
-          style={{ backgroundColor: darkerBackgroundColor, borderColor }}
-        >
-          {columns.map((col) => (
-            <div
-              key={col.accessor}
-              className="table-cell border-b-2 px-2 py-2 font-semibold whitespace-nowrap cursor-pointer"
-              style={{
-                backgroundColor: darkerBackgroundColor,
-                borderColor: borderColor,
-              }}
-              onClick={() => handleSort(col.accessor)}
-            >
-              <Text variant="body-small">{col.header}</Text>
-              {sortState.key === col.accessor
-                ? sortState.order === "asc"
-                  ? " 🔼"
-                  : " 🔽"
-                : null}
-            </div>
-          ))}
+      <div
+        className={`sm:table table-auto w-full border-b-2 ${textColorClass}`}
+        style={{ backgroundColor, borderColor }}
+      >
+        {/* Header */}
+        <div className="table-header-group sticky top-0">
+          <div
+            className={`table-row text-left ${textColorClass}`}
+            style={{ backgroundColor: darkerBackgroundColor, borderColor }}
+          >
+            {columns.map((col) => (
+              <div
+                key={col.accessor}
+                className="table-cell border-b-2 px-2 py-2 font-semibold whitespace-nowrap cursor-pointer"
+                style={{
+                  backgroundColor: darkerBackgroundColor,
+                  borderColor: borderColor,
+                }}
+                onClick={() => handleSort(col.accessor)}
+              >
+                <Text variant="body-small">{col.header}</Text>
+                {sortState.key === col.accessor
+                  ? sortState.order === "asc"
+                    ? " 🔼"
+                    : " 🔽"
+                  : null}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Body */}
+        <div className="table-row-group">
+          {sortedData.map((item, index) => {
+            const bg = index % 2 === 0 ? "transparent" : darkerBackgroundColor;
+            return (
+              <React.Fragment key={index}>
+                {rowRenderer(item, index, bg)}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
-      {/* Body */}
-      <div className="table-row-group">
-        {sortedData.map((item, index) => {
-          const bg = index % 2 === 0 ? "transparent" : darkerBackgroundColor;
-          return (
-            <React.Fragment key={index}>
-              {rowRenderer(item, index, bg)}
-            </React.Fragment>
-          );
-        })}
-      </div>
     </div>
-  </div>
   );
 };
