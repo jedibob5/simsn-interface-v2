@@ -31,8 +31,6 @@ We are using **Tailwind CSS** to power our custom UI component library, purpose-
 
 ## 🖼 Screenshots
 
-> A preview of SimSN Interface 2.0, showing different modules across college football and hockey simulation leagues.
-
 ### 🔘 Team Selection Interface
 
 Browse available teams across multiple conferences with live detail previews.
