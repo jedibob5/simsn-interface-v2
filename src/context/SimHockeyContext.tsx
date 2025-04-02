@@ -281,6 +281,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       phlid = currentUser.PHLTeamID;
     }
     const res = await BootstrapService.GetHCKBootstrapData(chlid, phlid);
+    console.log(res)
     setCHLTeams(res.AllCollegeTeams);
     setProTeams(res.AllProTeams);
     setAllCollegeGames(res.AllCollegeGames);

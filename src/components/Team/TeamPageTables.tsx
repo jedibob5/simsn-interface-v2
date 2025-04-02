@@ -1,17 +1,19 @@
 import { FC } from "react";
 import { Table } from "../../_design/Table";
 import { Text } from "../../_design/Typography";
-import { CollegePlayer as CHLPlayer } from "../../models/hockeyModels";
+import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer } from "../../models/hockeyModels";
 import { CollegePlayer as CFBPlayer, NFLPlayer, Timestamp } from "../../models/footballModels";
 import { useMobile } from "../../_hooks/useMobile";
-import { getCHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
+import { getCHLAttributes, getPHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { Button, ButtonGroup } from "../../_design/Buttons";
 import {
+  CurrencyDollar,
   Info,
   ScissorIcon,
   ShieldCheck,
   ShieldExclamation,
+  Tag,
   User,
   UserPlus,
 } from "../../_design/Icons";
@@ -148,6 +150,130 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   );
 };
 
+interface PHLRosterTableProps {
+  roster: PHLPlayer[] | undefined;
+  colorOne?: string;
+  colorTwo?: string;
+  colorThree?: string;
+  team?: any;
+  category?: string;
+  openModal: (action: ModalAction, player: PHLPlayer) => void;
+}
+
+export const PHLRosterTable: FC<PHLRosterTableProps> = ({
+  roster = [],
+  colorOne,
+  colorTwo,
+  colorThree,
+  team,
+  category,
+  openModal,
+}) => {
+  const backgroundColor = colorOne;
+  const borderColor = colorTwo;
+  const secondaryBorderColor = colorThree;
+  const textColorClass = getTextColorBasedOnBg(backgroundColor);
+  const [isMobile] = useMobile();
+
+  let rosterColumns = [
+    { header: "Name", accessor: "LastName" },
+    { header: "Pos", accessor: "Position" },
+    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+    { header: "Yr", accessor: "Year" },
+    { header: "Ovr", accessor: "Overall" },
+  ];
+
+  if (!isMobile) {
+    rosterColumns = rosterColumns.concat([
+      { header: "Agi", accessor: "Agility" },
+      { header: "FO", accessor: "Faceoffs" },
+      { header: "LSA", accessor: "LongShotAccuracy" },
+      { header: "LSP", accessor: "LongShotPower" },
+      { header: "CSA", accessor: "CloseShotAccuracy" },
+      { header: "CSP", accessor: "CloseShotPower" },
+      { header: "Pass", accessor: "Passing" },
+      { header: "PH", accessor: "PuckHandling" },
+      { header: "Str", accessor: "Strength" },
+      { header: "BChk", accessor: "BodyChecking" },
+      { header: "SChk", accessor: "StickChecking" },
+      { header: "SB", accessor: "ShotBlocking" },
+      { header: "GK", accessor: "Goalkeeping" },
+      { header: "GV", accessor: "GoalieVision" },
+      { header: "Sta", accessor: "Stamina" },
+      { header: "Inj", accessor: "Injury" },
+    ]);
+  }
+  rosterColumns.push({ header: "Actions", accessor: "actions" });
+
+  const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
+
+  const rowRenderer = (
+    item: PHLPlayer,
+    index: number,
+    backgroundColor: string
+  ) => {
+    const attributes = getPHLAttributes(item, isMobile, category!);
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-start`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
+            align-middle 
+            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+              idx === 4 ? "text-center" : ""
+            }`}
+          >
+            <Text variant="small">{attr.value}</Text>
+          </div>
+        ))}
+        <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+          <ButtonGroup>
+            <Button size="xs" onClick={() => openModal(InfoType, item)}>
+              <Info />
+            </Button>
+            <Button size="xs" onClick={() => openModal(Cut, item)}>
+              <ScissorIcon />
+            </Button>
+            {/* <Button
+              size="xs"
+              variant={`${item.IsRedshirting ? "danger" : "primary"}`}
+              disabled={item.IsRedshirting}
+              onClick={() => openModal(Redshirt, item)}
+            >
+              {item.IsRedshirt ? <User /> : <UserPlus />}
+            </Button>
+            <Button
+              size="xs"
+              variant={item.TransferStatus === 0 ? "success" : "warning"}
+              onClick={() => openModal(Promise, item)}
+              disabled={item.TransferStatus === 0}
+            >
+              <ShieldCheck />
+            </Button> */}
+          </ButtonGroup>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Table
+      columns={rosterColumns}
+      data={sortedRoster}
+      rowRenderer={rowRenderer}
+      backgroundColor={backgroundColor}
+      team={team}
+    />
+  );
+};
+
+
 interface CFBRosterTableProps {
   roster: CFBPlayer[];
   colorOne?: string;
@@ -172,7 +298,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
-  console.log(team);
+
   let rosterColumns = [
     { header: "Name", accessor: "LastName" },
     { header: "Pos", accessor: "Position" },
@@ -304,13 +430,12 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
-  console.log(team);
+
   let rosterColumns = [
     { header: "Name", accessor: "LastName" },
     { header: "Pos", accessor: "Position" },
     { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
     { header: "Yr", accessor: "Year" },
-    { header: "⭐", accessor: "Stars" },
     { header: "Ovr", accessor: "Overall" },
   ];
 
@@ -378,22 +503,16 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
             <Button size="xs" onClick={() => openModal(Cut, item)}>
               <ScissorIcon />
             </Button>
-            {/* <Button
-              size="xs"
-              variant={`${item.IsRedshirting ? "danger" : "primary"}`}
-              disabled={item.IsRedshirting}
-              onClick={() => openModal(Redshirt, item)}
-            >
-              {item.IsRedshirt ? <User /> : <UserPlus />}
-            </Button>
             <Button
               size="xs"
-              variant={item.TransferStatus === 0 ? "success" : "warning"}
-              onClick={() => openModal(Promise, item)}
-              disabled={item.TransferStatus === 0}
             >
-              <ShieldCheck />
-            </Button> */}
+              <CurrencyDollar />
+              </Button>
+            <Button
+              size="xs"
+            >
+              <Tag />
+            </Button>
           </ButtonGroup>
         </div>
       </div>

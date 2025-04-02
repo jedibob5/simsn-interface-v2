@@ -65,12 +65,11 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const logo = getLogo(League, id!!, isRetro);
-  console.log(Roster)
   return (
     <div className="flex flex-row">
       <Border
         direction="row"
-        classes="sm:w-full p-8 justify-around"
+        classes="sm:w-full min-w-[70vw] p-8 justify-around"
         styles={{
           backgroundColor,
           borderColor,
@@ -87,7 +86,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           marketing={Marketing} 
           borderColor={borderColor} 
           backgroundColor={darkerBorder}
-          lineColor={backgroundColor} />
+          lineColor={backgroundColor}
+          textColorClass={textColorClass} />
 
           <RosterInfo 
             roster={Roster} 
@@ -156,7 +156,7 @@ export const TeamDropdownSection: FC<TeamDropdownSectionProps> = ({}) => {
   return <></>;
 };
 
-export const CapsheetInfo = ({ capsheet, ts, backgroundColor, borderColor }: any) => {
+export const CapsheetInfo = ({ capsheet, ts, backgroundColor, borderColor, textColorClass }: any) => {
   return (
     <div
       className="flex w-full h-[100%] border-2 rounded-lg py-5 flex-row"
@@ -167,80 +167,80 @@ export const CapsheetInfo = ({ capsheet, ts, backgroundColor, borderColor }: any
           <div className="table-header-group w-full">
             <div className="table-row">
               <div className="table-cell w-[8em] font-semibold">
-                <Text variant="body">Year</Text>
+                <Text variant="body" classes={`${textColorClass}`}>Year</Text>
               </div>
               <div className="table-cell w-[8em] font-semibold">
-                <Text variant="body">Bonus</Text>
+                <Text variant="body" classes={`${textColorClass}`}>Bonus</Text>
               </div>
               <div className="table-cell w-[8em] font-semibold">
-                <Text variant="body">Salary</Text>
+                <Text variant="body" classes={`${textColorClass}`}>Salary</Text>
               </div>
               <div className="table-cell w-[8em] font-semibold">
-                <Text variant="body">Space</Text>
+                <Text variant="body" classes={`${textColorClass}`}>Space</Text>
               </div>
             </div>
           </div>
           <div className="table-row-group">
             <div className="table-row">
               <div className="table-cell">
-                <Text variant="body-small">{ts.Season}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{ts.Season}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y1Bonus.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y1Bonus.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y1Salary.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y1Salary.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">
+                <Text variant="body-small" classes={`${textColorClass}`}>
                   {(ts.Y1Capspace - (capsheet.Y1Bonus + capsheet.Y1Salary)).toFixed(2)}
                 </Text>
               </div>
             </div>
             <div className="table-row">
               <div className="table-cell">
-                <Text variant="body-small">{ts.Season + 1}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{ts.Season + 1}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y2Bonus.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y2Bonus.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y2Salary.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y2Salary.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">
+                <Text variant="body-small" classes={`${textColorClass}`}>
                   {(ts.Y2Capspace - (capsheet.Y2Bonus + capsheet.Y2Salary)).toFixed(2)}
                 </Text>
               </div>
             </div>
             <div className="table-row">
               <div className="table-cell">
-                <Text variant="body-small">{ts.Season + 2}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{ts.Season + 2}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y3Bonus.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y3Bonus.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y3Salary.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y3Salary.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">
+                <Text variant="body-small" classes={`${textColorClass}`}>
                   {(ts.Y3Capspace - (capsheet.Y3Bonus + capsheet.Y3Salary)).toFixed(2)}
                 </Text>
               </div>
             </div>
             <div className="table-row">
               <div className="table-cell">
-                <Text variant="body-small">{ts.Season + 3}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{ts.Season + 3}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y4Bonus.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y4Bonus.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">{capsheet.Y4Salary.toFixed(2)}</Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>{capsheet.Y4Salary.toFixed(2)}</Text>
               </div>
               <div className="table-cell">
-                <Text variant="body-small">
+                <Text variant="body-small" classes={`${textColorClass}`}>
                   {(ts.Y4Capspace - (capsheet.Y4Bonus + capsheet.Y4Salary)).toFixed(2)}
                 </Text>
               </div>
@@ -253,7 +253,7 @@ export const CapsheetInfo = ({ capsheet, ts, backgroundColor, borderColor }: any
 };
 
 export const FrontOfficeInfo = ({ 
-  backgroundColor, borderColor, lineColor, league, owner, coach, gm, scout, marketing, isPro 
+  backgroundColor, borderColor, textColorClass, lineColor, league, owner, coach, gm, scout, marketing, isPro 
 }: any) => {
   const personnelRoles = isPro
     ? [
@@ -311,10 +311,10 @@ export const FrontOfficeInfo = ({
         <div className="table-header-group">
           <div className="table-row">
             <div className="table-cell w-[6em] font-semibold text-left">
-              <Text variant="body-small">Role</Text>
+              <Text variant="body-small" classes={`${textColorClass}`}>Role</Text>
             </div>
             <div className="table-cell font-semibold text-left">
-              <Text variant="body-small">Personnel</Text>
+              <Text variant="body-small" classes={`${textColorClass}`}>Personnel</Text>
             </div>
           </div>
         </div>
@@ -322,10 +322,10 @@ export const FrontOfficeInfo = ({
           {Object.entries(personnelRoles).map(([person, roles]) => (
             <div key={person} className="table-row">
               <div className="table-cell text-left">
-                <Text variant="xs">{roles.join("/")}</Text>
+                <Text variant="xs" classes={`${textColorClass}`}>{roles.join("/")}</Text>
               </div>
               <div className="table-cell text-left">
-                <Text variant="xs">{person}</Text>
+                <Text variant="xs" classes={`${textColorClass}`}>{person}</Text>
               </div>
             </div>
           ))}
@@ -337,10 +337,10 @@ export const FrontOfficeInfo = ({
             <div className="table-row border-t" 
                  style={{ borderColor: lineColor, borderTopWidth: "2px" }}>
               <div className="table-cell w-[6em] text-left">
-                <Text variant="xs">Vacancies</Text>
+                <Text variant="xs" classes={`${textColorClass}`}>Vacancies</Text>
               </div>
               <div className="table-cell text-left">
-                <Text variant="xs">{vacancies}</Text>
+                <Text variant="xs" classes={`${textColorClass}`}>{vacancies}</Text>
               </div>
             </div>
           )}
@@ -367,38 +367,38 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, arena, capaci
       style={{ borderColor, backgroundColor }}
     >
       <div className="flex flex-col items-center">
-        <Text variant="small" classes="font-semibold">
+        <Text variant="small" classes={`${textColorClass} font-semibold`}>
           Active Roster
         </Text>
-        <Text variant="small">{activeRoster}</Text>
+        <Text variant="small" classes={`${textColorClass}`}>{activeRoster}</Text>
       </div>
       <div className="flex flex-col items-center">
-        <Text variant="small" classes="font-semibold">
+        <Text variant="small" classes={`${textColorClass} font-semibold`}>
           {isPro ? "Practice Squad" : "Redshirts"}
         </Text>
-        <Text variant="small">{specialPlayersCount}</Text>
+        <Text variant="small" classes={`${textColorClass}`}>{specialPlayersCount}</Text>
       </div>
     </div>
   );
 };
 
-export const StadiumInfo = ({ backgroundColor, borderColor, arena, team, capacity }: any) => {
+export const StadiumInfo = ({ backgroundColor, borderColor, arena, team, capacity, textColorClass }: any) => {
   return (
     <div
       className="flex flex-col w-[8em] h-[100%] justify-between py-5 border-2 rounded-lg p-1"
       style={{ borderColor, backgroundColor }}
     >
       <div className="flex flex-col items-center">
-        <Text variant="body-small" classes="font-semibold">
+        <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
           Stadium
         </Text>
-        <Text variant="xs">{arena}</Text>
+        <Text variant="xs" classes={`${textColorClass}`}>{arena}</Text>
       </div>
       <div className="flex flex-col items-center">
-        <Text variant="body-small" classes="font-semibold">
+        <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
           Capacity
         </Text>
-        <Text variant="xs">{capacity}</Text>
+        <Text variant="xs" classes={`${textColorClass}`}>{capacity}</Text>
       </div>
     </div>
   );

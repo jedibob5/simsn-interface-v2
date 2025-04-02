@@ -11,7 +11,7 @@ import {
   getCFBOverall,
 } from "../../_utility/getLetterGrade";
 import { getYear } from "../../_utility/getYear";
-import { CollegePlayer as CHLPlayer, Croot } from "../../models/hockeyModels";
+import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, Croot } from "../../models/hockeyModels";
 import { CollegePlayer as CFBPlayer, NFLPlayer } from "../../models/footballModels";
 import {
   Agility,
@@ -56,6 +56,33 @@ export const getCHLAttributes = (
   ];
   if (!isMobile && category === Attributes) {
     list = list.concat(...getAdditionalHockeyAttributes(player));
+  } else if (!isMobile && category === Potentials) {
+    list = list.concat(...getAdditionalPotentialAttributes(player));
+  }
+  return list;
+};
+
+export const getPHLAttributes = (
+  player: PHLPlayer,
+  isMobile: boolean,
+  category: string
+) => {
+  const heightObj = HeightToFeetAndInches(player.Height);
+  let list = [
+    { label: "Name", value: `${player.FirstName} ${player.LastName}` },
+    { label: "Pos", value: player.Position },
+    { label: "Arch", value: player.Archetype },
+    { label: "Yr", value: player.Year},
+    { label: "Ovr", value: player.Overall },
+  ];
+  if (!isMobile && category === Attributes) {
+    list = list.concat(
+      ...getAdditionalHockeyAttributes(player).map(attr => ({
+        ...attr,
+        letter: attr.value,
+        value: attr.raw,
+      }))
+    );
   } else if (!isMobile && category === Potentials) {
     list = list.concat(...getAdditionalPotentialAttributes(player));
   }
@@ -139,58 +166,91 @@ export const getAdditionalHockeyAttributeGrades = (player: Croot) => {
   ];
 };
 
-export const getAdditionalHockeyAttributes = (player: CHLPlayer) => {
+export const getAdditionalHockeyAttributes = (player: CHLPlayer | PHLPlayer) => {
   return [
-    { label: "Agi", value: getHockeyLetterGrade(player.Agility, player.Year) },
-    { label: "FO", value: getHockeyLetterGrade(player.Faceoffs, player.Year) },
+    { 
+      label: "Agi",
+      raw: player.Agility, 
+      value: getHockeyLetterGrade(player.Agility, player.Year) 
+    },
+    { 
+      label: "FO",
+      raw: player.Faceoffs, 
+      value: getHockeyLetterGrade(player.Faceoffs, player.Year) 
+    },
     {
       label: "LSA",
+      raw: player.LongShotAccuracy,
       value: getHockeyLetterGrade(player.LongShotAccuracy, player.Year),
     },
     {
       label: "LSP",
+      raw: player.LongShotPower,
       value: getHockeyLetterGrade(player.LongShotPower, player.Year),
     },
     {
       label: "CSA",
+      raw: player.CloseShotAccuracy,
       value: getHockeyLetterGrade(player.CloseShotAccuracy, player.Year),
     },
     {
       label: "CSP",
+      raw: player.CloseShotPower,
       value: getHockeyLetterGrade(player.CloseShotPower, player.Year),
     },
-    { label: "Pass", value: getHockeyLetterGrade(player.Passing, player.Year) },
+    { 
+      label: "Pass", 
+      raw: player.Passing,
+      value: getHockeyLetterGrade(player.Passing, player.Year) 
+    },
     {
       label: "PH",
+      raw: player.PuckHandling,
       value: getHockeyLetterGrade(player.PuckHandling, player.Year),
     },
-    { label: "Str", value: getHockeyLetterGrade(player.Strength, player.Year) },
+    { 
+      label: "Str", 
+      raw: player.Strength,
+      value: getHockeyLetterGrade(player.Strength, player.Year) },
     {
       label: "BChk",
+      raw: player.BodyChecking,
       value: getHockeyLetterGrade(player.BodyChecking, player.Year),
     },
     {
       label: "SChk",
+      raw: player.StickChecking,
       value: getHockeyLetterGrade(player.StickChecking, player.Year),
     },
     {
       label: "SB",
+      raw: player.ShotBlocking,
       value: getHockeyLetterGrade(player.ShotBlocking, player.Year),
     },
     {
       label: "GK",
+      raw: player.Goalkeeping,
       value: getHockeyLetterGrade(player.Goalkeeping, player.Year),
     },
     {
       label: "GV",
+      raw: player.GoalieVision,
       value: getHockeyLetterGrade(player.GoalieVision, player.Year),
     },
-    { label: "Sta", value: getGeneralLetterGrade(player.Stamina) },
-    { label: "Inj", value: getGeneralLetterGrade(player.InjuryRating) },
+    { 
+      label: "Sta",
+      raw: player.Stamina, 
+      value: getGeneralLetterGrade(player.Stamina) 
+    },
+    { 
+      label: "Inj",
+      raw: player.InjuryRating, 
+      value: getGeneralLetterGrade(player.InjuryRating) 
+    },
   ];
 };
 
-export const getAdditionalPotentialAttributes = (player: CHLPlayer) => {
+export const getAdditionalPotentialAttributes = (player: CHLPlayer | PHLPlayer) => {
   return [
     { label: "Agi", value: getGeneralLetterGrade(player.AgilityPotential) },
     { label: "FO", value: getGeneralLetterGrade(player.FaceoffsPotential) },
@@ -374,10 +434,10 @@ const archetypeAcronyms: { [key: string]: string } = {
   "Run Stopper": "RDS",
   "Speed Rusher": "SPR",
   Coverage: "CVG",
-  PassRush: "PRS",
+  "Pass Rush": "PRS",
   "Ball Hawk": "BH",
-  ManCoverage: "MCV",
-  ZoneCoverage: "ZCV",
+  "Man Coverage": "MCV",
+  "Zone Coverage": "ZCV",
   Accuracy: "ACC",
   "Triple-Threat": "TT",
   Wingback: "WB",
@@ -407,7 +467,6 @@ export const getNFLAttributes = (
           { label: "Pos", value: nflPlayer.Position },
           { label: "Arch", value: getArchetypeValue(nflPlayer.Archetype, isMobile) },
           { label: "Yr", value: nflPlayer.Experience },
-          { label: "Stars", value: nflPlayer.Stars },
           { label: "Ovr", value: nflPlayer.Overall },
           ...(isMobile || category !== "Attributes" ? [] : getAdditionalNFLAttributes(nflPlayer)),
         ];

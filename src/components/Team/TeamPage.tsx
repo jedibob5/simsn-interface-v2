@@ -15,7 +15,7 @@ import { useAuthStore } from "../../context/AuthContext";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { CapsheetInfo, TeamInfo } from "./TeamPageComponents";
-import { CHLRosterTable, CFBRosterTable, NFLRosterTable } from "./TeamPageTables";
+import { CHLRosterTable, CFBRosterTable, NFLRosterTable, PHLRosterTable } from "./TeamPageTables";
 import { SelectDropdown } from "../../_design/Select";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../_hooks/useSelectStyles";
@@ -24,7 +24,7 @@ import { Text } from "../../_design/Typography";
 import { useModal } from "../../_hooks/useModal";
 import {
   CollegePlayer as CHLPlayer,
-  ProfessionalPlayer,
+  ProfessionalPlayer as PHLPlayer,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer,
@@ -230,15 +230,18 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     phlTeam,
     phlTeamMap,
     phlTeamOptions,
-    proRosterMap,
-    capsheetMap,
-    proStandingsMap,
+    proRosterMap: phlRosterMap,
+    capsheetMap: phlCapsheetMap,
+    proStandingsMap: phlStandingsMap,
+    cutPHLPlayer
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
-  const [modalPlayer, setModalPlayer] = useState<ProfessionalPlayer | null>(
+  const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(
     null
   );
+  console.log(phlTeam)
+  console.log(phlRosterMap)
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
   const [category, setCategory] = useState("Attributes");
   const teamColors = useTeamColors(
@@ -246,54 +249,81 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  const backgroundColor = teamColors.One;
-  const borderColor = teamColors.Two;
+  let backgroundColor = teamColors.One;
+  console.log(backgroundColor)
+  let borderColor = teamColors.Two;
+  if (isBrightColor(backgroundColor)) {
+    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
   const selectedRoster = useMemo(() => {
     if (selectedTeam) {
-      return proRosterMap[selectedTeam.ID];
+      return phlRosterMap[selectedTeam.ID];
     }
-  }, [proRosterMap, selectedTeam]);
+  }, [phlRosterMap, selectedTeam]);
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = phlTeamMap[value];
     setSelectedTeam(nextTeam);
     setCategory("Attributes");
   };
-  const openModal = (action: ModalAction, player: ProfessionalPlayer) => {
+  const openModal = (action: ModalAction, player: PHLPlayer) => {
     handleOpenModal();
     setModalAction(action);
     setModalPlayer(player);
   };
+  const capsheetMap = useMemo(() => {
+    if (selectedTeam && phlCapsheetMap) {
+      return phlCapsheetMap[selectedTeam.ID];
+    }
+    return null;
+  }, [phlCapsheetMap, selectedTeam]);
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-x-2">
-        <TeamInfo
+          {modalPlayer && (
+        <ActionModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          playerID={modalPlayer.ID}
+          playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+          teamID={modalPlayer.TeamID}
+          league={SimPHL}
+          modalAction={modalAction}
+          player={modalPlayer}
+          cutPlayer={cutPHLPlayer}
+        />
+      )}
+      <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
+      <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
+          Roster={selectedRoster}
           League={league}
           ts={ts}
-          Roster={selectedRoster}
           isPro={true}
-          Team={selectedTeam}
+          Team={phlStandingsMap}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
+          Owner={selectedTeam?.Owner}
+          GM={selectedTeam?.GM}
+          Scout={selectedTeam?.Scout}
+          // Capsheet={capsheetMap}
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Arena}
           Capacity={selectedTeam?.ArenaCapacity}
-          colorOne={teamColors.One}
-          colorTwo={teamColors.Two}
+          colorOne={backgroundColor}
+          colorTwo={borderColor}
           colorThree={teamColors.Three}
         />
-        <CapsheetInfo />
       </div>
       <div className="flex flex-row md:flex-col w-full">
         <Border
           direction="row"
-          classes="w-full px-4 gap-x-2"
+          classes="w-full p-2 gap-x-2"
           styles={{
-            backgroundColor: secondaryBorderColor,
+            backgroundColor: backgroundColor,
             borderColor,
           }}
         >
@@ -303,7 +333,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
             <Button
               size="sm"
               isSelected={category === "Attributes"}
@@ -326,13 +356,21 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         </Border>
       </div>
       <Border
-        classes="px-2 lg:w-full min-[320px]:w-[25rem] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
+        classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
         styles={{
-          backgroundColor: secondaryBorderColor,
+          backgroundColor: backgroundColor,
           borderColor,
         }}
       >
-        Player Table Here
+        <PHLRosterTable
+            roster={selectedRoster}
+            team={selectedTeam}
+            category={category}
+            colorOne={teamColors.One}
+            colorTwo={teamColors.Two}
+            colorThree={teamColors.Three}
+            openModal={openModal}
+          />
       </Border>
     </>
   );
@@ -527,7 +565,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
       return nflCapsheetMap[selectedTeam.ID];
     }
     return null;
-  }, [nflRosterMap, selectedTeam]);
+  }, [nflCapsheetMap, selectedTeam]);
 
   return (
     <>
@@ -539,6 +577,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
           teamID={modalPlayer.TeamID}
           league={SimNFL}
+          capsheet={capsheetMap}
           modalAction={modalAction}
           player={modalPlayer}
           cutPlayer={cutNFLPlayer}

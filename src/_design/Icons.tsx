@@ -7,7 +7,11 @@ import {
   UserPlusIcon,
   UserIcon,
   InformationCircleIcon,
+  ArrowsUpDownIcon,
+  CurrencyDollarIcon,
   IdentificationIcon,
+  TagIcon,
+  BuildingOfficeIcon,
   PlusIcon,
 } from "@heroicons/react/16/solid";
 
@@ -96,4 +100,40 @@ export const Plus: React.FC<LockIconProps> = ({
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
   return <PlusIcon className="size-5" />;
+};
+
+export const ArrowsUpDown: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <ArrowsUpDownIcon className="size-5" />;
+};
+
+export const CurrencyDollar: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <CurrencyDollarIcon className="size-5" />;
+};
+
+export const Tag: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <TagIcon className="size-5" />;
+};
+
+export const BuildingOffice: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <BuildingOfficeIcon className="size-5" />;
 };

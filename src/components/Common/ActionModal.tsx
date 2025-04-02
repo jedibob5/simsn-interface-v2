@@ -10,6 +10,7 @@ interface ActionModalProps {
     onClose: () => void;
     playerID?: number;
     teamID?: number;
+    capsheet?: any;
     playerLabel?: string;
     league: League;
     modalAction: ModalAction;
@@ -29,6 +30,7 @@ interface ActionModalProps {
     teamID,
     playerLabel,
     league,
+    capsheet,
     modalAction,
     player,
     redshirtPlayer,
@@ -133,7 +135,7 @@ interface ActionModalProps {
             </Text>
           )}
           {modalAction === InfoType && (
-            <PlayerInfoModalBody league={league} player={player} />
+            <PlayerInfoModalBody league={league} player={player} capsheet={capsheet} />
           )}
           {modalAction === RecruitInfoType && (
             <RecruitInfoModalBody league={league} player={player}/>

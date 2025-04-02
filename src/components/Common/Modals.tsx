@@ -32,11 +32,13 @@ import PlayerPicture from "../../_utility/usePlayerFaces";
 interface PlayerInfoModalBodyProps {
   league: League;
   player: any;
+  capsheet?: any;
 }
 
 export const PlayerInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   player,
   league,
+  capsheet
 }) => {
   if (league === SimCHL) {
     return <CHLPlayerInfoModalBody player={player as CHLPlayer} />;
@@ -48,7 +50,7 @@ export const PlayerInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
     return <CFBPlayerInfoModalBody player={player as CFBPlayer} />;
   }
   if (league === SimNFL) {
-    return <NFLPlayerInfoModalBody player={player as NFLPlayer} />;
+    return <NFLPlayerInfoModalBody player={player as NFLPlayer} capsheet={capsheet} />;
   }
   return <>Unsupported League.</>;
 };
@@ -320,7 +322,272 @@ interface PHLPlayerInfoModalBodyProps {
 export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
   player,
 }) => {
-  return <div></div>;
+  const { currentUser } = useAuthStore();
+  const { phlTeamMap } = useSimHCKStore();
+  const team = phlTeamMap[player.TeamID];
+  const teamLogo = getLogo(SimPHL, player.TeamID, currentUser?.isRetro);
+  const collegeLogo = getLogo(SimCHL, player.CollegeID, currentUser?.isRetro);
+  const previousTeam = phlTeamMap[player.PreviousTeamID];
+  const previousTeamLogo = getLogo(
+    SimPHL,
+    player.PreviousTeamID,
+    currentUser?.isRetro
+  );
+  const heightObj = HeightToFeetAndInches(player.Height);
+
+
+  return (
+    <div className="w-full grid grid-cols-4 gap-2">
+      <div className="flex flex-col items-center px-1">
+        <div className={`flex my-1 items-center justify-center 
+                         px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`} 
+                         style={{ backgroundColor: "white" }}>
+            <PlayerPicture playerID={player.ID} 
+                           league="SimPHL" 
+                           team={team}/>
+        </div>
+          {team && (
+            <Logo
+            url={teamLogo}
+            label={team.Abbreviation}
+            classes="h-[5rem] max-h-[5rem]"
+            textClass="text-small"
+          />)}
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Origin
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+          {player.Country.length > 0 && `${player.Country}`}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Height
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {heightObj.feet}'{heightObj.inches}"
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Overall
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Overall}
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Experience
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Year}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Weight
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Weight} lbs
+          </Text>
+        </div>
+        <div className="flex flex-col pb-4 pt-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            College
+          </Text>
+          {team && (
+            <Logo
+            url={collegeLogo}
+            containerClass="pt-0"
+            classes="h-[2rem] max-h-[2rem]"
+            textClass="text-small"
+          />)}
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+              Age
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {player.Age}
+            </Text>
+          </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Personality
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Personality}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4 pb-4">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Drafted
+          </Text>
+          {player.DraftedRound === 0 && player.DraftedPick === 0 ? (
+            <Text variant="small" classes="whitespace-nowrap">
+              UDFA
+            </Text>
+          ) : (
+            <>
+              <Text variant="small" classes="whitespace-nowrap">
+                Round {player.DraftedRound} - Pick {player.DraftedPick}
+              </Text>
+              <Text variant="xs" classes="whitespace-nowrap">
+                by {player.DraftedTeam}
+              </Text>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+        <div className="grid grid-cols-4 gap-3">
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
+              Agility
+            </Text>
+            <Text variant="small">
+              {player.Agility}
+            </Text>
+          </div>
+      {player.Position !== "G" && (
+        <>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
+              Faceoffs
+            </Text>
+            <Text variant="small">
+              {player.Faceoffs}
+            </Text>
+          </div>
+          <div className="flex flex-col gap-1 px-1">
+            <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
+              Long Shot
+            </Text>
+            <div className="flex justify-around">
+              <div className="flex flex-col items-center justify-center align-center">
+                <Text variant="small">
+                {player.LongShotPower}
+                </Text>
+                <Text variant="xs">
+                  Pow
+                </Text>
+              </div>
+              <div className="flex flex-col">
+                <Text variant="small">
+                {player.LongShotAccuracy}
+                </Text>
+                <Text variant="xs">
+                  Acc
+                </Text>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1 px-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Close Shot
+            </Text>
+            <div className="flex justify-around">
+              <div className="flex flex-col items-center justify-center align-center">
+                <Text variant="small" classes="text-center">
+                {player.CloseShotPower}
+                </Text>
+                <Text variant="xs">
+                  Pow
+                </Text>
+              </div>
+              <div className="flex flex-col">
+                <Text variant="small">
+                {player.CloseShotAccuracy}
+                </Text>
+                <Text variant="xs">
+                  Acc
+                </Text>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Passing
+            </Text>
+            <Text variant="small">
+              {player.Passing}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Puck Handling
+            </Text>
+            <Text variant="small">
+              {player.PuckHandling}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Strength
+            </Text>
+            <Text variant="small">
+              {player.Strength}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Body Checks
+            </Text>
+            <Text variant="small">
+              {player.BodyChecking}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Stick Checks
+            </Text>
+            <Text variant="small">
+              {player.StickChecking}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Shot Blocks
+            </Text>
+            <Text variant="small">
+              {player.ShotBlocking}
+            </Text>
+          </div>
+        </>
+      )}
+
+      {player.Position === "G" && (
+        <>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Goalkeeping
+            </Text>
+            <Text variant="small">
+              {player.Goalkeeping}
+            </Text>
+          </div>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="body-small" classes="mb-1 whitespace-nowrap font-semibold">
+              Goalie Vision
+            </Text>
+            <Text variant="small">
+              {player.GoalieVision}
+            </Text>
+          </div>
+        </>
+      )}
+    </div>
+    </div>
+    </div>
+  );
 };
 
 interface CFBPlayerInfoModalBodyProps {
@@ -458,10 +725,12 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
 
 interface NFLPlayerInfoModalBodyProps {
   player: NFLPlayer;
+  capsheet: any;
 }
 
 export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   player,
+  capsheet
 }) => {
   const { currentUser } = useAuthStore();
   const { proTeamMap: nflTeamMap } = useSimFBAStore();
@@ -476,7 +745,6 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   );
   const heightObj = HeightToFeetAndInches(player.Height);
   const priorityAttributes = setPriorityNFLAttributes(player);
-  console.log(player)
 
   return (
     <div className="w-full grid grid-cols-4 gap-2">
