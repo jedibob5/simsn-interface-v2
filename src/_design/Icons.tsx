@@ -14,7 +14,8 @@ import {
   BuildingOfficeIcon,
   PlusIcon,
   CheckCircleIcon,
-  XCircleIcon
+  XCircleIcon,
+  BarsArrowDownIcon
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -150,4 +151,10 @@ export const CrossCircle: React.FC<LockIconProps> = ({
   textColorClass = "text-black", // Default color is black
 }) => {
   return <XCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const BarsArrowDown: React.FC<LockIconProps> = ({
+  textColorClass = "text-white", // Default color is black
+}) => {
+  return <BarsArrowDownIcon className={`size-5 ${textColorClass}`} />;
 };
