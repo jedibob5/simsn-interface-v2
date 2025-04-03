@@ -13,6 +13,8 @@ import {
   TagIcon,
   BuildingOfficeIcon,
   PlusIcon,
+  CheckCircleIcon,
+  XCircleIcon
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -136,4 +138,16 @@ export const BuildingOffice: React.FC<LockIconProps> = ({
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
   return <BuildingOfficeIcon className="size-5" />;
+};
+
+export const CheckCircle: React.FC<LockIconProps> = ({
+  textColorClass = "text-black", // Default color is black
+}) => {
+  return <CheckCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const CrossCircle: React.FC<LockIconProps> = ({
+  textColorClass = "text-black", // Default color is black
+}) => {
+  return <XCircleIcon className={`size-5 ${textColorClass}`} />;
 };

@@ -233,6 +233,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proRosterMap: phlRosterMap,
     capsheetMap: phlCapsheetMap,
     proStandingsMap: phlStandingsMap,
+    proContractMap: phlContractMap,
+    proExtensionMap: phlExtensionMap,
     cutPHLPlayer
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
@@ -280,12 +282,19 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     return null;
   }, [phlCapsheetMap, selectedTeam]);
 
+  const playerContract = useMemo(() => {
+    if (modalPlayer && phlContractMap) {
+      return phlContractMap[modalPlayer.ID];
+    }
+  }, [phlContractMap, modalPlayer]);
+
   return (
     <>
           {modalPlayer && (
         <ActionModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          contract={playerContract}
           playerID={modalPlayer.ID}
           playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
           teamID={modalPlayer.TeamID}
@@ -309,7 +318,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           Owner={selectedTeam?.Owner}
           GM={selectedTeam?.GM}
           Scout={selectedTeam?.Scout}
-          // Capsheet={capsheetMap}
+          Capsheet={capsheetMap}
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Arena}
           Capacity={selectedTeam?.ArenaCapacity}
@@ -364,6 +373,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
       >
         <PHLRosterTable
             roster={selectedRoster}
+            contracts={phlContractMap}
             team={selectedTeam}
             category={category}
             colorOne={teamColors.One}

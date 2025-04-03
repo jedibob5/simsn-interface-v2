@@ -12,6 +12,7 @@ interface ActionModalProps {
     teamID?: number;
     capsheet?: any;
     playerLabel?: string;
+    contract?: any;
     league: League;
     modalAction: ModalAction;
     player: any;
@@ -30,7 +31,7 @@ interface ActionModalProps {
     teamID,
     playerLabel,
     league,
-    capsheet,
+    contract,
     modalAction,
     player,
     redshirtPlayer,
@@ -135,7 +136,7 @@ interface ActionModalProps {
             </Text>
           )}
           {modalAction === InfoType && (
-            <PlayerInfoModalBody league={league} player={player} capsheet={capsheet} />
+            <PlayerInfoModalBody league={league} player={player} contract={contract} />
           )}
           {modalAction === RecruitInfoType && (
             <RecruitInfoModalBody league={league} player={player}/>

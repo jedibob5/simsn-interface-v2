@@ -152,6 +152,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 
 interface PHLRosterTableProps {
   roster: PHLPlayer[] | undefined;
+  contracts?: any;
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
@@ -162,6 +163,7 @@ interface PHLRosterTableProps {
 
 export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   roster = [],
+  contracts = {},
   colorOne,
   colorTwo,
   colorThree,

@@ -4,9 +4,11 @@ import {
   CollegePlayer as CHLPlayer,
   Croot as CHLCroot,
   ProfessionalPlayer as PHLPlayer,
+  ProContract as PHLContract
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
+  NFLContract,
   NFLPlayer as NFLPlayer,
 } from "../../models/footballModels"
 import { Text } from "../../_design/Typography";
@@ -27,30 +29,31 @@ import { getCFBAttributes, getShotgunRating } from "../Team/TeamPageUtils";
 import { setPriorityCFBAttributes, setPriorityNFLAttributes } from "../Team/TeamPageUtils";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import { getYear } from "../../_utility/getYear";
+import { CheckCircle, CrossCircle } from "../../_design/Icons";
 import PlayerPicture from "../../_utility/usePlayerFaces";
 
 interface PlayerInfoModalBodyProps {
   league: League;
   player: any;
-  capsheet?: any;
+  contract?: any;
 }
 
 export const PlayerInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   player,
   league,
-  capsheet
+  contract
 }) => {
   if (league === SimCHL) {
     return <CHLPlayerInfoModalBody player={player as CHLPlayer} />;
   }
   if (league === SimPHL) {
-    return <PHLPlayerInfoModalBody player={player as PHLPlayer} />;
+    return <PHLPlayerInfoModalBody player={player as PHLPlayer} contract={contract} />;
   }
   if (league === SimCFB) {
     return <CFBPlayerInfoModalBody player={player as CFBPlayer} />;
   }
   if (league === SimNFL) {
-    return <NFLPlayerInfoModalBody player={player as NFLPlayer} capsheet={capsheet} />;
+    return <NFLPlayerInfoModalBody player={player as NFLPlayer} contract={contract} />;
   }
   return <>Unsupported League.</>;
 };
@@ -317,14 +320,16 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
 
 interface PHLPlayerInfoModalBodyProps {
   player: PHLPlayer;
+  contract: any;
 }
 
 export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
-  player,
+  player, contract
 }) => {
   const { currentUser } = useAuthStore();
-  const { phlTeamMap } = useSimHCKStore();
+  const { phlTeamMap, chlTeamMap, hck_Timestamp } = useSimHCKStore();
   const team = phlTeamMap[player.TeamID];
+  const chlTeam = chlTeamMap[player.CollegeID];
   const teamLogo = getLogo(SimPHL, player.TeamID, currentUser?.isRetro);
   const collegeLogo = getLogo(SimCHL, player.CollegeID, currentUser?.isRetro);
   const previousTeam = phlTeamMap[player.PreviousTeamID];
@@ -334,118 +339,156 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
     currentUser?.isRetro
   );
   const heightObj = HeightToFeetAndInches(player.Height);
+  console.log('contract: ', contract)
+  const rawValue = Array.from({ length: contract.ContractLength }, (_, index) => 
+    contract[`Y${index + 1}BaseSalary`] || 0
+  ).reduce((sum, salary) => sum + salary, 0) / 1_000_000;
+  const totalValue = `${rawValue.toFixed(2)}M`;
 
 
   return (
-    <div className="w-full grid grid-cols-4 gap-2">
-      <div className="flex flex-col items-center px-1">
-        <div className={`flex my-1 items-center justify-center 
-                         px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`} 
-                         style={{ backgroundColor: "white" }}>
-            <PlayerPicture playerID={player.ID} 
-                           league="SimPHL" 
-                           team={team}/>
+    <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
+      <div className="row-span-3 flex flex-col items-center">
+        <div className="flex items-center justify-center h-[8rem] w-[8rem] px-5 rounded-lg border-2 bg-white">
+          <PlayerPicture playerID={player.ID} league="SimPHL" team={team} />
         </div>
-          {team && (
-            <Logo
+        {team && (
+          <Logo
             url={teamLogo}
             label={team.Abbreviation}
             classes="h-[5rem] max-h-[5rem]"
             textClass="text-small"
-          />)}
+          />
+        )}
       </div>
-      <div className="flex flex-col px-1">
-        <div className="flex flex-col">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Origin
-          </Text>
-          <Text variant="small" classes="whitespace-nowrap">
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Origin
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
           {player.Country.length > 0 && `${player.Country}`}
-          </Text>
-        </div>
-        <div className="flex flex-col pt-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Height
-          </Text>
-          <Text variant="small" classes="whitespace-nowrap">
-            {heightObj.feet}'{heightObj.inches}"
-          </Text>
-        </div>
-        <div className="flex flex-col pt-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Overall
-          </Text>
-          <Text variant="small" classes="whitespace-nowrap">
-            {player.Overall}
-          </Text>
-        </div>
+        </Text>
       </div>
-      <div className="flex flex-col px-1">
-        <div className="flex flex-col">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Experience
-          </Text>
-          <Text variant="small" classes="whitespace-nowrap">
-            {player.Year}
-          </Text>
-        </div>
-        <div className="flex flex-col pt-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Weight
-          </Text>
-          <Text variant="small" classes="whitespace-nowrap">
-            {player.Weight} lbs
-          </Text>
-        </div>
-        <div className="flex flex-col pb-4 pt-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            College
-          </Text>
-          {team && (
-            <Logo
-            url={collegeLogo}
-            containerClass="pt-0"
-            classes="h-[2rem] max-h-[2rem]"
-            textClass="text-small"
-          />)}
-        </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Experience
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Year}
+        </Text>
       </div>
-      <div className="flex flex-col px-1">
-        <div className="flex flex-col">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-              Age
-            </Text>
-            <Text variant="small" classes="whitespace-nowrap">
-              {player.Age}
-            </Text>
-          </div>
-        <div className="flex flex-col pt-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Personality
-          </Text>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Age
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Age}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Height
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {heightObj.feet}'{heightObj.inches}"
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Weight
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Weight} lbs
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Personality
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Personality}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Overall
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Overall}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          College
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {chlTeam.Abbreviation}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Drafted
+        </Text>
+        {player.DraftedRound === 0 && player.DraftedPick === 0 ? (
           <Text variant="small" classes="whitespace-nowrap">
-            {player.Personality}
+            UDFA
+          </Text>
+        ) : (
+          <>
+            <Text variant="small" classes="whitespace-nowrap">
+              Round {player.DraftedRound} - Pick {player.DraftedPick}
+            </Text>
+            <Text variant="xs" classes="whitespace-nowrap">
+              by {player.DraftedTeam}
+            </Text>
+          </>
+        )}
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Contract
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {contract.ContractLength} years
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1  font-semibold">
+          Total Value
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {totalValue}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 font-semibold">
+          Current Year
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {`${(contract.Y1BaseSalary / 1_000_000).toFixed(2)}M`}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <div className="flex flex-row w-full">
+          <Text variant="body" classes="w-full mb-1 font-semibold text-center">
+            NTC
+          </Text>
+          <Text variant="body" classes="w-full mb-1 font-semibold text-center">
+            NMC
           </Text>
         </div>
-        <div className="flex flex-col pt-4 pb-4">
-          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-            Drafted
-          </Text>
-          {player.DraftedRound === 0 && player.DraftedPick === 0 ? (
-            <Text variant="small" classes="whitespace-nowrap">
-              UDFA
-            </Text>
+        <div className="flex flex-row w-full">
+          {contract.NoTradeClause ? (
+            <CheckCircle textColorClass="w-full text-center text-green-500" />
           ) : (
-            <>
-              <Text variant="small" classes="whitespace-nowrap">
-                Round {player.DraftedRound} - Pick {player.DraftedPick}
-              </Text>
-              <Text variant="xs" classes="whitespace-nowrap">
-                by {player.DraftedTeam}
-              </Text>
-            </>
+            <CrossCircle textColorClass="w-full text-center text-red-500" />
           )}
-        </div>
+          {contract.NoMovementClause ? (
+            <CheckCircle textColorClass="w-full text-center text-green-500" />
+          ) : (
+            <CrossCircle textColorClass="w-full text-center text-red-500" />
+          )}
+          </div>
       </div>
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
         <div className="grid grid-cols-4 gap-3">
@@ -725,12 +768,12 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
 
 interface NFLPlayerInfoModalBodyProps {
   player: NFLPlayer;
-  capsheet: any;
+  contract: NFLContract;
 }
 
 export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   player,
-  capsheet
+  contract
 }) => {
   const { currentUser } = useAuthStore();
   const { proTeamMap: nflTeamMap } = useSimFBAStore();
