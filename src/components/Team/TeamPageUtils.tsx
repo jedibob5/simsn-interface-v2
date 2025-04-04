@@ -1667,12 +1667,15 @@ export const setPriorityNFLAttributes = (
       Value: showLetterGrade ? GetNFLOverall(rawValue, true) : rawValue,
     };
   });
-
-  priorityAttributes.push(
-    {
+  
+  if (player.Position === "QB") {
+    priorityAttributes.push({
       Name: "Shotgun Rating",
       Value: getShotgunRating(player),
-    },
+    });
+  }
+
+  priorityAttributes.push(
     {
       Name: "Football IQ",
       Value: showLetterGrade ? GetNFLOverall(player.FootballIQ, true) : player.FootballIQ,
