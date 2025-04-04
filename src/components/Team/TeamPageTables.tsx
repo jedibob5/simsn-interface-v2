@@ -50,9 +50,8 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const secondaryBorderColor = colorThree;
+  const backgroundColor = colorOne ?? "#4B5563";
+  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -96,9 +95,9 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   ) => {
     const attributes = getCHLAttributes(item, isMobile, category!);
     return (
-      <div
+<div
         key={item.ID}
-        className={`table-row border-b dark:border-gray-700 text-start`}
+        className={`table-row border-b dark:border-gray-700 text-left`}
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
@@ -106,39 +105,59 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
             key={idx}
             className={`table-cell 
             align-middle 
-            min-[360px]:max-w-[5em] min-[380px]:max-w-[7em] min-[430px]:max-w-[10em] 
+            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
             text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
               idx === 4 ? "text-center" : ""
             }`}
           >
+          {attr.label === "Name" ? (
+            <span
+            className={`cursor-pointer font-semibold ${textColorClass}`}
+            style={{
+              color: textColorClass,
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = borderColor;
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "";
+            }}
+            onClick={() => openModal(InfoType, item)}
+          >
             <Text variant="small">{attr.value}</Text>
+            </span>
+          ) : (
+            <Text variant="small">{attr.value}</Text>
+          )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
-          <ButtonGroup>
-            <Button size="xs" onClick={() => openModal(InfoType, item)}>
-              <Info />
-            </Button>
-            <Button size="xs" onClick={() => openModal(Cut, item)}>
-              <ScissorIcon />
-            </Button>
-            <Button
-              size="xs"
-              variant={`${item.IsRedshirting ? "danger" : "primary"}`}
-              disabled={item.IsRedshirting}
-              onClick={() => openModal(Redshirt, item)}
-            >
-              {item.IsRedshirt ? <User /> : <UserPlus />}
-            </Button>
-            <Button
-              size="xs"
-              variant={item.TransferStatus === 0 ? "success" : "warning"}
-              onClick={() => openModal(Promise, item)}
-              disabled={item.TransferStatus === 0}
-            >
-              <ShieldCheck />
-            </Button>
-          </ButtonGroup>
+          <SelectDropdown
+            placeholder={isMobile ? "Action" : "Select an action"}
+            options={[
+              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              ...(item.IsRedshirting || item.IsRedshirt
+                ? []
+                : [{ value: "redshirt", label: `Redshirt - ${item.FirstName} ${item.LastName}` }]),
+              ...(item.TransferStatus === 0
+                ? []
+                : [{ value: "promise", label: `Send Promise - ${item.FirstName} ${item.LastName}` }]),
+            ]}
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "cut") {
+                openModal(Cut, item);
+              }
+              if (selectedOption?.value === "redshirt") {
+                openModal(Redshirt, item);
+              } 
+              if (selectedOption?.value === "promise"){
+                openModal(Promise, item);
+              }
+              else {
+                console.log(`Action selected: ${selectedOption?.value}`);
+              }
+            }}
+          />
         </div>
       </div>
     );
@@ -176,14 +195,9 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne ?? "#ffffff";
-  const borderColor = colorTwo ?? "#000000"; 
-  const darkerBorder = backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
-  ? darkenColor(borderColor, 5)
-  : darkenColor(borderColor, -15);
-
+  const backgroundColor = colorOne ?? "#4B5563";
+  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const buttonColorClass = getTextColorBasedOnBg(borderColor)
   const [isMobile] = useMobile();
 
   let rosterColumns = [
@@ -265,12 +279,12 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
             options={[
-              { value: "cut", label: `Cut ${item.LastName}` },
-              { value: "extension", label: `Offer ${item.LastName} Extension` },
-              { value: "franchise", label: `Franchise Tag ${item.LastName}` },
-              { value: "injuredReserve", label: `Send ${item.LastName} to Injured Reserve` },
-              { value: "practiceSquad", label: `Send ${item.LastName} to Reserve Squad` },
-              { value: "tradeBlock", label: `Add ${item.LastName} to Trade Block` },
+              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              { value: "extension", label: `Offer Extension - ${item.FirstName} ${item.LastName}` },
+              { value: "franchise", label: `Franchise Tag - ${item.FirstName} ${item.LastName}` },
+              { value: "injuredReserve", label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}` },
+              { value: "practiceSquad", label: `Demote to Practice Squad - ${item.FirstName} ${item.LastName}` },
+              { value: "tradeBlock", label: `Trade Block - ${item.FirstName} ${item.LastName}` },
             ]}
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
@@ -316,9 +330,8 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const secondaryBorderColor = colorThree;
+  const backgroundColor = colorOne ?? "#4B5563";
+  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -374,44 +387,64 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
         className={`table-row border-b dark:border-gray-700 text-start`}
         style={{ backgroundColor }}
       >
-        {attributes.map((attr, idx) => (
-          <div
-            key={idx}
-            className={`table-cell 
-            align-middle 
-            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-              idx === 4 ? "text-center" : ""
-            }`}
-          >
-            <Text variant="small">{attr.value}</Text>
-          </div>
-        ))}
+      {attributes.map((attr, idx) => (
+        <div
+          key={idx}
+          className={`table-cell 
+          align-middle 
+          min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+          text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+            idx === 4 ? "text-center" : ""
+          }`}
+        >
+        {attr.label === "Name" ? (
+          <span
+          className={`cursor-pointer font-semibold ${textColorClass}`}
+          style={{
+            color: textColorClass,
+          }}
+          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = borderColor;
+          }}
+          onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = "";
+          }}
+          onClick={() => openModal(InfoType, item)}
+        >
+          <Text variant="small">{attr.value}</Text>
+          </span>
+        ) : (
+          <Text variant="small">{attr.value}</Text>
+        )}
+        </div>
+      ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
-          <ButtonGroup>
-            <Button size="xs" onClick={() => openModal(InfoType, item)}>
-              <Info />
-            </Button>
-            <Button size="xs" onClick={() => openModal(Cut, item)}>
-              <ScissorIcon />
-            </Button>
-            <Button
-              size="xs"
-              variant={`${item.IsRedshirting ? "danger" : "primary"}`}
-              disabled={item.IsRedshirting}
-              onClick={() => openModal(Redshirt, item)}
-            >
-              {item.IsRedshirt ? <User /> : <UserPlus />}
-            </Button>
-            <Button
-              size="xs"
-              variant={item.TransferStatus === 0 ? "success" : "warning"}
-              onClick={() => openModal(Promise, item)}
-              disabled={item.TransferStatus === 0}
-            >
-              <ShieldCheck />
-            </Button>
-          </ButtonGroup>
+          <SelectDropdown
+            placeholder={isMobile ? "Action" : "Select an action"}
+            options={[
+              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              ...(item.IsRedshirting || item.IsRedshirt
+                ? []
+                : [{ value: "redshirt", label: `Redshirt - ${item.FirstName} ${item.LastName}` }]),
+              ...(item.TransferStatus === 0
+                ? []
+                : [{ value: "promise", label: `Send Promise - ${item.FirstName} ${item.LastName}` }]),
+            ]}
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "cut") {
+                openModal(Cut, item);
+              }
+              if (selectedOption?.value === "redshirt") {
+                openModal(Redshirt, item);
+              } 
+              if (selectedOption?.value === "promise"){
+                openModal(Promise, item);
+              }
+              else {
+                console.log(`Action selected: ${selectedOption?.value}`);
+              }
+            }}
+          />
         </div>
       </div>
     );
@@ -448,9 +481,8 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const secondaryBorderColor = colorThree;
+  const backgroundColor = colorOne ?? "#4B5563";
+  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -502,56 +534,59 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
     return (
       <div
         key={item.ID}
-        className={`table-row border-b dark:border-gray-700 text-start`}
+        className={`table-row border-b dark:border-gray-700 text-left`}
         style={{ backgroundColor }}
       >
-        {attributes.map((attr, idx) => (
-          <div
-            key={idx}
-            className={`table-cell 
-            align-middle 
-            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-              idx === 4 ? "text-center" : ""
-            }`}
-          >
-            <Text variant="small">{attr.value}</Text>
-          </div>
-        ))}
+      {attributes.map((attr, idx) => (
+        <div
+          key={idx}
+          className={`table-cell 
+          align-middle 
+          min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+          text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+            idx === 4 ? "text-center" : ""
+          }`}
+        >
+        {attr.label === "Name" ? (
+          <span
+          className={`cursor-pointer font-semibold ${textColorClass}`}
+          style={{
+            color: textColorClass,
+          }}
+          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = borderColor;
+          }}
+          onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = "";
+          }}
+          onClick={() => openModal(InfoType, item)}
+        >
+          <Text variant="small">{attr.value}</Text>
+        </span>
+        ) : (
+          <Text variant="small">{attr.value}</Text>
+        )}
+        </div>
+      ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
-          <ButtonGroup classes="">
-            <Button size="xs" onClick={() => openModal(InfoType, item)}>
-              <Info />
-            </Button>
-            <Button size="xs" onClick={() => openModal(Cut, item)}>
-              <ScissorIcon />
-            </Button>
-            <Button
-              size="xs"
-            >
-              <CurrencyDollar />
-              </Button>
-            <Button
-              size="xs"
-            >
-              <Tag />
-            </Button>
-            <Button
-              size="xs"
-            >
-              <BuildingOffice />
-            </Button>
-            <Button
-              size="xs"
-            >
-              <ArrowsUpDown />
-            </Button>
-            <Button
-              size="xs"
-            >
-              <BarsArrowDown />
-            </Button>
-          </ButtonGroup>
+          <SelectDropdown
+            placeholder={isMobile ? "Action" : "Select an action"}
+            options={[
+              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              { value: "extension", label: `Offer Extension - ${item.FirstName} ${item.LastName}` },
+              { value: "franchise", label: `Franchise Tag - ${item.FirstName} ${item.LastName}` },
+              { value: "injuredReserve", label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}` },
+              { value: "practiceSquad", label: `Demote to Reserves - ${item.FirstName} ${item.LastName}` },
+              { value: "tradeBlock", label: `Trade Block - ${item.FirstName} ${item.LastName}` },
+            ]}
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "cut") {
+                openModal(Cut, item);
+              } else {
+                console.log(`Action selected: ${selectedOption?.value}`);
+              }
+            }}
+          />
         </div>
       </div>
     );
