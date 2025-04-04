@@ -9,6 +9,9 @@ import {
   InformationCircleIcon,
   IdentificationIcon,
   PlusIcon,
+  AcademicCapIcon,
+  TrashIcon,
+  FaceFrownIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -33,6 +36,12 @@ export const LockIcon: React.FC<LockIconProps> = ({
       />
     </div>
   );
+};
+
+export const ActionLock: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  return <LockClosedIcon className="size-5" />;
 };
 
 export const ScissorIcon: React.FC<LockIconProps> = ({
@@ -96,4 +105,31 @@ export const Plus: React.FC<LockIconProps> = ({
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
   return <PlusIcon className="size-5" />;
+};
+
+export const Scholarship: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <AcademicCapIcon className="size-5" />;
+};
+
+export const SadFace: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <FaceFrownIcon className="size-5" />;
+};
+
+export const TrashCan: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <TrashIcon className="size-5" />;
 };

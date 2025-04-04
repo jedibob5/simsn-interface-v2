@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
 import {
+  AddRecruitType,
   Attributes,
   InfoType,
   League,
@@ -15,8 +16,9 @@ import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
 import { getCHLCrootAttributes } from "../../Team/TeamPageUtils";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
-import { Info, Plus } from "../../../_design/Icons";
+import { ActionLock, Info, Plus } from "../../../_design/Icons";
 import { Table } from "../../../_design/Table";
+import { useSimHCKStore } from "../../../context/SimHockeyContext";
 
 const getRecruitingColumns = (
   league: League,
@@ -89,23 +91,21 @@ interface RecruitTableProps {
   ) => void;
   league: League;
   isMobile?: boolean;
+  recruitOnBoardMap: Record<number, boolean>;
 }
 
 export const RecruitTable: FC<RecruitTableProps> = ({
   croots,
   colorOne,
-  colorTwo,
-  colorThree,
   teamMap,
   team,
   category,
   openModal,
   league,
   isMobile = false,
+  recruitOnBoardMap,
 }) => {
   const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const secondaryBorderColor = colorThree;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const columns = getRecruitingColumns(league, category, isMobile);
 
@@ -121,6 +121,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
     backgroundColor: string
   ) => {
     const selection = getCHLCrootAttributes(item, isMobile, category!);
+    const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
     return (
       <div
         key={item.ID}
@@ -142,11 +143,12 @@ export const RecruitTable: FC<RecruitTableProps> = ({
               <Info />
             </Button>
             <Button
-              variant="success"
+              variant={actionVariant}
               size="xs"
-              onClick={() => openModal(InfoType, item as HockeyCroot)}
+              onClick={() => openModal(AddRecruitType, item as HockeyCroot)}
+              disabled={recruitOnBoardMap[item.ID]}
             >
-              <Plus />
+              {recruitOnBoardMap[item.ID] ? <ActionLock /> : <Plus />}
             </Button>
           </ButtonGroup>
         </div>

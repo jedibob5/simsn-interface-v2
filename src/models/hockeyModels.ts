@@ -2716,6 +2716,7 @@ export class Recruit {
   }
 }
 export class RecruitPlayerProfile {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -2737,6 +2738,22 @@ export class RecruitPlayerProfile {
   IsLocked: boolean;
   CaughtCheating: boolean;
   TeamReachedMax: boolean;
+  Agility: boolean;
+  Faceoffs: boolean;
+  LongShotAccuracy: boolean;
+  LongShotPower: boolean;
+  CloseShotAccuracy: boolean;
+  CloseShotPower: boolean;
+  OneTimer: boolean;
+  Passing: boolean;
+  PuckHandling: boolean;
+  Strength: boolean;
+  BodyChecking: boolean;
+  StickChecking: boolean;
+  ShotBlocking: boolean;
+  Goalkeeping: boolean;
+  GoalieVision: boolean;
+  GoalieReboundControl: boolean;
   Recruit: Recruit;
 
   constructor(source: any = {}) {
@@ -2762,6 +2779,22 @@ export class RecruitPlayerProfile {
     this.IsLocked = source["IsLocked"];
     this.CaughtCheating = source["CaughtCheating"];
     this.TeamReachedMax = source["TeamReachedMax"];
+    this.Agility = source["Agility"];
+    this.Faceoffs = source["Faceoffs"];
+    this.LongShotAccuracy = source["LongShotAccuracy"];
+    this.LongShotPower = source["LongShotPower"];
+    this.CloseShotAccuracy = source["CloseShotAccuracy"];
+    this.CloseShotPower = source["CloseShotPower"];
+    this.OneTimer = source["OneTimer"];
+    this.Passing = source["Passing"];
+    this.PuckHandling = source["PuckHandling"];
+    this.Strength = source["Strength"];
+    this.BodyChecking = source["BodyChecking"];
+    this.StickChecking = source["StickChecking"];
+    this.ShotBlocking = source["ShotBlocking"];
+    this.Goalkeeping = source["Goalkeeping"];
+    this.GoalieVision = source["GoalieVision"];
+    this.GoalieReboundControl = source["GoalieReboundControl"];
     this.Recruit = this.convertValues(source["Recruit"], Recruit);
   }
 
@@ -3393,6 +3426,7 @@ export class UpdateRecruitProfileDto {
   }
 }
 export class CrootProfile {
+  [key: string]: any;
   ID: number;
   SeasonID: number;
   RecruitID: number;
@@ -3410,6 +3444,22 @@ export class CrootProfile {
   IsSigned: boolean;
   IsLocked: boolean;
   CaughtCheating: boolean;
+  Agility: boolean;
+  Faceoffs: boolean;
+  LongShotAccuracy: boolean;
+  LongShotPower: boolean;
+  CloseShotAccuracy: boolean;
+  CloseShotPower: boolean;
+  OneTimer: boolean;
+  Passing: boolean;
+  PuckHandling: boolean;
+  Strength: boolean;
+  BodyChecking: boolean;
+  StickChecking: boolean;
+  ShotBlocking: boolean;
+  Goalkeeping: boolean;
+  GoalieVision: boolean;
+  GoalieReboundControl: boolean;
   Recruit: Croot;
 
   constructor(source: any = {}) {
@@ -3431,6 +3481,22 @@ export class CrootProfile {
     this.IsSigned = source["IsSigned"];
     this.IsLocked = source["IsLocked"];
     this.CaughtCheating = source["CaughtCheating"];
+    this.Agility = source["Agility"];
+    this.Faceoffs = source["Faceoffs"];
+    this.LongShotAccuracy = source["LongShotAccuracy"];
+    this.LongShotPower = source["LongShotPower"];
+    this.CloseShotAccuracy = source["CloseShotAccuracy"];
+    this.CloseShotPower = source["CloseShotPower"];
+    this.OneTimer = source["OneTimer"];
+    this.Passing = source["Passing"];
+    this.PuckHandling = source["PuckHandling"];
+    this.Strength = source["Strength"];
+    this.BodyChecking = source["BodyChecking"];
+    this.StickChecking = source["StickChecking"];
+    this.ShotBlocking = source["ShotBlocking"];
+    this.Goalkeeping = source["Goalkeeping"];
+    this.GoalieVision = source["GoalieVision"];
+    this.GoalieReboundControl = source["GoalieReboundControl"];
     this.Recruit = this.convertValues(source["Recruit"], Croot);
   }
 
@@ -5308,6 +5374,19 @@ export class FaceDataResponse {
     this.SmileLineSize = source["SmileLineSize"];
     this.SkinColor = source["SkinColor"];
     this.HairColor = source["HairColor"];
+  }
+}
+
+export class ScoutAttributeDTO {
+  ProfileID: number;
+  RecruitID: number;
+  Attribute: string;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.ProfileID = source["ProfileID"];
+    this.RecruitID = source["RecruitID"];
+    this.Attribute = source["Attribute"];
   }
 }
 

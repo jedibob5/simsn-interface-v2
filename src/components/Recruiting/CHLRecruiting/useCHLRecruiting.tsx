@@ -21,14 +21,23 @@ import {
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { usePagination } from "../../../_hooks/usePagination";
-import { Croot as HockeyCroot } from "../../../models/hockeyModels";
+import {
+  Croot as HockeyCroot,
+  RecruitingTeamProfile,
+} from "../../../models/hockeyModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 
 export const useCHLRecruiting = () => {
-  const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
-  const { recruits, teamProfileMap, chlTeam } = hkStore;
+  const {
+    recruits,
+    teamProfileMap,
+    chlTeam,
+    recruitProfiles,
+    chlTeams,
+    chlTeamMap,
+  } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [recruitingCategory, setRecruitingCategory] =
     useState<RecruitingCategory>(RecruitingOverview);
@@ -39,10 +48,21 @@ export const useCHLRecruiting = () => {
   const [archetype, setArchetype] = useState<string[]>([]);
   const [regions, setRegions] = useState<string[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
+  const [conferences, setConferences] = useState<any[]>([]);
+  const [attribute, setAttribute] = useState<string>("");
   const [modalPlayer, setModalPlayer] = useState<
     HockeyCroot | FootballCroot | BasketballCroot
   >({} as HockeyCroot);
   const [modalAction, setModalAction] = useState<ModalAction>(RecruitInfoType);
+
+  const recruitOnBoardMap = useMemo(() => {
+    const boardMap: Record<number, boolean> = {};
+    recruitProfiles.forEach((profile) => {
+      boardMap[profile.RecruitID] = true;
+    });
+    return boardMap;
+  }, [recruitProfiles]);
 
   const regionOptions = useMemo(() => {
     if (country === USA) {
@@ -83,7 +103,8 @@ export const useCHLRecruiting = () => {
         positions.length === 0 &&
         archetype.length === 0 &&
         regions.length === 0 &&
-        statuses.length === 0
+        statuses.length === 0 &&
+        stars.length === 0
       ) {
         return true;
       }
@@ -99,15 +120,46 @@ export const useCHLRecruiting = () => {
       if (regions.length > 0 && regions.includes(r.State)) {
         return true;
       }
+      if (stars.length > 0 && stars.includes(r.Stars)) {
+        return true;
+      }
       // Finally, recruiting status
       if (statuses.length > 0 && statuses.includes(r.RecruitingStatus)) {
         return true;
       }
       return false;
     });
-  }, [recruits, country, positions, archetype, regions, statuses]);
+  }, [recruits, country, positions, stars, archetype, regions, statuses]);
 
   const pageSize = 100;
+
+  const teamRankList = useMemo(() => {
+    const teamsList = [...chlTeams];
+    let profileList: RecruitingTeamProfile[] = [];
+    teamsList.forEach((team) => {
+      profileList.push(teamProfileMap[team.ID]);
+    });
+    return profileList
+      .sort((a, b) => a.CompositeScore - b.CompositeScore)
+      .filter((team) => {
+        if (conferences.length === 0 && selectedTeams.length === 0) {
+          return true;
+        }
+        if (
+          conferences.length > 0 &&
+          conferences.includes(chlTeamMap[team.ID].ConferenceID)
+        ) {
+          return true;
+        }
+        if (
+          selectedTeams.length > 0 &&
+          selectedTeams.includes(chlTeamMap[team.ID].ID)
+        ) {
+          return true;
+        }
+        return false;
+      });
+  }, [conferences, selectedTeams, chlTeams, chlTeamMap, teamProfileMap]);
 
   const {
     currentPage,
@@ -159,6 +211,16 @@ export const useCHLRecruiting = () => {
     setCurrentPage(0);
   };
 
+  const SelectConferences = (options: any) => {
+    const opts = [...options.map((x: any) => Number(x.value))];
+    setConferences(() => opts);
+  };
+
+  const SelectTeams = (options: any) => {
+    const opts = [...options.map((x: any) => Number(x.value))];
+    setSelectedTeams(() => opts);
+  };
+
   const openModal = (
     action: ModalAction,
     player: HockeyCroot | FootballCroot | BasketballCroot
@@ -194,5 +256,11 @@ export const useCHLRecruiting = () => {
     currentPage,
     totalPages,
     pagedRecruits,
+    recruitOnBoardMap,
+    teamRankList,
+    SelectConferences,
+    SelectTeams,
+    attribute,
+    setAttribute,
   };
 };

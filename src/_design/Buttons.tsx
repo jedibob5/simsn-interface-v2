@@ -1,9 +1,10 @@
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonColor } from "../_constants/constants";
 
 // 🔑 Define Button Props Interface
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "success" | "danger" | "warning";
+  variant?: ButtonColor;
   disabled?: boolean;
   isSelected?: boolean;
   size?: "xs" | "sm" | "md" | "lg";

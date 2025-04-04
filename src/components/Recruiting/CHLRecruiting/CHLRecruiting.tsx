@@ -10,6 +10,7 @@ import {
   CountryOptions,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
+  Potentials,
   Preferences,
   RecruitingOverview,
   RecruitingRankings,
@@ -22,24 +23,36 @@ import { RecruitingCategoryDropdown } from "../Common/RecruitingCategoryDropdown
 import { RecruitTable } from "../Common/RecruitTable";
 import { ActionModal } from "../../Common/ActionModal";
 import { useMobile } from "../../../_hooks/useMobile";
+import { TeamRankingsTable } from "../Common/TeamRankingsTable";
+import { RecruitProfileTable } from "../Common/RecruitProfileTable";
 
 export const CHLRecruiting = () => {
   const hkStore = useSimHCKStore();
-  const { recruits, teamProfileMap, chlTeam, chlTeamMap } = hkStore;
+  const {
+    recruitProfiles,
+    chlTeam,
+    chlTeamMap,
+    addRecruitToBoard,
+    removeRecruitFromBoard,
+    chlTeamOptions,
+    chlConferenceOptions,
+    updatePointsOnRecruit,
+    toggleScholarship,
+    scoutCrootAttribute,
+    SaveRecruitingBoard,
+  } = hkStore;
   const {
     teamProfile,
     recruitMap,
     recruitingCategory,
     setRecruitingCategory,
     isModalOpen,
-    handleOpenModal,
     handleCloseModal,
     regionOptions,
     SelectArchetypeOptions,
     SelectCountryOption,
     SelectPositionOptions,
     SelectRegionOptions,
-    country,
     SelectStarOptions,
     SelectStatusOptions,
     tableViewType,
@@ -52,6 +65,12 @@ export const CHLRecruiting = () => {
     openModal,
     modalAction,
     modalPlayer,
+    recruitOnBoardMap,
+    teamRankList,
+    SelectConferences,
+    SelectTeams,
+    attribute,
+    setAttribute,
   } = useCHLRecruiting();
   const teamColors = useTeamColors(
     chlTeam?.ColorOne,
@@ -60,32 +79,6 @@ export const CHLRecruiting = () => {
   );
   const [isMobile] = useMobile();
 
-  /* 
-        Will also need to add player profiles to bootstrap call.
-        Likely won't need to do double-wrapped call because of recruit mapping
-
-        There will likely be several select handles.
-        Overall Grade
-        Stars
-        State
-        Position
-        Archetype
-        Status
-
-        Will also likely need a Recruiting Action Modal
-        - Toggle Scholarship
-        - Remove player from Board
-        - Recruit Info Card
-        - Saving Team Board
-
-        We will also need to come up with categories that we will allow users to toggle.
-        - Viewing Overall Attributes
-        - Recruit Preferences
-
-        Might also help with having a left-side section to detail team recruiting info
-
-        This is for the overview alone.
-    */
   return (
     <>
       {modalPlayer && (
@@ -94,10 +87,15 @@ export const CHLRecruiting = () => {
           onClose={handleCloseModal}
           playerID={modalPlayer.ID}
           playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
-          teamID={modalPlayer.TeamID}
+          teamID={chlTeam!.ID}
           league={SimCHL}
           modalAction={modalAction}
           player={modalPlayer}
+          addPlayerToBoard={addRecruitToBoard}
+          removePlayerFromBoard={removeRecruitFromBoard}
+          toggleScholarship={toggleScholarship}
+          attribute={attribute}
+          scoutAttribute={scoutCrootAttribute}
         />
       )}
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
@@ -162,6 +160,17 @@ export const CHLRecruiting = () => {
                 >
                   Attributes
                 </Button>
+                {recruitingCategory === RecruitingTeamBoard && (
+                  <Button
+                    type="button"
+                    variant={
+                      tableViewType === Potentials ? "success" : "secondary"
+                    }
+                    onClick={() => setTableViewType(Potentials)}
+                  >
+                    Potentials
+                  </Button>
+                )}
                 <Button
                   type="button"
                   variant={
@@ -215,7 +224,13 @@ export const CHLRecruiting = () => {
                   <Button type="button" variant="primary">
                     Settings
                   </Button>
-                  <Button type="button" variant="primary">
+                  <Button
+                    type="button"
+                    variant={
+                      teamProfile!.SpentPoints < 50 ? "primary" : "warning"
+                    }
+                    onClick={SaveRecruitingBoard}
+                  >
                     Save
                   </Button>
                 </ButtonGroup>
@@ -298,6 +313,7 @@ export const CHLRecruiting = () => {
                   team={chlTeam}
                   openModal={openModal}
                   isMobile={isMobile}
+                  recruitOnBoardMap={recruitOnBoardMap}
                 />
                 <div className="flex flex-row justify-center py-2">
                   <ButtonGroup>
@@ -318,6 +334,82 @@ export const CHLRecruiting = () => {
                     </Button>
                   </ButtonGroup>
                 </div>
+              </Border>
+            </>
+          )}
+          {recruitingCategory === RecruitingTeamBoard && (
+            <>
+              <Border
+                direction="col"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
+                styles={{
+                  backgroundColor: teamColors.One,
+                  borderColor: teamColors.Two,
+                }}
+              >
+                <RecruitProfileTable
+                  colorOne={teamColors.One}
+                  colorTwo={teamColors.Two}
+                  colorThree={teamColors.Three}
+                  recruitProfiles={recruitProfiles}
+                  recruitMap={recruitMap}
+                  teamMap={chlTeamMap}
+                  team={chlTeam}
+                  league={SimCHL}
+                  category={tableViewType}
+                  isMobile={isMobile}
+                  ChangeInput={updatePointsOnRecruit}
+                  openModal={openModal}
+                  setAttribute={setAttribute}
+                />
+              </Border>
+            </>
+          )}
+          {recruitingCategory === RecruitingRankings && (
+            <>
+              <Border
+                direction="row"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
+                styles={{
+                  backgroundColor: teamColors.One,
+                  borderColor: teamColors.Two,
+                }}
+              >
+                <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
+                  <RecruitingCategoryDropdown
+                    label="Conferences"
+                    options={chlConferenceOptions}
+                    change={SelectConferences}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                  <RecruitingCategoryDropdown
+                    label="Teams"
+                    options={chlTeamOptions}
+                    change={SelectTeams}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                </div>
+              </Border>
+              <Border
+                direction="col"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
+                styles={{
+                  backgroundColor: teamColors.One,
+                  borderColor: teamColors.Two,
+                }}
+              >
+                <TeamRankingsTable
+                  colorOne={teamColors.One}
+                  colorTwo={teamColors.Two}
+                  colorThree={teamColors.Three}
+                  teamProfiles={teamRankList}
+                  teamMap={chlTeamMap}
+                  team={chlTeam}
+                  league={SimCHL}
+                  isMobile={isMobile}
+                />
               </Border>
             </>
           )}
