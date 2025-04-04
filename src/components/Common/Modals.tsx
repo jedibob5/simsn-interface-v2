@@ -742,7 +742,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   const teamLogo = getLogo(SimNFL, player.TeamID, currentUser?.isRetro);
   const cfbTeam = cfbTeamMap?.[player.CollegeID];
   const heightObj = HeightToFeetAndInches(player.Height);
-  const priorityAttributes = setPriorityNFLAttributes(player);
+  const priorityAttributes = setPriorityNFLAttributes(player, player.ShowLetterGrade);
   const rawValue = Array.from({ length: contract.ContractLength }, (_, index) => 
     (contract[`Y${index + 1}BaseSalary`] || 0) + (contract[`Y${index + 1}Bonus`] || 0)
   ).reduce((sum, salary) => sum + salary, 0);

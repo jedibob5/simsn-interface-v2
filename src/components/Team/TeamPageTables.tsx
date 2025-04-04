@@ -530,7 +530,8 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getNFLAttributes(item, isMobile, category!);
+    const attributes = getNFLAttributes(item, isMobile, category!, item.ShowLetterGrade);
+    console.log(attributes)
     return (
       <div
         key={item.ID}
