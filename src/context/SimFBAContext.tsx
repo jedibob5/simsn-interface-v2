@@ -435,7 +435,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       nflID = currentUser.NFLTeamID;
     }
     const res = await BootstrapService.GetThirdFBABootstrapData(cfbID, nflID);
-    console.log(res)
     setProNews(res.ProNews);
     setRecruits(res.Recruits);
     setFreeAgency(res.FreeAgency);

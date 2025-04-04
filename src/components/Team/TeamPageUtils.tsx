@@ -1634,7 +1634,7 @@ const headerMap: { [key: string]: string } = {
 };
 
 const priorityAttributesMap: { [key: string]: string[] } = {
-  QB: ["Agility", "Speed", "Carrying", "ShotgunRating", "ThrowPower", "ThrowAccuracy", "Strength"],
+  QB: ["Agility", "Speed", "Carrying", "ThrowPower", "ThrowAccuracy", "Strength"],
   RB: ["Agility", "Speed", "Carrying", "Catching", "PassBlock", "Strength"],
   FB: ["Agility", "Speed", "Carrying", "Catching", "PassBlock", "Strength"],
   WR: ["Agility", "Speed", "Carrying", "Catching", "RouteRunning", "Strength"],
@@ -1669,6 +1669,10 @@ export const setPriorityNFLAttributes = (
   });
 
   priorityAttributes.push(
+    {
+      Name: "Shotgun Rating",
+      Value: getShotgunRating(player),
+    },
     {
       Name: "Football IQ",
       Value: showLetterGrade ? GetNFLOverall(player.FootballIQ, true) : player.FootballIQ,
