@@ -467,7 +467,7 @@ export const getNFLAttributes = (
     { label: "Name", value: `${nflPlayer.FirstName} ${nflPlayer.LastName}` },
     { label: "Pos", value: nflPlayer.Position },
     { label: "Arch", value: getArchetypeValue(nflPlayer.Archetype, isMobile) },
-    { label: "Yr", value: nflPlayer.Experience },
+    { label: "Yr", value: GetNFLYear(nflPlayer.Experience)},
     { 
       label: "Ovr", 
       value: showLetterGrade 
@@ -755,7 +755,10 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
   ];
 };
 
-
+export const GetNFLYear = (data: number) => {
+  if (data < 2) return 'R';
+  return Number(data);
+};
 
 interface PriorityAttribute {
   Name: string;

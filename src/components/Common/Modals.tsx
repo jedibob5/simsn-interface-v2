@@ -26,7 +26,7 @@ import {
   getTeamLoyaltyLabel,
 } from "../../_helper/utilHelper";
 import { getCFBAttributes, getShotgunRating } from "../Team/TeamPageUtils";
-import { setPriorityCFBAttributes, setPriorityNFLAttributes } from "../Team/TeamPageUtils";
+import { setPriorityCFBAttributes, setPriorityNFLAttributes, GetNFLYear } from "../Team/TeamPageUtils";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import { getYear } from "../../_utility/getYear";
 import { CheckCircle, CrossCircle } from "../../_design/Icons";
@@ -778,7 +778,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           Experience
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {player.Experience}
+           {GetNFLYear(player.Experience)}
         </Text>
       </div>
       <div className="flex flex-col">
