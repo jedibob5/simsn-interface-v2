@@ -242,8 +242,6 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(
     null
   );
-  console.log(phlTeam)
-  console.log(phlRosterMap)
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
   const [category, setCategory] = useState("Attributes");
   const teamColors = useTeamColors(
@@ -533,7 +531,8 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     nflTeamOptions,
     proStandingsMap: nflStandingsMap,
     cutNFLPlayer,
-    capsheetMap: nflCapsheetMap
+    capsheetMap: nflCapsheetMap,
+    proContractMap: nflContractMap,
   } = fbStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -577,6 +576,12 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     return null;
   }, [nflCapsheetMap, selectedTeam]);
 
+  const playerContract = useMemo(() => {
+    if (modalPlayer && nflContractMap) {
+      return nflContractMap[modalPlayer.ID];
+    }
+  }, [nflContractMap, modalPlayer]);
+
   return (
     <>
       {modalPlayer && (
@@ -587,7 +592,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
           teamID={modalPlayer.TeamID}
           league={SimNFL}
-          capsheet={capsheetMap}
+          contract={playerContract}
           modalAction={modalAction}
           player={modalPlayer}
           cutPlayer={cutNFLPlayer}
