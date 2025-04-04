@@ -165,7 +165,7 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
         </Text>
       </div>
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid w-full grid-cols-4 gap-3">
           <div className="flex flex-col px-1 gap-1">
             <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
               Agility
@@ -464,7 +464,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
         </div>
       </div>
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid w-full grid-cols-4 gap-3">
           <div className="flex flex-col px-1 gap-1">
             <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
               Agility
@@ -718,7 +718,7 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
               <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
                 {attr.Name}
               </Text>
-              <Text variant="small">{attr.Value}</Text>
+              <Text variant="small">{attr.Letter}</Text>
             </div>
           ))}
         </div>

@@ -152,7 +152,6 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           isPro={false}
-          Team={selectedTeam}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Conference={selectedTeam?.Conference}
@@ -160,7 +159,6 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           Capacity={selectedTeam?.ArenaCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -214,7 +212,6 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             category={category}
             colorOne={teamColors.One}
             colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
             openModal={openModal}
           />
         </Border>
@@ -310,7 +307,6 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           isPro={true}
-          Team={phlStandingsMap}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Owner={selectedTeam?.Owner}
@@ -322,7 +318,6 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           Capacity={selectedTeam?.ArenaCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -371,12 +366,10 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
       >
         <PHLRosterTable
             roster={selectedRoster}
-            contracts={phlContractMap}
             team={selectedTeam}
             category={category}
             colorOne={teamColors.One}
             colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
             openModal={openModal}
           />
       </Border>
@@ -458,7 +451,6 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           ts={ts}
           Roster={selectedRoster}
           isPro={false}
-          Team={selectedTeam}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Conference={selectedTeam?.Conference}
@@ -466,7 +458,6 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           Capacity={selectedTeam?.StadiumCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -512,7 +503,6 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             category={category}
             colorOne={teamColors.One}
             colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
             openModal={openModal}
           />
         </Border>
@@ -606,7 +596,6 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           isPro={true}
-          Team={nflStandingsMap}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.NFLCoachName}
           Owner={selectedTeam?.NFLOwnerName}
@@ -618,7 +607,6 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           Capacity={selectedTeam?.StadiumCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -664,7 +652,6 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             category={category}
             colorOne={teamColors.One}
             colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
             openModal={openModal}
           />
         </Border>

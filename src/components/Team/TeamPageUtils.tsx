@@ -761,7 +761,7 @@ interface PriorityAttribute {
   Name: string;
   Value?: number | string;
   Letter?: string | number;
-}
+};
 
 export const setPriorityCFBAttributes = (
   player: CFBPlayer

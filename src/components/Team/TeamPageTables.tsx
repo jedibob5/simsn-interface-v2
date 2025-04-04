@@ -35,7 +35,6 @@ interface CHLRosterTableProps {
   roster: CHLPlayer[];
   colorOne?: string;
   colorTwo?: string;
-  colorThree?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CHLPlayer) => void;
@@ -45,7 +44,6 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   roster,
   colorOne,
   colorTwo,
-  colorThree,
   team,
   category,
   openModal,
@@ -176,10 +174,8 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 
 interface PHLRosterTableProps {
   roster: PHLPlayer[] | undefined;
-  contracts?: any;
   colorOne?: string;
   colorTwo?: string;
-  colorThree?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: PHLPlayer) => void;
@@ -187,10 +183,8 @@ interface PHLRosterTableProps {
 
 export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   roster = [],
-  contracts = {},
   colorOne,
   colorTwo,
-  colorThree,
   team,
   category,
   openModal,
@@ -315,7 +309,6 @@ interface CFBRosterTableProps {
   roster: CFBPlayer[];
   colorOne?: string;
   colorTwo?: string;
-  colorThree?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CFBPlayer) => void;
@@ -325,7 +318,6 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   roster,
   colorOne,
   colorTwo,
-  colorThree,
   team,
   category,
   openModal,
@@ -466,7 +458,6 @@ interface NFLRosterTableProps {
   roster: NFLPlayer[];
   colorOne?: string;
   colorTwo?: string;
-  colorThree?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: NFLPlayer) => void;
@@ -476,7 +467,6 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   roster,
   colorOne,
   colorTwo,
-  colorThree,
   team,
   category,
   openModal,
@@ -531,7 +521,6 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
     backgroundColor: string
   ) => {
     const attributes = getNFLAttributes(item, isMobile, category!, item.ShowLetterGrade);
-    console.log(attributes)
     return (
       <div
         key={item.ID}

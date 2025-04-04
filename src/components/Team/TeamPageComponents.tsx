@@ -3,6 +3,9 @@ import { Border } from "../../_design/Borders";
 import { Text } from "../../_design/Typography";
 import {
   League,
+  SimCFB,
+  SimNFL,
+  SimCHL,
   SimPHL,
 } from "../../_constants/constants";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
@@ -14,7 +17,6 @@ import { useMobile } from "../../_hooks/useMobile";
 interface TeamInfoProps {
   id?: number;
   TeamName?: string;
-  Team: any;
   Owner?: string;
   Coach?: string;
   GM?: string;
@@ -31,7 +33,6 @@ interface TeamInfoProps {
   ts: any;
   colorOne?: string;
   colorTwo?: string;
-  colorThree?: string;
   isRetro?: boolean;
 }
 
@@ -39,7 +40,6 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   isPro,
   id,
   TeamName = "",
-  Team,
   Owner = "None",
   Coach = "None",
   GM = "None",
@@ -55,7 +55,6 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   ts,
   colorOne = "",
   colorTwo = "",
-  colorThree = "",
   isRetro = false,
 }) => {
   const backgroundColor = colorOne;
@@ -165,7 +164,7 @@ export const TeamDropdownSection: FC<TeamDropdownSectionProps> = ({}) => {
 export const CapsheetInfo = ({ 
   capsheet, ts, league, 
   backgroundColor, borderColor, textColorClass }: any) => {
-  const isNFL = league === "SimNFL";
+  const isNFL = league === SimNFL;
   const rows = [1, 2, 3, 4, 5].map((yearOffset) => {
     const year = ts.Season + (yearOffset - 1);
     const salaryKey = `Y${yearOffset}Salary`;
@@ -269,7 +268,7 @@ export const FrontOfficeInfo = ({
           value: coach },
         { role: "Assistant", 
           value: scout },
-        ...(league === "SimPHL" ? 
+        ...(league === SimPHL ? 
           [{ role: "Marketing", 
              value: marketing }] : []),
       ]
@@ -295,7 +294,7 @@ export const FrontOfficeInfo = ({
           value: coach },
         { role: "Assistant", 
           value: scout },
-        ...(league === "SimPHL" ? 
+        ...(league === SimPHL ? 
           [{ role: "Marketing", 
              value: marketing }] : []),
       ]
@@ -377,10 +376,10 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
   const totalPlayers = roster?.length || 0;
   const specialPlayersCount = roster?.filter((player: any) => {
     if (isPro) {
-      if (league === "SimNFL") {
+      if (league === SimNFL) {
         return player?.IsPracticeSquad || false;
       }
-      if (league === "SimPHL") {
+      if (league === SimPHL) {
         return player?.IsAffiliatePlayer || false;
       }
     } else {
@@ -407,8 +406,8 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
       <div className="flex flex-col items-center">
         <Text variant="body-small" 
               classes={`${textColorClass} font-semibold`}>
-          {isPro ? league === "SimNFL" ? "Practice Squad" 
-                : league === "SimPHL" ? "Reserves" 
+          {isPro ? league === SimNFL ? "Practice Squad" 
+                : league === SimPHL ? "Reserves" 
                 : "Unknown" 
                 : "Redshirts"}
         </Text>
@@ -422,7 +421,7 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
 };
 
 export const StadiumInfo = ({ backgroundColor, borderColor, arena, capacity, league, textColorClass }: any) => {
-  const home = league === "SimCFB" || league === "SimNFL" ? "Stadium" : "Arena";
+  const home = league === SimCFB || league === SimNFL ? "Stadium" : "Arena";
   return (
     <div
       className="flex flex-col w-[12em] h-[100%] px-2 justify-between py-5 border-2 rounded-lg"
