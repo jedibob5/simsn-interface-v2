@@ -16,7 +16,7 @@ import {
   Redshirt,
 } from "../../_constants/constants";
 import { SelectDropdown } from "../../_design/Select";
-import { CheckCircle, CrossCircle } from "../../_design/Icons";
+import { CheckCircle, CrossCircle, User } from "../../_design/Icons";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -162,6 +162,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 interface PHLRosterTableProps {
   roster: PHLPlayer[] | undefined;
   contracts?: PHLContract[] | null;
+  ts: any;
   colorOne?: string;
   colorTwo?: string;
   team?: any;
@@ -172,6 +173,7 @@ interface PHLRosterTableProps {
 export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   roster = [],
   contracts,
+  ts,
   colorOne,
   colorTwo,
   team,
@@ -191,6 +193,17 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
     { header: "Exp", accessor: "Year" },
     { header: "Ovr", accessor: "Overall" },
   ];
+
+  if (!isMobile && category === Overview) {
+    columns = columns.concat([
+      { header: "Health", accessor: "isInjured" },
+      { header: "Injury", accessor: "InjuryType" },
+      { header: `${ts.Season} $`, accessor: "Y1BaseSalary" },
+      { header: "Yrs Left", accessor: "ContractLength" },
+      { header: "NTC", accessor: "NoTradeClause" },
+      { header: "NMC", accessor: "NoMovementClause" },
+    ]);
+  }
 
   if (!isMobile && category === Attributes || category === Potentials) {
     columns = columns.concat([
@@ -240,7 +253,6 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
     backgroundColor: string
   ) => {
     const playerContract = contracts?.find(contract => contract.PlayerID === item.ID);
-    console.log(playerContract)
     const attributes = getPHLAttributes(item, isMobile, category!, playerContract);
     return (
       <div
@@ -255,7 +267,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
         align-middle 
         min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
         text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-          idx === 4 ? "text-center" : ""
+          idx !== 0 ? "text-center" : ""
         }`}
       >
         {attr.label === "NTC" || attr.label === "NMC" ? (
@@ -264,6 +276,14 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
               <CheckCircle textColorClass="w-full text-center text-green-500" />
             ) : (
               <CrossCircle textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Health" ? (
+          <>
+            {attr.value === true ? (
+              <User textColorClass="w-full text-center text-red-500" />
+            ) : (
+              <User textColorClass="w-full text-center text-green-500" />
             )}
           </>
         ) : attr.label === "Name" ? (

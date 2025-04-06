@@ -84,7 +84,7 @@ export const User: React.FC<LockIconProps> = ({
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
-  return <UserIcon className="size-5" />;
+  return <UserIcon className={`size-5 ${textColorClass}`} />;
 };
 
 export const Info: React.FC<LockIconProps> = ({

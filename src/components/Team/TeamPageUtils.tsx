@@ -79,6 +79,25 @@ export const getPHLAttributes = (
     { label: "Ovr", value: player.Overall },
   ];
 
+  const overviewAttributes = category === Overview && phlContract
+    ? [
+        { label: "Health", value: player.IsInjured },
+        {
+          label: "Injury",
+          value: player.InjuryType
+            ? `${player.InjuryType}, ${player.WeeksOfRecovery || 0} weeks`
+            : "None",
+        },
+        {
+          label: "Current Year Salary",
+          value: `${(contract.Y1BaseSalary).toFixed(2)}M`,
+        },
+        { label: "Years Left", value: phlContract.ContractLength },
+        { label: "NTC", value: contract.NoTradeClause },
+        { label: "NMC", value: contract.NoMovementClause }
+      ]
+    : [];
+
   const additionalAttributes = !isMobile && category === Attributes
     ? getAdditionalHockeyAttributes(player).map(attr => ({
         ...attr,
@@ -95,7 +114,7 @@ export const getPHLAttributes = (
     ? getAdditionalPotentialAttributes(player)
     : [];
 
-  return [...attributes, ...additionalAttributes, ...potentialAttributes, ...contractAttributes];
+  return [...attributes, ...overviewAttributes, ...additionalAttributes, ...potentialAttributes, ...contractAttributes];
 };
 
 export const getPHLContracts = (contract: any) => {

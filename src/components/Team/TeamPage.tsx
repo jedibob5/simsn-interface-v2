@@ -205,7 +205,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] max-w-[2000px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor,
@@ -296,7 +296,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = phlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory(Attributes);
+    setCategory(Overview);
   };
   const openModal = (action: ModalAction, player: PHLPlayer) => {
     handleOpenModal();
@@ -369,22 +369,15 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-            <Button
+          {!isMobile && (<Button
               size="sm"
-              isSelected={category === Attributes}
-              onClick={() => setCategory(Attributes)}
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
             >
-              <Text variant="small">Attributes</Text>
+              <Text variant="small">Overview</Text>
             </Button>
-            <Button
-              size="sm"
-              disabled={selectedTeam?.ID !== phlTeam?.ID}
-              isSelected={category === Potentials}
-              onClick={() => setCategory(Potentials)}
-            >
-              <Text variant="small">Potentials</Text>
-            </Button>
-          {!isMobile && (
+          )}
+            {!isMobile && (
             <Button
             size="sm"
             isSelected={category === Contracts}
@@ -392,7 +385,26 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             >
             <Text variant="small">Contracts</Text>
             </Button>
+            )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
+            >
+              <Text variant="small">Attributes</Text>
+            </Button>
           )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              disabled={selectedTeam?.ID !== phlTeam?.ID}
+              isSelected={category === Potentials}
+              onClick={() => setCategory(Potentials)}
+            >
+              <Text variant="small">Potentials</Text>
+            </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -409,6 +421,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         <PHLRosterTable
             roster={selectedRoster}
             contracts={rosterContracts}
+            ts={ts}
             team={selectedTeam}
             category={category}
             colorOne={teamColors.One}

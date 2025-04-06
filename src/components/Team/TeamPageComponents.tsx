@@ -66,17 +66,17 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   const logo = getLogo(League, id!!, isRetro);
   const [isMobile] = useMobile();
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-col w-full max-w-[2000px]">
       <Border
         direction="row"
-        classes="w-full max-w-full min-w-[95vw] sm:min-w-[70vw] p-8 justify-around"
+        classes="w-full p-8 justify-around"
         styles={{
           backgroundColor,
           borderColor,
         }}
       >            
       {!isMobile && (
-        <div className="flex w-1/3 justify-center items-center gap-x-2">
+        <div className="flex flex-col w-1/3 gap-2 justify-center items-center gap-x-2">
           <FrontOfficeInfo 
             owner={Owner} 
             gm={GM} 
@@ -88,26 +88,11 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             backgroundColor={darkerBorder}
             lineColor={backgroundColor}
             textColorClass={textColorClass} />
-          <RosterInfo 
-            roster={Roster} 
-            league={League}
-            textColorClass={textColorClass}
-            borderColor={borderColor} 
-            backgroundColor={darkerBorder}
-            isPro={isPro} />
-          <StadiumInfo 
-            league={League}
-            arena={Arena}
-            capacity={Capacity}
-            textColorClass={textColorClass}
-            borderColor={borderColor} 
-            backgroundColor={darkerBorder}
-            isPro={isPro} />
         </div>
         )}
-        <div className="flex flex-col sm:w-1/4 justify-center items-center pb-2">
+        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center pb-2">
           <div className="flex flex-col max-w-1/4 p-2">
-            <div className="max-w-[6rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
+            <div className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
                   style={{ backgroundColor: darkerBorder, borderColor: borderColor }}>
               <Logo url={logo} 
                     variant="large" />
@@ -146,6 +131,34 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           )}
         </div>
         )}
+      </Border>
+      <Border
+        direction="row"
+        classes="w-full h-[1em] max-h-[5em] p-4 sm:p-6 sm:px-14 justify-center sm:justify-around"
+        styles={{
+          backgroundColor,
+          borderColor,
+        }}
+      >            
+        <div className="flex w-full justify-center sm:justify-between items-center gap-x-2">
+          {!isMobile && (
+            <StadiumInfo 
+            league={League}
+            arena={Arena}
+            capacity={Capacity}
+            textColorClass={textColorClass}
+            borderColor={borderColor} 
+            backgroundColor={darkerBorder}
+            isPro={isPro} />
+          )}
+            <RosterInfo 
+            roster={Roster} 
+            league={League}
+            textColorClass={textColorClass}
+            borderColor={borderColor} 
+            backgroundColor={darkerBorder}
+            isPro={isPro} />
+        </div>
       </Border>
     </div>
   );
@@ -191,27 +204,27 @@ export const CapsheetInfo = ({
         <div className="table-header-group w-full">
           <div className="table-row">
             <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body" 
+              <Text variant="body-small" 
                     classes={`${textColorClass}`}>
                 Year
               </Text>
             </div>
             {isNFL && (
             <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body" 
+              <Text variant="body-small" 
                     classes={`${textColorClass}`}>
                 Bonus
               </Text>
             </div>
             )}
             <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body" 
+              <Text variant="body-small" 
                     classes={`${textColorClass}`}>
                 Salary
               </Text>
             </div>
             <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body" 
+              <Text variant="body-small" 
                     classes={`${textColorClass}`}>
                 Space
               </Text>
@@ -222,27 +235,27 @@ export const CapsheetInfo = ({
           {rows.map(({ year, salary, bonus, space }) => (
           <div key={year} className="table-row">
             <div className="table-cell">
-              <Text variant="body-small" 
+              <Text variant="xs" 
                     classes={`${textColorClass}`}>
                 {year}
               </Text>
             </div>
             {isNFL && (
             <div className="table-cell">
-              <Text variant="body-small" 
+              <Text variant="xs" 
                     classes={`${textColorClass}`}>
                 {bonus.toFixed(2)}
               </Text>
             </div>
             )}
             <div className="table-cell">
-              <Text variant="body-small" 
+              <Text variant="xs" 
                     classes={`${textColorClass}`}>
                 {salary.toFixed(2)}
               </Text>
             </div>
             <div className="table-cell">
-              <Text variant="body-small" 
+              <Text variant="xs" 
                     classes={`${textColorClass}`}>
                 {space.toFixed(2)}
               </Text>
@@ -315,7 +328,7 @@ export const FrontOfficeInfo = ({
 
   return (
     <div
-      className="flex w-[15em] h-[100%] py-5 px-4 border-2 rounded-lg flex-row"
+      className="flex w-full h-full py-5 px-4 border-2 rounded-lg flex-row"
       style={{ borderColor, backgroundColor }}
     >
       <div className="table-fixed w-full">
@@ -397,25 +410,22 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
   const activeRoster = totalPlayers - specialPlayersCount;
 
   return (
-    <div
-      className="flex flex-col w-[10em] h-[100%] px-2 justify-between py-5 border-2 rounded-lg"
-      style={{ borderColor, backgroundColor }}
-    >
-      <div className="flex flex-col items-center">
-        <Text variant="body-small" 
+    <div className="flex gap-4">
+      <div className="flex justify-center items-center gap-2">
+        <Text variant="xs" 
               classes={`${textColorClass} font-semibold`}>
-          Active Roster
+          Active Roster:
         </Text>
         <Text variant="xs" 
               classes={`${textColorClass}`}>
           {activeRoster}
         </Text>
       </div>
-      <div className="flex flex-col items-center">
-        <Text variant="body-small" 
+      <div className="flex items-center gap-2">
+        <Text variant="xs" 
               classes={`${textColorClass} font-semibold`}>
-          {isPro ? league === SimNFL ? "Practice Squad" 
-                : league === SimPHL ? "Reserves" 
+          {isPro ? league === SimNFL ? "Practice Squad:" 
+                : league === SimPHL ? "Reserves:" 
                 : "Unknown" 
                 : "Redshirts"}
         </Text>
@@ -429,15 +439,12 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
 };
 
 export const StadiumInfo = ({ backgroundColor, borderColor, arena, capacity, league, textColorClass }: any) => {
-  const home = league === SimCFB || league === SimNFL ? "Stadium" : "Arena";
+  const home = league === SimCFB || league === SimNFL ? "Stadium:" : "Arena:";
   return (
-    <div
-      className="flex flex-col w-[12em] h-[100%] px-2 justify-between py-5 border-2 rounded-lg"
-      style={{ borderColor, backgroundColor }}
-    >
-      <div className="flex flex-col items-center">
-        <Text variant="body-small" 
-              classes={`${textColorClass} font-semibold`}>
+    <div className="flex gap-4">
+      <div className="flex items-center gap-2">
+        <Text variant="xs" 
+              classes={`${textColorClass} font-semibold text-left`}>
           {`${home}`}
         </Text>
         <Text variant="xs" 
@@ -445,10 +452,10 @@ export const StadiumInfo = ({ backgroundColor, borderColor, arena, capacity, lea
           {arena}
         </Text>
       </div>
-      <div className="flex flex-col items-center">
-        <Text variant="body-small" 
+      <div className="flex items-center gap-2">
+        <Text variant="xs" 
               classes={`${textColorClass} font-semibold`}>
-          Capacity
+          Capacity:
         </Text>
         <Text variant="xs" 
               classes={`${textColorClass}`}>
