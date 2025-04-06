@@ -169,15 +169,18 @@ export const CapsheetInfo = ({
     const year = ts.Season + (yearOffset - 1);
     const salaryKey = `Y${yearOffset}Salary`;
     const bonusKey = `Y${yearOffset}Bonus`;
+    const deadCapKey = `Y${yearOffset}CapHit`;
     const capspaceKey = `Y${yearOffset}Capspace`;
     const salary = isNFL
       ? capsheet[salaryKey] || 0
       : (capsheet[salaryKey] || 0) / 1_000_000;
     const bonus = isNFL ? capsheet[bonusKey] || 0 : 0;
+    const deadCap = capsheet[deadCapKey] || 0;
     const capSpace = ts[capspaceKey] || 0;
-    const space = capSpace - salary - bonus;
+    const space = capSpace - salary - bonus - deadCap;
     return { year, salary, bonus, space };
   });
+  console.log(capsheet)
 
   return (
     <div
@@ -188,27 +191,27 @@ export const CapsheetInfo = ({
       <div className="table-fixed w-full">
         <div className="table-header-group w-full">
           <div className="table-row">
-            <div className="table-cell w-[8em] font-semibold">
+            <div className="table-cell w-[9em] font-semibold">
               <Text variant="body" 
                     classes={`${textColorClass}`}>
                 Year
               </Text>
             </div>
             {isNFL && (
-            <div className="table-cell w-[8em] font-semibold">
+            <div className="table-cell w-[9em] font-semibold">
               <Text variant="body" 
                     classes={`${textColorClass}`}>
                 Bonus
               </Text>
             </div>
             )}
-            <div className="table-cell w-[8em] font-semibold">
+            <div className="table-cell w-[9em] font-semibold">
               <Text variant="body" 
                     classes={`${textColorClass}`}>
                 Salary
               </Text>
             </div>
-            <div className="table-cell w-[8em] font-semibold">
+            <div className="table-cell w-[9em] font-semibold">
               <Text variant="body" 
                     classes={`${textColorClass}`}>
                 Space
@@ -248,6 +251,12 @@ export const CapsheetInfo = ({
           </div>
           ))}
         </div>
+        <div className="flex justify-center">
+              <Text variant="xs" 
+                    classes={`${textColorClass} font-semibold`}>
+                {`Dead Cap: ${(capsheet.Y1CapHit).toFixed(2)}`}
+              </Text>
+            </div>
       </div>
       )}
     </div>
