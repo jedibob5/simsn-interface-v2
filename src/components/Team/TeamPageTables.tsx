@@ -100,15 +100,19 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
-          <div
-          key={idx}
-          className={`table-cell 
-          align-middle 
-          min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-          text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-            idx !== 0 ? "text-center" : ""
-          }`}
-        >
+        <div
+        key={idx}
+        className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          category === Overview && idx === 7
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+      >
           {attr.label === "Redshirt" ? (
           <>
             {attr.value === true ? (
@@ -299,13 +303,17 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
     style={{ backgroundColor }}
   >
     {attributes.map((attr, idx) => (
-      <div
+        <div
         key={idx}
         className={`table-cell 
         align-middle 
         min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
         text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-          idx !== 0 ? "text-center" : ""
+          category === Overview && idx === 6
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
         }`}
       >
         {attr.label === "NTC" || attr.label === "NMC" ? (
@@ -471,15 +479,19 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
         style={{ backgroundColor }}
       >
       {attributes.map((attr, idx) => (
-          <div
-          key={idx}
-          className={`table-cell 
-          align-middle 
-          min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-          text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-            idx !== 0 ? "text-center" : ""
-          }`}
-        >
+        <div
+        key={idx}
+        className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          category === Overview && idx === 8
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+      >
           {attr.label === "Redshirt" ? (
           <>
             {attr.value === true ? (
