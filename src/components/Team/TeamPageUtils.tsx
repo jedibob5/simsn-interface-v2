@@ -2,6 +2,8 @@ import {
   Attributes,
   Potentials,
   Preferences,
+  Contracts,
+  Overview
 } from "../../_constants/constants";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import {
@@ -11,7 +13,7 @@ import {
   getCFBOverall,
 } from "../../_utility/getLetterGrade";
 import { getYear } from "../../_utility/getYear";
-import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, Croot } from "../../models/hockeyModels";
+import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, ProContract as PHLContract, Croot } from "../../models/hockeyModels";
 import { CollegePlayer as CFBPlayer, NFLContract, NFLPlayer } from "../../models/footballModels";
 import {
   Agility,
@@ -65,28 +67,48 @@ export const getCHLAttributes = (
 export const getPHLAttributes = (
   player: PHLPlayer,
   isMobile: boolean,
-  category: string
+  category: string,
+  contract?: any,
 ) => {
-  const heightObj = HeightToFeetAndInches(player.Height);
-  let list = [
+  const phlContract = contract as PHLContract;
+  const attributes = [
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     { label: "Pos", value: player.Position },
     { label: "Arch", value: player.Archetype },
-    { label: "Yr", value: player.Year},
+    { label: "Yr", value: player.Year },
     { label: "Ovr", value: player.Overall },
   ];
-  if (!isMobile && category === Attributes) {
-    list = list.concat(
-      ...getAdditionalHockeyAttributes(player).map(attr => ({
+
+  const additionalAttributes = !isMobile && category === Attributes
+    ? getAdditionalHockeyAttributes(player).map(attr => ({
         ...attr,
         letter: attr.value,
         value: attr.raw,
       }))
-    );
-  } else if (!isMobile && category === Potentials) {
-    list = list.concat(...getAdditionalPotentialAttributes(player));
-  }
-  return list;
+    : [];
+
+  const contractAttributes = !isMobile && category === Contracts && phlContract
+    ? getPHLContracts(phlContract)
+    : [];
+
+  const potentialAttributes = !isMobile && category === Potentials
+    ? getAdditionalPotentialAttributes(player)
+    : [];
+
+  return [...attributes, ...additionalAttributes, ...potentialAttributes, ...contractAttributes];
+};
+
+export const getPHLContracts = (contract: any) => {
+  return [
+    { label: "Y1S", value: contract.Y1BaseSalary },
+    { label: "Y2S", value: contract.Y2BaseSalary },
+    { label: "Y3S", value: contract.Y3BaseSalary },
+    { label: "Y4S", value: contract.Y4BaseSalary },
+    { label: "Y5S", value: contract.Y5BaseSalary },
+    { label: "Yrs Left", value: contract.ContractLength },
+    { label: "NTC", value: contract.NoTradeClause },
+    { label: "NMC", value: contract.NoMovementClause },
+  ];
 };
 
 export const getCHLCrootAttributes = (
@@ -456,22 +478,6 @@ const getArchetypeValue = (archetype: string, isMobile: boolean) => {
     : archetype;
 };
 
-export const getNFLContracts = (contract: NFLContract) => {
-  return [
-    { label: "Y1B", value: contract.Y1Bonus },
-    { label: "Y1S", value: contract.Y1BaseSalary },
-    { label: "Y2B", value: contract.Y2Bonus },
-    { label: "Y2S", value: contract.Y2BaseSalary },
-    { label: "Y3B", value: contract.Y3Bonus },
-    { label: "Y3S", value: contract.Y3BaseSalary },
-    { label: "Y4B", value: contract.Y4Bonus },
-    { label: "Y4S", value: contract.Y4BaseSalary },
-    { label: "Y5B", value: contract.Y5Bonus },
-    { label: "Y5S", value: contract.Y5BaseSalary },
-    { label: "Yrs Left", value: contract.ContractLength },
-  ]
-}
-
 export const getNFLAttributes = (
   player: NFLPlayer,
   isMobile: boolean,
@@ -494,7 +500,7 @@ export const getNFLAttributes = (
     },
   ];
 
-  const additionalAttributes = !isMobile && category === "Attributes"
+  const additionalAttributes = !isMobile && category === Attributes
     ? getAdditionalNFLAttributes(nflPlayer).map(attr => ({
         ...attr,
         value: showLetterGrade 
@@ -503,13 +509,29 @@ export const getNFLAttributes = (
       }))
     : [];
   
-  const nflContracts = !isMobile && category === "Contracts"
+  const nflContracts = !isMobile && category === Contracts
     ? getNFLContracts(nflContract).map(attr => ({
       ...attr,
       value: attr.value,
     })) : [];
 
   return [...nflPlayerAttributes, ...additionalAttributes, ...nflContracts];
+};
+
+export const getNFLContracts = (contract: NFLContract) => {
+  return [
+    { label: "Y1B", value: contract.Y1Bonus },
+    { label: "Y1S", value: contract.Y1BaseSalary },
+    { label: "Y2B", value: contract.Y2Bonus },
+    { label: "Y2S", value: contract.Y2BaseSalary },
+    { label: "Y3B", value: contract.Y3Bonus },
+    { label: "Y3S", value: contract.Y3BaseSalary },
+    { label: "Y4B", value: contract.Y4Bonus },
+    { label: "Y4S", value: contract.Y4BaseSalary },
+    { label: "Y5B", value: contract.Y5Bonus },
+    { label: "Y5S", value: contract.Y5BaseSalary },
+    { label: "Yrs Left", value: contract.ContractLength },
+  ];
 };
 
 export const getAdditionalNFLAttributes = (player: NFLPlayer) => {
@@ -570,7 +592,7 @@ export const getCFBAttributes = (
     { label: "Stars", value: player.Stars },
     { label: "Ovr", value: getCFBOverall(player.Overall, player.Year) },
   ];
-  if (!isMobile && category === "Attributes") {
+  if (!isMobile && category === Attributes) {
     list = list.concat(...getAdditionalCFBAttributes(player));
   }
   return list;
@@ -591,7 +613,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "SPD",
       value: getCFBLetterGrade(
-        "Speed",
+        Speed,
         player.Position,
         player.Speed,
         player.Year
@@ -600,7 +622,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "AGI",
       value: getCFBLetterGrade(
-        "Agility",
+        Agility,
         player.Position,
         player.Agility,
         player.Year
@@ -609,7 +631,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "CAR",
       value: getCFBLetterGrade(
-        "Carrying",
+        Carrying,
         player.Position,
         player.Carrying,
         player.Year
@@ -618,7 +640,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "CTH",
       value: getCFBLetterGrade(
-        "Catching",
+        Catching,
         player.Position,
         player.Catching,
         player.Year
@@ -672,7 +694,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "STR",
       value: getCFBLetterGrade(
-        "Strength",
+        Strength,
         player.Position,
         player.Strength,
         player.Year
@@ -681,7 +703,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
     {
       label: "TKL",
       value: getCFBLetterGrade(
-        "Tackle",
+        Tackle,
         player.Position,
         player.Tackle,
         player.Year
@@ -803,7 +825,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -813,7 +835,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -823,7 +845,7 @@ export const setPriorityCFBAttributes = (
           Name: Carrying,
           Value: player.Carrying,
           Letter: getCFBLetterGrade(
-            "Carrying",
+            Carrying,
             player.Position,
             player.Carrying,
             player.Year
@@ -833,7 +855,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -873,7 +895,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -883,7 +905,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -893,7 +915,7 @@ export const setPriorityCFBAttributes = (
           Name: Carrying,
           Value: player.Carrying,
           Letter: getCFBLetterGrade(
-            "Carrying",
+            Carrying,
             player.Position,
             player.Carrying,
             player.Year
@@ -903,7 +925,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -923,7 +945,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -938,7 +960,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -948,7 +970,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -958,7 +980,7 @@ export const setPriorityCFBAttributes = (
           Name: Carrying,
           Value: player.Carrying,
           Letter: getCFBLetterGrade(
-            "Carrying",
+            Carrying,
             player.Position,
             player.Carrying,
             player.Year
@@ -968,7 +990,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -998,7 +1020,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1013,7 +1035,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1023,7 +1045,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1033,7 +1055,7 @@ export const setPriorityCFBAttributes = (
           Name: Carrying,
           Value: player.Carrying,
           Letter: getCFBLetterGrade(
-            "Carrying",
+            Carrying,
             player.Position,
             player.Carrying,
             player.Year
@@ -1043,7 +1065,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -1063,7 +1085,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1078,7 +1100,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1088,7 +1110,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1098,7 +1120,7 @@ export const setPriorityCFBAttributes = (
           Name: Carrying,
           Value: player.Carrying,
           Letter: getCFBLetterGrade(
-            "Carrying",
+            Carrying,
             player.Position,
             player.Carrying,
             player.Year
@@ -1108,7 +1130,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -1128,7 +1150,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1165,7 +1187,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1175,7 +1197,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1211,7 +1233,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1221,7 +1243,7 @@ export const setPriorityCFBAttributes = (
           Name: Tackle,
           Value: player.Tackle,
           Letter: getCFBLetterGrade(
-            "Tackle",
+            Tackle,
             player.Position,
             player.Tackle,
             player.Year
@@ -1231,7 +1253,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1267,7 +1289,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1277,7 +1299,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1287,7 +1309,7 @@ export const setPriorityCFBAttributes = (
           Name: Tackle,
           Value: player.Tackle,
           Letter: getCFBLetterGrade(
-            "Tackle",
+            Tackle,
             player.Position,
             player.Tackle,
             player.Year
@@ -1297,7 +1319,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1352,7 +1374,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1362,7 +1384,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1372,7 +1394,7 @@ export const setPriorityCFBAttributes = (
           Name: Tackle,
           Value: player.Tackle,
           Letter: getCFBLetterGrade(
-            "Tackle",
+            Tackle,
             player.Position,
             player.Tackle,
             player.Year
@@ -1382,7 +1404,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1412,7 +1434,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -1428,7 +1450,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1438,7 +1460,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1448,7 +1470,7 @@ export const setPriorityCFBAttributes = (
           Name: Tackle,
           Value: player.Tackle,
           Letter: getCFBLetterGrade(
-            "Tackle",
+            Tackle,
             player.Position,
             player.Tackle,
             player.Year
@@ -1458,7 +1480,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1498,7 +1520,7 @@ export const setPriorityCFBAttributes = (
           Name: Catching,
           Value: player.Catching,
           Letter: getCFBLetterGrade(
-            "Catching",
+            Catching,
             player.Position,
             player.Catching,
             player.Year
@@ -1563,7 +1585,7 @@ export const setPriorityCFBAttributes = (
           Name: Agility,
           Value: player.Agility,
           Letter: getCFBLetterGrade(
-            "Agility",
+            Agility,
             player.Position,
             player.Agility,
             player.Year
@@ -1573,7 +1595,7 @@ export const setPriorityCFBAttributes = (
           Name: Speed,
           Value: player.Speed,
           Letter: getCFBLetterGrade(
-            "Speed",
+            Speed,
             player.Position,
             player.Speed,
             player.Year
@@ -1583,7 +1605,7 @@ export const setPriorityCFBAttributes = (
           Name: Strength,
           Value: player.Strength,
           Letter: getCFBLetterGrade(
-            "Strength",
+            Strength,
             player.Position,
             player.Strength,
             player.Year
@@ -1633,18 +1655,18 @@ export const setPriorityCFBAttributes = (
 };
 
 const headerMap: { [key: string]: string } = {
-  Agility: "Agility",
-  Speed: "Speed",
-  Carrying: "Carrying",
+  Agility: Agility,
+  Speed: Speed,
+  Carrying: Carrying,
   ShotgunRating: "Shotgun Rating",
   ThrowPower: "Throw Power",
   ThrowAccuracy: "Throw Accuracy",
-  Strength: "Strength",
-  Catching: "Catching",
+  Strength: Strength,
+  Catching: Catching,
   PassBlock: "Pass Block",
   RunBlock: "Run Block",
   RouteRunning: "Route Running",
-  Tackle: "Tackle",
+  Tackle: Tackle,
   PassRush: "Pass Rush",
   RunDefense: "Run Defense",
   ZoneCoverage: "Zone Coverage",
@@ -1659,24 +1681,24 @@ const headerMap: { [key: string]: string } = {
 };
 
 const priorityAttributesMap: { [key: string]: string[] } = {
-  QB: ["Agility", "Speed", "Carrying", "ThrowPower", "ThrowAccuracy", "Strength"],
-  RB: ["Agility", "Speed", "Carrying", "Catching", "PassBlock", "Strength"],
-  FB: ["Agility", "Speed", "Carrying", "Catching", "PassBlock", "Strength"],
-  WR: ["Agility", "Speed", "Carrying", "Catching", "RouteRunning", "Strength"],
-  TE: ["Agility", "Speed", "Carrying", "Catching", "RouteRunning", "Strength", "PassBlock", "RunBlock"],
-  OT: ["Agility", "Strength", "PassBlock", "RunBlock"],
-  OG: ["Agility", "Strength", "PassBlock", "RunBlock"],
-  C: ["Agility", "Strength", "PassBlock", "RunBlock"],
-  DE: ["Agility", "Tackle", "Strength", "PassRush", "RunDefense"],
-  DT: ["Agility", "Tackle", "Strength", "PassRush", "RunDefense"],
-  ILB: ["Agility", "Speed", "Tackle", "Strength", "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
-  OLB: ["Agility", "Speed", "Tackle", "Strength", "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
-  CB: ["Agility", "Speed", "Tackle", "Strength", "ZoneCoverage", "ManCoverage", "Catching"],
-  FS: ["Agility", "Speed", "Tackle", "Strength", "RunDefense", "ZoneCoverage", "ManCoverage", "Catching"],
-  SS: ["Agility", "Speed", "Tackle", "Strength", "RunDefense", "ZoneCoverage", "ManCoverage", "Catching"],
+  QB: [Agility, Speed, Carrying, "ThrowPower", "ThrowAccuracy", Strength],
+  RB: [Agility, Speed, Carrying, Catching, "PassBlock", Strength],
+  FB: [Agility, Speed, Carrying, Catching, "PassBlock", Strength],
+  WR: [Agility, Speed, Carrying, Catching, "RouteRunning", Strength],
+  TE: [Agility, Speed, Carrying, Catching, "RouteRunning", Strength, "PassBlock", "RunBlock"],
+  OT: [Agility, Strength, "PassBlock", "RunBlock"],
+  OG: [Agility, Strength, "PassBlock", "RunBlock"],
+  C: [Agility, Strength, "PassBlock", "RunBlock"],
+  DE: [Agility, Tackle, Strength, "PassRush", "RunDefense"],
+  DT: [Agility, Tackle, Strength, "PassRush", "RunDefense"],
+  ILB: [Agility, Speed, Tackle, Strength, "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
+  OLB: [Agility, Speed, Tackle, Strength, "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
+  CB: [Agility, Speed, Tackle, Strength, "ZoneCoverage", "ManCoverage", Catching],
+  FS: [Agility, Speed, Tackle, Strength, "RunDefense", "ZoneCoverage", "ManCoverage", Catching],
+  SS: [Agility, Speed, Tackle, Strength, "RunDefense", "ZoneCoverage", "ManCoverage", Catching],
   K: ["KickAccuracy", "KickPower"],
   P: ["PuntAccuracy", "PuntPower"],
-  ATH: ["Agility", "Speed", "Strength"],
+  ATH: [Agility, Speed, Strength],
 };
 
 export const setPriorityNFLAttributes = (

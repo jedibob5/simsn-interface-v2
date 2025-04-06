@@ -1,25 +1,12 @@
 import { FC, useMemo } from "react";
 import { Table } from "../../_design/Table";
 import { Text } from "../../_design/Typography";
-import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer } from "../../models/hockeyModels";
-import { CollegePlayer as CFBPlayer, NFLContract, NFLPlayer, Timestamp } from "../../models/footballModels";
+import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, ProContract as PHLContract } from "../../models/hockeyModels";
+import { CollegePlayer as CFBPlayer, NFLPlayer, NFLContract, Timestamp } from "../../models/footballModels";
 import { useMobile } from "../../_hooks/useMobile";
+import { Attributes, Potentials, Contracts, Overview } from "../../_constants/constants";
 import { getCHLAttributes, getPHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
-import { Button, ButtonGroup } from "../../_design/Buttons";
-import {
-  ArrowsUpDown,
-  BarsArrowDown,
-  BuildingOffice,
-  CurrencyDollar,
-  Info,
-  ScissorIcon,
-  ShieldCheck,
-  ShieldExclamation,
-  Tag,
-  User,
-  UserPlus,
-} from "../../_design/Icons";
 import { useModal } from "../../_hooks/useModal";
 import {
   Cut,
@@ -28,8 +15,8 @@ import {
   Promise,
   Redshirt,
 } from "../../_constants/constants";
-import { darkenColor } from "../../_utility/getDarkerColor";
 import { SelectDropdown } from "../../_design/Select";
+import { CheckCircle, CrossCircle } from "../../_design/Icons";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -174,6 +161,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 
 interface PHLRosterTableProps {
   roster: PHLPlayer[] | undefined;
+  contracts?: PHLContract[] | null;
   colorOne?: string;
   colorTwo?: string;
   team?: any;
@@ -183,6 +171,7 @@ interface PHLRosterTableProps {
 
 export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   roster = [],
+  contracts,
   colorOne,
   colorTwo,
   team,
@@ -194,16 +183,17 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
-  let rosterColumns = [
+  const rosterColumns = useMemo(() => {
+    let columns = [
     { header: "Name", accessor: "LastName" },
     { header: "Pos", accessor: "Position" },
     { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-    { header: "Yr", accessor: "Year" },
+    { header: "Exp", accessor: "Year" },
     { header: "Ovr", accessor: "Overall" },
   ];
 
-  if (!isMobile) {
-    rosterColumns = rosterColumns.concat([
+  if (!isMobile && category === Attributes || category === Potentials) {
+    columns = columns.concat([
       { header: "Agi", accessor: "Agility" },
       { header: "FO", accessor: "Faceoffs" },
       { header: "LSA", accessor: "LongShotAccuracy" },
@@ -222,34 +212,62 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
       { header: "Inj", accessor: "Injury" },
     ]);
   }
-  rosterColumns.push({ header: "Actions", accessor: "actions" });
 
-  const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
+  if (!isMobile && category === Contracts) {
+    columns = columns.concat([
+      { header: "Y1 S", accessor: "Y1BaseSalary" },
+      { header: "Y2 S", accessor: "Y2BaseSalary" },
+      { header: "Y3 S", accessor: "Y3BaseSalary" },
+      { header: "Y4 S", accessor: "Y4BaseSalary" },
+      { header: "Y5 S", accessor: "Y5BaseSalary" },
+      { header: "Yrs", accessor: "ContractLength" },
+      { header: "NTC", accessor: "NoTradeClause" },
+      { header: "NMC", accessor: "NoMovementClause" },
+    ]);
+  }
+
+  columns.push({ header: "Actions", accessor: "actions" });
+  return columns;
+}, [isMobile, category]);
+
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
 
   const rowRenderer = (
     item: PHLPlayer,
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getPHLAttributes(item, isMobile, category!);
+    const playerContract = contracts?.find(contract => contract.PlayerID === item.ID);
+    console.log(playerContract)
+    const attributes = getPHLAttributes(item, isMobile, category!, playerContract);
     return (
       <div
-        key={item.ID}
-        className={`table-row border-b dark:border-gray-700 text-left`}
-        style={{ backgroundColor }}
+    key={item.ID}
+    className={`table-row border-b dark:border-gray-700 text-left`}
+    style={{ backgroundColor }}
+  >
+    {attributes.map((attr, idx) => (
+      <div
+        key={idx}
+        className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          idx === 4 ? "text-center" : ""
+        }`}
       >
-        {attributes.map((attr, idx) => (
-          <div
-            key={idx}
-            className={`table-cell 
-            align-middle 
-            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-              idx === 4 ? "text-center" : ""
-            }`}
-          >
-          {attr.label === "Name" ? (
-            <span
+        {attr.label === "NTC" || attr.label === "NMC" ? (
+          <>
+            {attr.value === true ? (
+              <CheckCircle textColorClass="w-full text-center text-green-500" />
+            ) : (
+              <CrossCircle textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Name" ? (
+          <span
             className={`cursor-pointer font-semibold ${textColorClass}`}
             style={{
               color: textColorClass,
@@ -264,11 +282,11 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
           >
             <Text variant="small">{attr.value}</Text>
           </span>
-          ) : (
-            <Text variant="small">{attr.value}</Text>
-          )}
-          </div>
-        ))}
+        ) : (
+          <Text variant="small">{attr.value}</Text>
+        )}
+      </div>
+    ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
@@ -483,11 +501,11 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Yr", accessor: "Year" },
+      { header: "Exp", accessor: "Year" },
       { header: "Ovr", accessor: "Overall" },
     ];
 
-    if (!isMobile && category === "Attributes") {
+    if (!isMobile && category === Attributes) {
       columns = columns.concat([
         { header: "Pot", accessor: "PotentialGrade" },
         { header: "FIQ", accessor: "FootballIQ" },
@@ -515,7 +533,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === "Contracts") {
+    if (!isMobile && category === Contracts) {
       columns = columns.concat([
         { header: "Y1 B", accessor: "Y1Bonus" },
         { header: "Y1 S", accessor: "Y1BaseSalary" },
@@ -527,7 +545,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
         { header: "Y4 S", accessor: "Y4BaseSalary" },
         { header: "Y5 B", accessor: "Y5Bonus" },
         { header: "Y5 S", accessor: "Y5BaseSalary" },
-        { header: "Yrs Left", accessor: "ContractLength" },
+        { header: "Yrs", accessor: "ContractLength" },
       ]);
     }
 

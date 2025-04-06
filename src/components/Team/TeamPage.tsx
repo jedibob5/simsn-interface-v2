@@ -7,7 +7,10 @@ import {
   SimPHL,
   SimCFB,
   SimNFL,
-  Attributes
+  Attributes,
+  Potentials,
+  Contracts,
+  Overview
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
@@ -35,6 +38,7 @@ import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
 import { useMobile } from "../../_hooks/useMobile";
+import { CheckCircle } from "../../_design/Icons";
 
 interface TeamPageProps {
   league: League;
@@ -180,16 +184,16 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
             <Button
               size="sm"
               disabled={selectedTeam?.ID !== chlTeam?.ID}
-              isSelected={category === "Potentials"}
-              onClick={() => setCategory("Potentials")}
+              isSelected={category === Potentials}
+              onClick={() => setCategory(Potentials)}
             >
               <Text variant="small">Potentials</Text>
             </Button>
@@ -241,7 +245,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     null
   );
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Attributes);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -261,11 +265,38 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
       return phlRosterMap[selectedTeam.ID];
     }
   }, [phlRosterMap, selectedTeam]);
+
+  const rosterContracts = useMemo(() => {
+    if (!selectedRoster || !phlContractMap) return null;
+  
+    return selectedRoster
+      .map(player => {
+        const contract = phlContractMap[player.ID];
+        if (!contract) return null;
+  
+        return {
+          ...contract,
+          Y1BaseSalary: contract.Y1BaseSalary ?
+           parseFloat((contract.Y1BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y2BaseSalary: contract.Y2BaseSalary ? 
+          parseFloat((contract.Y2BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y3BaseSalary: contract.Y3BaseSalary ? 
+          parseFloat((contract.Y3BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y4BaseSalary: contract.Y4BaseSalary ? 
+          parseFloat((contract.Y4BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y5BaseSalary: contract.Y5BaseSalary ? 
+          parseFloat((contract.Y5BaseSalary / 1_000_000).toFixed(2)) : 0,
+          convertValues: contract.convertValues,
+        };
+      })
+      .filter(contract => contract !== null);
+  }, [selectedRoster, phlContractMap]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = phlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Attributes);
   };
   const openModal = (action: ModalAction, player: PHLPlayer) => {
     handleOpenModal();
@@ -340,24 +371,24 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
             <Button
               size="sm"
               disabled={selectedTeam?.ID !== phlTeam?.ID}
-              isSelected={category === "Potentials"}
-              onClick={() => setCategory("Potentials")}
+              isSelected={category === Potentials}
+              onClick={() => setCategory(Potentials)}
             >
               <Text variant="small">Potentials</Text>
             </Button>
           {!isMobile && (
             <Button
             size="sm"
-            isSelected={category === "Contracts"}
-            onClick={() => setCategory("Contracts")}
+            isSelected={category === Contracts}
+            onClick={() => setCategory(Contracts)}
             >
             <Text variant="small">Contracts</Text>
             </Button>
@@ -377,6 +408,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
       >
         <PHLRosterTable
             roster={selectedRoster}
+            contracts={rosterContracts}
             team={selectedTeam}
             category={category}
             colorOne={teamColors.One}
@@ -405,7 +437,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CollegePlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Attributes);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -429,7 +461,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = cfbTeamMap ? cfbTeamMap[value] : null;
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Attributes);
   };
   const openModal = (action: ModalAction, player: CollegePlayer) => {
     handleOpenModal();
@@ -489,8 +521,8 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           <div className="flex flex-row gap-x-4">
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
@@ -539,7 +571,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<NFLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(nflTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Attributes);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -552,8 +584,6 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
-
-  const secondaryBorderColor = teamColors.Three;
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && nflRosterMap) {
@@ -592,7 +622,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Attributes);
   };
   const openModal = (action: ModalAction, player: NFLPlayer) => {
     handleOpenModal();
@@ -667,16 +697,16 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           <div className="flex flex-row gap-x-4">
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
           {!isMobile && (
             <Button
             size="sm"
-            isSelected={category === "Contracts"}
-            onClick={() => setCategory("Contracts")}
+            isSelected={category === Contracts}
+            onClick={() => setCategory(Contracts)}
             >
             <Text variant="small">Contracts</Text>
             </Button>
