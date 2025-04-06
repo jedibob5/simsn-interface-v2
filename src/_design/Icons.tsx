@@ -66,7 +66,7 @@ export const ShieldCheck: React.FC<LockIconProps> = ({
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
-  return <ShieldCheckIcon className="size-5" />;
+  return <ShieldCheckIcon className={`size-5 ${textColorClass}`} />;
 };
 
 export const UserPlus: React.FC<LockIconProps> = ({

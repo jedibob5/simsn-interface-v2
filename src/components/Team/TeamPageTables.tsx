@@ -16,7 +16,7 @@ import {
   Redshirt,
 } from "../../_constants/constants";
 import { SelectDropdown } from "../../_design/Select";
-import { CheckCircle, CrossCircle, User } from "../../_design/Icons";
+import { CheckCircle, CrossCircle, ShieldCheck, User } from "../../_design/Icons";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -36,42 +36,56 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   openModal,
 }) => {
   const backgroundColor = colorOne ?? "#4B5563";
-  const borderColor = colorTwo ?? "#3C444F"; 
+  const borderColor = colorTwo ?? "#3C444F";
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
-  let rosterColumns = [
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-    { header: "Yr", accessor: "Year" },
-    { header: "⭐", accessor: "Stars" },
-    { header: "Ovr", accessor: "Overall" },
-  ];
+  let rosterColumns = useMemo(() => {
+    let columns = [
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: "Yr", accessor: "Year" },
+      { header: "⭐", accessor: "Stars" },
+      { header: "Ovr", accessor: "Overall" },
+    ];
 
-  if (!isMobile) {
-    rosterColumns = rosterColumns.concat([
-      { header: "Agi", accessor: "Agility" },
-      { header: "FO", accessor: "Faceoffs" },
-      { header: "LSA", accessor: "LongShotAccuracy" },
-      { header: "LSP", accessor: "LongShotPower" },
-      { header: "CSA", accessor: "CloseShotAccuracy" },
-      { header: "CSP", accessor: "CloseShotPower" },
-      { header: "Pass", accessor: "Passing" },
-      { header: "PH", accessor: "PuckHandling" },
-      { header: "Str", accessor: "Strength" },
-      { header: "BChk", accessor: "BodyChecking" },
-      { header: "SChk", accessor: "StickChecking" },
-      { header: "SB", accessor: "ShotBlocking" },
-      { header: "GK", accessor: "Goalkeeping" },
-      { header: "GV", accessor: "GoalieVision" },
-      { header: "Sta", accessor: "Stamina" },
-      { header: "Inj", accessor: "Injury" },
-    ]);
-  }
-  rosterColumns.push({ header: "Actions", accessor: "actions" });
+    if (!isMobile && category === Overview) {
+      columns = columns.concat([
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: "Redshirt", accessor: "isRedshirting" },
+        { header: "Mood", accessor: "TransferStatus" },
+      ]);
+    }
 
-  const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
+    if (!isMobile  && category === Attributes || category === Potentials) {
+      columns = columns.concat([
+        { header: "Agi", accessor: "Agility" },
+        { header: "FO", accessor: "Faceoffs" },
+        { header: "LSA", accessor: "LongShotAccuracy" },
+        { header: "LSP", accessor: "LongShotPower" },
+        { header: "CSA", accessor: "CloseShotAccuracy" },
+        { header: "CSP", accessor: "CloseShotPower" },
+        { header: "Pass", accessor: "Passing" },
+        { header: "PH", accessor: "PuckHandling" },
+        { header: "Str", accessor: "Strength" },
+        { header: "BChk", accessor: "BodyChecking" },
+        { header: "SChk", accessor: "StickChecking" },
+        { header: "SB", accessor: "ShotBlocking" },
+        { header: "GK", accessor: "Goalkeeping" },
+        { header: "GV", accessor: "GoalieVision" },
+        { header: "Sta", accessor: "Stamina" },
+        { header: "Inj", accessor: "Injury" },
+      ]);
+    }
+    columns.push({ header: "Actions", accessor: "actions" });
+  return columns;
+  }, [isMobile, category]);
+
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
 
   const rowRenderer = (
     item: CHLPlayer,
@@ -80,23 +94,47 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   ) => {
     const attributes = getCHLAttributes(item, isMobile, category!);
     return (
-<div
+      <div
         key={item.ID}
         className={`table-row border-b dark:border-gray-700 text-left`}
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
           <div
-            key={idx}
-            className={`table-cell 
-            align-middle 
-            min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-            text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-              idx === 4 ? "text-center" : ""
-            }`}
-          >
-          {attr.label === "Name" ? (
-            <span
+          key={idx}
+          className={`table-cell 
+          align-middle 
+          min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+          text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+            idx !== 0 ? "text-center" : ""
+          }`}
+        >
+          {attr.label === "Redshirt" ? (
+          <>
+            {attr.value === true ? (
+              <CheckCircle textColorClass="w-full text-center text-green-500" />
+            ) : (
+              <CrossCircle textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Health" ? (
+          <>
+            {attr.value === true ? (
+              <User textColorClass="w-full text-center text-red-500" />
+            ) : (
+              <User textColorClass="w-full text-center text-green-500" />
+            )}
+          </>
+        ) : attr.label === "TransferStatus" ? (
+          <>
+            {attr.value === 0 ? (
+              <ShieldCheck textColorClass="w-full text-center text-green-500" />
+            ) : (
+              <ShieldCheck textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Name" ? (
+          <span
             className={`cursor-pointer font-semibold ${textColorClass}`}
             style={{
               color: textColorClass,
@@ -110,10 +148,10 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
             onClick={() => openModal(InfoType, item)}
           >
             <Text variant="small">{attr.value}</Text>
-            </span>
-          ) : (
-            <Text variant="small">{attr.value}</Text>
-          )}
+          </span>
+        ) : (
+          <Text variant="small">{attr.value}</Text>
+        )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
@@ -365,7 +403,8 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
-  let rosterColumns = [
+  let rosterColumns = useMemo(() => {
+    let columns = [
     { header: "Name", accessor: "LastName" },
     { header: "Pos", accessor: "Position" },
     { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -374,8 +413,18 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
     { header: "Ovr", accessor: "Overall" },
   ];
 
-  if (!isMobile) {
-    rosterColumns = rosterColumns.concat([
+  if (!isMobile && category === Overview) {
+    columns = columns.concat([
+      { header: "Pot", accessor: "PotentialGrade" },
+      { header: "Health", accessor: "isInjured" },
+      { header: "Injury", accessor: "InjuryType" },
+      { header: "Redshirt", accessor: "isRedshirting" },
+      { header: "Mood", accessor: "TransferStatus" },
+    ]);
+  }
+
+  if (!isMobile && category === Attributes) {
+    columns = columns.concat([
       { header: "Pot", accessor: "PotentialGrade" },
       { header: "FIQ", accessor: "FootballIQ" },
       { header: "SPD", accessor: "Speed" },
@@ -401,9 +450,13 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
       { header: "INJ", accessor: "Injury" },
     ]);
   }
-  rosterColumns.push({ header: "Actions", accessor: "actions" });
+    columns.push({ header: "Actions", accessor: "actions" });
+  return columns;
+  }, [isMobile, category]);
 
-  const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
 
   const rowRenderer = (
     item: CFBPlayer,
@@ -418,36 +471,60 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
         style={{ backgroundColor }}
       >
       {attributes.map((attr, idx) => (
-        <div
+          <div
           key={idx}
           className={`table-cell 
           align-middle 
           min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
           text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-            idx === 4 ? "text-center" : ""
+            idx !== 0 ? "text-center" : ""
           }`}
         >
-        {attr.label === "Name" ? (
+          {attr.label === "Redshirt" ? (
+          <>
+            {attr.value === true ? (
+              <CheckCircle textColorClass="w-full text-center text-green-500" />
+            ) : (
+              <CrossCircle textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Health" ? (
+          <>
+            {attr.value === true ? (
+              <User textColorClass="w-full text-center text-red-500" />
+            ) : (
+              <User textColorClass="w-full text-center text-green-500" />
+            )}
+          </>
+        ) : attr.label === "TransferStatus" ? (
+          <>
+            {attr.value === 0 ? (
+              <ShieldCheck textColorClass="w-full text-center text-green-500" />
+            ) : (
+              <ShieldCheck textColorClass="w-full text-center text-red-500" />
+            )}
+          </>
+        ) : attr.label === "Name" ? (
           <span
-          className={`cursor-pointer font-semibold ${textColorClass}`}
-          style={{
-            color: textColorClass,
-          }}
-          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-            (e.target as HTMLElement).style.color = borderColor;
-          }}
-          onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-            (e.target as HTMLElement).style.color = "";
-          }}
-          onClick={() => openModal(InfoType, item)}
-        >
-          <Text variant="small">{attr.value}</Text>
+            className={`cursor-pointer font-semibold ${textColorClass}`}
+            style={{
+              color: textColorClass,
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = borderColor;
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "";
+            }}
+            onClick={() => openModal(InfoType, item)}
+          >
+            <Text variant="small">{attr.value}</Text>
           </span>
         ) : (
           <Text variant="small">{attr.value}</Text>
         )}
-        </div>
-      ))}
+          </div>
+        ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
@@ -495,6 +572,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
 interface NFLRosterTableProps {
   roster: NFLPlayer[];
   contracts?: NFLContract[] | null;
+  ts: any;
   colorOne?: string;
   colorTwo?: string;
   team?: any;
@@ -505,6 +583,7 @@ interface NFLRosterTableProps {
 export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   roster,
   contracts,
+  ts,
   colorOne,
   colorTwo,
   team,
@@ -524,6 +603,18 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       { header: "Exp", accessor: "Year" },
       { header: "Ovr", accessor: "Overall" },
     ];
+
+    if (!isMobile && category === Overview) {
+      columns = columns.concat([
+        { header: "Pot", accessor: "PotentialGrade" },
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: `${ts.Season} S`, accessor: "Y1BaseSalary" },
+        { header: `${ts.Season} B`, accessor: "Y1Bonus" },
+        { header: "Yrs Left", accessor: "ContractLength" },
+        { header: "Tagged", accessor: "isTagged" },
+      ]);
+    }
 
     if (!isMobile && category === Attributes) {
       columns = columns.concat([
@@ -597,11 +688,31 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
           align-middle 
           min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
           text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
-            idx === 4 ? "text-center" : ""
+            category === Overview && idx === 7
+              ? "text-left"
+              : idx !== 0
+              ? "text-center"
+              : ""
           }`}
         >
-        {attr.label === "Name" ? (
-          <span
+      {attr.label === "Is Tagged" ? (
+        <>
+          {attr.value === true ? (
+            <CheckCircle textColorClass="w-full text-center text-green-500" />
+          ) : (
+            <CrossCircle textColorClass="w-full text-center text-red-500" />
+          )}
+        </>
+      ) : attr.label === "Health" ? (
+        <>
+          {attr.value === true ? (
+            <User textColorClass="w-full text-center text-red-500" />
+          ) : (
+            <User textColorClass="w-full text-center text-green-500" />
+          )}
+        </>
+      ) : attr.label === "Name" ? (
+        <span
           className={`cursor-pointer font-semibold ${textColorClass}`}
           style={{
             color: textColorClass,
@@ -616,11 +727,11 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
         >
           <Text variant="small">{attr.value}</Text>
         </span>
-        ) : (
-          <Text variant="small">{attr.value}</Text>
-        )}
-        </div>
-      ))}
+      ) : (
+        <Text variant="small">{attr.value}</Text>
+      )}
+    </div>
+  ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}

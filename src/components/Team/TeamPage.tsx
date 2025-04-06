@@ -102,7 +102,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
-  const [category, setCategory] = useState(Attributes);
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -110,6 +110,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
@@ -121,12 +122,15 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
       return chlRosterMap[selectedTeam.ID];
     }
   }, [chlRosterMap, selectedTeam]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = chlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory(Attributes);
+    setCategory(Overview
+    );
   };
+
   const openModal = (action: ModalAction, player: CHLPlayer) => {
     handleOpenModal();
     setModalAction(action);
@@ -157,6 +161,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           isPro={false}
+          Roster={selectedRoster}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Conference={selectedTeam?.Conference}
@@ -182,14 +187,26 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
             <Button
+              size="sm"
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               isSelected={category === Attributes}
               onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
-            <Button
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               disabled={selectedTeam?.ID !== chlTeam?.ID}
               isSelected={category === Potentials}
@@ -197,6 +214,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             >
               <Text variant="small">Potentials</Text>
             </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -215,8 +233,8 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             team={selectedTeam}
             roster={selectedRoster}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -245,7 +263,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     null
   );
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
-  const [category, setCategory] = useState(Attributes);
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -424,8 +442,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             ts={ts}
             team={selectedTeam}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
       </Border>
@@ -450,7 +468,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CollegePlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
-  const [category, setCategory] = useState(Attributes);
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -458,6 +476,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
@@ -474,7 +493,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = cfbTeamMap ? cfbTeamMap[value] : null;
     setSelectedTeam(nextTeam);
-    setCategory(Attributes);
+    setCategory(Overview);
   };
   const openModal = (action: ModalAction, player: CollegePlayer) => {
     handleOpenModal();
@@ -557,8 +576,8 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             roster={selectedRoster}
             team={selectedTeam}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -584,7 +603,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<NFLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(nflTeam);
-  const [category, setCategory] = useState(Attributes);
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -635,7 +654,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
     setSelectedTeam(nextTeam);
-    setCategory(Attributes);
+    setCategory(Overview);
   };
   const openModal = (action: ModalAction, player: NFLPlayer) => {
     handleOpenModal();
@@ -707,21 +726,32 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
             <Button
+              size="sm"
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+          {!isMobile && (
+            <Button
+              size="sm"
+              isSelected={category === Contracts}
+              onClick={() => setCategory(Contracts)}
+            >
+              <Text variant="small">Contracts</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               isSelected={category === Attributes}
               onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
-            </Button>
-          {!isMobile && (
-            <Button
-            size="sm"
-            isSelected={category === Contracts}
-            onClick={() => setCategory(Contracts)}
-            >
-            <Text variant="small">Contracts</Text>
             </Button>
           )}
             <Button variant="primary" size="sm">
@@ -741,10 +771,11 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           <NFLRosterTable
             roster={selectedRoster}
             contracts={rosterContracts}
+            ts={ts}
             team={selectedTeam}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
         </Border>

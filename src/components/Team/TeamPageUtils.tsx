@@ -48,7 +48,7 @@ export const getCHLAttributes = (
   category: string
 ) => {
   const heightObj = HeightToFeetAndInches(player.Height);
-  let list = [
+  const attributes = [
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     { label: "Pos", value: player.Position },
     { label: "Arch", value: player.Archetype },
@@ -56,12 +56,37 @@ export const getCHLAttributes = (
     { label: "Stars", value: player.Stars },
     { label: "Ovr", value: getHockeyLetterGrade(player.Overall, player.Year) },
   ];
-  if (!isMobile && category === Attributes) {
-    list = list.concat(...getAdditionalHockeyAttributes(player));
-  } else if (!isMobile && category === Potentials) {
-    list = list.concat(...getAdditionalPotentialAttributes(player));
-  }
-  return list;
+
+  const overviewAttributes = !isMobile && category === Overview
+    ? [
+        { label: "Health", value: player.IsInjured },
+        {
+          label: "Injury",
+          value: player.InjuryType
+            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+              : `None`
+            : "None",
+        },
+        { label: "Redshirt", value: player.IsRedshirting },
+        { label: "TransferStatus", value: player.TransferStatus },
+      ]
+    : [];
+
+  const additionalAttributes = !isMobile && category === Attributes
+    ? getAdditionalHockeyAttributes(player)
+    : [];
+
+  const potentialAttributes = !isMobile && category === Potentials
+    ? getAdditionalPotentialAttributes(player)
+    : [];
+
+  return [
+    ...attributes,
+    ...overviewAttributes,
+    ...additionalAttributes,
+    ...potentialAttributes,
+  ];
 };
 
 export const getPHLAttributes = (
@@ -79,13 +104,15 @@ export const getPHLAttributes = (
     { label: "Ovr", value: player.Overall },
   ];
 
-  const overviewAttributes = category === Overview && phlContract
+  const overviewAttributes = !isMobile && category === Overview && phlContract
     ? [
         { label: "Health", value: player.IsInjured },
         {
           label: "Injury",
           value: player.InjuryType
-            ? `${player.InjuryType}, ${player.WeeksOfRecovery || 0} weeks`
+            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+              : `None`
             : "None",
         },
         {
@@ -502,7 +529,7 @@ export const getNFLAttributes = (
   isMobile: boolean,
   category: string,
   showLetterGrade: boolean,
-  contract?: NFLContract,
+  contract?: any,
 ) => {
   const nflPlayer = player as NFLPlayer;
   const nflContract = contract as NFLContract;
@@ -519,6 +546,31 @@ export const getNFLAttributes = (
     },
   ];
 
+  const overviewAttributes = !isMobile && category === Overview && nflContract
+    ? [
+        { label: "Pot", value: player.PotentialGrade },
+        { label: "Health", value: player.IsInjured },
+        {
+          label: "Injury",
+          value: player.InjuryType
+            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+              : `None`
+            : "None",
+        },
+        {
+          label: "Y1S",
+          value: `${(contract.Y1BaseSalary).toFixed(2)}M`
+        },
+        {
+          label: "Y1B",
+          value: `${(contract.Y1Bonus).toFixed(2)}M`
+        },
+        { label: "Years Left", value: nflContract.ContractLength },
+        { label: "Is Tagged", value: nflContract.IsTagged },
+      ]
+    : [];
+
   const additionalAttributes = !isMobile && category === Attributes
     ? getAdditionalNFLAttributes(nflPlayer).map(attr => ({
         ...attr,
@@ -534,7 +586,7 @@ export const getNFLAttributes = (
       value: attr.value,
     })) : [];
 
-  return [...nflPlayerAttributes, ...additionalAttributes, ...nflContracts];
+  return [...nflPlayerAttributes, ...overviewAttributes, ...additionalAttributes, ...nflContracts];
 };
 
 export const getNFLContracts = (contract: NFLContract) => {
@@ -603,18 +655,41 @@ export const getCFBAttributes = (
   category: string
 ) => {
   const heightObj = HeightToFeetAndInches(player.Height);
-  let list = [
+  const attributes = [
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     { label: "Pos", value: player.Position },
-    { label: "Arch", value: getArchetypeValue(player.Archetype, isMobile) },
+    { label: "Arch", value: player.Archetype },
     { label: "Yr", value: getYear(player.Year, player.IsRedshirt) },
     { label: "Stars", value: player.Stars },
-    { label: "Ovr", value: getCFBOverall(player.Overall, player.Year) },
+    { label: "Ovr", value: getHockeyLetterGrade(player.Overall, player.Year) },
   ];
-  if (!isMobile && category === Attributes) {
-    list = list.concat(...getAdditionalCFBAttributes(player));
-  }
-  return list;
+
+  const overviewAttributes = !isMobile && category === Overview
+    ? [
+        { label: "Pot", value: player.PotentialGrade },
+        { label: "Health", value: player.IsInjured },
+        {
+          label: "Injury",
+          value: player.InjuryType
+            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+              : `None`
+            : "None",
+        },
+        { label: "Redshirt", value: player.IsRedshirting },
+        { label: "TransferStatus", value: player.TransferStatus },
+      ]
+    : [];
+
+  const additionalAttributes = !isMobile && category === Attributes
+    ? getAdditionalCFBAttributes(player)
+    : [];
+
+  return [
+    ...attributes,
+    ...overviewAttributes,
+    ...additionalAttributes,
+  ];
 };
 
 export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
