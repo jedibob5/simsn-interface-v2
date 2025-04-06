@@ -12,7 +12,7 @@ import {
 } from "../../_utility/getLetterGrade";
 import { getYear } from "../../_utility/getYear";
 import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, Croot } from "../../models/hockeyModels";
-import { CollegePlayer as CFBPlayer, NFLPlayer } from "../../models/footballModels";
+import { CollegePlayer as CFBPlayer, NFLContract, NFLPlayer } from "../../models/footballModels";
 import {
   Agility,
   Speed,
@@ -456,13 +456,31 @@ const getArchetypeValue = (archetype: string, isMobile: boolean) => {
     : archetype;
 };
 
+export const getNFLContracts = (contract: NFLContract) => {
+  return [
+    { label: "Y1B", value: contract.Y1Bonus },
+    { label: "Y1S", value: contract.Y1BaseSalary },
+    { label: "Y2B", value: contract.Y2Bonus },
+    { label: "Y2S", value: contract.Y2BaseSalary },
+    { label: "Y3B", value: contract.Y3Bonus },
+    { label: "Y3S", value: contract.Y3BaseSalary },
+    { label: "Y4B", value: contract.Y4Bonus },
+    { label: "Y4S", value: contract.Y4BaseSalary },
+    { label: "Y5B", value: contract.Y5Bonus },
+    { label: "Y5S", value: contract.Y5BaseSalary },
+    { label: "Yrs Left", value: contract.ContractLength },
+  ]
+}
+
 export const getNFLAttributes = (
   player: NFLPlayer,
   isMobile: boolean,
   category: string,
-  showLetterGrade: boolean
+  showLetterGrade: boolean,
+  contract?: NFLContract,
 ) => {
-  const nflPlayer = player as NFLPlayer
+  const nflPlayer = player as NFLPlayer;
+  const nflContract = contract as NFLContract;
   const nflPlayerAttributes = [
     { label: "Name", value: `${nflPlayer.FirstName} ${nflPlayer.LastName}` },
     { label: "Pos", value: nflPlayer.Position },
@@ -475,6 +493,7 @@ export const getNFLAttributes = (
         : nflPlayer.Overall 
     },
   ];
+
   const additionalAttributes = !isMobile && category === "Attributes"
     ? getAdditionalNFLAttributes(nflPlayer).map(attr => ({
         ...attr,
@@ -483,8 +502,14 @@ export const getNFLAttributes = (
           : attr.value,
       }))
     : [];
+  
+  const nflContracts = !isMobile && category === "Contracts"
+    ? getNFLContracts(nflContract).map(attr => ({
+      ...attr,
+      value: attr.value,
+    })) : [];
 
-  return [...nflPlayerAttributes, ...additionalAttributes];
+  return [...nflPlayerAttributes, ...additionalAttributes, ...nflContracts];
 };
 
 export const getAdditionalNFLAttributes = (player: NFLPlayer) => {

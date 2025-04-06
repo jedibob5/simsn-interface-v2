@@ -34,6 +34,7 @@ import { useTeamColors } from "../../_hooks/useTeamColors";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
+import { useMobile } from "../../_hooks/useMobile";
 
 interface TeamPageProps {
   league: League;
@@ -247,13 +248,14 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorThree
   );
   let backgroundColor = teamColors.One;
-  console.log(backgroundColor)
   let borderColor = teamColors.Two;
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
+  const [isMobile] = useMobile();
+
   const selectedRoster = useMemo(() => {
     if (selectedTeam) {
       return phlRosterMap[selectedTeam.ID];
@@ -351,6 +353,15 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             >
               <Text variant="small">Potentials</Text>
             </Button>
+          {!isMobile && (
+            <Button
+            size="sm"
+            isSelected={category === "Contracts"}
+            onClick={() => setCategory("Contracts")}
+            >
+            <Text variant="small">Contracts</Text>
+            </Button>
+          )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -536,18 +547,47 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
 
   const secondaryBorderColor = teamColors.Three;
+
   const selectedRoster = useMemo(() => {
     if (selectedTeam && nflRosterMap) {
       return nflRosterMap[selectedTeam.ID];
     }
     return null;
   }, [nflRosterMap, selectedTeam]);
+
+  const rosterContracts = useMemo(() => {
+    if (!selectedRoster || !nflContractMap) return null;
+  
+    return selectedRoster
+      .map(player => {
+        const contract = nflContractMap[player.ID];
+        if (!contract) return null;
+  
+        return {
+          ...contract,
+          Y1Bonus: parseFloat(contract.Y1Bonus.toFixed(2)),
+          Y1BaseSalary: parseFloat(contract.Y1BaseSalary.toFixed(2)),
+          Y2Bonus: parseFloat(contract.Y2Bonus.toFixed(2)),
+          Y2BaseSalary: parseFloat(contract.Y2BaseSalary.toFixed(2)),
+          Y3Bonus: parseFloat(contract.Y3Bonus.toFixed(2)),
+          Y3BaseSalary: parseFloat(contract.Y3BaseSalary.toFixed(2)),
+          Y4Bonus: parseFloat(contract.Y4Bonus.toFixed(2)),
+          Y4BaseSalary: parseFloat(contract.Y4BaseSalary.toFixed(2)),
+          Y5Bonus: parseFloat(contract.Y5Bonus.toFixed(2)),
+          Y5BaseSalary: parseFloat(contract.Y5BaseSalary.toFixed(2)),
+          convertValues: contract.convertValues,
+        };
+      })
+      .filter(contract => contract !== null);
+  }, [selectedRoster, nflContractMap]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
@@ -632,6 +672,15 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             >
               <Text variant="small">Attributes</Text>
             </Button>
+          {!isMobile && (
+            <Button
+            size="sm"
+            isSelected={category === "Contracts"}
+            onClick={() => setCategory("Contracts")}
+            >
+            <Text variant="small">Contracts</Text>
+            </Button>
+          )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -648,6 +697,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
         >
           <NFLRosterTable
             roster={selectedRoster}
+            contracts={rosterContracts}
             team={selectedTeam}
             category={category}
             colorOne={teamColors.One}

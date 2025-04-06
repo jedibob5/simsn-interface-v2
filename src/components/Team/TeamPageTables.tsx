@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Table } from "../../_design/Table";
 import { Text } from "../../_design/Typography";
 import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer } from "../../models/hockeyModels";
-import { CollegePlayer as CFBPlayer, NFLPlayer, Timestamp } from "../../models/footballModels";
+import { CollegePlayer as CFBPlayer, NFLContract, NFLPlayer, Timestamp } from "../../models/footballModels";
 import { useMobile } from "../../_hooks/useMobile";
 import { getCHLAttributes, getPHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
@@ -456,6 +456,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
 
 interface NFLRosterTableProps {
   roster: NFLPlayer[];
+  contracts?: NFLContract[] | null;
   colorOne?: string;
   colorTwo?: string;
   team?: any;
@@ -465,6 +466,7 @@ interface NFLRosterTableProps {
 
 export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   roster,
+  contracts,
   colorOne,
   colorTwo,
   team,
@@ -476,51 +478,74 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
-  let rosterColumns = [
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-    { header: "Yr", accessor: "Year" },
-    { header: "Ovr", accessor: "Overall" },
-  ];
+  const rosterColumns = useMemo(() => {
+    let columns = [
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: "Yr", accessor: "Year" },
+      { header: "Ovr", accessor: "Overall" },
+    ];
 
-  if (!isMobile) {
-    rosterColumns = rosterColumns.concat([
-      { header: "Pot", accessor: "PotentialGrade" },
-      { header: "FIQ", accessor: "FootballIQ" },
-      { header: "SPD", accessor: "Speed" },
-      { header: "AGI", accessor: "Agility" },
-      { header: "CAR", accessor: "Carrying" },
-      { header: "CTH", accessor: "Catching" },
-      { header: "RTE", accessor: "RouteRunning" },
-      { header: "THP", accessor: "ThrowPower" },
-      { header: "THA", accessor: "ThrowAccuracy" },
-      { header: "PBK", accessor: "PassBlock" },
-      { header: "RBK", accessor: "RunBlock" },
-      { header: "STR", accessor: "Strength" },
-      { header: "TKL", accessor: "Tackle" },
-      { header: "ZCV", accessor: "ZoneCoverage" },
-      { header: "MCV", accessor: "ManCoverage" },
-      { header: "RSH", accessor: "PassRush" },
-      { header: "RDF", accessor: "RunDefense" },
-      { header: "KP", accessor: "KickPower" },
-      { header: "KA", accessor: "KickAccuracy" },
-      { header: "PP", accessor: "PuntPower" },
-      { header: "PA", accessor: "PuntAccuracy" },
-      { header: "STA", accessor: "Stamina" },
-      { header: "INJ", accessor: "Injury" },
-    ]);
-  }
-  rosterColumns.push({ header: "Actions", accessor: "actions" });
+    if (!isMobile && category === "Attributes") {
+      columns = columns.concat([
+        { header: "Pot", accessor: "PotentialGrade" },
+        { header: "FIQ", accessor: "FootballIQ" },
+        { header: "SPD", accessor: "Speed" },
+        { header: "AGI", accessor: "Agility" },
+        { header: "CAR", accessor: "Carrying" },
+        { header: "CTH", accessor: "Catching" },
+        { header: "RTE", accessor: "RouteRunning" },
+        { header: "THP", accessor: "ThrowPower" },
+        { header: "THA", accessor: "ThrowAccuracy" },
+        { header: "PBK", accessor: "PassBlock" },
+        { header: "RBK", accessor: "RunBlock" },
+        { header: "STR", accessor: "Strength" },
+        { header: "TKL", accessor: "Tackle" },
+        { header: "ZCV", accessor: "ZoneCoverage" },
+        { header: "MCV", accessor: "ManCoverage" },
+        { header: "RSH", accessor: "PassRush" },
+        { header: "RDF", accessor: "RunDefense" },
+        { header: "KP", accessor: "KickPower" },
+        { header: "KA", accessor: "KickAccuracy" },
+        { header: "PP", accessor: "PuntPower" },
+        { header: "PA", accessor: "PuntAccuracy" },
+        { header: "STA", accessor: "Stamina" },
+        { header: "INJ", accessor: "Injury" },
+      ]);
+    }
 
-  const sortedRoster = [...roster].sort((a, b) => b.Overall - a.Overall);
+    if (!isMobile && category === "Contracts") {
+      columns = columns.concat([
+        { header: "Y1 B", accessor: "Y1Bonus" },
+        { header: "Y1 S", accessor: "Y1BaseSalary" },
+        { header: "Y2 B", accessor: "Y2Bonus" },
+        { header: "Y2 S", accessor: "Y2BaseSalary" },
+        { header: "Y3 B", accessor: "Y3Bonus" },
+        { header: "Y3 S", accessor: "Y3BaseSalary" },
+        { header: "Y4 B", accessor: "Y4Bonus" },
+        { header: "Y4 S", accessor: "Y4BaseSalary" },
+        { header: "Y5 B", accessor: "Y5Bonus" },
+        { header: "Y5 S", accessor: "Y5BaseSalary" },
+        { header: "Yrs Left", accessor: "ContractLength" },
+      ]);
+    }
+
+    columns.push({ header: "Actions", accessor: "actions" });
+    return columns;
+  }, [isMobile, category]);
+
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
 
   const rowRenderer = (
     item: NFLPlayer,
     index: number,
-    backgroundColor: string
+    backgroundColor: string,
   ) => {
-    const attributes = getNFLAttributes(item, isMobile, category!, item.ShowLetterGrade);
+    const playerContract = contracts?.find(contract => contract.PlayerID === item.ID);
+    const attributes = getNFLAttributes(item, isMobile, category!, item.ShowLetterGrade, playerContract);
     return (
       <div
         key={item.ID}

@@ -180,7 +180,6 @@ export const CapsheetInfo = ({
     const space = capSpace - salary - bonus - deadCap;
     return { year, salary, bonus, space };
   });
-  console.log(capsheet)
 
   return (
     <div
