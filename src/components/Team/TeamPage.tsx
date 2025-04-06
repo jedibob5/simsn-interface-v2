@@ -550,14 +550,25 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
             <Button
+              size="sm"
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               isSelected={category === Attributes}
               onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
+          )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
