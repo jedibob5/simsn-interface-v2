@@ -274,7 +274,6 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       nbaID = currentUser.NBATeamID;
     }
     const res = await BootstrapService.GetBBABootstrapData(cbbID, nbaID);
-    console.log({ res });
     setCBBTeam(res.CollegeTeam);
     setCBBTeams(res.AllCollegeTeams);
     setNBATeam(res.NBATeam);
@@ -350,7 +349,6 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       nbaID = currentUser.NBATeamID;
     }
     const res = await BootstrapService.GetSecondBBABootstrapData(cbbID, nbaID);
-    console.log({ res });
     setCollegeNews(res.CollegeNews);
     setTeamProfileMap(res.TeamProfileMap);
     setTopNBAPoints(res.TopNBAPoints);
@@ -394,7 +392,6 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       nbaID = currentUser.NBATeamID;
     }
     const res = await BootstrapService.GetThirdBBABootstrapData(cbbID, nbaID);
-    console.log({ res });
     setProNews(res.ProNews);
     setRecruits(res.Recruits);
     setFreeAgency(res.FreeAgency);

@@ -94,6 +94,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     chlRosterMap,
     chlTeamOptions,
     chlStandingsMap,
+    teamProfileMap,
     cutCHLPlayer,
     redshirtPlayer,
     promisePlayer,
@@ -122,6 +123,14 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
       return chlRosterMap[selectedTeam.ID];
     }
   }, [chlRosterMap, selectedTeam]);
+
+  
+  const selectedTeamProfile = useMemo(() => {
+    if (selectedTeam && teamProfileMap) {
+      return teamProfileMap[selectedTeam.ID]
+    }
+    return null;
+  }, [teamProfileMap, selectedTeam]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
@@ -162,6 +171,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           ts={ts}
           isPro={false}
           Roster={selectedRoster}
+          TeamProfile={selectedTeamProfile}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Conference={selectedTeam?.Conference}
@@ -459,7 +469,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
     cfbTeamMap,
     cfbRosterMap,
     cfbTeamOptions,
-    cfbStandingsMap,
+    teamProfileMap,
     cutCFBPlayer,
     redshirtPlayer,
     promisePlayer,
@@ -482,19 +492,27 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
 
-  const secondaryBorderColor = teamColors.Three;
   const selectedRoster = useMemo(() => {
     if (selectedTeam && cfbRosterMap) {
       return cfbRosterMap[selectedTeam.ID];
     }
     return null;
   }, [cfbRosterMap, selectedTeam]);
+
+  const selectedTeamProfile = useMemo(() => {
+    if (selectedTeam && teamProfileMap) {
+      return teamProfileMap[selectedTeam.ID]
+    }
+    return null;
+  }, [teamProfileMap, selectedTeam]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = cfbTeamMap ? cfbTeamMap[value] : null;
     setSelectedTeam(nextTeam);
     setCategory(Overview);
   };
+
   const openModal = (action: ModalAction, player: CollegePlayer) => {
     handleOpenModal();
     setModalAction(action);
@@ -525,6 +543,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           Roster={selectedRoster}
+          TeamProfile={selectedTeamProfile}
           isPro={false}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}

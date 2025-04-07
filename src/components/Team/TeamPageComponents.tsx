@@ -25,6 +25,7 @@ interface TeamInfoProps {
   Conference?: string;
   Division?: string;
   Roster?: any;
+  TeamProfile?: any;
   Arena?: string;
   Capacity?: number;
   isPro: boolean;
@@ -45,6 +46,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   GM = "None",
   Scout = "None",
   Marketing = "None",
+  TeamProfile,
   Division,
   Conference = "",
   Arena = "",
@@ -120,7 +122,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         </div>
         {!isMobile && (
         <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
-          {isPro && (
+        {isPro && (
           <CapsheetInfo 
             capsheet={Capsheet} 
             ts={ts} 
@@ -129,7 +131,17 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             backgroundColor={darkerBorder} 
             textColorClass={textColorClass}
           />
-          )}
+        )}
+        {!isPro && (
+          <TeamBreakdown
+            TeamProfile={TeamProfile}
+            ts={ts}
+            league={League}
+            backgroundColor={backgroundColor}
+            borderColor={borderColor}
+            textColorClass={textColorClass}
+          />
+        )}
         </div>
         )}
       </Border>
@@ -272,6 +284,79 @@ export const CapsheetInfo = ({
             </div>
       </div>
       )}
+    </div>
+  );
+};
+
+export const TeamBreakdown = ({
+  TeamProfile,
+  ts,
+  league,
+  backgroundColor,
+  borderColor,
+  textColorClass,
+}: any) => {
+  return (
+    <div
+      className="flex flex-col w-full h-[100%] border-2 rounded-lg py-5"
+      style={{ borderColor, backgroundColor }}
+    >
+    {TeamProfile && (
+      <div className="flex flex-row w-full pb-2 px-1">
+        <div className="flex flex-col items-center w-full">
+          <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
+            Offensive Scheme
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {TeamProfile.OffensiveScheme || "N/A"}
+          </Text>
+        </div>
+        <div className="flex flex-col items-center w-full">
+          <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
+            Defensive Scheme
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {TeamProfile.DefensiveScheme || "N/A"}
+          </Text>
+        </div>
+      </div>
+    )}
+    {TeamProfile && ts && (
+      <div className="flex flex-col w-full border-t border-dotted pt-1 px-1" 
+           style={{ borderColor }}>
+        <Text variant="body-small" classes={`${textColorClass} font-semibold pb-1`}>
+          Incoming Croots
+        </Text>
+        <div className="flex flex-row">
+          <div className="flex flex-col items-center w-full border-r-2 pr-1" 
+               style={{ borderColor }}>
+            <Text variant="xs" classes={`${textColorClass} text-small`}>
+              ⭐⭐⭐
+            </Text>
+            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
+              {TeamProfile.ThreeStars || "0"}
+            </Text>
+          </div>
+          <div className="flex flex-col items-center px-4">
+            <Text variant="xs" classes={`${textColorClass} text-small`}>
+                ⭐⭐⭐⭐
+            </Text>
+            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
+              {TeamProfile.FourStars || "0"}
+            </Text>
+          </div>
+          <div className="flex flex-col items-center w-full border-l-2 pl-1" 
+               style={{ borderColor }}>
+            <Text variant="xs" classes={`${textColorClass} text-small`}>
+              ⭐⭐⭐⭐⭐
+            </Text>
+            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
+              {TeamProfile.FiveStars || "0"}
+            </Text>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
