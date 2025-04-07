@@ -137,7 +137,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             TeamProfile={TeamProfile}
             ts={ts}
             league={League}
-            backgroundColor={backgroundColor}
+            backgroundColor={darkerBorder}
             borderColor={borderColor}
             textColorClass={textColorClass}
           />
