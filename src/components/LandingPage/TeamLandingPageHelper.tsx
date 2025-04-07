@@ -66,6 +66,7 @@ export const getLandingCFBData = (
     // Team Match-Up
     let foundMatch: CollegeGame[] | null = null;
     let gameWeek = currentWeek;
+
     for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
       const testWeek = currentWeek + weekOffset;
       const nextMatch = allCollegeGames.filter(
@@ -73,7 +74,7 @@ export const getLandingCFBData = (
           (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
           game.Week === testWeek
       );
-    
+
       if (nextMatch.length > 0) {
         foundMatch = nextMatch;
         gameWeek = testWeek;
@@ -86,19 +87,30 @@ export const getLandingCFBData = (
     let awayLogo = "";
     let homeLabel = "";
     let awayLabel = "";
-    
+    let gameLocation = "";
+
     if (teamMatchUp.length > 0) {
-      const homeRank = teamMatchUp[0].HomeTeamRank !== 0 
-        ? `#${teamMatchUp[0].HomeTeamRank} `
-        : "";
-      const awayRank = teamMatchUp[0].AwayTeamRank !== 0 
-        ? `#${teamMatchUp[0].AwayTeamRank} `
-        : "";
-    
-      homeLogo = getLogo(league, teamMatchUp[0].HomeTeamID, currentUser?.isRetro);
-      awayLogo = getLogo(league, teamMatchUp[0].AwayTeamID, currentUser?.isRetro);
-      homeLabel = `${homeRank}${teamMatchUp[0].HomeTeam}`;
-      awayLabel = `${awayRank}${teamMatchUp[0].AwayTeam}`;
+      const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+      homeLogo = getLogo(
+        league,
+        isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+        currentUser?.isRetro
+      );
+      awayLogo = getLogo(
+        league,
+        isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+        currentUser?.isRetro
+      );
+
+      homeLabel = isUserTeamHome
+        ? teamMatchUp[0].HomeTeam
+        : teamMatchUp[0].AwayTeam;
+      awayLabel = isUserTeamHome
+        ? teamMatchUp[0].AwayTeam
+        : teamMatchUp[0].HomeTeam;
+
+      gameLocation = isUserTeamHome ? "VS" : "AT";
     }
 
     // Team Schedule
@@ -174,6 +186,7 @@ export const getLandingNFLData = (
       // Team Match-Up
       let foundMatch: NFLGame[] | null = null;
       let gameWeek = currentWeek;
+
       for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
         const testWeek = currentWeek + weekOffset;
         const nextMatch = allProGames.filter(
@@ -181,29 +194,43 @@ export const getLandingNFLData = (
             (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
             game.Week === testWeek
         );
-      
+
         if (nextMatch.length > 0) {
           foundMatch = nextMatch;
           gameWeek = testWeek;
           break;
         }
       }
-    
+
       const teamMatchUp = foundMatch || [];
       let homeLogo = "";
       let awayLogo = "";
       let homeLabel = "";
       let awayLabel = "";
-      
+      let gameLocation = "";
+
       if (teamMatchUp.length > 0) {
-        homeLogo = getLogo(league, 
-          teamMatchUp[0].HomeTeamID, 
-          currentUser?.isRetro);
-        awayLogo = getLogo(league, 
-          teamMatchUp[0].AwayTeamID, 
-          currentUser?.isRetro);
-        homeLabel = teamMatchUp[0].HomeTeam;
-        awayLabel = teamMatchUp[0].AwayTeam;
+        const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+        homeLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+          currentUser?.isRetro
+        );
+        awayLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+          currentUser?.isRetro
+        );
+
+        homeLabel = isUserTeamHome
+          ? teamMatchUp[0].HomeTeam
+          : teamMatchUp[0].AwayTeam;
+        awayLabel = isUserTeamHome
+          ? teamMatchUp[0].AwayTeam
+          : teamMatchUp[0].HomeTeam;
+
+        gameLocation = isUserTeamHome ? "VS" : "AT";
       }
 
       // Team Schedule
@@ -279,6 +306,7 @@ export const getLandingNFLData = (
       // Team Match-Up
       let foundMatch: CBBMatch[] | null = null;
       let gameWeek = currentWeek;
+
       for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
         const testWeek = currentWeek + weekOffset;
         const nextMatch = allCBBGames.filter(
@@ -286,32 +314,43 @@ export const getLandingNFLData = (
             (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
             game.Week === testWeek
         );
-      
+
         if (nextMatch.length > 0) {
           foundMatch = nextMatch;
           gameWeek = testWeek;
           break;
         }
       }
-  
+
       const teamMatchUp = foundMatch || [];
       let homeLogo = "";
       let awayLogo = "";
       let homeLabel = "";
       let awayLabel = "";
-      
+      let gameLocation = "";
+
       if (teamMatchUp.length > 0) {
-        const homeRank = teamMatchUp[0].HomeTeamRank !== 0 
-          ? `#${teamMatchUp[0].HomeTeamRank} `
-          : "";
-        const awayRank = teamMatchUp[0].AwayTeamRank !== 0 
-          ? `#${teamMatchUp[0].AwayTeamRank} `
-          : "";
-      
-        homeLogo = getLogo(league, teamMatchUp[0].HomeTeamID, currentUser?.isRetro);
-        awayLogo = getLogo(league, teamMatchUp[0].AwayTeamID, currentUser?.isRetro);
-        homeLabel = `${homeRank}${teamMatchUp[0].HomeTeam}`;
-        awayLabel = `${awayRank}${teamMatchUp[0].AwayTeam}`;
+        const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+        homeLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+          currentUser?.isRetro
+        );
+        awayLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+          currentUser?.isRetro
+        );
+
+        homeLabel = isUserTeamHome
+          ? teamMatchUp[0].HomeTeam
+          : teamMatchUp[0].AwayTeam;
+        awayLabel = isUserTeamHome
+          ? teamMatchUp[0].AwayTeam
+          : teamMatchUp[0].HomeTeam;
+
+        gameLocation = isUserTeamHome ? "VS" : "AT";
       }
   
       // Team Schedule
@@ -387,6 +426,7 @@ export const getLandingNFLData = (
         // Team Match-Up
         let foundMatch: NBAMatch[] | null = null;
         let gameWeek = currentWeek;
+
         for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
           const testWeek = currentWeek + weekOffset;
           const nextMatch = allNBAGames.filter(
@@ -394,29 +434,43 @@ export const getLandingNFLData = (
               (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
               game.Week === testWeek
           );
-        
+
           if (nextMatch.length > 0) {
             foundMatch = nextMatch;
             gameWeek = testWeek;
             break;
           }
         }
-      
+
         const teamMatchUp = foundMatch || [];
         let homeLogo = "";
         let awayLogo = "";
         let homeLabel = "";
         let awayLabel = "";
-        
+        let gameLocation = "";
+
         if (teamMatchUp.length > 0) {
-          homeLogo = getLogo(league, 
-            teamMatchUp[0].HomeTeamID, 
-            currentUser?.isRetro);
-          awayLogo = getLogo(league, 
-            teamMatchUp[0].AwayTeamID, 
-            currentUser?.isRetro);
-          homeLabel = teamMatchUp[0].HomeTeam;
-          awayLabel = teamMatchUp[0].AwayTeam;
+          const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+          homeLogo = getLogo(
+            league,
+            isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+            currentUser?.isRetro
+          );
+          awayLogo = getLogo(
+            league,
+            isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+            currentUser?.isRetro
+          );
+
+          homeLabel = isUserTeamHome
+            ? teamMatchUp[0].HomeTeam
+            : teamMatchUp[0].AwayTeam;
+          awayLabel = isUserTeamHome
+            ? teamMatchUp[0].AwayTeam
+            : teamMatchUp[0].HomeTeam;
+
+          gameLocation = isUserTeamHome ? "VS" : "AT";
         }
   
         // Team Schedule
@@ -491,6 +545,7 @@ export const getLandingNFLData = (
       // Team Match-Up
       let foundMatch: CHLGame[] | null = null;
       let gameWeek = currentWeek;
+
       for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
         const testWeek = currentWeek + weekOffset;
         const nextMatch = allCHLGames.filter(
@@ -498,7 +553,7 @@ export const getLandingNFLData = (
             (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
             game.Week === testWeek
         );
-      
+
         if (nextMatch.length > 0) {
           foundMatch = nextMatch;
           gameWeek = testWeek;
@@ -511,19 +566,30 @@ export const getLandingNFLData = (
       let awayLogo = "";
       let homeLabel = "";
       let awayLabel = "";
-      
+      let gameLocation = "";
+
       if (teamMatchUp.length > 0) {
-        const homeRank = teamMatchUp[0].HomeTeamRank !== 0 
-          ? `#${teamMatchUp[0].HomeTeamRank} `
-          : "";
-        const awayRank = teamMatchUp[0].AwayTeamRank !== 0 
-          ? `#${teamMatchUp[0].AwayTeamRank} `
-          : "";
-      
-        homeLogo = getLogo(league, teamMatchUp[0].HomeTeamID, currentUser?.isRetro);
-        awayLogo = getLogo(league, teamMatchUp[0].AwayTeamID, currentUser?.isRetro);
-        homeLabel = `${homeRank}${teamMatchUp[0].HomeTeam}`;
-        awayLabel = `${awayRank}${teamMatchUp[0].AwayTeam}`;
+        const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+        homeLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+          currentUser?.isRetro
+        );
+        awayLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+          currentUser?.isRetro
+        );
+
+        homeLabel = isUserTeamHome
+          ? teamMatchUp[0].HomeTeam
+          : teamMatchUp[0].AwayTeam;
+        awayLabel = isUserTeamHome
+          ? teamMatchUp[0].AwayTeam
+          : teamMatchUp[0].HomeTeam;
+
+        gameLocation = isUserTeamHome ? "VS" : "AT";
       }
       
       // Team Schedule
@@ -596,6 +662,7 @@ export const getLandingNFLData = (
       // Team Match-Up
       let foundMatch: PHLGame[] | null = null;
       let gameWeek = currentWeek;
+
       for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
         const testWeek = currentWeek + weekOffset;
         const nextMatch = allPHLGames.filter(
@@ -603,29 +670,43 @@ export const getLandingNFLData = (
             (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
             game.Week === testWeek
         );
-      
+
         if (nextMatch.length > 0) {
           foundMatch = nextMatch;
           gameWeek = testWeek;
           break;
         }
       }
-    
+
       const teamMatchUp = foundMatch || [];
       let homeLogo = "";
       let awayLogo = "";
       let homeLabel = "";
       let awayLabel = "";
-      
+      let gameLocation = "";
+
       if (teamMatchUp.length > 0) {
-        homeLogo = getLogo(league, 
-          teamMatchUp[0].HomeTeamID, 
-          currentUser?.isRetro);
-        awayLogo = getLogo(league, 
-          teamMatchUp[0].AwayTeamID, 
-          currentUser?.isRetro);
-        homeLabel = teamMatchUp[0].HomeTeam;
-        awayLabel = teamMatchUp[0].AwayTeam;
+        const isUserTeamHome = teamMatchUp[0].HomeTeamID === team.ID;
+
+        homeLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].HomeTeamID : teamMatchUp[0].AwayTeamID,
+          currentUser?.isRetro
+        );
+        awayLogo = getLogo(
+          league,
+          isUserTeamHome ? teamMatchUp[0].AwayTeamID : teamMatchUp[0].HomeTeamID,
+          currentUser?.isRetro
+        );
+
+        homeLabel = isUserTeamHome
+          ? teamMatchUp[0].HomeTeam
+          : teamMatchUp[0].AwayTeam;
+        awayLabel = isUserTeamHome
+          ? teamMatchUp[0].AwayTeam
+          : teamMatchUp[0].HomeTeam;
+
+        gameLocation = isUserTeamHome ? "VS" : "AT";
       }
       
       // Team Schedule

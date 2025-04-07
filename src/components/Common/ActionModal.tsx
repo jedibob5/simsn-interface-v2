@@ -30,6 +30,8 @@ interface ActionModalProps {
   modalAction: ModalAction;
   player: any;
   attribute?: string;
+  capsheet?: any;
+  contract?: any;
   cutPlayer?: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer?: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer?: (playerID: number, teamID: number) => Promise<void>;
@@ -48,6 +50,8 @@ export const ActionModal: FC<ActionModalProps> = ({
   league,
   modalAction,
   player,
+  contract,
+  capsheet,
   redshirtPlayer,
   cutPlayer,
   promisePlayer,
@@ -272,12 +276,6 @@ export const ActionModal: FC<ActionModalProps> = ({
             from your recruiting board?
           </Text>
         )}
-        {modalAction === InfoType && (
-          <PlayerInfoModalBody league={league} player={player} />
-        )}
-        {modalAction === RecruitInfoType && (
-          <RecruitInfoModalBody league={league} player={player} />
-        )}
         {modalAction === ToggleScholarshipType && (
           <>
             <Text classes="mb-2">
@@ -319,6 +317,12 @@ export const ActionModal: FC<ActionModalProps> = ({
               ?
             </Text>
           </>
+          )}
+          {modalAction === InfoType && (
+            <PlayerInfoModalBody league={league} player={player} contract={contract} />
+          )}
+          {modalAction === RecruitInfoType && (
+            <RecruitInfoModalBody league={league} player={player}/>
         )}
       </Modal>
     </>

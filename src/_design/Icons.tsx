@@ -6,12 +6,18 @@ import {
   ShieldCheckIcon,
   UserPlusIcon,
   UserIcon,
-  InformationCircleIcon,
+  ArrowsUpDownIcon,
+  CurrencyDollarIcon,
   IdentificationIcon,
+  TagIcon,
+  BuildingOfficeIcon,
   PlusIcon,
   AcademicCapIcon,
   TrashIcon,
   FaceFrownIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  BarsArrowDownIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -68,7 +74,7 @@ export const ShieldCheck: React.FC<LockIconProps> = ({
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
-  return <ShieldCheckIcon className="size-5" />;
+  return <ShieldCheckIcon className={`size-5 ${textColorClass}`} />;
 };
 
 export const UserPlus: React.FC<LockIconProps> = ({
@@ -86,7 +92,7 @@ export const User: React.FC<LockIconProps> = ({
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
-  return <UserIcon className="size-5" />;
+  return <UserIcon className={`size-5 ${textColorClass}`} />;
 };
 
 export const Info: React.FC<LockIconProps> = ({
@@ -107,6 +113,7 @@ export const Plus: React.FC<LockIconProps> = ({
   return <PlusIcon className="size-5" />;
 };
 
+
 export const Scholarship: React.FC<LockIconProps> = ({
   textColorClass = "text-black",
 }) => {
@@ -115,14 +122,29 @@ export const Scholarship: React.FC<LockIconProps> = ({
 
   return <AcademicCapIcon className="size-5" />;
 };
-
-export const SadFace: React.FC<LockIconProps> = ({
+  
+export const ArrowsUpDown: React.FC<LockIconProps> = ({
   textColorClass = "text-black",
 }) => {
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
 
+  return <ArrowsUpDownIcon className="size-5" />;
+};
+
+export const SadFace: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
   return <FaceFrownIcon className="size-5" />;
+};
+export const CurrencyDollar: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+  return <CurrencyDollarIcon className="size-5" />;
 };
 
 export const TrashCan: React.FC<LockIconProps> = ({
@@ -130,6 +152,40 @@ export const TrashCan: React.FC<LockIconProps> = ({
 }) => {
   // ✅ Dynamically set stroke and fill based on the provided textColorClass
   const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
-
   return <TrashIcon className="size-5" />;
+};
+
+export const Tag: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+  return <TagIcon className="size-5" />;
+};
+
+export const BuildingOffice: React.FC<LockIconProps> = ({
+  textColorClass = "text-black",
+}) => {
+  // ✅ Dynamically set stroke and fill based on the provided textColorClass
+  const iconColor = textColorClass === "text-white" ? "#FFF" : "#000";
+
+  return <BuildingOfficeIcon className="size-5" />;
+};
+
+export const CheckCircle: React.FC<LockIconProps> = ({
+  textColorClass = "text-black", // Default color is black
+}) => {
+  return <CheckCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const CrossCircle: React.FC<LockIconProps> = ({
+  textColorClass = "text-black", // Default color is black
+}) => {
+  return <XCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const BarsArrowDown: React.FC<LockIconProps> = ({
+  textColorClass = "text-white", // Default color is black
+}) => {
+  return <BarsArrowDownIcon className={`size-5 ${textColorClass}`} />;
 };

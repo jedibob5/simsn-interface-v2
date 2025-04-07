@@ -27,7 +27,9 @@ import {
   Notification,
   RecruitingTeamProfile,
   Timestamp,
-  FaceDataResponse
+  FaceDataResponse,
+  NFLContract,
+  NFLExtensionOffer
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -93,6 +95,8 @@ interface SimFBAContextProps {
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
+  proContractMap: Record<number, NFLContract> | null;
+  proExtensionMap: Record<number, NFLExtensionOffer> | null;
 }
 
 // ✅ Initial Context State
@@ -149,6 +153,8 @@ const defaultContext: SimFBAContextProps = {
   promisePlayer: async () => {},
   updateCFBRosterMap: () => {},
   playerFaces: {},
+  proContractMap: {},
+  proExtensionMap: {},
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -258,6 +264,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [playerFaces, setPlayerFaces] = useState<{
     [key: number]: FaceDataResponse;
   }>({});
+  const [proContractMap, setProContractMap] = useState<Record<number, NFLContract> | null>({});
+  const [proExtensionMap, setProExtensionMap] = useState<Record<number, NFLExtensionOffer> | null>({});
 
   useEffect(() => {
     if (currentUser && !isFetching.current) {
@@ -285,7 +293,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       nflID = currentUser.NFLTeamID;
     }
     const res = await BootstrapService.GetFBABootstrapData(cfbID, nflID);
-    console.log({ res });
     setCFBTeam(res.CollegeTeam);
     setCFBTeams(res.AllCollegeTeams);
     setNFLTeam(res.ProTeam);
@@ -433,6 +440,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCFBDepthchartMap(res.CollegeDepthChartMap);
     setNFLDepthchartMap(res.NFLDepthChartMap);
     setIsLoadingThree(false);
+    setProContractMap(res.ContractMap);
+    setProExtensionMap(res.ExtensionMap);
   };
 
     const cutCFBPlayer = useCallback(
@@ -534,7 +543,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         promisePlayer,
         cutNFLPlayer,
         updateCFBRosterMap,
-        playerFaces
+        playerFaces,
+        proContractMap,
+        proExtensionMap,
       }}
     >
       {children}
