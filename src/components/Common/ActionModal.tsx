@@ -318,11 +318,11 @@ export const ActionModal: FC<ActionModalProps> = ({
             </Text>
           </>
           )}
-          {modalAction === InfoType && (
-            <PlayerInfoModalBody league={league} player={player} contract={contract} />
-          )}
-          {modalAction === RecruitInfoType && (
-            <RecruitInfoModalBody league={league} player={player}/>
+        {modalAction === InfoType && (
+          <PlayerInfoModalBody league={league} player={player} contract={contract} />
+        )}
+        {modalAction === RecruitInfoType && (
+          <RecruitInfoModalBody league={league} player={player}/>
         )}
       </Modal>
     </>
