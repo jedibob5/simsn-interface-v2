@@ -7,15 +7,18 @@ import {
   SimPHL,
   SimCFB,
   SimNFL,
-  Attributes
+  Attributes,
+  Potentials,
+  Contracts,
+  Overview
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
 import { useAuthStore } from "../../context/AuthContext";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
-import {  CapsheetInfo, TeamInfo } from "./TeamPageComponents";
-import { CHLRosterTable, CFBRosterTable } from "./TeamPageTables";
+import { CapsheetInfo, TeamInfo } from "./TeamPageComponents";
+import { CHLRosterTable, CFBRosterTable, NFLRosterTable, PHLRosterTable } from "./TeamPageTables";
 import { SelectDropdown } from "../../_design/Select";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../_hooks/useSelectStyles";
@@ -24,7 +27,7 @@ import { Text } from "../../_design/Typography";
 import { useModal } from "../../_hooks/useModal";
 import {
   CollegePlayer as CHLPlayer,
-  ProfessionalPlayer,
+  ProfessionalPlayer as PHLPlayer,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer,
@@ -34,15 +37,18 @@ import { useTeamColors } from "../../_hooks/useTeamColors";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
+import { useMobile } from "../../_hooks/useMobile";
+import { CheckCircle } from "../../_design/Icons";
 
 interface TeamPageProps {
   league: League;
+  ts: any;
 }
 
 export const TeamPage: FC<TeamPageProps> = ({ league }) => {
   const { currentUser } = useAuthStore();
   const leagueStore = useLeagueStore();
-  const { selectedLeague, setSelectedLeague } = leagueStore;
+  const { selectedLeague, setSelectedLeague, ts } = leagueStore;
   const { chlTeam, phlTeam } = useSimHCKStore();
   const { cfbTeam, nflTeam } = useSimFBAStore();
 
@@ -70,15 +76,16 @@ export const TeamPage: FC<TeamPageProps> = ({ league }) => {
   return (
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Team">
-        {selectedLeague === SimCHL && chlTeam && <CHLTeamPage />}
-        {selectedLeague === SimPHL && phlTeam && <PHLTeamPage />}
-        {selectedLeague === SimCFB && cfbTeam && <CFBTeamPage />}
+        {selectedLeague === SimCHL && chlTeam && <CHLTeamPage league={league} ts={ts} />}
+        {selectedLeague === SimPHL && phlTeam && <PHLTeamPage league={league} ts={ts}  />}
+        {selectedLeague === SimCFB && cfbTeam && <CFBTeamPage league={league} ts={ts}  />}
+        {selectedLeague === SimNFL && nflTeam && <NFLTeamPage league={league} ts={ts}  />}
       </PageContainer>
     </>
   );
 };
 
-const CHLTeamPage = () => {
+const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -87,6 +94,7 @@ const CHLTeamPage = () => {
     chlRosterMap,
     chlTeamOptions,
     chlStandingsMap,
+    teamProfileMap,
     cutCHLPlayer,
     redshirtPlayer,
     promisePlayer,
@@ -95,7 +103,7 @@ const CHLTeamPage = () => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
-  const [category, setCategory] = useState(Attributes);
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -103,6 +111,7 @@ const CHLTeamPage = () => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
@@ -114,12 +123,23 @@ const CHLTeamPage = () => {
       return chlRosterMap[selectedTeam.ID];
     }
   }, [chlRosterMap, selectedTeam]);
+
+  
+  const selectedTeamProfile = useMemo(() => {
+    if (selectedTeam && teamProfileMap) {
+      return teamProfileMap[selectedTeam.ID]
+    }
+    return null;
+  }, [teamProfileMap, selectedTeam]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = chlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory(Attributes);
+    setCategory(Overview
+    );
   };
+
   const openModal = (action: ModalAction, player: CHLPlayer) => {
     handleOpenModal();
     setModalAction(action);
@@ -147,8 +167,11 @@ const CHLTeamPage = () => {
         <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
-          League={SimCHL}
+          League={league}
+          ts={ts}
           isPro={false}
+          Roster={selectedRoster}
+          TeamProfile={selectedTeamProfile}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
           Conference={selectedTeam?.Conference}
@@ -156,7 +179,6 @@ const CHLTeamPage = () => {
           Capacity={selectedTeam?.ArenaCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -175,21 +197,34 @@ const CHLTeamPage = () => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
-            <Button
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               disabled={selectedTeam?.ID !== chlTeam?.ID}
-              isSelected={category === "Potentials"}
-              onClick={() => setCategory("Potentials")}
+              isSelected={category === Potentials}
+              onClick={() => setCategory(Potentials)}
             >
               <Text variant="small">Potentials</Text>
             </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -198,7 +233,7 @@ const CHLTeamPage = () => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] max-w-[2000px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor,
@@ -208,9 +243,8 @@ const CHLTeamPage = () => {
             team={selectedTeam}
             roster={selectedRoster}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -219,74 +253,140 @@ const CHLTeamPage = () => {
   );
 };
 
-const PHLTeamPage = () => {
+const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
     phlTeam,
     phlTeamMap,
     phlTeamOptions,
-    proRosterMap,
-    capsheetMap,
-    proStandingsMap,
+    proRosterMap: phlRosterMap,
+    capsheetMap: phlCapsheetMap,
+    proStandingsMap: phlStandingsMap,
+    proContractMap: phlContractMap,
+    proExtensionMap: phlExtensionMap,
+    cutPHLPlayer
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
-  const [modalPlayer, setModalPlayer] = useState<ProfessionalPlayer | null>(
+  const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(
     null
   );
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  const backgroundColor = teamColors.One;
-  const borderColor = teamColors.Two;
+  let backgroundColor = teamColors.One;
+  let borderColor = teamColors.Two;
+  if (isBrightColor(backgroundColor)) {
+    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
+  const [isMobile] = useMobile();
+
   const selectedRoster = useMemo(() => {
     if (selectedTeam) {
-      return proRosterMap[selectedTeam.ID];
+      return phlRosterMap[selectedTeam.ID];
     }
-  }, [proRosterMap, selectedTeam]);
+  }, [phlRosterMap, selectedTeam]);
+
+  const rosterContracts = useMemo(() => {
+    if (!selectedRoster || !phlContractMap) return null;
+  
+    return selectedRoster
+      .map(player => {
+        const contract = phlContractMap[player.ID];
+        if (!contract) return null;
+  
+        return {
+          ...contract,
+          Y1BaseSalary: contract.Y1BaseSalary ?
+           parseFloat((contract.Y1BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y2BaseSalary: contract.Y2BaseSalary ? 
+          parseFloat((contract.Y2BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y3BaseSalary: contract.Y3BaseSalary ? 
+          parseFloat((contract.Y3BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y4BaseSalary: contract.Y4BaseSalary ? 
+          parseFloat((contract.Y4BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y5BaseSalary: contract.Y5BaseSalary ? 
+          parseFloat((contract.Y5BaseSalary / 1_000_000).toFixed(2)) : 0,
+          convertValues: contract.convertValues,
+        };
+      })
+      .filter(contract => contract !== null);
+  }, [selectedRoster, phlContractMap]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = phlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Overview);
   };
-  const openModal = (action: ModalAction, player: ProfessionalPlayer) => {
+  const openModal = (action: ModalAction, player: PHLPlayer) => {
     handleOpenModal();
     setModalAction(action);
     setModalPlayer(player);
   };
+  const capsheetMap = useMemo(() => {
+    if (selectedTeam && phlCapsheetMap) {
+      return phlCapsheetMap[selectedTeam.ID];
+    }
+    return null;
+  }, [phlCapsheetMap, selectedTeam]);
+
+  const playerContract = useMemo(() => {
+    if (modalPlayer && phlContractMap) {
+      return phlContractMap[modalPlayer.ID];
+    }
+  }, [phlContractMap, modalPlayer]);
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-x-2">
-        <TeamInfo
+          {modalPlayer && (
+        <ActionModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          contract={playerContract}
+          playerID={modalPlayer.ID}
+          playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+          teamID={modalPlayer.TeamID}
+          league={SimPHL}
+          modalAction={modalAction}
+          player={modalPlayer}
+          cutPlayer={cutPHLPlayer}
+        />
+      )}
+      <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
+      <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
-          League={SimPHL}
-          isPro
+          Roster={selectedRoster}
+          League={league}
+          ts={ts}
+          isPro={true}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
+          Owner={selectedTeam?.Owner}
+          GM={selectedTeam?.GM}
+          Scout={selectedTeam?.Scout}
+          Capsheet={capsheetMap}
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Arena}
           Capacity={selectedTeam?.ArenaCapacity}
-          colorOne={teamColors.One}
-          colorTwo={teamColors.Two}
-          colorThree={teamColors.Three}
+          colorOne={backgroundColor}
+          colorTwo={borderColor}
         />
-        <CapsheetInfo />
       </div>
       <div className="flex flex-row md:flex-col w-full">
         <Border
           direction="row"
-          classes="w-full px-4 gap-x-2"
+          classes="w-full p-2 gap-x-2"
           styles={{
-            backgroundColor: secondaryBorderColor,
+            backgroundColor: backgroundColor,
             borderColor,
           }}
         >
@@ -296,22 +396,43 @@ const PHLTeamPage = () => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-4">
-            <Button
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (<Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+            {!isMobile && (
+            <Button
+            size="sm"
+            isSelected={category === Contracts}
+            onClick={() => setCategory(Contracts)}
+            >
+            <Text variant="small">Contracts</Text>
+            </Button>
+            )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
-            <Button
+          )}
+            {!isMobile && (
+              <Button
               size="sm"
               disabled={selectedTeam?.ID !== phlTeam?.ID}
-              isSelected={category === "Potentials"}
-              onClick={() => setCategory("Potentials")}
+              isSelected={category === Potentials}
+              onClick={() => setCategory(Potentials)}
             >
               <Text variant="small">Potentials</Text>
             </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -319,19 +440,28 @@ const PHLTeamPage = () => {
         </Border>
       </div>
       <Border
-        classes="px-2 lg:w-full min-[320px]:w-[25rem] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
+        classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
         styles={{
-          backgroundColor: secondaryBorderColor,
+          backgroundColor: backgroundColor,
           borderColor,
         }}
       >
-        Player Table Here
+        <PHLRosterTable
+            roster={selectedRoster}
+            contracts={rosterContracts}
+            ts={ts}
+            team={selectedTeam}
+            category={category}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
+            openModal={openModal}
+          />
       </Border>
     </>
   );
 };
 
-const CFBTeamPage = () => {
+const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
   const {
@@ -339,7 +469,7 @@ const CFBTeamPage = () => {
     cfbTeamMap,
     cfbRosterMap,
     cfbTeamOptions,
-    cfbStandingsMap,
+    teamProfileMap,
     cutCFBPlayer,
     redshirtPlayer,
     promisePlayer,
@@ -348,7 +478,7 @@ const CFBTeamPage = () => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CollegePlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
-  const [category, setCategory] = useState("Attributes");
+  const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -356,24 +486,33 @@ const CFBTeamPage = () => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
 
-  const secondaryBorderColor = teamColors.Three;
   const selectedRoster = useMemo(() => {
     if (selectedTeam && cfbRosterMap) {
       return cfbRosterMap[selectedTeam.ID];
     }
     return null;
   }, [cfbRosterMap, selectedTeam]);
+
+  const selectedTeamProfile = useMemo(() => {
+    if (selectedTeam && teamProfileMap) {
+      return teamProfileMap[selectedTeam.ID]
+    }
+    return null;
+  }, [teamProfileMap, selectedTeam]);
+
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = cfbTeamMap ? cfbTeamMap[value] : null;
     setSelectedTeam(nextTeam);
-    setCategory("Attributes");
+    setCategory(Overview);
   };
+
   const openModal = (action: ModalAction, player: CollegePlayer) => {
     handleOpenModal();
     setModalAction(action);
@@ -401,7 +540,10 @@ const CFBTeamPage = () => {
         <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
-          League={SimCFB}
+          League={league}
+          ts={ts}
+          Roster={selectedRoster}
+          TeamProfile={selectedTeamProfile}
           isPro={false}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
           Coach={selectedTeam?.Coach}
@@ -410,7 +552,6 @@ const CFBTeamPage = () => {
           Capacity={selectedTeam?.StadiumCapacity}
           colorOne={backgroundColor}
           colorTwo={borderColor}
-          colorThree={teamColors.Three}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -428,14 +569,25 @@ const CFBTeamPage = () => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-4">
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
             <Button
               size="sm"
-              isSelected={category === "Attributes"}
-              onClick={() => setCategory("Attributes")}
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
             >
               <Text variant="small">Attributes</Text>
             </Button>
+          )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -454,9 +606,8 @@ const CFBTeamPage = () => {
             roster={selectedRoster}
             team={selectedTeam}
             category={category}
-            colorOne={teamColors.One}
-            colorTwo={teamColors.Two}
-            colorThree={teamColors.Three}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -464,3 +615,202 @@ const CFBTeamPage = () => {
     </>
   );
 };
+
+const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
+  const { currentUser } = useAuthStore();
+  const fbStore = useSimFBAStore();
+  const {
+    nflTeam,
+    proTeamMap: nflTeamMap,
+    proRosterMap: nflRosterMap,
+    nflTeamOptions,
+    proStandingsMap: nflStandingsMap,
+    cutNFLPlayer,
+    capsheetMap: nflCapsheetMap,
+    proContractMap: nflContractMap,
+  } = fbStore;
+  const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
+  const [modalAction, setModalAction] = useState<ModalAction>(Cut);
+  const [modalPlayer, setModalPlayer] = useState<NFLPlayer | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState(nflTeam);
+  const [category, setCategory] = useState(Overview);
+  const teamColors = useTeamColors(
+    selectedTeam?.ColorOne,
+    selectedTeam?.ColorTwo,
+    selectedTeam?.ColorThree
+  );
+  let backgroundColor = teamColors.One;
+  let borderColor = teamColors.Two;
+  const [isMobile] = useMobile();
+
+  if (isBrightColor(backgroundColor)) {
+    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  }
+
+  const selectedRoster = useMemo(() => {
+    if (selectedTeam && nflRosterMap) {
+      return nflRosterMap[selectedTeam.ID];
+    }
+    return null;
+  }, [nflRosterMap, selectedTeam]);
+
+  const rosterContracts = useMemo(() => {
+    if (!selectedRoster || !nflContractMap) return null;
+  
+    return selectedRoster
+      .map(player => {
+        const contract = nflContractMap[player.ID];
+        if (!contract) return null;
+  
+        return {
+          ...contract,
+          Y1Bonus: parseFloat(contract.Y1Bonus.toFixed(2)),
+          Y1BaseSalary: parseFloat(contract.Y1BaseSalary.toFixed(2)),
+          Y2Bonus: parseFloat(contract.Y2Bonus.toFixed(2)),
+          Y2BaseSalary: parseFloat(contract.Y2BaseSalary.toFixed(2)),
+          Y3Bonus: parseFloat(contract.Y3Bonus.toFixed(2)),
+          Y3BaseSalary: parseFloat(contract.Y3BaseSalary.toFixed(2)),
+          Y4Bonus: parseFloat(contract.Y4Bonus.toFixed(2)),
+          Y4BaseSalary: parseFloat(contract.Y4BaseSalary.toFixed(2)),
+          Y5Bonus: parseFloat(contract.Y5Bonus.toFixed(2)),
+          Y5BaseSalary: parseFloat(contract.Y5BaseSalary.toFixed(2)),
+          convertValues: contract.convertValues,
+        };
+      })
+      .filter(contract => contract !== null);
+  }, [selectedRoster, nflContractMap]);
+
+  const selectTeamOption = (opts: SingleValue<SelectOption>) => {
+    const value = Number(opts?.value);
+    const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
+    setSelectedTeam(nextTeam);
+    setCategory(Overview);
+  };
+  const openModal = (action: ModalAction, player: NFLPlayer) => {
+    handleOpenModal();
+    setModalAction(action);
+    setModalPlayer(player);
+  };
+  const capsheetMap = useMemo(() => {
+    if (selectedTeam && nflCapsheetMap) {
+      return nflCapsheetMap[selectedTeam.ID];
+    }
+    return null;
+  }, [nflCapsheetMap, selectedTeam]);
+
+  const playerContract = useMemo(() => {
+    if (modalPlayer && nflContractMap) {
+      return nflContractMap[modalPlayer.ID];
+    }
+  }, [nflContractMap, modalPlayer]);
+
+  return (
+    <>
+      {modalPlayer && (
+        <ActionModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          playerID={modalPlayer.ID}
+          playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+          teamID={modalPlayer.TeamID}
+          league={SimNFL}
+          contract={playerContract}
+          modalAction={modalAction}
+          player={modalPlayer}
+          cutPlayer={cutNFLPlayer}
+        />
+      )}
+      <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
+        <TeamInfo
+          id={selectedTeam?.ID}
+          isRetro={currentUser?.isRetro}
+          Roster={selectedRoster}
+          League={league}
+          ts={ts}
+          isPro={true}
+          TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
+          Coach={selectedTeam?.NFLCoachName}
+          Owner={selectedTeam?.NFLOwnerName}
+          GM={selectedTeam?.NFLGMName}
+          Scout={selectedTeam?.NFLAssistantName}
+          Capsheet={capsheetMap}
+          Conference={selectedTeam?.Conference}
+          Arena={selectedTeam?.Stadium}
+          Capacity={selectedTeam?.StadiumCapacity}
+          colorOne={backgroundColor}
+          colorTwo={borderColor}
+        />
+      </div>
+      <div className="flex flex-row md:flex-col w-full">
+        <Border
+          direction="row"
+          classes="w-full p-2 gap-x-2"
+          styles={{
+            backgroundColor: backgroundColor,
+            borderColor,
+          }}
+        >
+          <div className="flex w-full">
+            <SelectDropdown
+              options={nflTeamOptions}
+              onChange={selectTeamOption}
+            />
+          </div>
+          <div className="flex flex-row gap-x-1 sm:gap-x-4">
+          {!isMobile && (
+            <Button
+              size="sm"
+              isSelected={category === Overview}
+              onClick={() => setCategory(Overview)}
+            >
+              <Text variant="small">Overview</Text>
+            </Button>
+          )}
+          {!isMobile && (
+            <Button
+              size="sm"
+              isSelected={category === Contracts}
+              onClick={() => setCategory(Contracts)}
+            >
+              <Text variant="small">Contracts</Text>
+            </Button>
+          )}
+            {!isMobile && (
+              <Button
+              size="sm"
+              isSelected={category === Attributes}
+              onClick={() => setCategory(Attributes)}
+            >
+              <Text variant="small">Attributes</Text>
+            </Button>
+          )}
+            <Button variant="primary" size="sm">
+              <Text variant="small">Export</Text>
+            </Button>
+          </div>
+        </Border>
+      </div>
+      {selectedRoster && (
+        <Border
+          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          styles={{
+            backgroundColor: backgroundColor,
+            borderColor,
+          }}
+        >
+          <NFLRosterTable
+            roster={selectedRoster}
+            contracts={rosterContracts}
+            ts={ts}
+            team={selectedTeam}
+            category={category}
+            colorOne={backgroundColor}
+            colorTwo={borderColor}
+            openModal={openModal}
+          />
+        </Border>
+      )}
+    </>
+  );
+};
+

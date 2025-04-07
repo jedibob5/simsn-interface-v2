@@ -190,35 +190,46 @@ interface TeamMatchUpProps {
   isLoadingTwo: boolean;
 }
 
-export const TeamMatchUp = ({ team, week, league, ts, matchUp,
-                              homeLogo, awayLogo,
-                              homeLabel, awayLabel,
-                              backgroundColor, borderColor, isLoadingTwo }:
-                              TeamMatchUpProps) => {
-
-  const textColorClass = getTextColorBasedOnBg(backgroundColor)
+export const TeamMatchUp = ({
+  team,
+  week,
+  league,
+  ts,
+  matchUp,
+  homeLogo,
+  awayLogo,
+  homeLabel,
+  awayLabel,
+  backgroundColor,
+  borderColor,
+  isLoadingTwo,
+}: TeamMatchUpProps) => {
+  const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const revealResult = matchUp.length > 0 && RevealFBResults(matchUp[0], ts, league);
+
   let resultColor = "";
   let gameScore = "";
+  let gameLocation = "";
+
   if (revealResult) {
     const isHomeGame = matchUp[0].HomeTeamID === team.ID;
-    if (isHomeGame) {
-      resultColor = matchUp[0].HomeTeamWin ? "text-green-500" : "text-red-500";
-      gameScore = `${matchUp[0].HomeTeamScore} - ${matchUp[0].AwayTeamScore}`;
-    } else {
-      resultColor = matchUp[0].AwayTeamWin ? "text-green-500" : "text-red-500";
-      gameScore = `${matchUp[0].HomeTeamScore} - ${matchUp[0].AwayTeamScore}`;
-    }
+    const userTeamScore = isHomeGame ? matchUp[0].HomeTeamScore : matchUp[0].AwayTeamScore;
+    const opponentScore = isHomeGame ? matchUp[0].AwayTeamScore : matchUp[0].HomeTeamScore;
+
+    resultColor = userTeamScore > opponentScore ? "text-green-500" : "text-red-500";
+    gameScore = `${userTeamScore} - ${opponentScore}`;
+    gameLocation = isHomeGame ? "VS" : "AT";
   }
 
   return (
-    <SectionCards team={team} 
-                  header={`Next Game`} 
-                  classes={`${textColorClass}`}>
+    <SectionCards
+      team={team}
+      header={`Next Game`}
+      classes={`${textColorClass}`}
+    >
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
-          <Text variant="small" 
-                classes={`${textColorClass}`}>
+          <Text variant="small" classes={`${textColorClass}`}>
             Loading...
           </Text>
         </div>
@@ -226,32 +237,31 @@ export const TeamMatchUp = ({ team, week, league, ts, matchUp,
         <>
           <div className="flex justify-center">
             <div className="flex-col pb-2">
-              <Logo variant="large" 
-                    containerClass="max-w-24" 
-                    url={homeLogo} />
-              <Text variant="small" 
-                    classes={`${textColorClass} 
-                              font-semibold`} 
-                    className="pr-1">
+              <Logo variant="large" containerClass="max-w-24" url={homeLogo} />
+              <Text
+                variant="small"
+                classes={`${textColorClass} font-semibold`}
+                className="pr-1"
+              >
                 {homeLabel}
               </Text>
               <Text variant="xs" classes="opacity-70">
                 {`HC ${matchUp[0].HomeTeamCoach}`}
               </Text>
             </div>
-            <Text variant="small" 
-                  classes={`${textColorClass} 
-                            self-center 
-                            font-semibold`}>
-              vs
+            <Text
+              variant="small"
+              classes={`${textColorClass} self-center font-semibold`}
+            >
+              {gameLocation}
             </Text>
             <div className="flex-col">
-              <Logo variant="large"
-                    containerClass="max-w-24" 
-                    url={awayLogo} />
-              <Text variant="small" 
-                    classes={`${textColorClass} font-semibold`} 
-                    className="pl-1">
+              <Logo variant="large" containerClass="max-w-24" url={awayLogo} />
+              <Text
+                variant="small"
+                classes={`${textColorClass} font-semibold`}
+                className="pl-1"
+              >
                 {awayLabel}
               </Text>
               <Text variant="xs" classes="opacity-70">
@@ -260,26 +270,35 @@ export const TeamMatchUp = ({ team, week, league, ts, matchUp,
             </div>
           </div>
           <div className="flex-col items-center">
-          {revealResult && (
-            <Text variant="h6" 
-                  classes={`${resultColor} font-semibold`} 
-                  style={{ textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                                        -0.5px -0.5px 0 ${borderColor}, 
-                                        0.5px -0.5px 0 ${borderColor}, 
-                                        -0.5px 0.5px 0 ${borderColor}` }}>
-              {`${gameScore}`}
-            </Text>
-          )}
+            {revealResult && (
+              <Text
+                variant="h6"
+                classes={`${resultColor} font-semibold`}
+                style={{
+                  textShadow: `0.5px 0.5px 0 ${borderColor}, 
+                               -0.5px -0.5px 0 ${borderColor}, 
+                               0.5px -0.5px 0 ${borderColor}, 
+                               -0.5px 0.5px 0 ${borderColor}`,
+                }}
+              >
+                {`${gameScore}`}
+              </Text>
+            )}
             <Text variant="small">{`Week ${week}`}</Text>
             <Text variant="small">
-              {matchUp[0].IsConference ? (matchUp[0].IsDivisional ? 
-                    "Conference Divisional Game" : 
-                    "Conference Game") : 
-                    "Non-Conference Game"}
+              {matchUp[0].IsConference
+                ? matchUp[0].IsDivisional
+                  ? "Conference Divisional Game"
+                  : "Conference Game"
+                : "Non-Conference Game"}
             </Text>
             <div className="flex justify-center gap-2 pt-1">
-              <Button variant="primary" size="sm">Depth Chart</Button>
-              <Button variant="primary" size="sm">Gameplan</Button>
+              <Button variant="primary" size="sm">
+                Depth Chart
+              </Button>
+              <Button variant="primary" size="sm">
+                Gameplan
+              </Button>
             </div>
           </div>
         </>
@@ -289,8 +308,8 @@ export const TeamMatchUp = ({ team, week, league, ts, matchUp,
         </Text>
       )}
     </SectionCards>
-  )
-}
+  );
+};
 
 interface TeamOverviewProps {
   team: any;
