@@ -1,12 +1,10 @@
 import { useMemo, useState } from "react";
-import { useAuthStore } from "../../../context/AuthContext";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { useModal } from "../../../_hooks/useModal";
 import {
   Attributes,
   Canada,
   CanadaRegionOptions,
-  InfoType,
   ModalAction,
   RecruitInfoType,
   RecruitingCategory,
@@ -27,8 +25,6 @@ import {
 } from "../../../models/hockeyModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
-import { CHLRecruitLockedMessages } from "../../../_constants/loadMessages";
-import { GenerateNumberFromRange } from "../../../_helper/utilHelper";
 
 export const useCHLRecruiting = () => {
   const hkStore = useSimHCKStore();

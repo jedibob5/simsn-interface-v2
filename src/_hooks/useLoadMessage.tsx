@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { GenerateNumberFromRange } from "../_helper/utilHelper";
 
 export const useLoadMessage = (

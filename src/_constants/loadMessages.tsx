@@ -127,11 +127,12 @@ export const CFBRecruitLockedMessages = [
 ];
 
 export const CHLRecruitLockedMessages = [
-  "If you're seeing this, Recruiting is currently being synced. No, you can't view your board right now. Nor can you ask to see who's being synced in real time. Please make a bowl of Froot Loops cereal in the meantime to enjoy the moment and to increase your odds in the recruit sync.",
-  "My dude, recruiting is currently in-sync. Please wait until it's finished. Until then, make some tea and enjoy the next few minutes. Please check Discord for news on the completion of this week's recruiting sync.",
+  "No, you can't view your board right now. Nor can you ask to see who's being synced in real time. Please make a bowl of Froot Loops cereal in the meantime to enjoy the moment and to increase your odds in the recruit sync.",
+  "Please wait until it's finished. Until then, make some tea and enjoy the next few minutes. Please check Discord for news on the completion of this week's recruiting sync.",
   "Sync is currently running... please be patient while the Ivy League schools count the numbers, smidge the numbers in their favor and return the results.",
   "Do you think recruits dream while the sync runs? Probably not, they're only pieces of data after all.",
   "This is load message #5.",
+  "Please be careful when refreshing the page, the sync is currently running...",
   "Please do not feed the recruits while the sync is running.",
   "Somewhere, in the middle of this recruiting sync, that highly-talented athlete is getting their NIL money and spending it on a Bentley. But they're not going to commit to Bentley University. That is a tragedy.",
   "The sync is running...",

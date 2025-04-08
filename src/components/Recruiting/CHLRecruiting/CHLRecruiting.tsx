@@ -457,7 +457,7 @@ export const CHLRecruiting = () => {
                 }}
               >
                 <Text variant="h2" classes="mb-6">
-                  Recruiting is Locked! Please wait for the sync to complete.
+                  Recruiting Sync is Running!
                 </Text>
                 <Text variant="h5">{lockMessage}</Text>
               </Border>
