@@ -24,6 +24,26 @@
   -webkit-text-size-adjust: 100%;
 }
 
+html.dark {
+  color-scheme: dark;
+}
+html.dark,
+html.dark body,
+html.dark #root {
+  background-color: #242424;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+html.light {
+  color-scheme: light;
+}
+html.light,
+html.light body,
+html.light #root {
+  background-color: #ffffff;
+  color: #213547;
+}
+
 .table-header-group {
   z-index: 1;
 }
@@ -73,22 +93,6 @@ input {
   padding: 0.5rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-/* OLD STYLE */
-/* Hero Container + Nav for all pages */
-/* Background Image */
 p {
   font-size: 1.6vh;
 }
@@ -240,122 +244,6 @@ h2 {
   color: var(--bs-body-bg);
 }
 
-.landing-image {
-  max-height: 50px !important;
-}
-
-.landing-page-row {
-  margin-left: 0.1rem;
-  font-size: 1.6vh;
-}
-
-.landing-page-row h6 {
-  font-size: 1.6vh;
-}
-
-.form-check {
-  font-size: 1.6vh;
-}
-
-.dropdown-item {
-  font-size: 1.6vh;
-}
-
-.mobile-card-viewer {
-  width: 92vw !important;
-}
-
-.img-lp-match {
-  max-height: 75px;
-  max-width: 75px;
-}
-
-.img-match {
-  max-height: 100px;
-  max-width: 100px;
-}
-
-.img-match-schedule {
-  max-height: 125px;
-  max-width: 125px;
-}
-
-.bba-match-row {
-  /* max-width: 27vw; */
-  font-size: 12px;
-  /* height: 125px; */
-}
-
-.bba-match-row h5 {
-  font-size: 1rem;
-}
-
-.bba-match-row h6 {
-  font-size: 0.8rem;
-}
-
-.bba-match-row p {
-  margin-bottom: 0.5rem;
-}
-
-.bba-match-schedule {
-  height: 75px;
-  object-fit: contain;
-}
-
-.image-nfl-roster {
-  max-height: 16px !important;
-  max-width: 16px !important;
-}
-
-.image-nfl-fa {
-  max-height: 24px !important;
-  max-width: 24px !important;
-}
-
-.image-nfl-player-modal {
-  max-height: 32px !important;
-  max-width: 32px !important;
-}
-
-.image-nfl-team {
-  max-height: 64px !important;
-  max-width: 64px !important;
-}
-
-.image-college-team {
-  max-height: 32px !important;
-  max-width: 32px !important;
-}
-
-/* Schedule Styles */
-.image-standings-logo {
-  max-height: 30px !important;
-  max-width: 30px !important;
-}
-
-.nfl-standings-container {
-  font-size: 1.6vh !important;
-  max-width: 34rem !important;
-}
-
-.standings-container {
-  font-size: 14px !important;
-  max-width: 22rem !important;
-}
-
-.cbb-modal {
-  --bs-modal-margin: 6rem !important;
-}
-
-.modal-game {
-  min-width: 85vw;
-}
-
-.modal-col {
-  flex: 0.75 0 0%;
-}
-
 .text-small {
   font-size: 1.35vh !important;
 }
@@ -366,44 +254,6 @@ h2 {
 /* logo */
 .logo {
   height: 36vh;
-}
-
-.userInterface {
-  padding: 24px;
-  border-radius: 10px;
-}
-
-.availableTeams {
-  overflow-y: auto;
-}
-
-.availableScrollbar {
-  padding: 6px;
-  overflow-x: hidden;
-}
-
-.availableText {
-  color: white;
-}
-
-.jumbotron-shadow {
-  -webkit-box-shadow: 2px 5px 15px 2px rgba(0, 0, 0, 0.69);
-  box-shadow: 2px 5px 15px 2px rgba(0, 0, 0, 0.69);
-  border-style: none !important;
-}
-
-/* End of Hero Container + Nav */
-
-/* For Available Teams + Roster page */
-.scrollbar {
-  padding: 6px;
-  margin: auto;
-  max-width: 1100px;
-}
-
-.scrollbar-dc {
-  padding: 6px;
-  max-width: 92vw;
 }
 
 /* Specific UI height for Available Teams UI */
