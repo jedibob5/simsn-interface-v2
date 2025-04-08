@@ -1,5 +1,6 @@
 firebase-config.js
 firebase-config.ts
+.env
 
 # Logs
 logs
