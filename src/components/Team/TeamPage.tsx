@@ -10,15 +10,20 @@ import {
   Attributes,
   Potentials,
   Contracts,
-  Overview
+  Overview,
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
 import { useAuthStore } from "../../context/AuthContext";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
-import { CapsheetInfo, TeamInfo } from "./TeamPageComponents";
-import { CHLRosterTable, CFBRosterTable, NFLRosterTable, PHLRosterTable } from "./TeamPageTables";
+import { TeamInfo } from "./TeamPageComponents";
+import {
+  CHLRosterTable,
+  CFBRosterTable,
+  NFLRosterTable,
+  PHLRosterTable,
+} from "./TeamPageTables";
 import { SelectDropdown } from "../../_design/Select";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../_hooks/useSelectStyles";
@@ -29,16 +34,12 @@ import {
   CollegePlayer as CHLPlayer,
   ProfessionalPlayer as PHLPlayer,
 } from "../../models/hockeyModels";
-import {
-  CollegePlayer,
-  NFLPlayer,
-} from "../../models/footballModels"
+import { CollegePlayer, NFLPlayer } from "../../models/footballModels";
 import { useTeamColors } from "../../_hooks/useTeamColors";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
 import { useMobile } from "../../_hooks/useMobile";
-import { CheckCircle } from "../../_design/Icons";
 
 interface TeamPageProps {
   league: League;
@@ -76,10 +77,18 @@ export const TeamPage: FC<TeamPageProps> = ({ league }) => {
   return (
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Team">
-        {selectedLeague === SimCHL && chlTeam && <CHLTeamPage league={league} ts={ts} />}
-        {selectedLeague === SimPHL && phlTeam && <PHLTeamPage league={league} ts={ts}  />}
-        {selectedLeague === SimCFB && cfbTeam && <CFBTeamPage league={league} ts={ts}  />}
-        {selectedLeague === SimNFL && nflTeam && <NFLTeamPage league={league} ts={ts}  />}
+        {selectedLeague === SimCHL && chlTeam && (
+          <CHLTeamPage league={league} ts={ts} />
+        )}
+        {selectedLeague === SimPHL && phlTeam && (
+          <PHLTeamPage league={league} ts={ts} />
+        )}
+        {selectedLeague === SimCFB && cfbTeam && (
+          <CFBTeamPage league={league} ts={ts} />
+        )}
+        {selectedLeague === SimNFL && nflTeam && (
+          <NFLTeamPage league={league} ts={ts} />
+        )}
       </PageContainer>
     </>
   );
@@ -124,10 +133,9 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     }
   }, [chlRosterMap, selectedTeam]);
 
-  
   const selectedTeamProfile = useMemo(() => {
     if (selectedTeam && teamProfileMap) {
-      return teamProfileMap[selectedTeam.ID]
+      return teamProfileMap[selectedTeam.ID];
     }
     return null;
   }, [teamProfileMap, selectedTeam]);
@@ -136,8 +144,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     const value = Number(opts?.value);
     const nextTeam = chlTeamMap[value];
     setSelectedTeam(nextTeam);
-    setCategory(Overview
-    );
+    setCategory(Overview);
   };
 
   const openModal = (action: ModalAction, player: CHLPlayer) => {
@@ -197,33 +204,33 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-          {!isMobile && (
-            <Button
-              size="sm"
-              isSelected={category === Overview}
-              onClick={() => setCategory(Overview)}
-            >
-              <Text variant="small">Overview</Text>
-            </Button>
-          )}
             {!isMobile && (
               <Button
-              size="sm"
-              isSelected={category === Attributes}
-              onClick={() => setCategory(Attributes)}
-            >
-              <Text variant="small">Attributes</Text>
-            </Button>
-          )}
+                size="sm"
+                isSelected={category === Overview}
+                onClick={() => setCategory(Overview)}
+              >
+                <Text variant="small">Overview</Text>
+              </Button>
+            )}
             {!isMobile && (
               <Button
-              size="sm"
-              disabled={selectedTeam?.ID !== chlTeam?.ID}
-              isSelected={category === Potentials}
-              onClick={() => setCategory(Potentials)}
-            >
-              <Text variant="small">Potentials</Text>
-            </Button>
+                size="sm"
+                isSelected={category === Attributes}
+                onClick={() => setCategory(Attributes)}
+              >
+                <Text variant="small">Attributes</Text>
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                size="sm"
+                disabled={selectedTeam?.ID !== chlTeam?.ID}
+                isSelected={category === Potentials}
+                onClick={() => setCategory(Potentials)}
+              >
+                <Text variant="small">Potentials</Text>
+              </Button>
             )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
@@ -265,13 +272,11 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proStandingsMap: phlStandingsMap,
     proContractMap: phlContractMap,
     proExtensionMap: phlExtensionMap,
-    cutPHLPlayer
+    cutPHLPlayer,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
-  const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(
-    null
-  );
+  const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
   const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
@@ -296,28 +301,33 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 
   const rosterContracts = useMemo(() => {
     if (!selectedRoster || !phlContractMap) return null;
-  
+
     return selectedRoster
-      .map(player => {
+      .map((player) => {
         const contract = phlContractMap[player.ID];
         if (!contract) return null;
-  
+
         return {
           ...contract,
-          Y1BaseSalary: contract.Y1BaseSalary ?
-           parseFloat((contract.Y1BaseSalary / 1_000_000).toFixed(2)) : 0,
-          Y2BaseSalary: contract.Y2BaseSalary ? 
-          parseFloat((contract.Y2BaseSalary / 1_000_000).toFixed(2)) : 0,
-          Y3BaseSalary: contract.Y3BaseSalary ? 
-          parseFloat((contract.Y3BaseSalary / 1_000_000).toFixed(2)) : 0,
-          Y4BaseSalary: contract.Y4BaseSalary ? 
-          parseFloat((contract.Y4BaseSalary / 1_000_000).toFixed(2)) : 0,
-          Y5BaseSalary: contract.Y5BaseSalary ? 
-          parseFloat((contract.Y5BaseSalary / 1_000_000).toFixed(2)) : 0,
+          Y1BaseSalary: contract.Y1BaseSalary
+            ? parseFloat((contract.Y1BaseSalary / 1_000_000).toFixed(2))
+            : 0,
+          Y2BaseSalary: contract.Y2BaseSalary
+            ? parseFloat((contract.Y2BaseSalary / 1_000_000).toFixed(2))
+            : 0,
+          Y3BaseSalary: contract.Y3BaseSalary
+            ? parseFloat((contract.Y3BaseSalary / 1_000_000).toFixed(2))
+            : 0,
+          Y4BaseSalary: contract.Y4BaseSalary
+            ? parseFloat((contract.Y4BaseSalary / 1_000_000).toFixed(2))
+            : 0,
+          Y5BaseSalary: contract.Y5BaseSalary
+            ? parseFloat((contract.Y5BaseSalary / 1_000_000).toFixed(2))
+            : 0,
           convertValues: contract.convertValues,
         };
       })
-      .filter(contract => contract !== null);
+      .filter((contract) => contract !== null);
   }, [selectedRoster, phlContractMap]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
@@ -346,7 +356,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 
   return (
     <>
-          {modalPlayer && (
+      {modalPlayer && (
         <ActionModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
@@ -361,7 +371,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         />
       )}
       <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
-      <TeamInfo
+        <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
           Roster={selectedRoster}
@@ -397,41 +407,42 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-          {!isMobile && (<Button
-              size="sm"
-              isSelected={category === Overview}
-              onClick={() => setCategory(Overview)}
-            >
-              <Text variant="small">Overview</Text>
-            </Button>
-          )}
             {!isMobile && (
-            <Button
-            size="sm"
-            isSelected={category === Contracts}
-            onClick={() => setCategory(Contracts)}
-            >
-            <Text variant="small">Contracts</Text>
-            </Button>
+              <Button
+                size="sm"
+                isSelected={category === Overview}
+                onClick={() => setCategory(Overview)}
+              >
+                <Text variant="small">Overview</Text>
+              </Button>
             )}
             {!isMobile && (
               <Button
-              size="sm"
-              isSelected={category === Attributes}
-              onClick={() => setCategory(Attributes)}
-            >
-              <Text variant="small">Attributes</Text>
-            </Button>
-          )}
+                size="sm"
+                isSelected={category === Contracts}
+                onClick={() => setCategory(Contracts)}
+              >
+                <Text variant="small">Contracts</Text>
+              </Button>
+            )}
             {!isMobile && (
               <Button
-              size="sm"
-              disabled={selectedTeam?.ID !== phlTeam?.ID}
-              isSelected={category === Potentials}
-              onClick={() => setCategory(Potentials)}
-            >
-              <Text variant="small">Potentials</Text>
-            </Button>
+                size="sm"
+                isSelected={category === Attributes}
+                onClick={() => setCategory(Attributes)}
+              >
+                <Text variant="small">Attributes</Text>
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                size="sm"
+                disabled={selectedTeam?.ID !== phlTeam?.ID}
+                isSelected={category === Potentials}
+                onClick={() => setCategory(Potentials)}
+              >
+                <Text variant="small">Potentials</Text>
+              </Button>
             )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
@@ -447,15 +458,15 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         }}
       >
         <PHLRosterTable
-            roster={selectedRoster}
-            contracts={rosterContracts}
-            ts={ts}
-            team={selectedTeam}
-            category={category}
-            colorOne={backgroundColor}
-            colorTwo={borderColor}
-            openModal={openModal}
-          />
+          roster={selectedRoster}
+          contracts={rosterContracts}
+          ts={ts}
+          team={selectedTeam}
+          category={category}
+          colorOne={backgroundColor}
+          colorTwo={borderColor}
+          openModal={openModal}
+        />
       </Border>
     </>
   );
@@ -501,7 +512,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
 
   const selectedTeamProfile = useMemo(() => {
     if (selectedTeam && teamProfileMap) {
-      return teamProfileMap[selectedTeam.ID]
+      return teamProfileMap[selectedTeam.ID];
     }
     return null;
   }, [teamProfileMap, selectedTeam]);
@@ -570,24 +581,24 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-          {!isMobile && (
-            <Button
-              size="sm"
-              isSelected={category === Overview}
-              onClick={() => setCategory(Overview)}
-            >
-              <Text variant="small">Overview</Text>
-            </Button>
-          )}
             {!isMobile && (
               <Button
-              size="sm"
-              isSelected={category === Attributes}
-              onClick={() => setCategory(Attributes)}
-            >
-              <Text variant="small">Attributes</Text>
-            </Button>
-          )}
+                size="sm"
+                isSelected={category === Overview}
+                onClick={() => setCategory(Overview)}
+              >
+                <Text variant="small">Overview</Text>
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                size="sm"
+                isSelected={category === Attributes}
+                onClick={() => setCategory(Attributes)}
+              >
+                <Text variant="small">Attributes</Text>
+              </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -656,12 +667,12 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
 
   const rosterContracts = useMemo(() => {
     if (!selectedRoster || !nflContractMap) return null;
-  
+
     return selectedRoster
-      .map(player => {
+      .map((player) => {
         const contract = nflContractMap[player.ID];
         if (!contract) return null;
-  
+
         return {
           ...contract,
           Y1Bonus: parseFloat(contract.Y1Bonus.toFixed(2)),
@@ -677,7 +688,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           convertValues: contract.convertValues,
         };
       })
-      .filter(contract => contract !== null);
+      .filter((contract) => contract !== null);
   }, [selectedRoster, nflContractMap]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
@@ -757,33 +768,33 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-          {!isMobile && (
-            <Button
-              size="sm"
-              isSelected={category === Overview}
-              onClick={() => setCategory(Overview)}
-            >
-              <Text variant="small">Overview</Text>
-            </Button>
-          )}
-          {!isMobile && (
-            <Button
-              size="sm"
-              isSelected={category === Contracts}
-              onClick={() => setCategory(Contracts)}
-            >
-              <Text variant="small">Contracts</Text>
-            </Button>
-          )}
             {!isMobile && (
               <Button
-              size="sm"
-              isSelected={category === Attributes}
-              onClick={() => setCategory(Attributes)}
-            >
-              <Text variant="small">Attributes</Text>
-            </Button>
-          )}
+                size="sm"
+                isSelected={category === Overview}
+                onClick={() => setCategory(Overview)}
+              >
+                <Text variant="small">Overview</Text>
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                size="sm"
+                isSelected={category === Contracts}
+                onClick={() => setCategory(Contracts)}
+              >
+                <Text variant="small">Contracts</Text>
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                size="sm"
+                isSelected={category === Attributes}
+                onClick={() => setCategory(Attributes)}
+              >
+                <Text variant="small">Attributes</Text>
+              </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -813,4 +824,3 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     </>
   );
 };
-
