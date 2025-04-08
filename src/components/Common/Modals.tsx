@@ -398,7 +398,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
           {chlTeam.Abbreviation}
         </Text>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Drafted
         </Text>
@@ -411,7 +411,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
             <Text variant="small" classes="whitespace-nowrap">
               Round {player.DraftedRound} - Pick {player.DraftedPick}
             </Text>
-            <Text variant="xs" classes="whitespace-nowrap">
+            <Text variant="xs" classes="whitespace-nowrap text-small">
               by {player.DraftedTeam}
             </Text>
           </>
@@ -829,7 +829,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           {cfbTeam?.TeamAbbr}
         </Text>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Drafted
         </Text>
@@ -842,7 +842,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
             <Text variant="small" classes="whitespace-nowrap">
               Round {player.DraftedRound} - Pick {player.DraftedPick}
             </Text>
-            <Text variant="xs" classes="whitespace-nowrap">
+            <Text variant="xs" classes="whitespace-nowrap text-small">
               by {player.DraftedTeam}
             </Text>
           </>

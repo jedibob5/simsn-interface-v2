@@ -106,7 +106,7 @@ export const GamesBar = ({ games, league, team, ts,
 
   return (
     <div className="flex pb-1">
-      <div className="flex w-[90vw] md:w-[72em] 3xl:w-[70vw] max-w-[1400px] justify-center">
+      <div className="flex w-[90vw] sm:w-full max-w-[1400px] justify-center">
         <div className="relative flex items-center w-[92vw] md:w-[72.6em] 3xl:w-full pb-1">
           <button
             onClick={scrollLeft}
@@ -204,21 +204,29 @@ export const TeamMatchUp = ({
   borderColor,
   isLoadingTwo,
 }: TeamMatchUpProps) => {
+  
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const revealResult = matchUp.length > 0 && RevealFBResults(matchUp[0], ts, league);
-
   let resultColor = "";
   let gameScore = "";
   let gameLocation = "";
+  let coaches: string[] = [];
+  let isHomeGame = false;
 
-  if (revealResult) {
-    const isHomeGame = matchUp[0].HomeTeamID === team.ID;
-    const userTeamScore = isHomeGame ? matchUp[0].HomeTeamScore : matchUp[0].AwayTeamScore;
-    const opponentScore = isHomeGame ? matchUp[0].AwayTeamScore : matchUp[0].HomeTeamScore;
-
-    resultColor = userTeamScore > opponentScore ? "text-green-500" : "text-red-500";
-    gameScore = `${userTeamScore} - ${opponentScore}`;
+  if (matchUp?.length > 0){
+    const userGame = matchUp[0];
+    isHomeGame = matchUp[0].HomeTeamID === team.ID;
+    coaches = isHomeGame
+    ? [userGame.HomeTeamCoach, userGame.AwayTeamCoach]
+    : [userGame.AwayTeamCoach, userGame.HomeTeamCoach];
     gameLocation = isHomeGame ? "VS" : "AT";
+
+    if (revealResult) {
+      const userTeamScore = isHomeGame ? matchUp[0].HomeTeamScore : matchUp[0].AwayTeamScore;
+      const opponentScore = isHomeGame ? matchUp[0].AwayTeamScore : matchUp[0].HomeTeamScore;
+      resultColor = userTeamScore > opponentScore ? "text-green-500" : "text-red-500";
+      gameScore = `${userTeamScore} - ${opponentScore}`;
+    }
   }
 
   return (
@@ -237,7 +245,7 @@ export const TeamMatchUp = ({
         <>
           <div className="flex justify-center">
             <div className="flex-col pb-2">
-              <Logo variant="large" containerClass="max-w-24" url={homeLogo} />
+              <Logo variant="large" containerClass="max-w-24 w-24" url={homeLogo} />
               <Text
                 variant="small"
                 classes={`${textColorClass} font-semibold`}
@@ -246,7 +254,7 @@ export const TeamMatchUp = ({
                 {homeLabel}
               </Text>
               <Text variant="xs" classes="opacity-70">
-                {`HC ${matchUp[0].HomeTeamCoach}`}
+                {`HC ${coaches[0]}`}
               </Text>
             </div>
             <Text
@@ -265,7 +273,7 @@ export const TeamMatchUp = ({
                 {awayLabel}
               </Text>
               <Text variant="xs" classes="opacity-70">
-                {`HC ${matchUp[0].AwayTeamCoach}`}
+                {`HC ${coaches[1]}`}
               </Text>
             </div>
           </div>
