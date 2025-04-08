@@ -1,5 +1,5 @@
 import { AdminPageProvider } from "./context/AdminPageContext";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuthStore } from "./context/AuthContext";
 import { LeagueProvider } from "./context/LeagueContext";
 import { SimBaseballProvider } from "./context/SimBaseballContext";
 import { SimBBAProvider } from "./context/SimBBAContext";
@@ -9,24 +9,31 @@ import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
-    <div className="dark">
-      <AuthProvider>
-        <SimFBAProvider>
-          <SimBBAProvider>
-            <SimHCKProvider>
-              <SimBaseballProvider>
-                <LeagueProvider>
-                  <AdminPageProvider>
-                    <AppRoutes />
-                  </AdminPageProvider>
-                </LeagueProvider>
-              </SimBaseballProvider>
-            </SimHCKProvider>
-          </SimBBAProvider>
-        </SimFBAProvider>
-      </AuthProvider>
-    </div>
+    <AuthProvider>
+      <InnerApp />
+    </AuthProvider>
   );
 }
+
+const InnerApp = () => {
+  const authStore = useAuthStore();
+  return (
+    <div className={authStore.viewMode}>
+      <SimFBAProvider>
+        <SimBBAProvider>
+          <SimHCKProvider>
+            <SimBaseballProvider>
+              <LeagueProvider>
+                <AdminPageProvider>
+                  <AppRoutes />
+                </AdminPageProvider>
+              </LeagueProvider>
+            </SimBaseballProvider>
+          </SimHCKProvider>
+        </SimBBAProvider>
+      </SimFBAProvider>
+    </div>
+  );
+};
 
 export default App;
