@@ -5,7 +5,7 @@ import { SideMenu } from "../components/SideMenu/SideMenu";
 
 function AppRoutes() {
   return (
-    <Router>
+    <Router basename="/simsn-interface-v2">
       <SideMenu />
       <Routes>
         {AuthRoutes}
