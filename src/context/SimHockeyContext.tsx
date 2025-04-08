@@ -33,7 +33,8 @@ import {
   RecruitPlayerProfile,
   FaceDataResponse,
   ProContract,
-  ExtensionOffer
+  ExtensionOffer,
+  UpdateRecruitingBoardDTO,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -111,6 +112,7 @@ interface SimHCKContextProps {
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   scoutCrootAttribute: (dto: any) => Promise<void>;
   SaveRecruitingBoard: () => Promise<void>;
+  SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -179,6 +181,7 @@ const defaultContext: SimHCKContextProps = {
   toggleScholarship: async () => {},
   scoutCrootAttribute: async () => {},
   SaveRecruitingBoard: async () => {},
+  SaveAIRecruitingSettings: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -285,8 +288,14 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [playerFaces, setPlayerFaces] = useState<{
     [key: number]: FaceDataResponse;
   }>({});
-  const [proContractMap, setProContractMap] = useState<Record<number, ProContract> | null>({});
-  const [proExtensionMap, setProExtensionMap] = useState<Record<number, ExtensionOffer> | null>({});
+  const [proContractMap, setProContractMap] = useState<Record<
+    number,
+    ProContract
+  > | null>({});
+  const [proExtensionMap, setProExtensionMap] = useState<Record<
+    number,
+    ExtensionOffer
+  > | null>({});
 
   useEffect(() => {
     if (currentUser) {
@@ -694,6 +703,30 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     await RecruitService.HCKSaveRecruitingBoard(dto);
   }, [teamProfileMap, recruitProfiles, chlTeam]);
 
+  const SaveAIRecruitingSettings = useCallback(
+    async (dto: UpdateRecruitingBoardDTO) => {
+      const res = await RecruitService.HCKSaveAISettings(dto);
+      if (res) {
+        enqueueSnackbar("AI Recruiting Settings Saved!", {
+          variant: "success",
+          autoHideDuration: 3000,
+        });
+        setTeamProfileMap((prevTeamProfiles) => {
+          let currentProfile = prevTeamProfiles[chlTeam!.ID];
+          if (!currentProfile) return prevTeamProfiles;
+          return {
+            ...prevTeamProfiles,
+            [chlTeam!.ID]: new RecruitingTeamProfile({
+              ...currentProfile,
+              ...dto.Profile,
+            }),
+          };
+        });
+      }
+    },
+    [chlTeamMap]
+  );
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -758,7 +791,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         SaveRecruitingBoard,
         playerFaces,
         proContractMap,
-        proExtensionMap
+        proExtensionMap,
+        SaveAIRecruitingSettings,
       }}
     >
       {children}

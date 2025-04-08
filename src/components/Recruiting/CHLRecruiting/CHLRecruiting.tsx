@@ -8,6 +8,7 @@ import { RecruitingSideBar } from "../Common/RecruitingSideBar";
 import {
   Attributes,
   CountryOptions,
+  Help1,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
   Potentials,
@@ -25,6 +26,9 @@ import { ActionModal } from "../../Common/ActionModal";
 import { useMobile } from "../../../_hooks/useMobile";
 import { TeamRankingsTable } from "../Common/TeamRankingsTable";
 import { RecruitProfileTable } from "../Common/RecruitProfileTable";
+import { useModal } from "../../../_hooks/useModal";
+import { RecruitingHelpModal } from "../Common/RecruitingHelpModal";
+import { RecruitingAISettingsModal } from "../Common/RecruitingAISettingsModal";
 
 export const CHLRecruiting = () => {
   const hkStore = useSimHCKStore();
@@ -40,6 +44,7 @@ export const CHLRecruiting = () => {
     toggleScholarship,
     scoutCrootAttribute,
     SaveRecruitingBoard,
+    SaveAIRecruitingSettings,
   } = hkStore;
   const {
     teamProfile,
@@ -78,6 +83,8 @@ export const CHLRecruiting = () => {
     chlTeam?.ColorThree
   );
   const [isMobile] = useMobile();
+  const helpModal = useModal();
+  const aiSettingsModal = useModal();
 
   return (
     <>
@@ -98,6 +105,19 @@ export const CHLRecruiting = () => {
           scoutAttribute={scoutCrootAttribute}
         />
       )}
+      <RecruitingHelpModal
+        isOpen={helpModal.isModalOpen}
+        onClose={helpModal.handleCloseModal}
+        league={SimCHL}
+        modalAction={Help1}
+      />
+      <RecruitingAISettingsModal
+        isOpen={aiSettingsModal.isModalOpen}
+        onClose={aiSettingsModal.handleCloseModal}
+        league={SimCHL}
+        teamProfile={teamProfile}
+        SaveSettings={SaveAIRecruitingSettings}
+      />
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <RecruitingSideBar
           Team={chlTeam!!}
@@ -218,10 +238,18 @@ export const CHLRecruiting = () => {
                   </div>
                 </div>
                 <ButtonGroup classes="flex flex-row w-full justify-center sm:justify-end">
-                  <Button type="button" variant="primary">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={helpModal.handleOpenModal}
+                  >
                     Help
                   </Button>
-                  <Button type="button" variant="primary">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={aiSettingsModal.handleOpenModal}
+                  >
                     Settings
                   </Button>
                   <Button
