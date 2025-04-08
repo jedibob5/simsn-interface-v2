@@ -104,8 +104,6 @@ export const AvailableTeams = () => {
       return matchesConference && matchesTeams;
     });
 
-    console.log({ conferences, selectedTeams });
-
     setFilteredTeams(filtered);
     setIsLoading(false);
   };

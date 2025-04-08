@@ -35,6 +35,7 @@ export const RecruitInfoType = "Recruit Info";
 export const AddRecruitType = "Add Recruit";
 export const RemoveRecruitType = "Remove Recruit";
 export const ToggleScholarshipType = "Toggle Scholarship";
+export const ScoutAttributeType = "Scout Attribute";
 export const PracticeSquad = "Practice Squad";
 export const Affiliate = "Affiliate";
 export const Help1 = "Help1";
@@ -50,6 +51,7 @@ export type ModalAction =
   | typeof AddRecruitType
   | typeof RemoveRecruitType
   | typeof ToggleScholarshipType
+  | typeof ScoutAttributeType
   | typeof PracticeSquad
   | typeof Affiliate
   | typeof Help1
@@ -371,3 +373,12 @@ export const PuntPower = "Punt Power";
 export const FootballIQ = "Football IQ";
 export const Stamina = "Stamina";
 export const Injury = "Injury";
+export type ButtonColor =
+  | "primary"
+  | "secondary"
+  | "success"
+  | "danger"
+  | "warning";
+
+export const ScholarshipOffered = "ScholarshipOffered";
+export const ScholarshipRevoked = "ScholarshipRevoked";

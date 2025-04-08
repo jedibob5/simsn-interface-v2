@@ -33,7 +33,8 @@ import {
   RecruitPlayerProfile,
   FaceDataResponse,
   ProContract,
-  ExtensionOffer
+  ExtensionOffer,
+  UpdateRecruitingBoardDTO,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -47,6 +48,8 @@ import {
 import { hck_ws } from "../_constants/urls";
 import { PlayerService } from "../_services/playerService";
 import { GameplanService } from "../_services/gameplanService";
+import { useSnackbar } from "notistack";
+import { RecruitService } from "../_services/recruitService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -92,6 +95,7 @@ interface SimHCKContextProps {
   currentProSeasonGames: ProfessionalGame[];
   proTeamsGames: ProfessionalGame[];
   proNotifications: Notification[];
+  updatePointsOnRecruit: (id: number, name: string, points: number) => void;
   removeUserfromCHLTeamCall: (teamID: number) => Promise<void>;
   removeUserfromPHLTeamCall: (request: ProTeamRequest) => Promise<void>;
   addUserToCHLTeam: (teamID: number, user: string) => void;
@@ -103,6 +107,12 @@ interface SimHCKContextProps {
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
   saveCHLGameplan: (dto: any) => Promise<void>;
   savePHLGameplan: (dto: any) => Promise<void>;
+  addRecruitToBoard: (dto: any) => Promise<void>;
+  toggleScholarship: (dto: any) => Promise<void>;
+  removeRecruitFromBoard: (dto: any) => Promise<void>;
+  scoutCrootAttribute: (dto: any) => Promise<void>;
+  SaveRecruitingBoard: () => Promise<void>;
+  SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -165,6 +175,13 @@ const defaultContext: SimHCKContextProps = {
   updateCHLRosterMap: () => {},
   saveCHLGameplan: async () => {},
   savePHLGameplan: async () => {},
+  addRecruitToBoard: async () => {},
+  removeRecruitFromBoard: async () => {},
+  updatePointsOnRecruit: () => {},
+  toggleScholarship: async () => {},
+  scoutCrootAttribute: async () => {},
+  SaveRecruitingBoard: async () => {},
+  SaveAIRecruitingSettings: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -179,6 +196,7 @@ interface SimHCKProviderProps {
 }
 
 export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
   const { hck_Timestamp } = useWebSockets(hck_ws, SimHCK);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -270,8 +288,14 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [playerFaces, setPlayerFaces] = useState<{
     [key: number]: FaceDataResponse;
   }>({});
-  const [proContractMap, setProContractMap] = useState<Record<number, ProContract> | null>({});
-  const [proExtensionMap, setProExtensionMap] = useState<Record<number, ExtensionOffer> | null>({});
+  const [proContractMap, setProContractMap] = useState<Record<
+    number,
+    ProContract
+  > | null>({});
+  const [proExtensionMap, setProExtensionMap] = useState<Record<
+    number,
+    ExtensionOffer
+  > | null>({});
 
   useEffect(() => {
     if (currentUser) {
@@ -445,6 +469,13 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       const teamIDX = teams.findIndex((team) => team.ID === teamID);
       if (teamID > -1) {
         teams[teamIDX].Coach = user;
+        enqueueSnackbar(
+          `${user} has been added as the Head Coach for ${teams[teamIDX].TeamName} Organization`,
+          {
+            variant: "success",
+            autoHideDuration: 3000,
+          }
+        );
       }
       setCHLTeams(teams);
     },
@@ -467,6 +498,13 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         } else {
           teams[teamIDX].Marketing = user;
         }
+        enqueueSnackbar(
+          `${user} has been added as a ${role} to the ${teams[teamIDX].Mascot} Organization`,
+          {
+            variant: "success",
+            autoHideDuration: 3000,
+          }
+        );
       }
       setProTeams(teams);
     },
@@ -522,13 +560,172 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     const res = await GameplanService.SaveCHLGameplan(dto);
     setCHLLineups(dto.CHLLineups);
     setCHLShootoutLineup(dto.CHLShootoutLineup);
+    enqueueSnackbar("Lineups saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
   };
 
   const savePHLGameplan = async (dto: any) => {
     const res = await GameplanService.SaveCHLGameplan(dto);
     setPHLLineups(dto.CHLLineups);
     setPHLShootoutLineup(dto.CHLShootoutLineup);
+    enqueueSnackbar("Lineups saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
   };
+
+  const addRecruitToBoard = async (dto: any) => {
+    const apiDTO = {
+      ...dto,
+      SeasonID: hck_Timestamp?.SeasonID,
+      Team: chlTeam,
+      Recruiter: chlTeam?.Coach,
+      ProfileID: chlTeam?.ID,
+    };
+    const profile = await RecruitService.HCKCreateRecruitProfile(apiDTO);
+    if (profile) {
+      setRecruitProfiles((profiles) => [...profiles, profile]);
+    }
+  };
+
+  const removeRecruitFromBoard = async (dto: any) => {
+    const profile = await RecruitService.HCKRemoveCrootFromBoard(dto);
+    if (profile) {
+      setRecruitProfiles((profiles) =>
+        [...profiles].filter((p) => p.RecruitID != dto.RecruitID)
+      );
+    }
+  };
+
+  const toggleScholarship = async (dto: any) => {
+    const profile = await RecruitService.HCKToggleScholarship(dto);
+    if (profile) {
+      setRecruitProfiles((profiles) =>
+        [...profiles].map((p) =>
+          p.RecruitID === profile.RecruitID
+            ? new RecruitPlayerProfile({
+                ...profile,
+                Scholarship: profile.Scholarship,
+                ScholarshipRevoked: profile.ScholarshipRevoked,
+              })
+            : p
+        )
+      );
+      setTeamProfileMap((prev) => {
+        const currentProfile = prev[profile.ProfileID];
+        if (!currentProfile) return prev;
+
+        const adjustment = profile.Scholarship
+          ? -1
+          : profile.ScholarshipRevoked
+          ? 1
+          : 0;
+        return {
+          ...prev,
+          [profile.ProfileID]: new RecruitingTeamProfile({
+            ...currentProfile,
+            ScholarshipsAvailable:
+              currentProfile.ScholarshipsAvailable + adjustment,
+          }),
+        };
+      });
+    }
+  };
+
+  const scoutCrootAttribute = async (dto: any) => {
+    const profile = await RecruitService.HCKScoutRecruitingAttribute(dto);
+    if (profile) {
+      setRecruitProfiles((profiles) =>
+        [...profiles].map((p) =>
+          p.RecruitID === profile.RecruitID
+            ? new RecruitPlayerProfile({
+                ...profile,
+                [dto.Attribute]: true,
+              })
+            : p
+        )
+      );
+      setTeamProfileMap((prev) => {
+        const currentProfile = prev[profile.ProfileID];
+        if (!currentProfile) return prev;
+        return {
+          ...prev,
+          [profile.ProfileID]: new RecruitingTeamProfile({
+            ...currentProfile,
+            WeeklyScoutingPoints: currentProfile.WeeklyScoutingPoints - 1,
+          }),
+        };
+      });
+    }
+  };
+
+  const updatePointsOnRecruit = (id: number, name: string, points: number) => {
+    setRecruitProfiles((prevProfiles) => {
+      // Update the profiles and get the new profiles array.
+      const updatedProfiles = prevProfiles.map((profile) =>
+        profile.ID === id
+          ? new RecruitPlayerProfile({ ...profile, [name]: points })
+          : profile
+      );
+
+      // Calculate the total points from the updated profiles.
+      const totalPoints = updatedProfiles.reduce(
+        (sum, profile) => sum + (profile.CurrentWeeksPoints || 0),
+        0
+      );
+
+      // Update the recruiting team profile based on the updated points.
+      setTeamProfileMap((prevTeamProfiles) => {
+        const currentProfile = prevTeamProfiles[chlTeam!.ID];
+        if (!currentProfile) return prevTeamProfiles;
+        return {
+          ...prevTeamProfiles,
+          [chlTeam!.ID]: new RecruitingTeamProfile({
+            ...currentProfile,
+            SpentPoints: totalPoints,
+          }),
+        };
+      });
+
+      return updatedProfiles;
+    });
+  };
+
+  const SaveRecruitingBoard = useCallback(async () => {
+    const dto = {
+      Profile: teamProfileMap[chlTeam!.ID],
+      Recruits: recruitProfiles,
+      TeamID: chlTeam!.ID,
+    };
+
+    await RecruitService.HCKSaveRecruitingBoard(dto);
+  }, [teamProfileMap, recruitProfiles, chlTeam]);
+
+  const SaveAIRecruitingSettings = useCallback(
+    async (dto: UpdateRecruitingBoardDTO) => {
+      const res = await RecruitService.HCKSaveAISettings(dto);
+      if (res) {
+        enqueueSnackbar("AI Recruiting Settings Saved!", {
+          variant: "success",
+          autoHideDuration: 3000,
+        });
+        setTeamProfileMap((prevTeamProfiles) => {
+          let currentProfile = prevTeamProfiles[chlTeam!.ID];
+          if (!currentProfile) return prevTeamProfiles;
+          return {
+            ...prevTeamProfiles,
+            [chlTeam!.ID]: new RecruitingTeamProfile({
+              ...currentProfile,
+              ...dto.Profile,
+            }),
+          };
+        });
+      }
+    },
+    [chlTeamMap]
+  );
 
   return (
     <SimHCKContext.Provider
@@ -586,9 +783,16 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         updateCHLRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
+        addRecruitToBoard,
+        removeRecruitFromBoard,
+        updatePointsOnRecruit,
+        toggleScholarship,
+        scoutCrootAttribute,
+        SaveRecruitingBoard,
         playerFaces,
         proContractMap,
-        proExtensionMap
+        proExtensionMap,
+        SaveAIRecruitingSettings,
       }}
     >
       {children}

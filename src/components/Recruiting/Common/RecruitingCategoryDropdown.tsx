@@ -62,6 +62,10 @@ export const RecruitingCategoryDropdown: FC<
             ...provided,
             color: "#A0AEC0",
           }),
+          input: (provided) => ({
+            ...provided,
+            color: "#fff",
+          }),
         }}
       />
     </div>

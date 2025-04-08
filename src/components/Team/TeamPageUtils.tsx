@@ -40,7 +40,10 @@ import {
   Stamina,
   Injury,
 } from "../../_constants/constants";
-import { annotateCountry, annotateRegion } from "../../_helper/StateAbbreviationHelper";
+import {
+  annotateCountry,
+  annotateRegion,
+} from "../../_helper/StateAbbreviationHelper";
 
 export const getCHLAttributes = (
   player: CHLPlayer,
@@ -187,48 +190,48 @@ export const getCHLCrootAttributes = (
 
 export const getAdditionalHockeyAttributeGrades = (player: Croot) => {
   return [
-    { label: "Agi", value: player.AgilityGrade },
-    { label: "FO", value: player.FaceoffsGrade },
+    { label: "Agility", value: player.AgilityGrade },
+    { label: "Faceoffs", value: player.FaceoffsGrade },
     {
-      label: "LSA",
+      label: "LongShotAccuracy",
       value: player.LongShotAccuracyGrade,
     },
     {
-      label: "LSP",
+      label: "LongShotPower",
       value: player.LongShotPowerGrade,
     },
     {
-      label: "CSA",
+      label: "CloseShotAccuracy",
       value: player.CloseShotAccuracyGrade,
     },
     {
-      label: "CSP",
+      label: "CloseShotPower",
       value: player.CloseShotPowerGrade,
     },
-    { label: "Pass", value: player.PassingGrade },
+    { label: "Passing", value: player.PassingGrade },
     {
-      label: "PH",
+      label: "PuckHandling",
       value: player.PuckHandlingGrade,
     },
-    { label: "Str", value: player.StrengthGrade },
+    { label: "Strength", value: player.StrengthGrade },
     {
-      label: "BChk",
+      label: "BodyChecking",
       value: player.BodyCheckingGrade,
     },
     {
-      label: "SChk",
+      label: "StickChecking",
       value: player.StickCheckingGrade,
     },
     {
-      label: "SB",
+      label: "ShotBlocking",
       value: player.ShotBlockingGrade,
     },
     {
-      label: "GK",
+      label: "Goalkeeping",
       value: player.GoalkeepingGrade,
     },
     {
-      label: "GV",
+      label: "GoalieVision",
       value: player.GoalieVisionGrade,
     },
   ];
