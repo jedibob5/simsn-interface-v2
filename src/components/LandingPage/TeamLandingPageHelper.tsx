@@ -64,6 +64,7 @@ export const getLandingCFBData = (
       .reverse();
 
     // Team Match-Up
+    const teamAbbrMap = new Map(allCollegeTeams.map((team) => [team.ID, team.TeamAbbr]));
     let foundMatch: CollegeGame[] | null = null;
     let gameWeek = currentWeek;
 
@@ -104,17 +105,16 @@ export const getLandingCFBData = (
       );
 
       homeLabel = isUserTeamHome
-        ? teamMatchUp[0].HomeTeam
-        : teamMatchUp[0].AwayTeam;
+      ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+      : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
       awayLabel = isUserTeamHome
-        ? teamMatchUp[0].AwayTeam
-        : teamMatchUp[0].HomeTeam;
+      ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+      : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
       gameLocation = isUserTeamHome ? "VS" : "AT";
     }
 
     // Team Schedule
-    const teamAbbrMap = new Map(allCollegeTeams.map((team) => [team.ID, team.TeamAbbr]));
     const teamSchedule = allCollegeGames
       .filter((game) => game.HomeTeamID === team.ID || 
                         game.AwayTeamID === team.ID)
@@ -184,6 +184,7 @@ export const getLandingNFLData = (
         .reverse();
       
       // Team Match-Up
+      const teamAbbrMap = new Map(allProTeams.map((team) => [team.ID, team.TeamAbbr]));
       let foundMatch: NFLGame[] | null = null;
       let gameWeek = currentWeek;
 
@@ -224,17 +225,16 @@ export const getLandingNFLData = (
         );
 
         homeLabel = isUserTeamHome
-          ? teamMatchUp[0].HomeTeam
-          : teamMatchUp[0].AwayTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
         awayLabel = isUserTeamHome
-          ? teamMatchUp[0].AwayTeam
-          : teamMatchUp[0].HomeTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
         gameLocation = isUserTeamHome ? "VS" : "AT";
       }
 
       // Team Schedule
-      const teamAbbrMap = new Map(allProTeams.map((team) => [team.ID, team.TeamAbbr]));
       const teamSchedule = allProGames
         .filter((game) => game.HomeTeamID === team.ID || 
                           game.AwayTeamID === team.ID)
@@ -304,6 +304,7 @@ export const getLandingNFLData = (
         .reverse();
   
       // Team Match-Up
+      const teamAbbrMap = new Map(allCBBTeams.map((team) => [team.ID, team.Abbr]));
       let foundMatch: CBBMatch[] | null = null;
       let gameWeek = currentWeek;
 
@@ -344,17 +345,16 @@ export const getLandingNFLData = (
         );
 
         homeLabel = isUserTeamHome
-          ? teamMatchUp[0].HomeTeam
-          : teamMatchUp[0].AwayTeam;
-        awayLabel = isUserTeamHome
-          ? teamMatchUp[0].AwayTeam
-          : teamMatchUp[0].HomeTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
+      awayLabel = isUserTeamHome
+        ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
         gameLocation = isUserTeamHome ? "VS" : "AT";
       }
   
       // Team Schedule
-      const teamAbbrMap = new Map(allCBBTeams.map((team) => [team.ID, team.Abbr]));
       const teamSchedule = allCBBGames
         .filter((game) => game.HomeTeamID === team.ID || 
                           game.AwayTeamID === team.ID)
@@ -424,6 +424,7 @@ export const getLandingNFLData = (
           .reverse();
         
         // Team Match-Up
+        const teamAbbrMap = new Map(allNBATeams.map((team) => [team.ID, team.Abbr]));
         let foundMatch: NBAMatch[] | null = null;
         let gameWeek = currentWeek;
 
@@ -464,17 +465,16 @@ export const getLandingNFLData = (
           );
 
           homeLabel = isUserTeamHome
-            ? teamMatchUp[0].HomeTeam
-            : teamMatchUp[0].AwayTeam;
-          awayLabel = isUserTeamHome
-            ? teamMatchUp[0].AwayTeam
-            : teamMatchUp[0].HomeTeam;
+          ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+          : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
+        awayLabel = isUserTeamHome
+          ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+          : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
           gameLocation = isUserTeamHome ? "VS" : "AT";
         }
   
         // Team Schedule
-        const teamAbbrMap = new Map(allNBATeams.map((team) => [team.ID, team.Abbr]));
         const teamSchedule = allNBAGames
           .filter((game) => game.HomeTeamID === team.ID || 
                             game.AwayTeamID === team.ID)
@@ -543,6 +543,7 @@ export const getLandingNFLData = (
         .reverse();
 
       // Team Match-Up
+      const teamAbbrMap = new Map(chlTeams.map((team) => [team.ID, team.Abbreviation]));
       let foundMatch: CHLGame[] | null = null;
       let gameWeek = currentWeek;
 
@@ -583,17 +584,16 @@ export const getLandingNFLData = (
         );
 
         homeLabel = isUserTeamHome
-          ? teamMatchUp[0].HomeTeam
-          : teamMatchUp[0].AwayTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
         awayLabel = isUserTeamHome
-          ? teamMatchUp[0].AwayTeam
-          : teamMatchUp[0].HomeTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
         gameLocation = isUserTeamHome ? "VS" : "AT";
       }
       
       // Team Schedule
-      const teamAbbrMap = new Map(chlTeams.map((team) => [team.ID, team.Abbreviation]));
       const teamSchedule = allCHLGames
         .filter((game) => game.HomeTeamID === team.ID || 
                           game.AwayTeamID === team.ID)
@@ -660,6 +660,7 @@ export const getLandingNFLData = (
         .reverse();
 
       // Team Match-Up
+      const teamAbbrMap = new Map(phlTeams.map((team) => [team.ID, team.Abbreviation]));
       let foundMatch: PHLGame[] | null = null;
       let gameWeek = currentWeek;
 
@@ -700,17 +701,16 @@ export const getLandingNFLData = (
         );
 
         homeLabel = isUserTeamHome
-          ? teamMatchUp[0].HomeTeam
-          : teamMatchUp[0].AwayTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown";
         awayLabel = isUserTeamHome
-          ? teamMatchUp[0].AwayTeam
-          : teamMatchUp[0].HomeTeam;
+        ? teamAbbrMap.get(teamMatchUp[0].AwayTeamID) || "Unknown"
+        : teamAbbrMap.get(teamMatchUp[0].HomeTeamID) || "Unknown";
 
         gameLocation = isUserTeamHome ? "VS" : "AT";
       }
       
       // Team Schedule
-      const teamAbbrMap = new Map(phlTeams.map((team) => [team.ID, team.Abbreviation]));
       const teamSchedule = allPHLGames
         .filter((game) => game.HomeTeamID === team.ID || 
                           game.AwayTeamID === team.ID)
