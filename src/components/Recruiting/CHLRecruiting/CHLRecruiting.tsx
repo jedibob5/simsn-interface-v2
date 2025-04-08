@@ -29,6 +29,8 @@ import { RecruitProfileTable } from "../Common/RecruitProfileTable";
 import { useModal } from "../../../_hooks/useModal";
 import { RecruitingHelpModal } from "../Common/RecruitingHelpModal";
 import { RecruitingAISettingsModal } from "../Common/RecruitingAISettingsModal";
+import { useLoadMessage } from "../../../_hooks/useLoadMessage";
+import { CHLRecruitLockedMessages } from "../../../_constants/loadMessages";
 
 export const CHLRecruiting = () => {
   const hkStore = useSimHCKStore();
@@ -76,6 +78,7 @@ export const CHLRecruiting = () => {
     SelectTeams,
     attribute,
     setAttribute,
+    recruitingLocked,
   } = useCHLRecruiting();
   const teamColors = useTeamColors(
     chlTeam?.ColorOne,
@@ -85,6 +88,7 @@ export const CHLRecruiting = () => {
   const [isMobile] = useMobile();
   const helpModal = useModal();
   const aiSettingsModal = useModal();
+  const lockMessage = useLoadMessage(CHLRecruitLockedMessages, 5000);
 
   return (
     <>
@@ -258,6 +262,7 @@ export const CHLRecruiting = () => {
                       teamProfile!.SpentPoints < 50 ? "primary" : "warning"
                     }
                     onClick={SaveRecruitingBoard}
+                    disabled={recruitingLocked}
                   >
                     Save
                   </Button>
@@ -265,7 +270,7 @@ export const CHLRecruiting = () => {
               </div>
             </Border>
           </div>
-          {recruitingCategory === RecruitingOverview && (
+          {!recruitingLocked && recruitingCategory === RecruitingOverview && (
             <>
               <Border
                 direction="row"
@@ -365,7 +370,7 @@ export const CHLRecruiting = () => {
               </Border>
             </>
           )}
-          {recruitingCategory === RecruitingTeamBoard && (
+          {!recruitingLocked && recruitingCategory === RecruitingTeamBoard && (
             <>
               <Border
                 direction="col"
@@ -393,7 +398,7 @@ export const CHLRecruiting = () => {
               </Border>
             </>
           )}
-          {recruitingCategory === RecruitingRankings && (
+          {!recruitingLocked && recruitingCategory === RecruitingRankings && (
             <>
               <Border
                 direction="row"
@@ -438,6 +443,23 @@ export const CHLRecruiting = () => {
                   league={SimCHL}
                   isMobile={isMobile}
                 />
+              </Border>
+            </>
+          )}
+          {recruitingLocked && (
+            <>
+              <Border
+                direction="col"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center h-[50vh]"
+                styles={{
+                  backgroundColor: teamColors.One,
+                  borderColor: teamColors.Two,
+                }}
+              >
+                <Text variant="h2" classes="mb-6">
+                  Recruiting is Locked! Please wait for the sync to complete.
+                </Text>
+                <Text variant="h5">{lockMessage}</Text>
               </Border>
             </>
           )}

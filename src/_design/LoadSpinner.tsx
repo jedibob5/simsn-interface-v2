@@ -1,14 +1,10 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Text } from "./Typography";
 import { LoadingMessages } from "../_constants/loadMessages";
-import { GenerateNumberFromRange } from "../_helper/utilHelper";
+import { useLoadMessage } from "../_hooks/useLoadMessage";
 
 export const LoadSpinner: React.FC = () => {
-  const loadMessage = useMemo(() => {
-    const messages = LoadingMessages;
-    const randomIndex = GenerateNumberFromRange(0, messages.length - 1);
-    return messages[randomIndex];
-  }, []);
+  const loadMessage = useLoadMessage(LoadingMessages, 3000);
   return (
     <div className="flex flex-col my-auto items-center justify-center">
       <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>

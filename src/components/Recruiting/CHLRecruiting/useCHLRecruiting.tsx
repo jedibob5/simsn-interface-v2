@@ -27,6 +27,8 @@ import {
 } from "../../../models/hockeyModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
+import { CHLRecruitLockedMessages } from "../../../_constants/loadMessages";
+import { GenerateNumberFromRange } from "../../../_helper/utilHelper";
 
 export const useCHLRecruiting = () => {
   const hkStore = useSimHCKStore();
@@ -37,6 +39,7 @@ export const useCHLRecruiting = () => {
     recruitProfiles,
     chlTeams,
     chlTeamMap,
+    hck_Timestamp,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [recruitingCategory, setRecruitingCategory] =
@@ -55,6 +58,13 @@ export const useCHLRecruiting = () => {
     HockeyCroot | FootballCroot | BasketballCroot
   >({} as HockeyCroot);
   const [modalAction, setModalAction] = useState<ModalAction>(RecruitInfoType);
+
+  const recruitingLocked = useMemo(() => {
+    if (hck_Timestamp) {
+      return hck_Timestamp.IsRecruitingLocked;
+    }
+    return false;
+  }, [hck_Timestamp]);
 
   const recruitOnBoardMap = useMemo(() => {
     const boardMap: Record<number, boolean> = {};
@@ -262,5 +272,6 @@ export const useCHLRecruiting = () => {
     SelectTeams,
     attribute,
     setAttribute,
+    recruitingLocked,
   };
 };
