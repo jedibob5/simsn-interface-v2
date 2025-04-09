@@ -1,6 +1,5 @@
 import { League, SimCHL, SimPHL } from "../../_constants/constants";
 import { useTeamColors } from "../../_hooks/useTeamColors";
-import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { getLogo } from "../../_utility/getLogo";
 import { useAdminPage } from "../../context/AdminPageContext";
 import { useAuthStore } from "../../context/AuthContext";
@@ -24,7 +23,7 @@ export const AdminRequestsTab = () => {
   const fbStore = useSimFBAStore();
   return (
     <div
-      className={`grid grid-cols-2 gap-4 w-full px-4 py-2 ${
+      className={`grid grid-cols-2 gap-4 w-full px-2 py-2 ${
         hckCHLRequests.length === 1 ? "justify-center" : "justify-start"
       }`}
     >
@@ -85,8 +84,8 @@ export const CHLRequestCard: React.FC<CHLRequestCardProps> = ({
   const accept = async () => {
     await acceptCHLRequest(request);
     const payload = {
-      CHLTeamID: request.TeamID
-    }
+      CHLTeamID: request.TeamID,
+    };
     await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
@@ -136,7 +135,7 @@ export const PHLRequestCard: React.FC<PHLRequestCardProps> = ({
     const payload = {
       PHLTeamID: request.TeamID,
       PHLRole: request.Role,
-    }
+    };
     await updateUserByUsername(request.Username, payload);
     await acceptPHLRequest(request);
   };
