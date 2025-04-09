@@ -9,6 +9,10 @@ interface SectionCardsProps {
   children: React.ReactNode;
   team: any;
   classes?: string;
+  backgroundColor: string;
+  darkerBackgroundColor: string;
+  borderColor: string;
+  textColorClass: string;
 }
 
 export const SectionCards: React.FC<SectionCardsProps> = ({
@@ -16,14 +20,11 @@ export const SectionCards: React.FC<SectionCardsProps> = ({
   children,
   team,
   classes="bg-[#1f2937]",
+  backgroundColor,
+  darkerBackgroundColor,
+  textColorClass,
+  borderColor
 }) => {
-  let backgroundColor = team?.ColorOne || "#4B5563";
-  let borderColor = team?.ColorTwo || "#4B5563";
-  if (isBrightColor(backgroundColor)) {
-    [backgroundColor, borderColor] = [borderColor, backgroundColor];
-  }
-  const darkerBackgroundColor = darkenColor(backgroundColor, -5);
-  const textColorClass = getTextColorBasedOnBg(backgroundColor)
   
   return (
     <div className={`flex flex-col rounded-lg p-4 max-w-[50em] h-full shadow-md border-2 ${classes}`}

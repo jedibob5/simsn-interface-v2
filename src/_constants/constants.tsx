@@ -382,3 +382,6 @@ export type ButtonColor =
 
 export const ScholarshipOffered = "ScholarshipOffered";
 export const ScholarshipRevoked = "ScholarshipRevoked";
+
+export const ButtonGreen = "bg-[#189E5B]"
+export const TextGreen = "text-[#189E5B]"

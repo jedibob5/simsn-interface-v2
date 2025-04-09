@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
-import { ButtonColor } from "../_constants/constants";
+import { ButtonColor, ButtonGreen } from "../_constants/constants";
 
 // 🔑 Define Button Props Interface
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
   const variants = {
     primary: "bg-blue-500 hover:bg-blue-700 text-white",
     secondary: "bg-gray-500 hover:bg-gray-700 text-white",
-    success: "bg-green-500 hover:bg-green-700 text-white",
+    success: `${ButtonGreen} hover:bg-green-700 text-white`,
     warning: "bg-yellow-500 hover:bg-yellow-700 text-white",
     danger: "bg-red-500 hover:bg-red-700 text-white",
   };
@@ -88,7 +88,7 @@ export const PillButton: React.FC<PillButtonProps> = ({
   const styles = {
     primary: "bg-blue-500 hover:bg-blue-700 text-white",
     secondary: "bg-gray-500 hover:bg-gray-700 text-white",
-    success: "bg-green-500 hover:bg-green-700 border-white text-white",
+    success: `${ButtonGreen} hover:bg-green-700 border-white text-white`,
     danger: "bg-red-500 hover:bg-red-700 text-white",
     basketball: "bg-orange-500 hover:bg-orange-700 text-white",
     hockey: "bg-gray-500 hover:bg-gray-700 text-white",

@@ -18,6 +18,9 @@ interface StandingsTableProps {
   league: League;
   team: any;
   currentUser: CurrentUser;
+  rowBgColor: string;
+  darkerRowBgColor: string;
+  textColorClass: string;
 }
 
 export const StandingsTable = ({
@@ -25,6 +28,9 @@ export const StandingsTable = ({
   league,
   team,
   currentUser,
+  rowBgColor,
+  darkerRowBgColor,
+  textColorClass
 }: StandingsTableProps) => {
   if (!standings || standings.length === 0) {
     return <div>No standings available</div>;
@@ -45,25 +51,25 @@ export const StandingsTable = ({
         className="table-row border-b dark:border-gray-700 text-left"
         style={{ backgroundColor }}
       >
-        <div className="table-cell px-2 align-middle w-[16%]">{item.Rank}</div>
+        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>{item.Rank}</div>
         <div className="table-cell align-middle w-[18%]">
-          <Logo
+          {<Logo
             variant="normal"
             classes="max-h-[2em] max-w-[2em] sm:max-h-full sm:max-w-full sm:ml-[-0.5em] sm:my-[-0.5em]"
-            containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[70px] sm:max-h-[70px]"
+            containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[60px] sm:max-h-[60px]"
             url={logoUrl}
-          />
+          />}
         </div>
-        <div className="table-cell px-3 align-middle w-[16%]">
+        <div className={`table-cell px-3 align-middle w-[16%] ${textColorClass}`}>
           {item.ConferenceWins}
         </div>
-        <div className="table-cell px-2 align-middle w-[16%]">
+        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>
           {item.ConferenceLosses}
         </div>
-        <div className="table-cell px-2 align-middle w-[16%]">
+        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>
           {item.TotalWins}
         </div>
-        <div className="table-cell px-1 align-middle w-[16%]">
+        <div className={`table-cell px-1 align-middle w-[16%] ${textColorClass}`}>
           {item.TotalLosses}
         </div>
       </div>
@@ -76,6 +82,8 @@ export const StandingsTable = ({
       data={standings}
       rowRenderer={rowRenderer}
       team={team}
+      rowBgColor={rowBgColor}
+      darkerRowBgColor={darkerRowBgColor}
     />
   );
 };

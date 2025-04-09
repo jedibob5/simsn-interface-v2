@@ -4,7 +4,7 @@ import { Text } from "../../_design/Typography";
 import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, ProContract as PHLContract } from "../../models/hockeyModels";
 import { CollegePlayer as CFBPlayer, NFLPlayer, NFLContract, Timestamp } from "../../models/footballModels";
 import { useMobile } from "../../_hooks/useMobile";
-import { Attributes, Potentials, Contracts, Overview } from "../../_constants/constants";
+import { Attributes, Potentials, Contracts, Overview, ButtonGreen, TextGreen } from "../../_constants/constants";
 import { getCHLAttributes, getPHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { useModal } from "../../_hooks/useModal";
@@ -116,7 +116,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
           {attr.label === "Redshirt" ? (
           <>
             {attr.value === true ? (
-              <CheckCircle textColorClass="w-full text-center text-green-500" />
+              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
             ) : (
               <CrossCircle textColorClass="w-full text-center text-red-500" />
             )}
@@ -126,25 +126,22 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
             {attr.value === true ? (
               <User textColorClass="w-full text-center text-red-500" />
             ) : (
-              <User textColorClass="w-full text-center text-green-500" />
+              <User textColorClass={`w-full text-center ${TextGreen}`} />
             )}
           </>
         ) : attr.label === "TransferStatus" ? (
           <>
             {attr.value === 0 ? (
-              <ShieldCheck textColorClass="w-full text-center text-green-500" />
+              <ShieldCheck textColorClass={`w-full text-center ${TextGreen}`} />
             ) : (
               <ShieldCheck textColorClass="w-full text-center text-red-500" />
             )}
           </>
         ) : attr.label === "Name" ? (
           <span
-            className={`cursor-pointer font-semibold ${textColorClass}`}
-            style={{
-              color: textColorClass,
-            }}
+            className={`cursor-pointer font-semibold`}
             onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = borderColor;
+              (e.target as HTMLElement).style.color = "#fcd53f";
             }}
             onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
               (e.target as HTMLElement).style.color = "";
@@ -319,7 +316,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
         {attr.label === "NTC" || attr.label === "NMC" ? (
           <>
             {attr.value === true ? (
-              <CheckCircle textColorClass="w-full text-center text-green-500" />
+              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
             ) : (
               <CrossCircle textColorClass="w-full text-center text-red-500" />
             )}
@@ -329,17 +326,14 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
             {attr.value === true ? (
               <User textColorClass="w-full text-center text-red-500" />
             ) : (
-              <User textColorClass="w-full text-center text-green-500" />
+              <User textColorClass={`w-full text-center ${TextGreen}`} />
             )}
           </>
         ) : attr.label === "Name" ? (
           <span
-            className={`cursor-pointer font-semibold ${textColorClass}`}
-            style={{
-              color: textColorClass,
-            }}
+            className={`cursor-pointer font-semibold`}
             onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = borderColor;
+              (e.target as HTMLElement).style.color = "#fcd53f";
             }}
             onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
               (e.target as HTMLElement).style.color = "";
@@ -495,7 +489,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
           {attr.label === "Redshirt" ? (
           <>
             {attr.value === true ? (
-              <CheckCircle textColorClass="w-full text-center text-green-500" />
+              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
             ) : (
               <CrossCircle textColorClass="w-full text-center text-red-500" />
             )}
@@ -505,25 +499,22 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
             {attr.value === true ? (
               <User textColorClass="w-full text-center text-red-500" />
             ) : (
-              <User textColorClass="w-full text-center text-green-500" />
+              <User textColorClass={`w-full text-center ${TextGreen}`} />
             )}
           </>
         ) : attr.label === "TransferStatus" ? (
           <>
             {attr.value === 0 ? (
-              <ShieldCheck textColorClass="w-full text-center text-green-500" />
+              <ShieldCheck textColorClass={`w-full text-center ${TextGreen}`} />
             ) : (
               <ShieldCheck textColorClass="w-full text-center text-red-500" />
             )}
           </>
         ) : attr.label === "Name" ? (
           <span
-            className={`cursor-pointer font-semibold ${textColorClass}`}
-            style={{
-              color: textColorClass,
-            }}
+            className={`cursor-pointer font-semibold`}
             onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = borderColor;
+              (e.target as HTMLElement).style.color = "#fcd53f";
             }}
             onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
               (e.target as HTMLElement).style.color = "";
@@ -710,7 +701,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       {attr.label === "Is Tagged" ? (
         <>
           {attr.value === true ? (
-            <CheckCircle textColorClass="w-full text-center text-green-500" />
+            <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
           ) : (
             <CrossCircle textColorClass="w-full text-center text-red-500" />
           )}
@@ -720,17 +711,14 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
           {attr.value === true ? (
             <User textColorClass="w-full text-center text-red-500" />
           ) : (
-            <User textColorClass="w-full text-center text-green-500" />
+            <User textColorClass={`w-full text-center ${TextGreen}`} />
           )}
         </>
       ) : attr.label === "Name" ? (
         <span
-          className={`cursor-pointer font-semibold ${textColorClass}`}
-          style={{
-            color: textColorClass,
-          }}
+          className={`cursor-pointer font-semibold`}
           onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-            (e.target as HTMLElement).style.color = borderColor;
+            (e.target as HTMLElement).style.color = "#fcd53f";
           }}
           onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
             (e.target as HTMLElement).style.color = "";
