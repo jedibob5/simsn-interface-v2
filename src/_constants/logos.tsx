@@ -95,7 +95,7 @@ export const logos = {
   ETSU: baseUrl + "/logos/East_Tennessee_State_Buccaneers_logo.png",
   Eastern_Illinois: `${baseUrl}/logos/Eastern_Illinois_Panthers_logo.png`,
   Eastern_Kentucky: `${baseUrl}/logos/eku_white_logo.png`,
-  Eastern_Michigan: baseUrl + "/logos/Eastern_Michigan_Eagles_logo.png",
+  Eastern_Michigan: baseUrl + "/logos/emu_white.png",
   Eastern_Washington: baseUrl + "/logos/Eastern_Washington_Eagles_logo.png",
   Elon: `${baseUrl}/logos/Elon_Phoenix_logo.png`,
   Evansville: baseUrl + "/logos/Evansville_Purple_Aces_logo.png",
