@@ -78,11 +78,17 @@ export const Home = () => {
     } else if (nflTeam && !fbLoading) {
       SetTeam(SimNFL, nflTeam);
       return;
-    } else if (cbbTeam && !bkLoading) {
+    } else if (cbbTeam && !fbLoading) {
       SetTeam(SimCBB, cbbTeam);
       return;
-    } else if (nbaTeam && !bkLoading) {
+    } else if (nbaTeam && !fbLoading) {
       SetTeam(SimNBA, nbaTeam);
+      return;
+    } else if (chlTeam && !fbLoading) {
+      SetTeam(SimCHL, chlTeam);
+      return;
+    } else if (phlTeam && !fbLoading) {
+      SetTeam(SimPHL, phlTeam);
       return;
     }
   }, [

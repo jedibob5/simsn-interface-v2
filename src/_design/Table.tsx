@@ -29,6 +29,8 @@ export interface TableProps<T> {
   team: any;
   textColor?: string;
   rowRenderer: (item: T, index: number, backgroundColor: string) => ReactNode;
+  rowBgColor?: string;
+  darkerRowBgColor?: string;
 }
 
 export const Table = <T,>({
@@ -36,9 +38,13 @@ export const Table = <T,>({
   data,
   team,
   rowRenderer,
+  rowBgColor,
+  darkerRowBgColor
 }: TableProps<T>): JSX.Element => {
   let backgroundColor = team?.ColorOne || "#4B5563";
   let borderColor = team?.ColorTwo || "#4B5563";
+  let tableBgColor = rowBgColor || "#242424";
+  let darkerTableBgColor = darkerRowBgColor || darkenColor(tableBgColor, 5) || "#242424";
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
@@ -87,9 +93,9 @@ export const Table = <T,>({
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg mt-2 w-full">
+    <div className="overflow-x-auto rounded-lg w-full">
       <div
-        className={`sm:table table-auto w-full border-b-2 ${textColorClass}`}
+        className={`sm:table table-auto w-full border-b-2`}
         style={{ backgroundColor, borderColor }}
       >
         {/* Header */}
@@ -121,7 +127,7 @@ export const Table = <T,>({
         {/* Body */}
         <div className="table-row-group">
           {sortedData.map((item, index) => {
-            const bg = index % 2 === 0 ? "transparent" : darkerBackgroundColor;
+          const bg = index % 2 === 0 ? tableBgColor : darkerTableBgColor;
             return (
               <React.Fragment key={index}>
                 {rowRenderer(item, index, bg)}

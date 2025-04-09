@@ -27,7 +27,6 @@ export const GamesBar = ({ games, league, team, ts,
                            borderColor }: 
                            GamesBarProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const textColorClass = getTextColorBasedOnBg(backgroundColor);
 
   useEffect(() => {
     if (scrollContainerRef.current && games.length > 0) {
@@ -69,9 +68,9 @@ export const GamesBar = ({ games, league, team, ts,
   
     if (revealResult) {
       if (isHomeGame) {
-        resultColor = item.HomeTeamWin ? "bg-green-500" : "bg-red-500";
+        resultColor = item.HomeTeamWin ? "bg-[#189E5B]" : "bg-red-500";
       } else {
-        resultColor = item.AwayTeamWin ? "bg-green-500" : "bg-red-500";
+        resultColor = item.AwayTeamWin ? "bg-[#189E5B]" : "bg-red-500";
       }
       if (!item.HomeTeamWin && !item.AwayTeamWin) {
         resultColor = "";
@@ -143,20 +142,24 @@ interface TeamStandingsProps {
   isLoadingTwo: boolean;
   backgroundColor: string;
   borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
 }
 
 export const TeamStandings = ({ standings, team, 
                                 league, currentUser, isLoadingTwo, 
-                                backgroundColor, borderColor }: 
+                                backgroundColor, borderColor, textColorClass, darkerBackgroundColor }: 
                                 TeamStandingsProps) => {
-  
-  const textColorClass = getTextColorBasedOnBg(backgroundColor);
   
   return(
       <SectionCards
         team={team}
         header={`${team.Conference} Standings`}
         classes={`${textColorClass}, h-full`}
+        backgroundColor={backgroundColor}
+        borderColor={borderColor}
+        darkerBackgroundColor={darkerBackgroundColor}
+        textColorClass={textColorClass}
       >
         {isLoadingTwo ? (
           <div className="flex justify-center items-center">
@@ -169,7 +172,10 @@ export const TeamStandings = ({ standings, team,
           <StandingsTable standings={standings} 
                           league={league} 
                           team={team} 
-                          currentUser={currentUser} />
+                          currentUser={currentUser}
+                          rowBgColor={backgroundColor}
+                          darkerRowBgColor={darkerBackgroundColor}
+                          textColorClass={textColorClass} />
         )}
       </SectionCards>
   )
@@ -187,6 +193,8 @@ interface TeamMatchUpProps {
   awayLabel: string;
   backgroundColor: string;
   borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
   isLoadingTwo: boolean;
 }
 
@@ -202,10 +210,11 @@ export const TeamMatchUp = ({
   awayLabel,
   backgroundColor,
   borderColor,
+  textColorClass,
+  darkerBackgroundColor,
   isLoadingTwo,
 }: TeamMatchUpProps) => {
   
-  const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const revealResult = matchUp.length > 0 && RevealFBResults(matchUp[0], ts, league);
   let resultColor = "";
   let gameScore = "";
@@ -234,6 +243,11 @@ export const TeamMatchUp = ({
       team={team}
       header={`Next Game`}
       classes={`${textColorClass}`}
+      backgroundColor={backgroundColor}
+      borderColor={borderColor}
+      textColorClass={textColorClass}
+      darkerBackgroundColor={darkerBackgroundColor}
+
     >
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
@@ -326,21 +340,25 @@ interface TeamOverviewProps {
   currentUser: any;
   backgroundColor: string;
   borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
   isLoadingTwo: boolean;
 }
 
 export const TeamOverview = ({ team, league, ts, 
                            currentUser, backgroundColor, 
-                           borderColor, isLoadingTwo }: 
+                           borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }: 
                            TeamOverviewProps) => {
   
-  const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const darkerBackgroundColor = darkenColor(backgroundColor, -5);
   return (
     <SectionCards
                 team={team}
                 header="Team Grades"
                 classes={`${textColorClass} h-full`}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                textColorClass={textColorClass}
+                darkerBackgroundColor={darkerBackgroundColor}
               >
       {isLoadingTwo ? (
       <div className="flex justify-center items-center">
@@ -415,19 +433,25 @@ interface TeamMailboxProps {
   team: any;
   notifications: any[];
   backgroundColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
   isLoadingTwo: boolean;
 }
 
 export const TeamMailbox = ({ team, notifications,
-                              backgroundColor, isLoadingTwo }:
+                              backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamMailboxProps) => {
-
-  const textColorClass = getTextColorBasedOnBg(backgroundColor)
 
   return (
     <SectionCards team={team} 
                   header="Team Inbox" 
-                  classes={`${textColorClass} h-full`}>
+                  classes={`${textColorClass} h-full`}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  >
       {isLoadingTwo ? (
         <div className="flex justify-center items-center">
           <Text variant="small" 
@@ -463,15 +487,15 @@ interface TeamStatsProps {
   titles: any;
   backgroundColor: string;
   borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
   isLoadingTwo: boolean;
 }
 
 export const TeamStats = ({ team, league, header, teamStats, titles,
-                            backgroundColor, borderColor, isLoadingTwo }:
+                            backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamStatsProps) => {
 
-  const textColorClass = getTextColorBasedOnBg(backgroundColor)                          
-  const darkerBackgroundColor = darkenColor(backgroundColor, -5)
   const { boxOne, boxTwo, boxThree } = getLandingBoxStats(league, teamStats);
   
   return (
@@ -479,6 +503,10 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
     team={team}
     header={header}
     classes={`${textColorClass}`}
+    backgroundColor={backgroundColor}
+    borderColor={borderColor}
+    textColorClass={textColorClass}
+    darkerBackgroundColor={darkerBackgroundColor}
   >
 {isLoadingTwo ? (
         <div className="flex justify-center min-h-[10em]">
@@ -599,19 +627,24 @@ interface TeamNewsProps {
   team: any;
   teamNews: any[];
   backgroundColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
   isLoadingTwo: boolean;
 }
 
 export const TeamNews = ({ team, teamNews,
-                              backgroundColor, isLoadingTwo }:
+                              backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamNewsProps) => {
-
-  const textColorClass = getTextColorBasedOnBg(backgroundColor)
 
   return (
     <SectionCards team={team} 
                   header="Team News" 
-                  classes={`${textColorClass} h-full`}>
+                  classes={`${textColorClass} h-full`}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}>
       {isLoadingTwo ? (
         <div className="flex justify-center items-center">
           <Text variant="small" 

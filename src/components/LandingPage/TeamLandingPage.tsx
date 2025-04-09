@@ -25,6 +25,9 @@ import {
   TeamStats,
   TeamNews 
 } from "./TeamLandingPageComponents";
+import { isBrightColor } from "../../_utility/isBrightColor";
+import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
+import { darkenColor } from "../../_utility/getDarkerColor";
 
 interface TeamLandingPageProps {
   team: any;
@@ -34,8 +37,13 @@ interface TeamLandingPageProps {
 
 export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
   const { currentUser } = useAuthStore();
-  const backgroundColor = team?.ColorOne || "#4B5563";
-  const borderColor = team?.ColorTwo || "#4B5563";
+  let backgroundColor = team?.ColorOne || "#4B5563";
+  let borderColor = team?.ColorTwo || "#4B5563";
+    if (isBrightColor(backgroundColor)) {
+      [backgroundColor, borderColor] = [borderColor, backgroundColor];
+    }
+  let darkerBackgroundColor = darkenColor(backgroundColor, -5)
+  const textColorClass = getTextColorBasedOnBg(backgroundColor)
   const { 
     collegeNotifications, 
     proNotifications, 
@@ -283,7 +291,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   ts={ts} 
                   currentUser={currentUser} 
                   backgroundColor={backgroundColor} 
-                  borderColor={borderColor} 
+                  borderColor={borderColor}
         />
         <div className="flex-col md:flex md:flex-row gap-4 items-start w-full justify-center">
           <div className="flex md:gap-4 flex-col-reverse md:flex-row">
@@ -302,6 +310,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                               isLoadingTwo={isLoadingTwo}
                               backgroundColor={backgroundColor}
                               borderColor={borderColor}
+                              textColorClass={textColorClass}
+                              darkerBackgroundColor={darkerBackgroundColor}  
                 />
               )}
             </Border>
@@ -324,6 +334,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                             awayLabel={awayLabel}
                             backgroundColor={backgroundColor}
                             borderColor={borderColor}
+                            textColorClass={textColorClass}
+                            darkerBackgroundColor={darkerBackgroundColor}  
                             isLoadingTwo={isLoadingTwo}
                 />
               </Border>
@@ -338,6 +350,9 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   <TeamMailbox team={team}
                               notifications={teamNotifications}
                               backgroundColor={backgroundColor}
+                              borderColor={borderColor}
+                              textColorClass={textColorClass}
+                              darkerBackgroundColor={darkerBackgroundColor}  
                               isLoadingTwo={isLoadingTwo}
                   />
                 </Border>
@@ -351,6 +366,9 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   <TeamNews team={team}
                                 teamNews={teamNews}
                                 backgroundColor={backgroundColor}
+                                borderColor={borderColor}
+                                textColorClass={textColorClass}
+                                darkerBackgroundColor={darkerBackgroundColor}  
                                 isLoadingTwo={isLoadingTwo}
                     />
                 </Border>
@@ -372,6 +390,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                           titles={headers}
                           backgroundColor={backgroundColor}
                           borderColor={borderColor}
+                          textColorClass={textColorClass}
+                          darkerBackgroundColor={darkerBackgroundColor}  
                           isLoadingTwo={isLoadingTwo}
                 />
               </Border>
@@ -389,6 +409,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   currentUser={currentUser}
                   backgroundColor={backgroundColor}
                   borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}  
                   isLoadingTwo={isLoadingTwo}
                 />
             </Border>

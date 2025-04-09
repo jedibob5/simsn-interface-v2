@@ -130,7 +130,7 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
           {player.Weight} lbs
         </Text>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Personality
         </Text>
@@ -374,7 +374,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
           {player.Weight} lbs
         </Text>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Personality
         </Text>
@@ -677,7 +677,7 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
             {player.Weight} lbs
           </Text>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
             Personality
           </Text>
@@ -805,7 +805,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           {player.Weight} lbs
         </Text>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Personality
         </Text>

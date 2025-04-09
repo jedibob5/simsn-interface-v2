@@ -61,6 +61,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
 }) => {
   const backgroundColor = colorOne;
   const borderColor = colorTwo;
+  const sectionBg = "#242424";
   const darkerBorder = backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
   ? darkenColor(backgroundColor, 5)
   : darkenColor(backgroundColor, -5);
@@ -87,15 +88,14 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             isPro={isPro}
             marketing={Marketing} 
             borderColor={borderColor} 
-            backgroundColor={darkerBorder}
-            lineColor={backgroundColor}
-            textColorClass={textColorClass} />
+            backgroundColor={sectionBg}
+            lineColor={borderColor} />
         </div>
         )}
         <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center pb-2">
           <div className="flex flex-col max-w-1/4 p-2">
             <div className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
-                  style={{ backgroundColor: darkerBorder, borderColor: borderColor }}>
+                  style={{ backgroundColor: sectionBg, borderColor: borderColor }}>
               <Logo url={logo} 
                     variant="large" />
             </div>
@@ -128,8 +128,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             ts={ts} 
             league={League}
             borderColor={borderColor} 
-            backgroundColor={darkerBorder} 
-            textColorClass={textColorClass}
+            backgroundColor={sectionBg} 
           />
         )}
         {!isPro && (
@@ -137,9 +136,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             TeamProfile={TeamProfile}
             ts={ts}
             league={League}
-            backgroundColor={darkerBorder}
+            backgroundColor={sectionBg}
             borderColor={borderColor}
-            textColorClass={textColorClass}
           />
         )}
         </div>
