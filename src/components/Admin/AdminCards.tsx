@@ -124,7 +124,7 @@ export const AdminRequestCard: React.FC<AdminRequestCardProps> = ({
           </Text>
           {role && <Text variant="small">Role: {role}</Text>}
         </div>
-        <div className="flex flex-col justify-center space-y-2">
+        <div className="flex flex-col justify-center space-y-2 mr-1">
           <Button variant="success" size="sm" onClick={accept}>
             Accept
           </Button>

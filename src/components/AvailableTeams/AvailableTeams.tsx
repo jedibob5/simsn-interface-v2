@@ -59,7 +59,12 @@ export const AvailableTeams = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [selectedTeamData, setSelectedTeamData] = useState<any>(null);
-  const [sentRequest, setSentRequest] = useState(false);
+  const [sentRequestCFB, setSentRequestCFB] = useState(false);
+  const [sentRequestNFL, setSentRequestNFL] = useState(false);
+  const [sentRequestCBB, setSentRequestCBB] = useState(false);
+  const [sentRequestNBA, setSentRequestNBA] = useState(false);
+  const [sentRequestCHL, setSentRequestCHL] = useState(false);
+  const [sentRequestPHL, setSentRequestPHL] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const isRetro = currentUser?.isRetro;
 
@@ -117,9 +122,16 @@ export const AvailableTeams = () => {
   };
 
   const sendRequest = async (league: string, team: any, role?: string) => {
-    if (sentRequest) {
+    if (
+      (league === SimCFB && sentRequestCFB) ||
+      (league === SimNFL && sentRequestNFL) ||
+      (league === SimCBB && sentRequestCBB) ||
+      (league === SimNBA && sentRequestNBA) ||
+      (league === SimCHL && sentRequestCHL) ||
+      (league === SimPHL && sentRequestPHL)
+    ) {
       alert(
-        "It appears you've already requested a team. Please wait for an admin to approve the request."
+        `It appears you've already requested a team within the ${league}. Please wait for an admin to approve the request.`
       );
       return;
     }
@@ -134,6 +146,7 @@ export const AvailableTeams = () => {
     switch (league) {
       case SimCFB:
         await RequestService.CreateCFBTeamRequest(team, currentUser!.username);
+        setSentRequestCFB(true);
         break;
       case SimNFL:
         requestDTO = {
@@ -144,9 +157,11 @@ export const AvailableTeams = () => {
           IsAssistant: role === "a",
         };
         await RequestService.CreateNFLTeamRequest(requestDTO as any);
+        setSentRequestNFL(true);
         break;
       case SimCBB:
         await RequestService.CreateCBBTeamRequest(team, currentUser!.username);
+        setSentRequestCBB(true);
         break;
       case SimNBA:
         requestDTO = {
@@ -157,9 +172,11 @@ export const AvailableTeams = () => {
           IsAssistant: role === "a",
         };
         await RequestService.CreateNBATeamRequest(requestDTO as any);
+        setSentRequestNBA(true);
         break;
       case SimCHL:
         await RequestService.CreateCHLTeamRequest(team, currentUser!.username);
+        setSentRequestCHL(true);
         break;
       case SimPHL:
         requestDTO = {
@@ -172,14 +189,13 @@ export const AvailableTeams = () => {
           IsActive: true,
         };
         await RequestService.CreatePHLTeamRequest(requestDTO as any);
+        setSentRequestPHL(true);
         break;
     }
-
-    enqueueSnackbar("Request Sent!", {
+    enqueueSnackbar(`${league} Request Sent!`, {
       variant: "success",
       autoHideDuration: 3000,
     });
-    setSentRequest(true);
   };
 
   const selectSport = (sport: League) => {
@@ -322,7 +338,7 @@ export const AvailableTeams = () => {
                   league={selectedLeague}
                   disable={
                     !x.IsFBS ||
-                    sentRequest ||
+                    sentRequestCFB ||
                     (x.Coach != "AI" && x.Coach.length > 0)
                   }
                   setSelectedTeam={setSelectedTeam}
@@ -352,7 +368,7 @@ export const AvailableTeams = () => {
                   team={x.Team}
                   conference={x.Conference}
                   league={selectedLeague}
-                  disable={sentRequest || x.IsUserCoached}
+                  disable={sentRequestCBB || x.IsUserCoached}
                   setSelectedTeam={setSelectedTeam}
                 />
               ))}
@@ -381,7 +397,7 @@ export const AvailableTeams = () => {
                   conference={x.Conference}
                   league={selectedLeague}
                   disable={
-                    sentRequest || (x.Coach != "AI" && x.Coach.length > 0)
+                    sentRequestCHL || (x.Coach != "AI" && x.Coach.length > 0)
                   }
                   setSelectedTeam={setSelectedTeam}
                 />
@@ -407,7 +423,6 @@ export const AvailableTeams = () => {
               data={selectedTeamData}
               league={selectedLeague}
               retro={isRetro}
-              sentRequest={sentRequest}
               sendRequest={sendRequest}
             />
           </div>

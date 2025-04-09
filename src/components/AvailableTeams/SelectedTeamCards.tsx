@@ -91,7 +91,6 @@ export const SelectedTeamCard: React.FC<SelectedTeamCardProps> = ({
   data,
   retro,
   sendRequest,
-  sentRequest,
 }) => {
   if (!selectedTeam) {
     return <NoSelectedTeam />;
