@@ -7,28 +7,28 @@ import {
   useState,
 } from "react";
 import { useAuthStore } from "./AuthContext";
-import { 
+import {
   NBATeam,
   Team,
-  CollegeStandings, 
+  CollegeStandings,
   Timestamp,
   CollegePlayer,
   Croot,
   TeamRecruitingProfile,
   Match,
-  NewsLog, 
+  NewsLog,
   Notification,
   NBAStandings,
   NBAPlayer,
   NBAMatch,
   FreeAgencyResponse,
-  NBACapsheet, 
+  NBACapsheet,
   Gameplan,
   NBAGameplan,
   TransferPlayerResponse,
   FaceDataResponse,
   NBAContract,
-  NBAExtensionOffer
+  NBAExtensionOffer,
 } from "../models/basketballModels";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { BootstrapService } from "../_services/bootstrapService";
@@ -50,7 +50,7 @@ interface SimBBAContextProps {
   nbaTeamOptions: { label: string; value: string }[];
   nbaConferenceOptions: { label: string; value: string }[];
   cbbTeamMap: Record<number, Team> | null;
-  currentCBBStandings: CollegeStandings[],
+  currentCBBStandings: CollegeStandings[];
   cbbStandingsMap: Record<number, CollegeStandings> | null;
   cbbRosterMap: Record<number, CollegePlayer[]> | null;
   recruits: Croot[];
@@ -192,7 +192,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     number,
     TeamRecruitingProfile
   > | null>({});
-  const [portalPlayers, setPortalPlayers] = useState<TransferPlayerResponse[]>([]);
+  const [portalPlayers, setPortalPlayers] = useState<TransferPlayerResponse[]>(
+    []
+  );
   const [collegeInjuryReport, setCollegeInjuryReport] = useState<
     CollegePlayer[]
   >([]);
@@ -228,9 +230,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   const [proInjuryReport, setProInjuryReport] = useState<NBAPlayer[]>([]);
   const [proNews, setProNews] = useState<NewsLog[]>([]);
   const [allProGames, setAllProGames] = useState<NBAMatch[]>([]);
-  const [currentProSeasonGames, setCurrentProSeasonGames] = useState<NBAMatch[]>(
-    []
-  );
+  const [currentProSeasonGames, setCurrentProSeasonGames] = useState<
+    NBAMatch[]
+  >([]);
   const [collegeGameplan, setCollegeGameplan] = useState<Gameplan[]>([]);
   const [nbaGameplan, setNBAGameplan] = useState<NBAGameplan[]>([]);
   const [proTeamsGames, setProTeamsGames] = useState<NBAMatch[]>([]);
@@ -244,9 +246,14 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   const [playerFaces, setPlayerFaces] = useState<{
     [key: number]: FaceDataResponse;
   }>({});
-  const [proContractMap, setProContractMap] = useState<Record<number, NBAContract> | null>({});
-  const [proExtensionMap, setProExtensionMap] = useState<Record<number, NBAExtensionOffer> | null>({});
-  
+  const [proContractMap, setProContractMap] = useState<Record<
+    number,
+    NBAContract
+  > | null>({});
+  const [proExtensionMap, setProExtensionMap] = useState<Record<
+    number,
+    NBAExtensionOffer
+  > | null>({});
 
   useEffect(() => {
     if (currentUser && !isFetching.current) {
@@ -257,9 +264,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
 
   const bootstrapAllData = async () => {
     await getFirstBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
     await getSecondBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
     await getThirdBootstrapData();
     isFetching.current = false;
   };
@@ -283,12 +290,12 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     setCBBRosterMap(res.CollegeRosterMap);
     setPortalPlayers(res.PortalPlayers);
     setProNotifications(res.ProNotifications);
-    setCollegeGameplan(res.CollegeGameplan)
-    setNBAGameplan(res.NBAGameplan)
+    setCollegeGameplan(res.CollegeGameplan);
+    setNBAGameplan(res.NBAGameplan);
     setTopCBBPoints(res.TopCBBPoints);
     setTopCBBAssists(res.TopCBBAssists);
     setTopCBBRebounds(res.TopCBBRebounds);
-    setPlayerFaces(res.FaceData)
+    setPlayerFaces(res.FaceData);
 
     if (res.AllCollegeTeams.length > 0) {
       const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
@@ -398,7 +405,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     setAllCollegeGames(res.AllCollegeGames);
     setProContractMap(res.ContractMap);
     setProExtensionMap(res.ExtensionMap);
-    
+
     if (res.AllCollegeGames.length > 0 && cbb_Timestamp) {
       const currentSeasonGames = res.AllCollegeGames.filter(
         (x) => x.SeasonID === cbb_Timestamp.SeasonID
@@ -473,7 +480,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
         topNBARebounds,
         playerFaces,
         proContractMap,
-        proExtensionMap
+        proExtensionMap,
       }}
     >
       {children}

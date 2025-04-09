@@ -13,7 +13,7 @@ import {
   HockeyPositionOptions,
   Potentials,
   Preferences,
-  RecruitingOverview,
+  Overview,
   RecruitingRankings,
   RecruitingTeamBoard,
   SimCHL,
@@ -143,11 +143,9 @@ export const CHLRecruiting = () => {
                 <Button
                   type="button"
                   variant={
-                    recruitingCategory === RecruitingOverview
-                      ? "success"
-                      : "secondary"
+                    recruitingCategory === Overview ? "success" : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(RecruitingOverview)}
+                  onClick={() => setRecruitingCategory(Overview)}
                 >
                   Overview
                 </Button>
@@ -270,7 +268,7 @@ export const CHLRecruiting = () => {
               </div>
             </Border>
           </div>
-          {!recruitingLocked && recruitingCategory === RecruitingOverview && (
+          {!recruitingLocked && recruitingCategory === Overview && (
             <>
               <Border
                 direction="row"

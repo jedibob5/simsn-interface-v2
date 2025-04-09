@@ -43,7 +43,7 @@ import { useMobile } from "../../_hooks/useMobile";
 
 interface TeamPageProps {
   league: League;
-  ts: any;
+  ts?: any;
 }
 
 export const TeamPage: FC<TeamPageProps> = ({ league }) => {
