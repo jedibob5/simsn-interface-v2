@@ -1,6 +1,9 @@
 import {
   Attributes,
   Contracts,
+  CountryOptions,
+  HockeyArchetypeOptions,
+  HockeyPositionOptions,
   Overview,
   Preferences,
   SimPHL,
@@ -13,6 +16,7 @@ import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { Timestamp } from "../../../models/hockeyModels";
+import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { FreeAgencySidebar } from "../Common/FreeAgencySidebar";
 import { usePHLFreeAgency } from "./usePHLFreeAgency";
 
@@ -20,6 +24,7 @@ export const PHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
   const { freeAgency, phlTeam, hck_Timestamp } = hkStore;
   const {
+    teamCapsheet,
     modalAction,
     setModalAction,
     isModalOpen,
@@ -29,9 +34,20 @@ export const PHLFreeAgency = () => {
     setFreeAgencyCategory,
     tableViewType,
     setTableViewType,
+    goToPreviousPage,
+    goToNextPage,
+    currentPage,
+    totalPages,
     modalPlayer,
     setModalPlayer,
-    teamCapsheet,
+    SelectArchetypeOptions,
+    SelectCountryOption,
+    SelectPositionOptions,
+    SelectRegionOptions,
+    country,
+    regionOptions,
+    filteredFA,
+    freeAgentMap,
   } = usePHLFreeAgency();
   const [isMobile] = useMobile();
   const teamColors = useTeamColors(
@@ -53,64 +69,35 @@ export const PHLFreeAgency = () => {
           league={SimPHL}
           ts={hck_Timestamp as Timestamp}
         />
-        <div className="flex flex-col sm:flex-row gap-x-2">
-          <Border
-            direction="row"
-            classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
-            styles={{
-              backgroundColor: teamColors.One,
-              borderColor: teamColors.Two,
-            }}
-          >
-            <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
-              <Button
-                type="button"
-                variant={
-                  freeAgencyCategory === Overview ? "success" : "secondary"
-                }
-                onClick={() => setFreeAgencyCategory(Overview)}
-              >
-                Overview
-              </Button>
-              <Button
-                type="button"
-                variant={
-                  freeAgencyCategory === Contracts ? "success" : "secondary"
-                }
-                onClick={() => setFreeAgencyCategory(Contracts)}
-              >
-                Contracts
-              </Button>
-            </ButtonGroup>
-            <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
-              <Button
-                type="button"
-                variant={tableViewType === Attributes ? "success" : "secondary"}
-                onClick={() => setTableViewType(Attributes)}
-              >
-                Attributes
-              </Button>
-              <Button
-                type="button"
-                variant={
-                  tableViewType === Preferences ? "success" : "secondary"
-                }
-                onClick={() => setTableViewType(Preferences)}
-              >
-                Preferences
-              </Button>
-            </ButtonGroup>
-          </Border>
-          <Border
-            direction="col"
-            classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-8"
-            styles={{
-              backgroundColor: teamColors.One,
-              borderColor: teamColors.Two,
-            }}
-          >
-            <div className="sm:grid sm:grid-cols-2 w-full">
-              <ButtonGroup classes="flex flex-row w-full justify-center sm:justify-end">
+        <div className="flex flex-col w-full max-[1024px]:gap-y-2">
+          <div className="flex flex-col sm:flex-row gap-x-2">
+            <Border
+              direction="row"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
+              styles={{
+                backgroundColor: teamColors.One,
+                borderColor: teamColors.Two,
+              }}
+            >
+              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
+                <Button
+                  type="button"
+                  variant={
+                    freeAgencyCategory === Overview ? "success" : "secondary"
+                  }
+                  onClick={() => setFreeAgencyCategory(Overview)}
+                >
+                  Overview
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    freeAgencyCategory === Contracts ? "success" : "secondary"
+                  }
+                  onClick={() => setFreeAgencyCategory(Contracts)}
+                >
+                  Contracts
+                </Button>
                 <Button
                   type="button"
                   variant="primary"
@@ -126,6 +113,105 @@ export const PHLFreeAgency = () => {
                   Settings
                 </Button>
               </ButtonGroup>
+              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Attributes ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Attributes)}
+                >
+                  Free Agents
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Preferences ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Preferences)}
+                >
+                  Waivers
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Preferences ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Preferences)}
+                >
+                  Affiliate
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Preferences ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Preferences)}
+                >
+                  International
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Attributes ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Attributes)}
+                >
+                  Attributes
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    tableViewType === Preferences ? "success" : "secondary"
+                  }
+                  onClick={() => setTableViewType(Preferences)}
+                >
+                  Preferences
+                </Button>
+              </ButtonGroup>
+            </Border>
+          </div>
+          <Border
+            direction="row"
+            classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
+            styles={{
+              backgroundColor: teamColors.One,
+              borderColor: teamColors.Two,
+            }}
+          >
+            <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
+              <CategoryDropdown
+                label="Positions"
+                options={HockeyPositionOptions}
+                change={SelectPositionOptions}
+                isMulti={true}
+                isMobile={isMobile}
+              />
+              <CategoryDropdown
+                label="Archetype"
+                options={HockeyArchetypeOptions}
+                change={SelectArchetypeOptions}
+                isMulti={true}
+                isMobile={isMobile}
+              />
+              <CategoryDropdown
+                label="Country"
+                options={CountryOptions}
+                change={SelectCountryOption}
+                isMulti={false}
+                isMobile={isMobile}
+              />
+              {regionOptions.length > 0 && (
+                <CategoryDropdown
+                  label="Region"
+                  options={regionOptions}
+                  change={SelectRegionOptions}
+                  isMulti={false}
+                  isMobile={isMobile}
+                />
+              )}
             </div>
           </Border>
         </div>

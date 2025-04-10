@@ -125,6 +125,7 @@ export const HockeyArchetypeOptions = [
   { label: "Sniper", value: "Sniper" },
 ];
 export const USARegionOptions = [
+  { label: "All", value: "" },
   { label: "Alabama", value: "AL" },
   { label: "Alaska", value: "AK" },
   { label: "Arizona", value: "AZ" },
@@ -178,6 +179,7 @@ export const USARegionOptions = [
 ];
 
 export const CanadaRegionOptions = [
+  { label: "All", value: "" },
   { label: "Alberta", value: "AB" },
   { label: "British Columbia", value: "BC" },
   { label: "Manitoba", value: "MB" },
@@ -194,6 +196,7 @@ export const CanadaRegionOptions = [
 ];
 
 export const RussiaRegionOptions = [
+  { label: "All", value: "" },
   { label: "Karelia", value: "Karelia" },
   { label: "Moscow", value: "Moscow" },
   { label: "Saint Petersburg", value: "Saint Petersburg" },
@@ -269,6 +272,7 @@ export const RussiaRegionOptions = [
 ];
 
 export const SwedenRegionOptions = [
+  { label: "All", value: "" },
   { label: "Uppland", value: "Uppland" },
   { label: "Skane", value: "Skane" },
   { label: "Vastergotland", value: "Vastergotland" },
@@ -298,6 +302,7 @@ export const SwedenRegionOptions = [
 ];
 
 export const CountryOptions = [
+  { label: "All", value: "" },
   { label: "Canada", value: "Canada" },
   { label: "Russia", value: "Russia" },
   { label: "Sweden", value: "Sweden" },
