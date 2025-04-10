@@ -46,4 +46,6 @@ export default {
   NBA_SCHEDULE: "/nba/schedule",
   NBA_DRAFT_ROOM: "/nba/draft/room",
   NBA_STATS: "/nba/stats",
+  CHL_SCHEDULE: "/chl/schedule",
+  PHL_SCHEDULE: "/phl/schedule",
 };

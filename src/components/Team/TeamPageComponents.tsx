@@ -319,9 +319,10 @@ export const TeamBreakdown = ({
         </div>
       </div>
     )}
+    <div className="flex w-[90%] self-center border-t" 
+             style={{ borderColor }} />
     {TeamProfile && ts && (
-      <div className="flex flex-col w-full border-t border-dotted pt-1 px-1" 
-           style={{ borderColor }}>
+      <div className="flex flex-col w-full pt-1 px-1">
         <Text variant="body-small" classes={`${textColorClass} font-semibold pb-1`}>
           Incoming Croots
         </Text>
