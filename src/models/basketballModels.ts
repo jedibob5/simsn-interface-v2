@@ -759,48 +759,6 @@ export class NBAPlayer {
     return a;
   }
 }
-export class FreeAgencyResponse {
-  FreeAgents: NBAPlayer[];
-  WaiverPlayers: NBAPlayer[];
-  GLeaguePlayers: NBAPlayer[];
-  ISLPlayers: NBAPlayer[];
-  TeamOffers: NBAContractOffer[];
-  RosterCount: number;
-
-  constructor(source: any = {}) {
-    if ("string" === typeof source) source = JSON.parse(source);
-    this.FreeAgents = this.convertValues(source["FreeAgents"], NBAPlayer);
-    this.WaiverPlayers = this.convertValues(source["WaiverPlayers"], NBAPlayer);
-    this.GLeaguePlayers = this.convertValues(
-      source["GLeaguePlayers"],
-      NBAPlayer
-    );
-    this.ISLPlayers = this.convertValues(source["ISLPlayers"], NBAPlayer);
-    this.TeamOffers = this.convertValues(
-      source["TeamOffers"],
-      NBAContractOffer
-    );
-    this.RosterCount = source["RosterCount"];
-  }
-
-  convertValues(a: any, classs: any, asMap: boolean = false): any {
-    if (!a) {
-      return a;
-    }
-    if (Array.isArray(a)) {
-      return (a as any[]).map((elem) => this.convertValues(elem, classs));
-    } else if ("object" === typeof a) {
-      if (asMap) {
-        for (const key of Object.keys(a)) {
-          a[key] = new classs(a[key]);
-        }
-        return a;
-      }
-      return new classs(a);
-    }
-    return a;
-  }
-}
 export class NBAStandings {
   ID: number;
   CreatedAt: Time;
@@ -3407,14 +3365,17 @@ export class BootstrapData {
   TopNBAAssists: NBAPlayer[];
   TopNBARebounds: NBAPlayer[];
   ProInjuryReport: NBAPlayer[];
+  GLeaguePlayers: NBAPlayer[];
+  InternationalPlayers: NBAPlayer[];
   Recruits: Croot[];
-  FreeAgency: FreeAgencyResponse;
   ProNews: NewsLog[];
   AllCollegeGames: Match[];
   AllProGames: NBAMatch[];
-  FaceData: {[key: number]: FaceDataResponse};
-  ContractMap: {[key: number]: NBAContract};
-  ExtensionMap: {[key: number]: NBAExtensionOffer};
+  FaceData: { [key: number]: FaceDataResponse };
+  ContractMap: { [key: number]: NBAContract };
+  ExtensionMap: { [key: number]: NBAExtensionOffer };
+  FreeAgentOffers: NBAContractOffer[];
+  WaiverOffers: NBAWaiverOffer[];
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -3482,17 +3443,41 @@ export class BootstrapData {
       source["ProInjuryReport"],
       NBAPlayer
     );
+    this.GLeaguePlayers = this.convertValues(
+      source["GLeaguePlayers"],
+      NBAPlayer
+    );
+    this.InternationalPlayers = this.convertValues(
+      source["InternationalPlayers"],
+      NBAPlayer
+    );
     this.Recruits = this.convertValues(source["Recruits"], Croot);
-    this.FreeAgency = this.convertValues(
-      source["FreeAgency"],
-      FreeAgencyResponse
+    this.FreeAgentOffers = this.convertValues(
+      source["FreeAgentOffers"],
+      NBAContractOffer
+    );
+    this.WaiverOffers = this.convertValues(
+      source["WaiverOffers"],
+      NBAWaiverOffer
     );
     this.ProNews = this.convertValues(source["ProNews"], NewsLog);
     this.AllCollegeGames = this.convertValues(source["AllCollegeGames"], Match);
     this.AllProGames = this.convertValues(source["AllProGames"], NBAMatch);
-    this.FaceData = this.convertValues(source["FaceData"], FaceDataResponse, true);
-    this.ContractMap = this.convertValues(source["ContractMap"], NBAContract, true);
-    this.ExtensionMap = this.convertValues(source["ExtensionMap"], NBAExtensionOffer, true);
+    this.FaceData = this.convertValues(
+      source["FaceData"],
+      FaceDataResponse,
+      true
+    );
+    this.ContractMap = this.convertValues(
+      source["ContractMap"],
+      NBAContract,
+      true
+    );
+    this.ExtensionMap = this.convertValues(
+      source["ExtensionMap"],
+      NBAExtensionOffer,
+      true
+    );
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -7077,37 +7062,37 @@ export class FaceDataResponse {
   HairColor: string;
 
   constructor(source: any = {}) {
-      if ('string' === typeof source) source = JSON.parse(source);
-      this.PlayerID = source["PlayerID"];
-      this.Accessories = source["Accessories"];
-      this.Body = source["Body"];
-      this.Ear = source["Ear"];
-      this.Eye = source["Eye"];
-      this.EyeLine = source["EyeLine"];
-      this.Eyebrow = source["Eyebrow"];
-      this.FacialHair = source["FacialHair"];
-      this.Glasses = source["Glasses"];
-      this.Hair = source["Hair"];
-      this.HairBG = source["HairBG"];
-      this.HairFlip = source["HairFlip"];
-      this.Head = source["Head"];
-      this.Jersey = source["Jersey"];
-      this.MiscLine = source["MiscLine"];
-      this.Mouth = source["Mouth"];
-      this.MouthFlip = source["MouthFlip"];
-      this.Nose = source["Nose"];
-      this.NoseFlip = source["NoseFlip"];
-      this.SmileLine = source["SmileLine"];
-      this.BodySize = source["BodySize"];
-      this.EarSize = source["EarSize"];
-      this.EyeAngle = source["EyeAngle"];
-      this.EyeBrowAngle = source["EyeBrowAngle"];
-      this.FaceSize = source["FaceSize"];
-      this.FacialHairShave = source["FacialHairShave"];
-      this.NoseSize = source["NoseSize"];
-      this.SmileLineSize = source["SmileLineSize"];
-      this.SkinColor = source["SkinColor"];
-      this.HairColor = source["HairColor"];
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.PlayerID = source["PlayerID"];
+    this.Accessories = source["Accessories"];
+    this.Body = source["Body"];
+    this.Ear = source["Ear"];
+    this.Eye = source["Eye"];
+    this.EyeLine = source["EyeLine"];
+    this.Eyebrow = source["Eyebrow"];
+    this.FacialHair = source["FacialHair"];
+    this.Glasses = source["Glasses"];
+    this.Hair = source["Hair"];
+    this.HairBG = source["HairBG"];
+    this.HairFlip = source["HairFlip"];
+    this.Head = source["Head"];
+    this.Jersey = source["Jersey"];
+    this.MiscLine = source["MiscLine"];
+    this.Mouth = source["Mouth"];
+    this.MouthFlip = source["MouthFlip"];
+    this.Nose = source["Nose"];
+    this.NoseFlip = source["NoseFlip"];
+    this.SmileLine = source["SmileLine"];
+    this.BodySize = source["BodySize"];
+    this.EarSize = source["EarSize"];
+    this.EyeAngle = source["EyeAngle"];
+    this.EyeBrowAngle = source["EyeBrowAngle"];
+    this.FaceSize = source["FaceSize"];
+    this.FacialHairShave = source["FacialHairShave"];
+    this.NoseSize = source["NoseSize"];
+    this.SmileLineSize = source["SmileLineSize"];
+    this.SkinColor = source["SkinColor"];
+    this.HairColor = source["HairColor"];
   }
 }
 export class Timestamp {
