@@ -16,7 +16,6 @@ import {
   CollegeTeam,
   CollegeTeamDepthChart,
   Croot,
-  FreeAgencyResponse,
   NewsLog,
   NFLCapsheet,
   NFLDepthChart,
@@ -29,7 +28,9 @@ import {
   Timestamp,
   FaceDataResponse,
   NFLContract,
-  NFLExtensionOffer
+  NFLExtensionOffer,
+  FreeAgencyOffer,
+  NFLWaiverOffer,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -74,9 +75,11 @@ interface SimFBAContextProps {
   proRosterMap: {
     [key: number]: NFLPlayer[];
   } | null;
-  freeAgency: FreeAgencyResponse | null;
+  freeAgentOffers: FreeAgencyOffer[];
+  waiverOffers: NFLWaiverOffer[];
   capsheetMap: Record<number, NFLCapsheet> | null;
   proInjuryReport: NFLPlayer[];
+  practiceSquadPlayers: NFLPlayer[];
   proNews: NewsLog[];
   allProGames: NFLGame[];
   currentProSeasonGames: NFLGame[];
@@ -134,7 +137,9 @@ const defaultContext: SimFBAContextProps = {
   currentProStandings: [],
   proStandingsMap: {},
   proRosterMap: {},
-  freeAgency: null,
+  freeAgentOffers: [],
+  waiverOffers: [],
+  practiceSquadPlayers: [],
   capsheetMap: {},
   proInjuryReport: [],
   proNews: [],
@@ -248,12 +253,16 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [proRosterMap, setProRosterMap] = useState<{
     [key: number]: NFLPlayer[];
   } | null>({});
-  const [freeAgency, setFreeAgency] = useState<FreeAgencyResponse | null>(null);
+  const [freeAgentOffers, setFreeAgentOffers] = useState<FreeAgencyOffer[]>([]);
+  const [waiverOffers, setWaiverOffers] = useState<NFLWaiverOffer[]>([]);
   const [capsheetMap, setCapsheetMap] = useState<Record<
     number,
     NFLCapsheet
   > | null>({});
   const [proInjuryReport, setProInjuryReport] = useState<NFLPlayer[]>([]);
+  const [practiceSquadPlayers, setPracticeSquadPlayers] = useState<NFLPlayer[]>(
+    []
+  );
   const [proNews, setProNews] = useState<NewsLog[]>([]);
   const [allProGames, setAllProGames] = useState<NFLGame[]>([]);
   const [currentProSeasonGames, setCurrentProSeasonGames] = useState<NFLGame[]>(
@@ -264,8 +273,14 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [playerFaces, setPlayerFaces] = useState<{
     [key: number]: FaceDataResponse;
   }>({});
-  const [proContractMap, setProContractMap] = useState<Record<number, NFLContract> | null>({});
-  const [proExtensionMap, setProExtensionMap] = useState<Record<number, NFLExtensionOffer> | null>({});
+  const [proContractMap, setProContractMap] = useState<Record<
+    number,
+    NFLContract
+  > | null>({});
+  const [proExtensionMap, setProExtensionMap] = useState<Record<
+    number,
+    NFLExtensionOffer
+  > | null>({});
 
   useEffect(() => {
     if (currentUser && !isFetching.current) {
@@ -305,7 +320,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setTopCFBPassers(res.TopCFBPassers);
     setTopCFBRushers(res.TopCFBRushers);
     setTopCFBReceivers(res.TopCFBReceivers);
-    setPlayerFaces(res.FaceData)
+    setPlayerFaces(res.FaceData);
 
     if (res.AllCollegeTeams.length > 0) {
       const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
@@ -399,6 +414,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCapsheetMap(res.CapsheetMap);
     setAllProGames(res.AllProGames);
     setProRosterMap(res.ProRosterMap);
+    setPracticeSquadPlayers(res.PracticeSquadPlayers);
     setProInjuryReport(res.ProInjuryReport);
     setAllProStandings(res.ProStandings);
     if (res.AllProGames.length > 0 && cfb_Timestamp) {
@@ -436,7 +452,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     const res = await BootstrapService.GetThirdFBABootstrapData(cfbID, nflID);
     setProNews(res.ProNews);
     setRecruits(res.Recruits);
-    setFreeAgency(res.FreeAgency);
+    setFreeAgentOffers(res.FreeAgentOffers);
+    setWaiverOffers(res.WaiverWireOffers);
     setCFBDepthchartMap(res.CollegeDepthChartMap);
     setNFLDepthchartMap(res.NFLDepthChartMap);
     setIsLoadingThree(false);
@@ -444,50 +461,50 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setProExtensionMap(res.ExtensionMap);
   };
 
-    const cutCFBPlayer = useCallback(
-      async (playerID: number, teamID: number) => {
-        const res = await PlayerService.CutCFBPlayer(playerID);
-        const rosterMap = { ...cfbRosterMap };
-        rosterMap[teamID] = rosterMap[teamID].filter(
-          (player) => player.ID !== playerID
-        );
+  const cutCFBPlayer = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.CutCFBPlayer(playerID);
+      const rosterMap = { ...cfbRosterMap };
+      rosterMap[teamID] = rosterMap[teamID].filter(
+        (player) => player.ID !== playerID
+      );
+      setCFBRosterMap(rosterMap);
+    },
+    [cfbRosterMap]
+  );
+  const redshirtPlayer = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.CutCFBPlayer(playerID);
+      const rosterMap = { ...cfbRosterMap };
+      const playerIDX = rosterMap[teamID].findIndex(
+        (player) => player.ID === playerID
+      );
+      if (playerIDX > -1) {
+        rosterMap[teamID][playerIDX].IsRedshirting = true;
         setCFBRosterMap(rosterMap);
-      },
-      [cfbRosterMap]
-    );
-    const redshirtPlayer = useCallback(
-      async (playerID: number, teamID: number) => {
-        const res = await PlayerService.CutCFBPlayer(playerID);
-        const rosterMap = { ...cfbRosterMap };
-        const playerIDX = rosterMap[teamID].findIndex(
-          (player) => player.ID === playerID
-        );
-        if (playerIDX > -1) {
-          rosterMap[teamID][playerIDX].IsRedshirting = true;
-          setCFBRosterMap(rosterMap);
-        }
-      },
-      [cfbRosterMap]
-    );
-    const promisePlayer = useCallback(
-      async (playerID: number, teamID: number) => {},
-      [cfbRosterMap]
-    );
-    const cutNFLPlayer = useCallback(
-      async (playerID: number, teamID: number) => {
-        const res = await PlayerService.CutNFLPlayer(playerID);
-        const rosterMap = { ...proRosterMap };
-        rosterMap[teamID] = rosterMap[teamID].filter(
-          (player) => player.ID !== playerID
-        );
-        setProRosterMap(rosterMap);
-      },
-      [proRosterMap]
-    );
+      }
+    },
+    [cfbRosterMap]
+  );
+  const promisePlayer = useCallback(
+    async (playerID: number, teamID: number) => {},
+    [cfbRosterMap]
+  );
+  const cutNFLPlayer = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.CutNFLPlayer(playerID);
+      const rosterMap = { ...proRosterMap };
+      rosterMap[teamID] = rosterMap[teamID].filter(
+        (player) => player.ID !== playerID
+      );
+      setProRosterMap(rosterMap);
+    },
+    [proRosterMap]
+  );
 
-      const updateCFBRosterMap = (newMap: Record<number, CollegePlayer[]>) => {
-        setCFBRosterMap(newMap);
-      };
+  const updateCFBRosterMap = (newMap: Record<number, CollegePlayer[]>) => {
+    setCFBRosterMap(newMap);
+  };
 
   return (
     <SimFBAContext.Provider
@@ -522,7 +539,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         currentProStandings,
         proStandingsMap,
         proRosterMap,
-        freeAgency,
+        freeAgentOffers,
+        waiverOffers,
+        practiceSquadPlayers,
         capsheetMap,
         proInjuryReport,
         proNews,
