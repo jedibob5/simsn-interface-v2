@@ -21,7 +21,6 @@ import {
   NBAStandings,
   NBAPlayer,
   NBAMatch,
-  FreeAgencyResponse,
   NBACapsheet,
   Gameplan,
   NBAGameplan,
@@ -29,6 +28,8 @@ import {
   FaceDataResponse,
   NBAContract,
   NBAExtensionOffer,
+  NBAContractOffer,
+  NBAWaiverOffer,
 } from "../models/basketballModels";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { BootstrapService } from "../_services/bootstrapService";
@@ -69,7 +70,10 @@ interface SimBBAContextProps {
   proRosterMap: {
     [key: number]: NBAPlayer[];
   } | null;
-  freeAgency: FreeAgencyResponse | null;
+  freeAgentOffers: NBAContractOffer[];
+  waiverOffers: NBAWaiverOffer[];
+  gLeaguePlayers: NBAPlayer[];
+  internationalPlayers: NBAPlayer[];
   capsheetMap: Record<number, NBACapsheet> | null;
   proInjuryReport: NBAPlayer[];
   proNews: NewsLog[];
@@ -123,7 +127,10 @@ const defaultContext: SimBBAContextProps = {
   allProStandings: [],
   currentProStandings: [],
   proRosterMap: {},
-  freeAgency: null,
+  freeAgentOffers: [],
+  waiverOffers: [],
+  gLeaguePlayers: [],
+  internationalPlayers: [],
   capsheetMap: {},
   proInjuryReport: [],
   proNews: [],
@@ -222,7 +229,14 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   const [proRosterMap, setProRosterMap] = useState<{
     [key: number]: NBAPlayer[];
   } | null>({});
-  const [freeAgency, setFreeAgency] = useState<FreeAgencyResponse | null>(null);
+  const [freeAgentOffers, setFreeAgentOffers] = useState<NBAContractOffer[]>(
+    []
+  );
+  const [waiverOffers, setWaiverOffers] = useState<NBAWaiverOffer[]>([]);
+  const [gLeaguePlayers, setGLeaguePlayers] = useState<NBAPlayer[]>([]);
+  const [internationalPlayers, setInternationalPlayers] = useState<NBAPlayer[]>(
+    []
+  );
   const [capsheetMap, setCapsheetMap] = useState<Record<
     number,
     NBACapsheet
@@ -374,6 +388,8 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     }
     setCapsheetMap(res.CapsheetMap);
     setProRosterMap(res.ProRosterMap);
+    setGLeaguePlayers(res.GLeaguePlayers);
+    setInternationalPlayers(res.InternationalPlayers);
     setProInjuryReport(res.ProInjuryReport);
     setAllProStandings(res.ProStandings);
     if (res.ProStandings.length > 0 && cbb_Timestamp) {
@@ -401,7 +417,8 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     const res = await BootstrapService.GetThirdBBABootstrapData(cbbID, nbaID);
     setProNews(res.ProNews);
     setRecruits(res.Recruits);
-    setFreeAgency(res.FreeAgency);
+    setFreeAgentOffers(res.FreeAgentOffers);
+    setWaiverOffers(res.WaiverOffers);
     setAllCollegeGames(res.AllCollegeGames);
     setProContractMap(res.ContractMap);
     setProExtensionMap(res.ExtensionMap);
@@ -463,7 +480,10 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
         allProStandings,
         currentProStandings,
         proRosterMap,
-        freeAgency,
+        freeAgentOffers,
+        waiverOffers,
+        gLeaguePlayers,
+        internationalPlayers,
         capsheetMap,
         proInjuryReport,
         proNews,

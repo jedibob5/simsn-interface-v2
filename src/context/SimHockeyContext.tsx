@@ -23,7 +23,6 @@ import {
   ProfessionalPlayer,
   ProCapsheet,
   ProfessionalGame,
-  FreeAgencyResponse,
   ProTeamRequest,
   Timestamp,
   CollegeLineup,
@@ -35,6 +34,8 @@ import {
   ProContract,
   ExtensionOffer,
   UpdateRecruitingBoardDTO,
+  FreeAgencyOffer,
+  WaiverOffer,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -87,7 +88,9 @@ interface SimHCKContextProps {
   currentProStandings: ProfessionalStandings[];
   proStandingsMap: Record<number, ProfessionalStandings>;
   proRosterMap: Record<number, ProfessionalPlayer[]>;
-  freeAgency: FreeAgencyResponse | null;
+  affiliatePlayers: ProfessionalPlayer[];
+  freeAgentOffers: FreeAgencyOffer[];
+  waiverOffers: WaiverOffer[];
   capsheetMap: Record<number, ProCapsheet>;
   proInjuryReport: ProfessionalPlayer[];
   proNews: NewsLog[];
@@ -156,7 +159,9 @@ const defaultContext: SimHCKContextProps = {
   currentProStandings: [],
   proStandingsMap: {},
   proRosterMap: {},
-  freeAgency: null,
+  affiliatePlayers: [],
+  freeAgentOffers: [],
+  waiverOffers: [],
   capsheetMap: {},
   proInjuryReport: [],
   proNews: [],
@@ -271,13 +276,17 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [proRosterMap, setProRosterMap] = useState<
     Record<number, ProfessionalPlayer[]>
   >({});
-  const [freeAgency, setFreeAgency] = useState<FreeAgencyResponse | null>(null);
+  const [freeAgentOffers, setFreeAgentOffers] = useState<FreeAgencyOffer[]>([]);
+  const [waiverOffers, setWaiverOffers] = useState<WaiverOffer[]>([]);
   const [capsheetMap, setCapsheetMap] = useState<Record<number, ProCapsheet>>(
     {}
   );
   const [proInjuryReport, setProInjuryReport] = useState<ProfessionalPlayer[]>(
     []
   );
+  const [affiliatePlayers, setAffiliatePlayers] = useState<
+    ProfessionalPlayer[]
+  >([]);
   const [proNews, setProNews] = useState<NewsLog[]>([]);
   const [allProGames, setAllProGames] = useState<ProfessionalGame[]>([]);
   const [currentProSeasonGames, setCurrentProSeasonGames] = useState<
@@ -332,7 +341,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setTeamProfileMap(res.TeamProfileMap);
     setCHLRosterMap(res.CollegeRosterMap);
     setProRosterMap(res.ProRosterMap);
-    setFreeAgency(res.FreeAgency);
+    setFreeAgentOffers(res.FreeAgentOffers);
+    setWaiverOffers(res.WaiverWireOffers);
+    setAffiliatePlayers(res.AffiliatePlayers);
     setPortalPlayers(res.PortalPlayers);
     setRecruits(res.Recruits);
     setRecruitProfiles(res.RecruitProfiles);
@@ -731,6 +742,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     <SimHCKContext.Provider
       value={{
         hck_Timestamp,
+        affiliatePlayers,
         isLoading,
         chlTeam,
         phlTeam,
@@ -764,7 +776,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         currentProStandings,
         proStandingsMap,
         proRosterMap,
-        freeAgency,
+        freeAgentOffers,
+        waiverOffers,
         capsheetMap,
         proInjuryReport,
         proNews,
