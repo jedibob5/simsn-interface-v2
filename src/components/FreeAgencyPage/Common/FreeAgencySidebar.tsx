@@ -73,8 +73,7 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
         direction="col"
         classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-start"
         styles={{
-          backgroundColor: teamColors.One,
-          borderColor: teamColors.Two,
+          borderColor: teamColors.One,
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">

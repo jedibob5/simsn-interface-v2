@@ -26,7 +26,14 @@ import { SelectOption } from "../../../_hooks/useSelectStyles";
 
 export const usePHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
-  const { capsheetMap, phlTeamMap, phlTeam, freeAgency } = hkStore;
+  const {
+    capsheetMap,
+    phlTeamMap,
+    phlTeam,
+    freeAgentOffers,
+    waiverOffers,
+    proRosterMap,
+  } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [freeAgencyCategory, setFreeAgencyCategory] = useState("");
   const [tableViewType, setTableViewType] = useState<string>(Attributes);
@@ -40,7 +47,13 @@ export const usePHLFreeAgency = () => {
   const [regions, setRegions] = useState<string[]>([]);
   const pageSize = 100;
 
-  const { FreeAgents } = freeAgency!!;
+  const FreeAgents = useMemo(() => {
+    return proRosterMap[0].filter((player) => player.IsFreeAgent);
+  }, [proRosterMap]);
+
+  const WaiverPlayers = useMemo(() => {
+    return proRosterMap[0].filter((player) => player.IsFreeAgent);
+  }, [proRosterMap]);
 
   const teamCapsheet = useMemo(() => {
     if (phlTeam) {

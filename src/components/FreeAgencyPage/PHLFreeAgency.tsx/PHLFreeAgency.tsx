@@ -22,7 +22,7 @@ import { usePHLFreeAgency } from "./usePHLFreeAgency";
 
 export const PHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
-  const { freeAgency, phlTeam, hck_Timestamp } = hkStore;
+  const { phlTeam, hck_Timestamp } = hkStore;
   const {
     teamCapsheet,
     modalAction,
@@ -75,8 +75,7 @@ export const PHLFreeAgency = () => {
               direction="row"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
               styles={{
-                backgroundColor: teamColors.One,
-                borderColor: teamColors.Two,
+                borderColor: teamColors.One,
               }}
             >
               <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
@@ -177,8 +176,7 @@ export const PHLFreeAgency = () => {
             direction="row"
             classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
             styles={{
-              backgroundColor: teamColors.One,
-              borderColor: teamColors.Two,
+              borderColor: teamColors.One,
             }}
           >
             <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
