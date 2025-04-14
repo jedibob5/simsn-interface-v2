@@ -7,8 +7,10 @@ import {
   Canada,
   CanadaRegionOptions,
   FreeAgent,
+  FreeAgentOffer,
   InfoType,
   ModalAction,
+  OfferAction,
   Overview,
   Russia,
   RussiaRegionOptions,
@@ -50,6 +52,7 @@ export const usePHLFreeAgency = () => {
     PHLPlayer | NFLPlayer | NBAPlayer
   >({} as PHLPlayer);
   const [modalAction, setModalAction] = useState<ModalAction>(InfoType);
+  const [offerAction, setOfferAction] = useState<OfferAction>(FreeAgentOffer);
   const [country, setCountry] = useState<string>("");
   const [positions, setPositions] = useState<string[]>([]);
   const [archetype, setArchetype] = useState<string[]>([]);
@@ -115,27 +118,19 @@ export const usePHLFreeAgency = () => {
   }, [waiverOffers]);
 
   const teamFreeAgentOfferMap = useMemo(() => {
-    const dict: Record<number, FreeAgencyOffer[]> = {};
+    const dict: Record<number, FreeAgencyOffer> = {};
     for (let i = 0; i < freeAgentOffers.length; i) {
       const offer = freeAgentOffers[i];
-      if (dict[offer.PlayerID].length > 0) {
-        dict[offer.PlayerID].push(offer);
-      } else {
-        dict[offer.PlayerID] = [offer];
-      }
+      dict[offer.PlayerID] = offer;
     }
     return dict;
   }, [teamFreeAgentOffers]);
 
   const teamWaiverOfferMap = useMemo(() => {
-    const dict: Record<number, WaiverOffer[]> = {};
+    const dict: Record<number, WaiverOffer> = {};
     for (let i = 0; i < waiverOffers.length; i) {
       const offer = waiverOffers[i];
-      if (dict[offer.PlayerID].length > 0) {
-        dict[offer.PlayerID].push(offer);
-      } else {
-        dict[offer.PlayerID] = [offer];
-      }
+      dict[offer.PlayerID] = offer;
     }
     return dict;
   }, [teamWaiverOffers]);
@@ -185,7 +180,6 @@ export const usePHLFreeAgency = () => {
     } else if (playerType === Affiliate) {
       players = [...affiliatePlayers];
     }
-    console.log({ country });
     return players.filter((fa) => {
       if (
         country.length === 0 &&
@@ -257,12 +251,24 @@ export const usePHLFreeAgency = () => {
     setCurrentPage(0);
   };
 
+  const handleFAModal = (action: ModalAction, player: ProfessionalPlayer | NFLPlayer | NBAPlayer) => {
+    setModalPlayer(player);
+    setModalAction(action);
+    handleOpenModal();
+  };
+
+  const offerModal = useModal();
+
+  const handleOfferModal = (action: OfferAction, player: ProfessionalPlayer | NFLPlayer | NBAPlayer) => {
+    setOfferAction(action);
+    setModalPlayer(player);
+    offerModal.handleOpenModal();
+  };
+
   return {
     teamCapsheet,
     modalAction,
-    setModalAction,
     isModalOpen,
-    handleOpenModal,
     handleCloseModal,
     freeAgencyCategory,
     setFreeAgencyCategory,
@@ -273,7 +279,7 @@ export const usePHLFreeAgency = () => {
     currentPage,
     totalPages,
     modalPlayer,
-    setModalPlayer,
+    handleFAModal,
     SelectArchetypeOptions,
     SelectCountryOption,
     SelectPositionOptions,
@@ -289,5 +295,8 @@ export const usePHLFreeAgency = () => {
     teamOfferMap,
     playerType,
     setPlayerType,
+    offerAction,
+    offerModal,
+    handleOfferModal
   };
 };

@@ -21,6 +21,8 @@ import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { Timestamp } from "../../../models/hockeyModels";
+import { ActionModal } from "../../Common/ActionModal";
+import { OfferModal } from "../../Common/OfferModal";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { FreeAgencySidebar } from "../Common/FreeAgencySidebar";
 import { FreeAgentTable } from "../Common/FreeAgencyTable";
@@ -32,9 +34,7 @@ export const PHLFreeAgency = () => {
   const {
     teamCapsheet,
     modalAction,
-    setModalAction,
     isModalOpen,
-    handleOpenModal,
     handleCloseModal,
     freeAgencyCategory,
     setFreeAgencyCategory,
@@ -45,7 +45,7 @@ export const PHLFreeAgency = () => {
     currentPage,
     totalPages,
     modalPlayer,
-    setModalPlayer,
+    handleFAModal,
     SelectArchetypeOptions,
     SelectCountryOption,
     SelectPositionOptions,
@@ -61,6 +61,9 @@ export const PHLFreeAgency = () => {
     teamOfferMap,
     playerType,
     setPlayerType,
+    offerAction,
+    offerModal,
+    handleOfferModal,
   } = usePHLFreeAgency();
   const [isMobile] = useMobile();
   const teamColors = useTeamColors(
@@ -73,6 +76,28 @@ export const PHLFreeAgency = () => {
 
   return (
     <>
+    {modalPlayer && (
+      <OfferModal 
+        isOpen={offerModal.isModalOpen}
+        onClose={offerModal.handleCloseModal}
+        league={SimPHL}
+        player={modalPlayer}
+        existingOffer={teamOfferMap[modalPlayer.ID]}
+        action={offerAction}
+      />
+    )}
+      {modalPlayer && (
+        <ActionModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          playerID={modalPlayer.ID}
+          playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
+          league={SimPHL}
+          teamID={modalPlayer.PreviousTeamID}
+          modalAction={modalAction}
+          player={modalPlayer}
+        />
+      )}
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <FreeAgencySidebar
           Capsheet={teamCapsheet}
@@ -239,7 +264,8 @@ export const PHLFreeAgency = () => {
                 category={tableViewType}
                 league={SimPHL}
                 teamMap={phlTeamMap}
-                openModal={handleOpenModal}
+                openModal={handleFAModal}
+                handleOfferModal={handleOfferModal}
                 isMobile={isMobile}
               />
               <div className="flex flex-row justify-center py-2">

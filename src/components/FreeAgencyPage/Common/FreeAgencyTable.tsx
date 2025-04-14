@@ -9,9 +9,11 @@ import { NBAPlayer } from "../../../models/basketballModels";
 import {
   AddFreeAgentType,
   Attributes,
+  FreeAgentOffer,
   InfoType,
   League,
   ModalAction,
+  OfferAction,
   SimPHL,
 } from "../../../_constants/constants";
 import { Table, TableCell } from "../../../_design/Table";
@@ -38,6 +40,10 @@ interface FreeAgentTableProps {
     action: ModalAction,
     player: PHLPlayer | NFLPlayer | NBAPlayer
   ) => void;
+  handleOfferModal: (
+    action: OfferAction,
+    player: PHLPlayer | NFLPlayer | NBAPlayer
+  ) => void;
   league: League;
   isMobile?: boolean;
 }
@@ -51,6 +57,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
   team,
   category,
   openModal,
+  handleOfferModal,
   league,
   isMobile = false,
 }) => {
@@ -150,7 +157,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
           <Button
             variant={actionVariant}
             size="xs"
-            onClick={() => openModal(AddFreeAgentType, item as PHLPlayer)}
+            onClick={() => handleOfferModal(FreeAgentOffer, item as PHLPlayer)}
             disabled={!!teamOfferMap[item.ID]}
           >
             {teamOfferMap[item.ID] ? <ActionLock /> : <Plus />}

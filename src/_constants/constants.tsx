@@ -60,6 +60,13 @@ export type ModalAction =
   | typeof Help2
   | typeof Help3
   | typeof Help4;
+export const FreeAgentOffer = 'FreeAgentOffer';
+export const WaiverOffer = 'WaiverOffer';
+export const Extension = 'Extension';
+export type OfferAction = 
+  | typeof FreeAgentOffer
+  | typeof WaiverOffer
+  | typeof Extension;
 
 export const LineupF1 = "Forwards 1";
 export const LineupF2 = "Forwards 2";

@@ -300,7 +300,7 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
 
 interface PHLPlayerInfoModalBodyProps {
   player: PHLPlayer;
-  contract: any;
+  contract?: any;
 }
 
 export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
@@ -312,10 +312,15 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
   const chlTeam = chlTeamMap[player.CollegeID];
   const teamLogo = getLogo(SimPHL, player.TeamID, currentUser?.isRetro);
   const heightObj = HeightToFeetAndInches(player.Height);
-  const rawValue = Array.from({ length: contract.ContractLength }, (_, index) => 
-    contract[`Y${index + 1}BaseSalary`] || 0
-  ).reduce((sum, salary) => sum + salary, 0) / 1_000_000;
-  const totalValue = `${rawValue.toFixed(2)}M`;
+  let rawValue = 0;
+  let totalValue = '';
+  if (contract) {
+    Array.from({ length: contract.ContractLength }, (_, index) => 
+      contract[`Y${index + 1}BaseSalary`] || 0
+    ).reduce((sum, salary) => sum + salary, 0) / 1_000_000;
+    totalValue = `${rawValue.toFixed(2)}M`;
+  }
+  
 
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
@@ -417,7 +422,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
           </>
         )}
       </div>
-      <div className="flex flex-col">
+      {contract && (<><div className="flex flex-col">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
           Contract
         </Text>
@@ -462,7 +467,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
             <CrossCircle textColorClass="w-full text-center text-red-500" />
           )}
         </div>
-      </div>
+      </div></>)}
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
         <div className="grid w-full grid-cols-4 gap-3">
           <div className="flex flex-col px-1 gap-1">
@@ -582,6 +587,14 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
 
       {player.Position === "G" && (
         <>
+          <div className="flex flex-col px-1 gap-1">
+            <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
+              Strength
+            </Text>
+            <Text variant="small">
+              {player.Strength}
+            </Text>
+          </div>
           <div className="flex flex-col px-1 gap-1">
             <Text variant="small" classes="mb-1 whitespace-nowrap font-semibold">
               Goalkeeping
