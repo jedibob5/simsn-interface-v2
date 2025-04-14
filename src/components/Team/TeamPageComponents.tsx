@@ -32,8 +32,9 @@ interface TeamInfoProps {
   Capsheet?: any;
   League: League;
   ts: any;
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   isRetro?: boolean;
 }
 
@@ -55,16 +56,12 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   League,
   Roster,
   ts,
-  colorOne = "",
-  colorTwo = "",
+  backgroundColor,
+  headerColor,
+  borderColor,
   isRetro = false,
 }) => {
-  const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const sectionBg = "#242424";
-  const darkerBorder = backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
-  ? darkenColor(backgroundColor, 5)
-  : darkenColor(backgroundColor, -5);
+  const sectionBg = darkenColor("#1f2937", -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const logo = getLogo(League, id!!, isRetro);
   const [isMobile] = useMobile();
@@ -75,7 +72,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         classes="w-full p-8 justify-around"
         styles={{
           backgroundColor,
-          borderColor,
+          borderColor: headerColor,
         }}
       >            
       {!isMobile && (
@@ -87,7 +84,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             scout={Scout} 
             isPro={isPro}
             marketing={Marketing} 
-            borderColor={borderColor} 
+            borderColor={headerColor} 
             backgroundColor={sectionBg}
             lineColor={borderColor} />
         </div>
@@ -95,7 +92,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center pb-2">
           <div className="flex flex-col max-w-1/4 p-2">
             <div className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
-                  style={{ backgroundColor: sectionBg, borderColor: borderColor }}>
+                  style={{ backgroundColor: sectionBg, borderColor: headerColor }}>
               <Logo url={logo} 
                     variant="large" />
             </div>
@@ -127,7 +124,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             capsheet={Capsheet} 
             ts={ts} 
             league={League}
-            borderColor={borderColor} 
+            borderColor={headerColor} 
             backgroundColor={sectionBg} 
           />
         )}
@@ -137,7 +134,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             ts={ts}
             league={League}
             backgroundColor={sectionBg}
-            borderColor={borderColor}
+            borderColor={headerColor}
+            lineColor={borderColor}
           />
         )}
         </div>
@@ -148,7 +146,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         classes="w-full h-[1em] max-h-[5em] p-4 sm:p-6 sm:px-14 justify-center sm:justify-around"
         styles={{
           backgroundColor,
-          borderColor,
+          borderColor: headerColor,
         }}
       >            
         <div className="flex w-full justify-center sm:justify-between items-center gap-x-2">
@@ -158,16 +156,16 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             arena={Arena}
             capacity={Capacity}
             textColorClass={textColorClass}
-            borderColor={borderColor} 
-            backgroundColor={darkerBorder}
+            borderColor={headerColor} 
+            backgroundColor={backgroundColor}
             isPro={isPro} />
           )}
             <RosterInfo 
             roster={Roster} 
             league={League}
             textColorClass={textColorClass}
-            borderColor={borderColor} 
-            backgroundColor={darkerBorder}
+            borderColor={headerColor} 
+            backgroundColor={backgroundColor}
             isPro={isPro} />
         </div>
       </Border>
@@ -292,6 +290,7 @@ export const TeamBreakdown = ({
   league,
   backgroundColor,
   borderColor,
+  lineColor,
   textColorClass,
 }: any) => {
   return (
@@ -320,7 +319,7 @@ export const TeamBreakdown = ({
       </div>
     )}
     <div className="flex w-[90%] self-center border-t" 
-             style={{ borderColor }} />
+             style={{ borderColor: lineColor }} />
     {TeamProfile && ts && (
       <div className="flex flex-col w-full pt-1 px-1">
         <Text variant="body-small" classes={`${textColorClass} font-semibold pb-1`}>

@@ -175,7 +175,7 @@ export const AuthRoutes = [
   }
 />,
   <Route
-  key="CFB Schedule"
+  key="CHL Schedule"
   path={routes.CHL_SCHEDULE}
   element={
     <AuthGuard>
@@ -184,7 +184,7 @@ export const AuthRoutes = [
   }
 />,
   <Route
-  key="CFB Schedule"
+  key="PHL Schedule"
   path={routes.PHL_SCHEDULE}
   element={
     <AuthGuard>
@@ -193,7 +193,7 @@ export const AuthRoutes = [
   }
 />,
   <Route
-  key="CFB Schedule"
+  key="CBB Schedule"
   path={routes.CBB_SCHEDULE}
   element={
     <AuthGuard>
@@ -202,7 +202,7 @@ export const AuthRoutes = [
   }
 />,
   <Route
-  key="CFB Schedule"
+  key="NBA Schedule"
   path={routes.NBA_SCHEDULE}
   element={
     <AuthGuard>

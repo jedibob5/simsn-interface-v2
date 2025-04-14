@@ -82,8 +82,6 @@ export const StandingsTable = ({
       data={standings}
       rowRenderer={rowRenderer}
       team={team}
-      rowBgColor={rowBgColor}
-      darkerRowBgColor={darkerRowBgColor}
     />
   );
 };

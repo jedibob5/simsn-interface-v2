@@ -20,8 +20,9 @@ import { CheckCircle, CrossCircle, ShieldCheck, User } from "../../_design/Icons
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CHLPlayer) => void;
@@ -29,14 +30,14 @@ interface CHLRosterTableProps {
 
 export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   roster,
-  colorOne,
-  colorTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
   team,
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne ?? "#4B5563";
-  const borderColor = colorTwo ?? "#3C444F";
+
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -202,8 +203,9 @@ interface PHLRosterTableProps {
   roster: PHLPlayer[] | undefined;
   contracts?: PHLContract[] | null;
   ts: any;
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: PHLPlayer) => void;
@@ -213,14 +215,13 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   roster = [],
   contracts,
   ts,
-  colorOne,
-  colorTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
   team,
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne ?? "#4B5563";
-  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -385,8 +386,9 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
 
 interface CFBRosterTableProps {
   roster: CFBPlayer[];
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CFBPlayer) => void;
@@ -394,14 +396,13 @@ interface CFBRosterTableProps {
 
 export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   roster,
-  colorOne,
-  colorTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
   team,
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne ?? "#4B5563";
-  const borderColor = colorTwo ?? "#3C444F"; 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -576,8 +577,9 @@ interface NFLRosterTableProps {
   roster: NFLPlayer[];
   contracts?: NFLContract[] | null;
   ts: any;
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: NFLPlayer) => void;
@@ -587,14 +589,14 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   roster,
   contracts,
   ts,
-  colorOne,
-  colorTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
   team,
   category,
   openModal,
 }) => {
-  const backgroundColor = colorOne ?? "#4B5563";
-  const borderColor = colorTwo ?? "#3C444F"; 
+
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 

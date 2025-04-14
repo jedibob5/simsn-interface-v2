@@ -60,7 +60,7 @@ export const SchedulePage: FC<SchedulePageProps> = ({ league }) => {
   }, [chlTeam, phlTeam, cfbTeam, nflTeam, cbbTeam, nbaTeam, selectedLeague]);
   return (
     <>
-      <PageContainer direction="col" isLoading={isLoading} title="Team">
+      <PageContainer direction="col" isLoading={isLoading} title="Schedule">
         {selectedLeague === SimCFB && cfbTeam && (
           <FootballSchedulePage league={league} ts={ts} />
         )}

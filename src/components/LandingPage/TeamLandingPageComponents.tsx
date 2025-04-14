@@ -20,11 +20,12 @@ interface GamesBarProps {
   currentUser: any;
   backgroundColor: string;
   borderColor: string;
+  headerColor: string;
 }
 
 export const GamesBar = ({ games, league, team, ts, 
                            currentUser, backgroundColor, 
-                           borderColor }: 
+                           borderColor, headerColor }: 
                            GamesBarProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +87,7 @@ export const GamesBar = ({ games, league, team, ts,
     return (
       <div key={index} 
            className={`flex flex-col rounded-lg items-center border pb-1 px-2 md:w-28 3xl:w-48 ${resultColor}`} 
-           style={{ borderColor: backgroundColor }}>
+           style={{ borderColor: headerColor }}>
         <div className="flex-col px-2 overflow-auto">
           <div className="flex-col items-center justify-center">
             <Logo variant="xs" containerClass="pb-1 max-w-[4em]" url={opponentLogoUrl} />
@@ -110,7 +111,7 @@ export const GamesBar = ({ games, league, team, ts,
           <button
             onClick={scrollLeft}
             className="absolute left-0 z-10 p-2 rounded-full border-1"
-            style={{ backgroundColor: backgroundColor, color: borderColor, borderColor: borderColor }}
+            style={{ backgroundColor: backgroundColor, color: borderColor, borderColor: headerColor }}
           >
             &lt;
           </button>
@@ -124,7 +125,7 @@ export const GamesBar = ({ games, league, team, ts,
           <button
             onClick={scrollRight}
             className="absolute right-0 z-10 p-2 rounded-full border-1"
-            style={{ backgroundColor: backgroundColor, color: borderColor, borderColor: borderColor }}
+            style={{ backgroundColor: backgroundColor, color: borderColor, borderColor: headerColor }}
           >
             &gt;
           </button>
@@ -141,6 +142,7 @@ interface TeamStandingsProps {
   currentUser: any;
   isLoadingTwo: boolean;
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -148,7 +150,7 @@ interface TeamStandingsProps {
 
 export const TeamStandings = ({ standings, team, 
                                 league, currentUser, isLoadingTwo, 
-                                backgroundColor, borderColor, textColorClass, darkerBackgroundColor }: 
+                                backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor }: 
                                 TeamStandingsProps) => {
   
   return(
@@ -157,6 +159,7 @@ export const TeamStandings = ({ standings, team,
         header={`${team.Conference} Standings`}
         classes={`${textColorClass}, h-full`}
         backgroundColor={backgroundColor}
+        headerColor={headerColor}
         borderColor={borderColor}
         darkerBackgroundColor={darkerBackgroundColor}
         textColorClass={textColorClass}
@@ -192,6 +195,7 @@ interface TeamMatchUpProps {
   homeLabel: string;
   awayLabel: string;
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -209,6 +213,7 @@ export const TeamMatchUp = ({
   homeLabel,
   awayLabel,
   backgroundColor,
+  headerColor,
   borderColor,
   textColorClass,
   darkerBackgroundColor,
@@ -244,6 +249,7 @@ export const TeamMatchUp = ({
       header={`Next Game`}
       classes={`${textColorClass}`}
       backgroundColor={backgroundColor}
+      headerColor={headerColor}
       borderColor={borderColor}
       textColorClass={textColorClass}
       darkerBackgroundColor={darkerBackgroundColor}
@@ -339,6 +345,7 @@ interface TeamOverviewProps {
   ts: any;
   currentUser: any;
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -346,7 +353,7 @@ interface TeamOverviewProps {
 }
 
 export const TeamOverview = ({ team, league, ts, 
-                           currentUser, backgroundColor, 
+                           currentUser, backgroundColor, headerColor, 
                            borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }: 
                            TeamOverviewProps) => {
   
@@ -356,6 +363,7 @@ export const TeamOverview = ({ team, league, ts,
                 header="Team Grades"
                 classes={`${textColorClass} h-full`}
                 backgroundColor={backgroundColor}
+                headerColor={headerColor}
                 borderColor={borderColor}
                 textColorClass={textColorClass}
                 darkerBackgroundColor={darkerBackgroundColor}
@@ -373,7 +381,7 @@ export const TeamOverview = ({ team, league, ts,
             <div className="flex flex-col py-1 items-center">
               <div className={`flex items-center justify-center 
                                 size-12 md:size-16 rounded-full border-2`} 
-                                style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+                                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
                 <Text variant="body" 
                       classes={`${textColorClass} font-semibold`}>
                         {team.OverallGrade ? team.OverallGrade : "N/A"}
@@ -390,7 +398,7 @@ export const TeamOverview = ({ team, league, ts,
             <div className="flex flex-col py-1 items-center">
               <div className={`flex items-center justify-center size-12 md:size-16
                                rounded-full border-2`} 
-                                style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+                                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
                 <Text variant="body" 
                       classes={`${textColorClass} font-semibold`}>
                         {team.OffenseGrade ? team.OffenseGrade : "N/A"}
@@ -406,7 +414,7 @@ export const TeamOverview = ({ team, league, ts,
             <div className="flex flex-col py-1 items-center">
               <div className={`flex items-center justify-center 
                                 size-12 md:size-16 rounded-full border-2`} 
-                                style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+                                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
                 <Text variant="body" 
                       classes=
                       {`${textColorClass} font-semibold`}>
@@ -433,6 +441,7 @@ interface TeamMailboxProps {
   team: any;
   notifications: any[];
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -440,7 +449,7 @@ interface TeamMailboxProps {
 }
 
 export const TeamMailbox = ({ team, notifications,
-                              backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
+                              backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamMailboxProps) => {
 
   return (
@@ -448,6 +457,7 @@ export const TeamMailbox = ({ team, notifications,
                   header="Team Inbox" 
                   classes={`${textColorClass} h-full`}
                   backgroundColor={backgroundColor}
+                  headerColor={headerColor}
                   borderColor={borderColor}
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
@@ -486,6 +496,7 @@ interface TeamStatsProps {
   teamStats: any;
   titles: any;
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -493,7 +504,7 @@ interface TeamStatsProps {
 }
 
 export const TeamStats = ({ team, league, header, teamStats, titles,
-                            backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
+                            backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamStatsProps) => {
 
   const { boxOne, boxTwo, boxThree } = getLandingBoxStats(league, teamStats);
@@ -504,6 +515,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
     header={header}
     classes={`${textColorClass}`}
     backgroundColor={backgroundColor}
+    headerColor={headerColor}
     borderColor={borderColor}
     textColorClass={textColorClass}
     darkerBackgroundColor={darkerBackgroundColor}
@@ -518,7 +530,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
       ) : Object.keys(teamStats).length > 0 ? (
         <div className="flex-col items-center justify-center py-3 space-y-2 md:space-y-4">
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
-               style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+               style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
             <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[0]}</Text>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
@@ -550,7 +562,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
             </div>
           </div>
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
-               style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+               style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
             <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[1]}</Text>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
@@ -582,7 +594,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
             </div>
           </div>
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
-               style={{ borderColor: borderColor, backgroundColor: darkerBackgroundColor }}>
+               style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
             <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[2]}</Text>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
@@ -627,6 +639,7 @@ interface TeamNewsProps {
   team: any;
   teamNews: any[];
   backgroundColor: string;
+  headerColor: string;
   borderColor: string;
   textColorClass: string;
   darkerBackgroundColor: string;
@@ -634,7 +647,7 @@ interface TeamNewsProps {
 }
 
 export const TeamNews = ({ team, teamNews,
-                              backgroundColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
+                              backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }:
                               TeamNewsProps) => {
 
   return (
@@ -642,6 +655,7 @@ export const TeamNews = ({ team, teamNews,
                   header="Team News" 
                   classes={`${textColorClass} h-full`}
                   backgroundColor={backgroundColor}
+                  headerColor={headerColor}
                   borderColor={borderColor}
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}>

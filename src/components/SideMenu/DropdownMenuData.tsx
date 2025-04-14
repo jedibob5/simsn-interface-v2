@@ -135,7 +135,7 @@ export const useSideMenu = () => {
       {
         label: "Schedule",
         isRoute: true,
-        route: "",
+        route: routes.NFL_SCHEDULE,
         league: SimNFL,
         toggle: () => toggleMenu(),
       },
@@ -187,7 +187,7 @@ export const useSideMenu = () => {
       {
         label: "Schedule",
         isRoute: true,
-        route: "",
+        route: routes.CBB_SCHEDULE,
         league: SimCBB,
         toggle: () => toggleMenu(),
       },
@@ -231,7 +231,7 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: "",
+        route: routes.NBA_SCHEDULE,
         league: SimNBA,
         toggle: () => toggleMenu(),
       },
@@ -278,7 +278,7 @@ export const useSideMenu = () => {
       {
         label: "Schedule",
         isRoute: true,
-        route: "",
+        route: routes.CHL_SCHEDULE,
         league: SimCHL,
         toggle: () => toggleMenu(),
       },
@@ -330,7 +330,7 @@ export const useSideMenu = () => {
       {
         label: "Schedule",
         isRoute: true,
-        route: "",
+        route: routes.PHL_SCHEDULE,
         league: SimPHL,
         toggle: () => toggleMenu(),
       },
