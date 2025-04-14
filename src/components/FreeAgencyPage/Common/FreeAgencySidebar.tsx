@@ -84,6 +84,9 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
           {scout.length > 0 && <Text variant="body-small">Scout: {scout}</Text>}
           <Text variant="body-small">State: {Team?.State}</Text>
         </div>
+        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
+          TEST
+        </div>
         <CapsheetInfo
           ts={ts as HCKTimestamp}
           capsheet={Capsheet}

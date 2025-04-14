@@ -33,6 +33,7 @@ export const Redshirt = "Redshirt";
 export const InfoType = "Info";
 export const RecruitInfoType = "Recruit Info";
 export const AddRecruitType = "Add Recruit";
+export const AddFreeAgentType = "Add Free Agent";
 export const RemoveRecruitType = "Remove Recruit";
 export const ToggleScholarshipType = "Toggle Scholarship";
 export const ScoutAttributeType = "Scout Attribute";
@@ -49,6 +50,7 @@ export type ModalAction =
   | typeof InfoType
   | typeof RecruitInfoType
   | typeof AddRecruitType
+  | typeof AddFreeAgentType
   | typeof RemoveRecruitType
   | typeof ToggleScholarshipType
   | typeof ScoutAttributeType
@@ -103,6 +105,10 @@ export const Preferences = "Preferences";
 export const Potentials = "Potentials";
 export const Contracts = "Contracts";
 export const Overview = "Overview";
+export const FreeAgent = "FreeAgent";
+export const Waivers = "Waivers";
+export const GLeague = "GLeague";
+export const International = "International";
 export const USA = "USA";
 export const Canada = "Canada";
 export const Sweden = "Sweden";
@@ -307,7 +313,6 @@ export const CountryOptions = [
   { label: "Russia", value: "Russia" },
   { label: "Sweden", value: "Sweden" },
   { label: "USA", value: "USA" },
-  { label: "None", value: "" },
   { label: "Australia", value: "Australia" },
   { label: "Belarus", value: "Belarus" },
   { label: "Brazil", value: "Brazil" },

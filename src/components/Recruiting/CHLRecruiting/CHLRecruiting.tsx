@@ -354,7 +354,7 @@ export const CHLRecruiting = () => {
                     >
                       Prev
                     </Button>
-                    <Text variant="body-small" className="flex items-center">
+                    <Text variant="body-small" classes="flex items-center">
                       {currentPage + 1}
                     </Text>
                     <Button

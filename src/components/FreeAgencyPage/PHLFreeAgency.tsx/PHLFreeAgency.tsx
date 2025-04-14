@@ -1,15 +1,20 @@
 import {
+  Affiliate,
   Attributes,
   Contracts,
   CountryOptions,
+  FreeAgent,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
+  International,
   Overview,
   Preferences,
   SimPHL,
+  Waivers,
 } from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { Text } from "../../../_design/Typography";
 import { useLoadMessage } from "../../../_hooks/useLoadMessage";
 import { useMobile } from "../../../_hooks/useMobile";
 import { useModal } from "../../../_hooks/useModal";
@@ -18,11 +23,12 @@ import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { Timestamp } from "../../../models/hockeyModels";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { FreeAgencySidebar } from "../Common/FreeAgencySidebar";
+import { FreeAgentTable } from "../Common/FreeAgencyTable";
 import { usePHLFreeAgency } from "./usePHLFreeAgency";
 
 export const PHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
-  const { phlTeam, hck_Timestamp } = hkStore;
+  const { phlTeam, hck_Timestamp, phlTeamMap } = hkStore;
   const {
     teamCapsheet,
     modalAction,
@@ -46,8 +52,15 @@ export const PHLFreeAgency = () => {
     SelectRegionOptions,
     country,
     regionOptions,
-    filteredFA,
+    pagedFreeAgents,
     freeAgentMap,
+    waiverPlayerMap,
+    teamFreeAgentOffers,
+    teamWaiverOffers,
+    offerMapByPlayerType,
+    teamOfferMap,
+    playerType,
+    setPlayerType,
   } = usePHLFreeAgency();
   const [isMobile] = useMobile();
   const teamColors = useTeamColors(
@@ -57,7 +70,6 @@ export const PHLFreeAgency = () => {
   );
   const helpModal = useModal();
   const aiSettingsModal = useModal();
-  const lockMessage = useLoadMessage([], 5000);
 
   return (
     <>
@@ -97,59 +109,41 @@ export const PHLFreeAgency = () => {
                 >
                   Contracts
                 </Button>
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={helpModal.handleOpenModal}
-                >
-                  Help
-                </Button>
-                <Button
-                  type="button"
-                  variant="primary"
-                  onClick={aiSettingsModal.handleOpenModal}
-                >
-                  Settings
-                </Button>
               </ButtonGroup>
-              <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
-                <Button
-                  type="button"
-                  variant={
-                    tableViewType === Attributes ? "success" : "secondary"
-                  }
-                  onClick={() => setTableViewType(Attributes)}
-                >
-                  Free Agents
-                </Button>
-                <Button
-                  type="button"
-                  variant={
-                    tableViewType === Preferences ? "success" : "secondary"
-                  }
-                  onClick={() => setTableViewType(Preferences)}
-                >
-                  Waivers
-                </Button>
-                <Button
-                  type="button"
-                  variant={
-                    tableViewType === Preferences ? "success" : "secondary"
-                  }
-                  onClick={() => setTableViewType(Preferences)}
-                >
-                  Affiliate
-                </Button>
-                <Button
-                  type="button"
-                  variant={
-                    tableViewType === Preferences ? "success" : "secondary"
-                  }
-                  onClick={() => setTableViewType(Preferences)}
-                >
-                  International
-                </Button>
-              </ButtonGroup>
+              {freeAgencyCategory === Overview && (
+                <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
+                  <Button
+                    type="button"
+                    variant={playerType === FreeAgent ? "success" : "secondary"}
+                    onClick={() => setPlayerType(FreeAgent)}
+                  >
+                    Free Agents
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={playerType === Waivers ? "success" : "secondary"}
+                    onClick={() => setPlayerType(Waivers)}
+                  >
+                    Waivers
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={playerType === Affiliate ? "success" : "secondary"}
+                    onClick={() => setPlayerType(Affiliate)}
+                  >
+                    Affiliate
+                  </Button>
+                  {/* <Button
+                    type="button"
+                    variant={
+                      playerType === International ? "success" : "secondary"
+                    }
+                    onClick={() => setPlayerType(International)}
+                  >
+                    International
+                  </Button> */}
+                </ButtonGroup>
+              )}
               <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-row sm:justify-end">
                 <Button
                   type="button"
@@ -168,6 +162,20 @@ export const PHLFreeAgency = () => {
                   onClick={() => setTableViewType(Preferences)}
                 >
                   Preferences
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={helpModal.handleOpenModal}
+                >
+                  Help
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={aiSettingsModal.handleOpenModal}
+                >
+                  Settings
                 </Button>
               </ButtonGroup>
             </Border>
@@ -206,12 +214,55 @@ export const PHLFreeAgency = () => {
                   label="Region"
                   options={regionOptions}
                   change={SelectRegionOptions}
-                  isMulti={false}
+                  isMulti={true}
                   isMobile={isMobile}
                 />
               )}
             </div>
           </Border>
+          {freeAgencyCategory === Overview && (
+            <Border
+              direction="col"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
+              styles={{
+                borderColor: teamColors.One,
+              }}
+            >
+              <FreeAgentTable
+                players={pagedFreeAgents}
+                offersByPlayer={offerMapByPlayerType}
+                teamOfferMap={teamOfferMap}
+                colorOne={teamColors.One}
+                colorTwo={teamColors.Two}
+                colorThree={teamColors.Three}
+                team={phlTeam!!}
+                category={tableViewType}
+                league={SimPHL}
+                teamMap={phlTeamMap}
+                openModal={handleOpenModal}
+                isMobile={isMobile}
+              />
+              <div className="flex flex-row justify-center py-2">
+                <ButtonGroup>
+                  <Button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 0}
+                  >
+                    Prev
+                  </Button>
+                  <Text variant="body-small" classes="flex items-center">
+                    {currentPage + 1}
+                  </Text>
+                  <Button
+                    onClick={goToNextPage}
+                    disabled={currentPage >= totalPages - 1}
+                  >
+                    Next
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </Border>
+          )}
         </div>
       </div>
     </>

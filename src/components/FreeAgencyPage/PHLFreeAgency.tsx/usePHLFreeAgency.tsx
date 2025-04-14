@@ -2,21 +2,28 @@ import { useMemo, useState } from "react";
 import { useModal } from "../../../_hooks/useModal";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import {
+  Affiliate,
   Attributes,
   Canada,
   CanadaRegionOptions,
+  FreeAgent,
   InfoType,
   ModalAction,
+  Overview,
   Russia,
   RussiaRegionOptions,
   Sweden,
   SwedenRegionOptions,
   USA,
   USARegionOptions,
+  Waivers,
 } from "../../../_constants/constants";
 import {
+  FreeAgencyOffer,
   ProfessionalPlayer as PHLPlayer,
   ProCapsheet,
+  ProfessionalPlayer,
+  WaiverOffer,
 } from "../../../models/hockeyModels";
 import { NFLPlayer } from "../../../models/footballModels";
 import { NBAPlayer } from "../../../models/basketballModels";
@@ -33,9 +40,11 @@ export const usePHLFreeAgency = () => {
     freeAgentOffers,
     waiverOffers,
     proRosterMap,
+    affiliatePlayers,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
-  const [freeAgencyCategory, setFreeAgencyCategory] = useState("");
+  const [freeAgencyCategory, setFreeAgencyCategory] = useState(Overview);
+  const [playerType, setPlayerType] = useState<string>(FreeAgent);
   const [tableViewType, setTableViewType] = useState<string>(Attributes);
   const [modalPlayer, setModalPlayer] = useState<
     PHLPlayer | NFLPlayer | NBAPlayer
@@ -47,13 +56,103 @@ export const usePHLFreeAgency = () => {
   const [regions, setRegions] = useState<string[]>([]);
   const pageSize = 100;
 
-  const FreeAgents = useMemo(() => {
+  const freeAgents = useMemo(() => {
     return proRosterMap[0].filter((player) => player.IsFreeAgent);
   }, [proRosterMap]);
 
-  const WaiverPlayers = useMemo(() => {
-    return proRosterMap[0].filter((player) => player.IsFreeAgent);
+  const freeAgentMap = useMemo(() => {
+    const dict: Record<number, ProfessionalPlayer> = {};
+    for (let i = 0; i < freeAgents.length; i++) {
+      dict[freeAgents[i].ID] = freeAgents[i];
+    }
+  }, [freeAgents]);
+
+  const waiverPlayers = useMemo(() => {
+    return proRosterMap[0].filter((player) => player.IsWaived);
   }, [proRosterMap]);
+
+  const waiverPlayerMap = useMemo(() => {
+    const dict: Record<number, ProfessionalPlayer> = {};
+    for (let i = 0; i < waiverPlayers.length; i++) {
+      dict[waiverPlayers[i].ID] = waiverPlayers[i];
+    }
+  }, [waiverPlayers]);
+
+  const teamFreeAgentOffers = useMemo(() => {
+    if (!phlTeam) return [];
+    return freeAgentOffers.filter((x) => x.TeamID === phlTeam.ID);
+  }, [phlTeam, freeAgentOffers]);
+
+  const teamWaiverOffers = useMemo(() => {
+    if (!phlTeam) return [];
+    return waiverOffers.filter((x) => x.TeamID === phlTeam.ID);
+  }, [phlTeam, waiverOffers]);
+
+  const freeAgentOfferMapByPlayer = useMemo(() => {
+    const dict: Record<number, FreeAgencyOffer[]> = {};
+    for (let i = 0; i < freeAgentOffers.length; i) {
+      const offer = freeAgentOffers[i];
+      if (dict[offer.PlayerID].length > 0) {
+        dict[offer.PlayerID].push(offer);
+      } else {
+        dict[offer.PlayerID] = [offer];
+      }
+    }
+    return dict;
+  }, [freeAgentOffers]);
+
+  const waiverOfferMapByPlayer = useMemo(() => {
+    const dict: Record<number, WaiverOffer[]> = {};
+    for (let i = 0; i < waiverOffers.length; i) {
+      const offer = waiverOffers[i];
+      if (dict[offer.PlayerID].length > 0) {
+        dict[offer.PlayerID].push(offer);
+      } else {
+        dict[offer.PlayerID] = [offer];
+      }
+    }
+    return dict;
+  }, [waiverOffers]);
+
+  const teamFreeAgentOfferMap = useMemo(() => {
+    const dict: Record<number, FreeAgencyOffer[]> = {};
+    for (let i = 0; i < freeAgentOffers.length; i) {
+      const offer = freeAgentOffers[i];
+      if (dict[offer.PlayerID].length > 0) {
+        dict[offer.PlayerID].push(offer);
+      } else {
+        dict[offer.PlayerID] = [offer];
+      }
+    }
+    return dict;
+  }, [teamFreeAgentOffers]);
+
+  const teamWaiverOfferMap = useMemo(() => {
+    const dict: Record<number, WaiverOffer[]> = {};
+    for (let i = 0; i < waiverOffers.length; i) {
+      const offer = waiverOffers[i];
+      if (dict[offer.PlayerID].length > 0) {
+        dict[offer.PlayerID].push(offer);
+      } else {
+        dict[offer.PlayerID] = [offer];
+      }
+    }
+    return dict;
+  }, [teamWaiverOffers]);
+
+  const offerMapByPlayerType = useMemo(() => {
+    if (playerType === Waivers) {
+      return waiverOfferMapByPlayer;
+    }
+    return freeAgentOfferMapByPlayer;
+  }, [freeAgentOfferMapByPlayer, waiverOfferMapByPlayer, playerType]);
+
+  const teamOfferMap = useMemo(() => {
+    if (playerType === Waivers) {
+      return teamWaiverOfferMap;
+    }
+    return teamFreeAgentOfferMap;
+  }, [teamFreeAgentOfferMap, teamWaiverOfferMap, playerType]);
 
   const teamCapsheet = useMemo(() => {
     if (phlTeam) {
@@ -78,17 +177,16 @@ export const usePHLFreeAgency = () => {
     return [];
   }, [country]);
 
-  const freeAgentMap = useMemo(() => {
-    const rMap: any = {};
-    for (let i = 0; i < FreeAgents.length; i++) {
-      rMap[FreeAgents[i].ID] = FreeAgents[i];
-    }
-    return rMap;
-  }, [FreeAgents]);
-
   const filteredFA = useMemo(() => {
     // Single-pass filter
-    return FreeAgents.filter((fa) => {
+    let players = [...freeAgents];
+    if (playerType === Waivers) {
+      players = [...waiverPlayers];
+    } else if (playerType === Affiliate) {
+      players = [...affiliatePlayers];
+    }
+    console.log({ country });
+    return players.filter((fa) => {
       if (
         country.length === 0 &&
         positions.length === 0 &&
@@ -111,7 +209,16 @@ export const usePHLFreeAgency = () => {
       }
       return false;
     });
-  }, [FreeAgents, country, positions, archetype, regions]);
+  }, [
+    freeAgents,
+    waiverPlayers,
+    affiliatePlayers,
+    playerType,
+    country,
+    positions,
+    archetype,
+    regions,
+  ]);
 
   const {
     currentPage,
@@ -120,6 +227,11 @@ export const usePHLFreeAgency = () => {
     goToPreviousPage,
     goToNextPage,
   } = usePagination(filteredFA.length, pageSize);
+
+  const pagedFreeAgents = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredFA.slice(start, start + pageSize);
+  }, [filteredFA, currentPage, pageSize]);
 
   const SelectPositionOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
@@ -134,11 +246,9 @@ export const usePHLFreeAgency = () => {
   };
 
   const SelectCountryOption = (opts: SingleValue<SelectOption>) => {
-    const value = opts?.value;
-    if (value) {
-      setCountry(value);
-      setCurrentPage(0);
-    }
+    const value = opts!.value;
+    setCountry(value);
+    setCurrentPage(0);
   };
 
   const SelectRegionOptions = (opts: any) => {
@@ -170,7 +280,14 @@ export const usePHLFreeAgency = () => {
     SelectRegionOptions,
     country,
     regionOptions,
-    filteredFA,
+    pagedFreeAgents,
     freeAgentMap,
+    waiverPlayerMap,
+    teamFreeAgentOffers,
+    teamWaiverOffers,
+    offerMapByPlayerType,
+    teamOfferMap,
+    playerType,
+    setPlayerType,
   };
 };
