@@ -146,7 +146,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
           {!offers || offers.length === 0 ? "None" : "???"}
         </TableCell>
-        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6em]">
+        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
           <Button
             variant={actionVariant}
             size="xs"
