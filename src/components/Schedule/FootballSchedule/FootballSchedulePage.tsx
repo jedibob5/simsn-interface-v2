@@ -122,30 +122,39 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   return (
     <>
-    <div className="flex flex-col">          
-      <SelectDropdown
-        options={cfbTeamOptions}
-        onChange={selectTeamOption}
-      />
-      <div className="flex h-[82vh] justify-center">
-        <div className="flex overflow-auto">
-        <TeamSchedule   
-              team={selectedTeam}
-              currentUser={currentUser}
-              week={currentWeek}
-              league={league}
-              ts={ts}
-              schedule={teamSchedule}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading} 
-            />
+      <div className="grid grid-cols-[1.6fr_3fr_2.5fr]">
+        <div className="flex flex-col items-center gap-4 overflow-auto max-h-[85vh]">
+          <div className="flex gap-4 justify-center">
+            <Button size="md" variant="success">
+              Schedule
+            </Button>
+            <Button size="md" variant="success">
+              Standings
+            </Button>
+          </div>             
+          <SelectDropdown
+            options={cfbTeamOptions}
+            placeholder="Select a team"
+            onChange={selectTeamOption}
+          />
         </div>
-        <div className="flex flex-col gap-2 justify-center items-start">
-          <div className="flex w-full overflow-auto">
+        <div className="flex w-full h-full pl-8 overflow-auto max-h-[84vh]">
+          <TeamSchedule   
+            team={selectedTeam}
+            currentUser={currentUser}
+            week={currentWeek}
+            league={league}
+            ts={ts}
+            schedule={teamSchedule}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
+            textColorClass={textColorClass}
+            darkerBackgroundColor={darkerBackgroundColor}
+            isLoadingTwo={isLoading} 
+          />
+        </div>
+        <div className="flex w-full h-full overflow-auto max-h-[84vh]">
           <TeamStandings   
             team={selectedTeam}
             currentUser={currentUser}
@@ -157,10 +166,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             textColorClass={textColorClass}
             darkerBackgroundColor={darkerBackgroundColor}
             isLoadingTwo={isLoading} 
-            />
-
-          </div>
-        </div>
+          />
         </div>
       </div>
     </>

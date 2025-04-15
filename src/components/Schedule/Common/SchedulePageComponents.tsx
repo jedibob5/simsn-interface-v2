@@ -41,140 +41,149 @@ export const TeamSchedule = ({
 }: TeamScheduleProps) => {
   const processedSchedule = schedule.map((game) => {
     const revealResult = RevealFBResults(game, ts, league);
+    const isHomeGame = game.HomeTeamID === team.ID;
+    const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
+    const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
 
-    const isUserTeam = game.HomeTeamID === team.ID || game.AwayTeamID === team.ID;
-
-    const homeLogo = getLogo(league, game.HomeTeamID, currentUser?.isRetro);
-    const awayLogo = getLogo(league, game.AwayTeamID, currentUser?.isRetro);
-
-    const homeLabel = game.HomeTeamAbbr;
-    const awayLabel = game.AwayTeamAbbr;
-
-    let resultColor = "";
-    let gameScore = "";
+    let userWin = false;
+    let userLoss = false;
+    let gameScore = "TBC";
+    let headerGameScore = "TBC";
 
     if (revealResult) {
-      const userTeamScore = game.HomeTeamID === team.ID ? game.HomeTeamScore : game.AwayTeamScore;
-      const opponentScore = game.HomeTeamID === team.ID ? game.AwayTeamScore : game.HomeTeamScore;
+      const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
+      const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
+      userWin = userTeamScore > opponentScore;
+      userLoss = userTeamScore < opponentScore;
 
-      resultColor = userTeamScore > opponentScore ? "text-green-500" : "text-red-500";
-      gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+        gameScore = "TBC";
+        headerGameScore = "TBC";
+      } else {
+        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+        headerGameScore = `${userTeamScore} - ${opponentScore}`;
+      }
     }
 
     return {
       ...game,
-      revealResult,
-      isUserTeam,
-      homeLogo,
-      awayLogo,
-      homeLabel,
-      awayLabel,
-      resultColor,
+      opponentLabel,
+      opponentLogo,
+      userWin,
+      userLoss,
       gameScore,
-      gameLocation: "VS",
+      headerGameScore,
+      gameLocation: isHomeGame ? "vs" : "@",
     };
   });
 
   return (
-    <div className="w-full flex flex-wrap gap-4">
+    <SectionCards
+      team={team}
+      header={`${team.TeamAbbr} Schedule`}
+      classes={`w-3/4 ${textColorClass}`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      textColorClass={textColorClass}
+      darkerBackgroundColor={darkerBackgroundColor}
+    >
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
           <Text variant="small" classes={`${textColorClass}`}>
             Loading...
           </Text>
         </div>
-      ) : processedSchedule.length > 0 ? (
-        processedSchedule.map((game, index) => (
-          <SectionCards
-            key={index}
-            team={team}
-            header={`Week ${game.Week}`}
-            classes={`w-[30em] max-h-[24em] ${textColorClass}`}
-            backgroundColor={backgroundColor}
-            headerColor={headerColor}
-            borderColor={borderColor}
-            textColorClass={textColorClass}
-            darkerBackgroundColor={darkerBackgroundColor}
+      ) : (
+        <div className="grid">
+          <div
+            className="grid grid-cols-4 font-semibold border-b-2 pb-2"
+            style={{
+              borderColor,
+              gridTemplateColumns: "3fr 4fr 3fr 1.5fr",
+            }}
           >
-            <div className="flex justify-center">
-              <div className="flex-col pb-2">
-                <Logo variant="large" containerClass="max-w-24 w-24" url={game.homeLogo} />
-                <Text
-                  variant="small"
-                  classes={`${textColorClass} font-semibold`}
-                  className="pr-1"
-                >
-                  {game.homeLabel}
-                </Text>
-              </div>
-              <Text
-                variant="small"
-                classes={`${textColorClass} self-center font-semibold`}
-              >
-                {game.gameLocation}
+            <div className="text-left">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Week
               </Text>
-              <div className="flex-col">
-                <Logo variant="large" containerClass="max-w-24" url={game.awayLogo} />
-                <Text
-                  variant="small"
-                  classes={`${textColorClass} font-semibold`}
-                  className="pl-1"
-                >
-                  {game.awayLabel}
-                </Text>
-              </div>
             </div>
-            <div className="flex-col items-center">
-              {game.revealResult && (
-                <Text
-                  variant="h6"
-                  classes={`${game.resultColor} font-semibold`}
-                  style={{
-                    textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                                 -0.5px -0.5px 0 ${borderColor}, 
-                                 0.5px -0.5px 0 ${borderColor}, 
-                                 -0.5px 0.5px 0 ${borderColor}`,
-                  }}
-                >
-                  {`${game.gameScore}`}
-                </Text>
-              )}
-              {!game.revealResult && (
-                <Text
-                  variant="h6"
-                  classes={`${game.resultColor} font-semibold`}
-                  style={{
-                    textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                                 -0.5px -0.5px 0 ${borderColor}, 
-                                 0.5px -0.5px 0 ${borderColor}, 
-                                 -0.5px 0.5px 0 ${borderColor}`,
-                  }}
-                >
-                  {`--`}
-                </Text>
-              )}
-              <Text variant="small">
-                {game.IsConference
-                  ? game.IsDivisional
-                    ? "Conference Divisional Game"
-                    : "Conference Game"
-                  : "Non-Conference Game"}
+            <div className="text-left">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Opponent
               </Text>
-              <Text variant="xs">{game.Stadium}, {game.State}</Text>
-              <div className="flex justify-center gap-2 py-2">
-                <Button size="sm" classes="bg-transparent">
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Result
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Actions
+              </Text>
+            </div>
+          </div>
+          {processedSchedule.map((game, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-4 py-1 border-b border-b-[#34455d] items-center"
+              style={{
+                gridTemplateColumns: "3fr 4fr 4fr 1fr",
+                backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+              }}
+            >
+              <div className="text-left">
+                <Text variant="xs" className="font-semibold">
+                  Week {game.Week}
+                </Text>
+              </div>
+              <div className="flex items-center justify-start text-center">
+                <Text variant="xs" className="font-semibold text-center">
+                    {game.gameLocation}
+                </Text>
+                <div className="flex pl-4">
+                  <Logo
+                      variant="xs"
+                      classes="w-4 h-4 mr-2"
+                      containerClass="flex-shrink-0 p-0"
+                      url={game.opponentLogo}
+                  />
+                  <Text variant="xs" className="font-semibold text-center">
+                    {game.opponentLabel}
+                  </Text>
+                </div>
+              </div>
+              <div className="text-center">
+                <Text
+                  variant="xs"
+                  className={`font-semibold ${
+                    game.userWin
+                      ? "text-green-500"
+                      : game.userLoss
+                      ? "text-red-500"
+                      : textColorClass
+                  } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
+                >
+                  {game.headerGameScore}
+                </Text>
+              </div>
+              <div className="text-center">
+                <Button
+                  size="sm"
+                  classes={`flex bg-transparent rounded-full size-10 items-center ${
+                    game.gameScore === "TBC" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={game.gameScore === "TBC"}
+                >
                   <InformationCircle />
                 </Button>
               </div>
             </div>
-          </SectionCards>
-        ))
-      ) : (
-        <Text variant="small" classes={`${textColorClass} pt-2`}>
-          No games available.
-        </Text>
+          ))}
+        </div>
       )}
-    </div>
+    </SectionCards>
   );
 };
 
@@ -196,33 +205,108 @@ export const TeamStandings = ({ standings, team,
                                 backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor }: 
                                 TeamStandingsProps) => {
   
-  return(
-      <SectionCards
-        team={team}
-        header={`${team.Conference} Standings`}
-        classes={`${textColorClass}, h-full`}
-        backgroundColor={backgroundColor}
-        headerColor={headerColor}
-        borderColor={borderColor}
-        darkerBackgroundColor={darkerBackgroundColor}
-        textColorClass={textColorClass}
-      >
-        {isLoadingTwo ? (
-          <div className="flex justify-center items-center">
-            <Text variant="small" 
-                  classes={`${textColorClass}`}>
-              Loading...
-            </Text>
+  return (
+    <SectionCards
+      team={team}
+      header={`${team.Conference} Standings`}
+      classes={`${textColorClass}, h-full`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      darkerBackgroundColor={darkerBackgroundColor}
+      textColorClass={textColorClass}
+    >
+      {isLoadingTwo ? (
+        <div className="flex justify-center items-center">
+          <Text variant="small" classes={`${textColorClass}`}>
+            Loading...
+          </Text>
+        </div>
+      ) : (
+        <div className="grid">
+          <div
+            className="grid grid-cols-6 font-semibold border-b-2 pb-2"
+            style={{
+              borderColor,
+            }}
+          >
+            <div className="text-left">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Rank
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Team
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                C.W
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                C.L
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                T.W
+              </Text>
+            </div>
+            <div className="text-center">
+              <Text variant="xs" className={`${textColorClass}`}>
+                T.L
+              </Text>
+            </div>
           </div>
-        ) : (
-          <StandingsTable standings={standings} 
-                          league={league} 
-                          team={team} 
-                          currentUser={currentUser}
-                          rowBgColor={backgroundColor}
-                          darkerRowBgColor={darkerBackgroundColor}
-                          textColorClass={textColorClass} />
-        )}
-      </SectionCards>
-  )
+          {standings.map((standing, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-6 py-1 border-b border-b-[#34455d] items-center"
+              style={{ backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor, }}
+            >
+              <div className="text-left pl-1 flex items-center">
+                <Text variant="xs" className="font-semibold">
+                  {standing.Rank}
+                </Text>
+              </div>
+              <div className="flex text-left pl-1 items-center">
+                <Logo
+                  variant="xs"
+                  classes="w-4 h-4 mr-2"
+                  containerClass="flex-shrink-0 p-0"
+                  url={getLogo(league, standing.TeamID, false)}
+                />
+                <Text variant="xs" className="font-semibold">
+                  {standing.TeamAbbr}
+                </Text>
+              </div>
+              <div className="text-center flex items-center justify-center">
+                <Text variant="xs" className="font-semibold">
+                  {standing.ConferenceWins}
+                </Text>
+              </div>
+              <div className="text-center flex items-center justify-center">
+                <Text variant="xs" className="font-semibold">
+                  {standing.ConferenceLosses}
+                </Text>
+              </div>
+              <div className="text-center flex items-center justify-center">
+                <Text variant="xs" className="font-semibold">
+                  {standing.TotalWins}
+                </Text>
+              </div>
+              <div className="text-center flex items-center justify-center">
+                <Text variant="xs" className="font-semibold">
+                  {standing.TotalLosses}
+                </Text>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCards>
+  );
 }
