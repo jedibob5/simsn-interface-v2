@@ -6,7 +6,6 @@ import {
   FreeAgent,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
-  International,
   Overview,
   Preferences,
   SimPHL,
@@ -15,7 +14,6 @@ import {
 import { Border } from "../../../_design/Borders";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
-import { useLoadMessage } from "../../../_hooks/useLoadMessage";
 import { useMobile } from "../../../_hooks/useMobile";
 import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
@@ -30,9 +28,18 @@ import { usePHLFreeAgency } from "./usePHLFreeAgency";
 
 export const PHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
-  const { phlTeam, hck_Timestamp, phlTeamMap } = hkStore;
+  const {
+    phlTeam,
+    hck_Timestamp,
+    phlTeamMap,
+    SaveFreeAgencyOffer,
+    CancelFreeAgencyOffer,
+    SaveWaiverWireOffer,
+    CancelWaiverWireOffer,
+  } = hkStore;
   const {
     teamCapsheet,
+    adjustedTeamCapsheet,
     modalAction,
     isModalOpen,
     handleCloseModal,
@@ -76,16 +83,19 @@ export const PHLFreeAgency = () => {
 
   return (
     <>
-    {modalPlayer && (
-      <OfferModal 
-        isOpen={offerModal.isModalOpen}
-        onClose={offerModal.handleCloseModal}
-        league={SimPHL}
-        player={modalPlayer}
-        existingOffer={teamOfferMap[modalPlayer.ID]}
-        action={offerAction}
-      />
-    )}
+      {modalPlayer && (
+        <OfferModal
+          isOpen={offerModal.isModalOpen}
+          capsheet={adjustedTeamCapsheet}
+          onClose={offerModal.handleCloseModal}
+          league={SimPHL}
+          player={modalPlayer}
+          existingOffer={teamOfferMap[modalPlayer.ID]}
+          action={offerAction}
+          ts={hck_Timestamp!!}
+          confirmOffer={SaveFreeAgencyOffer}
+        />
+      )}
       {modalPlayer && (
         <ActionModal
           isOpen={isModalOpen}
@@ -101,6 +111,7 @@ export const PHLFreeAgency = () => {
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <FreeAgencySidebar
           Capsheet={teamCapsheet}
+          AdjCapsheet={adjustedTeamCapsheet}
           Team={phlTeam!!}
           teamColors={teamColors}
           league={SimPHL}

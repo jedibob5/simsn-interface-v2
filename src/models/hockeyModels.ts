@@ -587,6 +587,7 @@ export class CollegePlayer {
   }
 }
 export class ExtensionOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -644,6 +645,13 @@ export class ExtensionOffer {
     this.IsRejected = source["IsRejected"];
   }
 
+  updateField(name: string, value: number): ExtensionOffer {
+    const copy = new ExtensionOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
+  }
+
   convertValues(a: any, classs: any, asMap: boolean = false): any {
     if (!a) {
       return a;
@@ -663,6 +671,7 @@ export class ExtensionOffer {
   }
 }
 export class WaiverOffer {
+  [key: string]: any;
   ID: number;
   PlayerID: number;
   TeamID: number;
@@ -681,6 +690,7 @@ export class WaiverOffer {
   }
 }
 export class FreeAgencyOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -728,6 +738,13 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.IsActive = source["IsActive"];
+  }
+
+  updateField(name: string, value: number): FreeAgencyOffer {
+    const copy = new FreeAgencyOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1162,9 +1179,13 @@ export class ProfessionalPlayer {
   IsAffiliatePlayer: boolean;
   IsWaived: boolean;
   IsFreeAgent: boolean;
+  IsEligibleForPlay: boolean;
   AffiliateTeamID: number;
   Marketability: number;
   JerseyPrice: number;
+  MarketPreference: number;
+  CompetitivePreference: number;
+  FinancialPreference: number;
   Stats: ProfessionalPlayerGameStats[];
   SeasonStats: ProfessionalPlayerSeasonStats[];
   Contract: ProContract;
@@ -1295,6 +1316,10 @@ export class ProfessionalPlayer {
     this.AffiliateTeamID = source["AffiliateTeamID"];
     this.Marketability = source["Marketability"];
     this.JerseyPrice = source["JerseyPrice"];
+    this.MarketPreference = source["MarketPreference"];
+    this.CompetitivePreference = source["CompetitivePreference"];
+    this.FinancialPreference = source["FinancialPreference"];
+    this.IsEligibleForPlay = source["IsEligibleForPlay"];
     this.Stats = this.convertValues(
       source["Stats"],
       ProfessionalPlayerGameStats

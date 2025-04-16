@@ -62,9 +62,10 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   const backgroundColor = colorOne;
   const borderColor = colorTwo;
   const sectionBg = "#242424";
-  const darkerBorder = backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
-  ? darkenColor(backgroundColor, 5)
-  : darkenColor(backgroundColor, -5);
+  const darkerBorder =
+    backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
+      ? darkenColor(backgroundColor, 5)
+      : darkenColor(backgroundColor, -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const logo = getLogo(League, id!!, isRetro);
   const [isMobile] = useMobile();
@@ -77,70 +78,68 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           backgroundColor,
           borderColor,
         }}
-      >            
-      {!isMobile && (
-        <div className="flex flex-col w-1/3 gap-2 justify-center items-center gap-x-2">
-          <FrontOfficeInfo 
-            owner={Owner} 
-            gm={GM} 
-            coach={Coach} 
-            scout={Scout} 
-            isPro={isPro}
-            marketing={Marketing} 
-            borderColor={borderColor} 
-            backgroundColor={sectionBg}
-            lineColor={borderColor} />
-        </div>
+      >
+        {!isMobile && (
+          <div className="flex flex-col w-1/3 gap-2 justify-center items-center gap-x-2">
+            <FrontOfficeInfo
+              owner={Owner}
+              gm={GM}
+              coach={Coach}
+              scout={Scout}
+              isPro={isPro}
+              marketing={Marketing}
+              borderColor={borderColor}
+              backgroundColor={sectionBg}
+              lineColor={borderColor}
+            />
+          </div>
         )}
         <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center pb-2">
           <div className="flex flex-col max-w-1/4 p-2">
-            <div className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
-                  style={{ backgroundColor: sectionBg, borderColor: borderColor }}>
-              <Logo url={logo} 
-                    variant="large" />
+            <div
+              className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
+              style={{ backgroundColor: sectionBg, borderColor: borderColor }}
+            >
+              <Logo url={logo} variant="large" />
             </div>
           </div>
           <div className="flex flex-col max-w-1/2">
-            <Text variant="h5" 
-                  classes={`${textColorClass}`}>
+            <Text variant="h5" classes={`${textColorClass}`}>
               {TeamName}
             </Text>
             <div className="flex flex-row justify-center">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`
-                    }>
+              <Text variant="body-small" classes={`${textColorClass}`}>
                 {Conference} Conference
               </Text>
               {Division && Division.length > 0 && (
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
-                {Division}
-              </Text>
+                <Text variant="body-small" classes={`${textColorClass}`}>
+                  {Division}
+                </Text>
               )}
             </div>
           </div>
         </div>
         {!isMobile && (
-        <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
-        {isPro && (
-          <CapsheetInfo 
-            capsheet={Capsheet} 
-            ts={ts} 
-            league={League}
-            borderColor={borderColor} 
-            backgroundColor={sectionBg} 
-          />
-        )}
-        {!isPro && (
-          <TeamBreakdown
-            TeamProfile={TeamProfile}
-            ts={ts}
-            league={League}
-            backgroundColor={sectionBg}
-            borderColor={borderColor}
-          />
-        )}
-        </div>
+          <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
+            {isPro && (
+              <CapsheetInfo
+                capsheet={Capsheet}
+                ts={ts}
+                league={League}
+                borderColor={borderColor}
+                backgroundColor={sectionBg}
+              />
+            )}
+            {!isPro && (
+              <TeamBreakdown
+                TeamProfile={TeamProfile}
+                ts={ts}
+                league={League}
+                backgroundColor={sectionBg}
+                borderColor={borderColor}
+              />
+            )}
+          </div>
         )}
       </Border>
       <Border
@@ -150,25 +149,27 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           backgroundColor,
           borderColor,
         }}
-      >            
+      >
         <div className="flex w-full justify-center sm:justify-between items-center gap-x-2">
           {!isMobile && (
-            <StadiumInfo 
-            league={League}
-            arena={Arena}
-            capacity={Capacity}
-            textColorClass={textColorClass}
-            borderColor={borderColor} 
-            backgroundColor={darkerBorder}
-            isPro={isPro} />
+            <StadiumInfo
+              league={League}
+              arena={Arena}
+              capacity={Capacity}
+              textColorClass={textColorClass}
+              borderColor={borderColor}
+              backgroundColor={darkerBorder}
+              isPro={isPro}
+            />
           )}
-            <RosterInfo 
-            roster={Roster} 
+          <RosterInfo
+            roster={Roster}
             league={League}
             textColorClass={textColorClass}
-            borderColor={borderColor} 
+            borderColor={borderColor}
             backgroundColor={darkerBorder}
-            isPro={isPro} />
+            isPro={isPro}
+          />
         </div>
       </Border>
     </div>
@@ -185,9 +186,14 @@ export const TeamDropdownSection: FC<TeamDropdownSectionProps> = ({}) => {
   return <></>;
 };
 
-export const CapsheetInfo = ({ 
-  capsheet, ts, league, 
-  backgroundColor, borderColor, textColorClass }: any) => {
+export const CapsheetInfo = ({
+  capsheet,
+  ts,
+  league,
+  backgroundColor,
+  borderColor,
+  textColorClass,
+}: any) => {
   const isNFL = league === SimNFL;
   const rows = [1, 2, 3, 4, 5].map((yearOffset) => {
     const year = ts.Season + (yearOffset - 1);
@@ -195,9 +201,7 @@ export const CapsheetInfo = ({
     const bonusKey = `Y${yearOffset}Bonus`;
     const deadCapKey = `Y${yearOffset}CapHit`;
     const capspaceKey = `Y${yearOffset}Capspace`;
-    const salary = isNFL
-      ? capsheet[salaryKey] || 0
-      : (capsheet[salaryKey] || 0) / 1_000_000;
+    const salary = capsheet[salaryKey] || 0;
     const bonus = isNFL ? capsheet[bonusKey] || 0 : 0;
     const deadCap = capsheet[deadCapKey] || 0;
     const capSpace = ts[capspaceKey] || 0;
@@ -211,76 +215,67 @@ export const CapsheetInfo = ({
       style={{ borderColor, backgroundColor }}
     >
       {capsheet && (
-      <div className="table-fixed w-full">
-        <div className="table-header-group w-full">
-          <div className="table-row">
-            <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
-                Year
-              </Text>
-            </div>
-            {isNFL && (
-            <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
-                Bonus
-              </Text>
-            </div>
-            )}
-            <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
-                Salary
-              </Text>
-            </div>
-            <div className="table-cell w-[9em] font-semibold">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
-                Space
-              </Text>
+        <div className="table-fixed w-full">
+          <div className="table-header-group w-full">
+            <div className="table-row">
+              <div className="table-cell w-[9em] font-semibold">
+                <Text variant="body-small" classes={`${textColorClass}`}>
+                  Year
+                </Text>
+              </div>
+              {isNFL && (
+                <div className="table-cell w-[9em] font-semibold">
+                  <Text variant="body-small" classes={`${textColorClass}`}>
+                    Bonus
+                  </Text>
+                </div>
+              )}
+              <div className="table-cell w-[9em] font-semibold">
+                <Text variant="body-small" classes={`${textColorClass}`}>
+                  Salary
+                </Text>
+              </div>
+              <div className="table-cell w-[9em] font-semibold">
+                <Text variant="body-small" classes={`${textColorClass}`}>
+                  Space
+                </Text>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="table-row-group">
-          {rows.map(({ year, salary, bonus, space }) => (
-          <div key={year} className="table-row">
-            <div className="table-cell">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {year}
-              </Text>
-            </div>
-            {isNFL && (
-            <div className="table-cell">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {bonus.toFixed(2)}
-              </Text>
-            </div>
-            )}
-            <div className="table-cell">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {salary.toFixed(2)}
-              </Text>
-            </div>
-            <div className="table-cell">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {space.toFixed(2)}
-              </Text>
-            </div>
+          <div className="table-row-group">
+            {rows.map(({ year, salary, bonus, space }) => (
+              <div key={year} className="table-row">
+                <div className="table-cell">
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {year}
+                  </Text>
+                </div>
+                {isNFL && (
+                  <div className="table-cell">
+                    <Text variant="xs" classes={`${textColorClass}`}>
+                      {bonus.toFixed(2)}
+                    </Text>
+                  </div>
+                )}
+                <div className="table-cell">
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {salary.toFixed(2)}
+                  </Text>
+                </div>
+                <div className="table-cell">
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {space.toFixed(2)}
+                  </Text>
+                </div>
+              </div>
+            ))}
           </div>
-          ))}
+          <div className="flex justify-center">
+            <Text variant="xs" classes={`${textColorClass} font-semibold`}>
+              {`Dead Cap: ${capsheet.Y1CapHit.toFixed(2)}`}
+            </Text>
+          </div>
         </div>
-        <div className="flex justify-center">
-              <Text variant="xs" 
-                    classes={`${textColorClass} font-semibold`}>
-                {`Dead Cap: ${(capsheet.Y1CapHit).toFixed(2)}`}
-              </Text>
-            </div>
-      </div>
       )}
     </div>
   );
@@ -299,83 +294,110 @@ export const TeamBreakdown = ({
       className="flex flex-col w-full h-[100%] border-2 rounded-lg py-5"
       style={{ borderColor, backgroundColor }}
     >
-    {TeamProfile && (
-      <div className="flex flex-row w-full pb-2 px-1">
-        <div className="flex flex-col items-center w-full">
-          <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
-            Offensive Scheme
-          </Text>
-          <Text variant="xs" classes={`${textColorClass}`}>
-            {TeamProfile.OffensiveScheme || "N/A"}
-          </Text>
-        </div>
-        <div className="flex flex-col items-center w-full">
-          <Text variant="body-small" classes={`${textColorClass} font-semibold`}>
-            Defensive Scheme
-          </Text>
-          <Text variant="xs" classes={`${textColorClass}`}>
-            {TeamProfile.DefensiveScheme || "N/A"}
-          </Text>
-        </div>
-      </div>
-    )}
-    {TeamProfile && ts && (
-      <div className="flex flex-col w-full border-t border-dotted pt-1 px-1" 
-           style={{ borderColor }}>
-        <Text variant="body-small" classes={`${textColorClass} font-semibold pb-1`}>
-          Incoming Croots
-        </Text>
-        <div className="flex flex-row">
-          <div className="flex flex-col items-center w-full border-r-2 pr-1" 
-               style={{ borderColor }}>
-            <Text variant="xs" classes={`${textColorClass} text-small`}>
-              ⭐⭐⭐
+      {TeamProfile && (
+        <div className="flex flex-row w-full pb-2 px-1">
+          <div className="flex flex-col items-center w-full">
+            <Text
+              variant="body-small"
+              classes={`${textColorClass} font-semibold`}
+            >
+              Offensive Scheme
             </Text>
-            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
-              {TeamProfile.ThreeStars || "0"}
+            <Text variant="xs" classes={`${textColorClass}`}>
+              {TeamProfile.OffensiveScheme || "N/A"}
             </Text>
           </div>
-          <div className="flex flex-col items-center px-4">
-            <Text variant="xs" classes={`${textColorClass} text-small`}>
+          <div className="flex flex-col items-center w-full">
+            <Text
+              variant="body-small"
+              classes={`${textColorClass} font-semibold`}
+            >
+              Defensive Scheme
+            </Text>
+            <Text variant="xs" classes={`${textColorClass}`}>
+              {TeamProfile.DefensiveScheme || "N/A"}
+            </Text>
+          </div>
+        </div>
+      )}
+      {TeamProfile && ts && (
+        <div
+          className="flex flex-col w-full border-t border-dotted pt-1 px-1"
+          style={{ borderColor }}
+        >
+          <Text
+            variant="body-small"
+            classes={`${textColorClass} font-semibold pb-1`}
+          >
+            Incoming Croots
+          </Text>
+          <div className="flex flex-row">
+            <div
+              className="flex flex-col items-center w-full border-r-2 pr-1"
+              style={{ borderColor }}
+            >
+              <Text variant="xs" classes={`${textColorClass} text-small`}>
+                ⭐⭐⭐
+              </Text>
+              <Text
+                variant="xs"
+                classes={`${textColorClass} font-semibold text-small`}
+              >
+                {TeamProfile.ThreeStars || "0"}
+              </Text>
+            </div>
+            <div className="flex flex-col items-center px-4">
+              <Text variant="xs" classes={`${textColorClass} text-small`}>
                 ⭐⭐⭐⭐
-            </Text>
-            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
-              {TeamProfile.FourStars || "0"}
-            </Text>
-          </div>
-          <div className="flex flex-col items-center w-full border-l-2 pl-1" 
-               style={{ borderColor }}>
-            <Text variant="xs" classes={`${textColorClass} text-small`}>
-              ⭐⭐⭐⭐⭐
-            </Text>
-            <Text variant="xs" classes={`${textColorClass} font-semibold text-small`}>
-              {TeamProfile.FiveStars || "0"}
-            </Text>
+              </Text>
+              <Text
+                variant="xs"
+                classes={`${textColorClass} font-semibold text-small`}
+              >
+                {TeamProfile.FourStars || "0"}
+              </Text>
+            </div>
+            <div
+              className="flex flex-col items-center w-full border-l-2 pl-1"
+              style={{ borderColor }}
+            >
+              <Text variant="xs" classes={`${textColorClass} text-small`}>
+                ⭐⭐⭐⭐⭐
+              </Text>
+              <Text
+                variant="xs"
+                classes={`${textColorClass} font-semibold text-small`}
+              >
+                {TeamProfile.FiveStars || "0"}
+              </Text>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };
 
-export const FrontOfficeInfo = ({ 
-  backgroundColor, borderColor, textColorClass, lineColor, 
-  league, owner, coach, gm, scout, marketing, isPro 
+export const FrontOfficeInfo = ({
+  backgroundColor,
+  borderColor,
+  textColorClass,
+  lineColor,
+  league,
+  owner,
+  coach,
+  gm,
+  scout,
+  marketing,
+  isPro,
 }: any) => {
   const personnelRoles = isPro
     ? [
-        { role: "Owner", 
-          value: owner },
-        { role: "GM", 
-          value: gm },
-        { role: "Coach", 
-          value: coach },
-        { role: "Assistant", 
-          value: scout },
-        ...(league === SimPHL ? 
-          [{ role: "Marketing", 
-             value: marketing }] : []),
+        { role: "Owner", value: owner },
+        { role: "GM", value: gm },
+        { role: "Coach", value: coach },
+        { role: "Assistant", value: scout },
+        ...(league === SimPHL ? [{ role: "Marketing", value: marketing }] : []),
       ]
         .filter(({ value }) => value)
         .reduce((acc: Record<string, string[]>, { role, value }) => {
@@ -391,17 +413,11 @@ export const FrontOfficeInfo = ({
 
   const vacancies = isPro
     ? [
-        { role: "Owner", 
-          value: owner },
-        { role: "GM", 
-          value: gm },
-        { role: "Coach", 
-          value: coach },
-        { role: "Assistant", 
-          value: scout },
-        ...(league === SimPHL ? 
-          [{ role: "Marketing", 
-             value: marketing }] : []),
+        { role: "Owner", value: owner },
+        { role: "GM", value: gm },
+        { role: "Coach", value: coach },
+        { role: "Assistant", value: scout },
+        ...(league === SimPHL ? [{ role: "Marketing", value: marketing }] : []),
       ]
         .filter(({ value }) => !value)
         .map(({ role }) => role)
@@ -419,14 +435,12 @@ export const FrontOfficeInfo = ({
         <div className="table-header-group">
           <div className="table-row">
             <div className="table-cell w-[6em] font-semibold text-left">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
+              <Text variant="body-small" classes={`${textColorClass}`}>
                 Role
               </Text>
             </div>
             <div className="table-cell font-semibold text-left">
-              <Text variant="body-small" 
-                    classes={`${textColorClass}`}>
+              <Text variant="body-small" classes={`${textColorClass}`}>
                 Personnel
               </Text>
             </div>
@@ -434,42 +448,41 @@ export const FrontOfficeInfo = ({
         </div>
         <div className="table-row-group">
           {Object.entries(personnelRoles).map(([person, roles]) => (
-          <div key={person} 
-                className="table-row">
-            <div className="table-cell text-left">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {roles.join("/")}
-              </Text>
+            <div key={person} className="table-row">
+              <div className="table-cell text-left">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {roles.join("/")}
+                </Text>
+              </div>
+              <div className="table-cell text-left">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {person}
+                </Text>
+              </div>
             </div>
-            <div className="table-cell text-left">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {person}
-              </Text>
-            </div>
-          </div>
           ))}
         </div>
-        <div className="flex my-2 border-t" 
-             style={{ borderColor: lineColor }} />
+        <div
+          className="flex my-2 border-t"
+          style={{ borderColor: lineColor }}
+        />
         <div className="table-row-group">
           {vacancies && (
-          <div className="table-row border-t" 
-                style={{ borderColor: lineColor, borderTopWidth: "2px" }}>
-            <div className="table-cell w-[6em] text-left">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                Vacancies
-              </Text>
+            <div
+              className="table-row border-t"
+              style={{ borderColor: lineColor, borderTopWidth: "2px" }}
+            >
+              <div className="table-cell w-[6em] text-left">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  Vacancies
+                </Text>
+              </div>
+              <div className="table-cell text-left">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {vacancies}
+                </Text>
+              </div>
             </div>
-            <div className="table-cell text-left">
-              <Text variant="xs" 
-                    classes={`${textColorClass}`}>
-                {vacancies}
-              </Text>
-            </div>
-          </div>
           )}
         </div>
       </div>
@@ -477,44 +490,51 @@ export const FrontOfficeInfo = ({
   );
 };
 
-export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro, textColorClass }: any) => {
+export const RosterInfo = ({
+  backgroundColor,
+  borderColor,
+  league,
+  roster,
+  isPro,
+  textColorClass,
+}: any) => {
   const totalPlayers = roster?.length || 0;
-  const specialPlayersCount = roster?.filter((player: any) => {
-    if (isPro) {
-      if (league === SimNFL) {
-        return player?.IsPracticeSquad || false;
+  const specialPlayersCount =
+    roster?.filter((player: any) => {
+      if (isPro) {
+        if (league === SimNFL) {
+          return player?.IsPracticeSquad || false;
+        }
+        if (league === SimPHL) {
+          return player?.IsAffiliatePlayer || false;
+        }
+      } else {
+        return player?.IsRedshirting || false;
       }
-      if (league === SimPHL) {
-        return player?.IsAffiliatePlayer || false;
-      }
-    } else {
-      return player?.IsRedshirting || false;
-    }
-  }).length || 0;
+    }).length || 0;
   const activeRoster = totalPlayers - specialPlayersCount;
 
   return (
     <div className="flex gap-4">
       <div className="flex justify-center items-center gap-2">
-        <Text variant="xs" 
-              classes={`${textColorClass} font-semibold`}>
+        <Text variant="xs" classes={`${textColorClass} font-semibold`}>
           Active Roster:
         </Text>
-        <Text variant="xs" 
-              classes={`${textColorClass}`}>
+        <Text variant="xs" classes={`${textColorClass}`}>
           {activeRoster}
         </Text>
       </div>
       <div className="flex items-center gap-2">
-        <Text variant="xs" 
-              classes={`${textColorClass} font-semibold`}>
-          {isPro ? league === SimNFL ? "Practice Squad:" 
-                : league === SimPHL ? "Reserves:" 
-                : "Unknown" 
-                : "Redshirts"}
+        <Text variant="xs" classes={`${textColorClass} font-semibold`}>
+          {isPro
+            ? league === SimNFL
+              ? "Practice Squad:"
+              : league === SimPHL
+              ? "Reserves:"
+              : "Unknown"
+            : "Redshirts"}
         </Text>
-        <Text variant="xs" 
-              classes={`${textColorClass}`}>
+        <Text variant="xs" classes={`${textColorClass}`}>
           {specialPlayersCount}
         </Text>
       </div>
@@ -522,27 +542,33 @@ export const RosterInfo = ({ backgroundColor, borderColor, league, roster, isPro
   );
 };
 
-export const StadiumInfo = ({ backgroundColor, borderColor, arena, capacity, league, textColorClass }: any) => {
+export const StadiumInfo = ({
+  backgroundColor,
+  borderColor,
+  arena,
+  capacity,
+  league,
+  textColorClass,
+}: any) => {
   const home = league === SimCFB || league === SimNFL ? "Stadium:" : "Arena:";
   return (
     <div className="flex gap-4">
       <div className="flex items-center gap-2">
-        <Text variant="xs" 
-              classes={`${textColorClass} font-semibold text-left`}>
+        <Text
+          variant="xs"
+          classes={`${textColorClass} font-semibold text-left`}
+        >
           {`${home}`}
         </Text>
-        <Text variant="xs" 
-              classes={`${textColorClass}`}>
+        <Text variant="xs" classes={`${textColorClass}`}>
           {arena}
         </Text>
       </div>
       <div className="flex items-center gap-2">
-        <Text variant="xs" 
-              classes={`${textColorClass} font-semibold`}>
+        <Text variant="xs" classes={`${textColorClass} font-semibold`}>
           Capacity:
         </Text>
-        <Text variant="xs" 
-              classes={`${textColorClass}`}>
+        <Text variant="xs" classes={`${textColorClass}`}>
           {capacity}
         </Text>
       </div>

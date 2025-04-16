@@ -21,6 +21,7 @@ import { CapsheetInfo } from "../../Team/TeamPageComponents";
 
 interface FreeAgencySideBarProps {
   Capsheet: ProCapsheet | NFLCapsheet | NBACapsheet;
+  AdjCapsheet: ProCapsheet | NFLCapsheet | NBACapsheet;
   Team: ProfessionalTeam | NFLTeam | NBATeam;
   teamColors: any;
   league: League;
@@ -29,6 +30,7 @@ interface FreeAgencySideBarProps {
 
 export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
   Capsheet,
+  AdjCapsheet,
   Team,
   teamColors,
   league,
@@ -95,6 +97,16 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
           borderColor={teamColors.Two}
           textColorClass={teamColors.TextColorThree}
         />
+        {AdjCapsheet.UpdatedAt !== Capsheet.UpdatedAt && (
+          <CapsheetInfo
+            ts={ts as HCKTimestamp}
+            capsheet={AdjCapsheet}
+            league={league}
+            backgroundColor={teamColors.Three}
+            borderColor={teamColors.Two}
+            textColorClass={teamColors.TextColorThree}
+          />
+        )}
       </Border>
     </div>
   );

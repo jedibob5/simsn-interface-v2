@@ -156,6 +156,22 @@ export const usePHLFreeAgency = () => {
     return {} as ProCapsheet;
   }, [phlTeam, capsheetMap]);
 
+  const adjustedTeamCapsheet = useMemo(() => {
+    if (teamFreeAgentOffers.length === 0) {
+      return teamCapsheet;
+    }
+    const adjCapsheet = { ...teamCapsheet } as ProCapsheet;
+    for (let i = 0; i < teamFreeAgentOffers.length; i++) {
+      adjCapsheet.Y1Salary += teamFreeAgentOffers[i].ContractValue;
+      adjCapsheet.Y2Salary += teamFreeAgentOffers[i].ContractValue;
+      adjCapsheet.Y3Salary += teamFreeAgentOffers[i].ContractValue;
+      adjCapsheet.Y4Salary += teamFreeAgentOffers[i].ContractValue;
+      adjCapsheet.Y5Salary += teamFreeAgentOffers[i].ContractValue;
+    }
+    adjCapsheet.UpdatedAt = new Date();
+    return adjCapsheet;
+  }, [teamCapsheet, teamFreeAgentOffers]);
+
   const regionOptions = useMemo(() => {
     if (country === USA) {
       return USARegionOptions;
@@ -251,7 +267,10 @@ export const usePHLFreeAgency = () => {
     setCurrentPage(0);
   };
 
-  const handleFAModal = (action: ModalAction, player: ProfessionalPlayer | NFLPlayer | NBAPlayer) => {
+  const handleFAModal = (
+    action: ModalAction,
+    player: ProfessionalPlayer | NFLPlayer | NBAPlayer
+  ) => {
     setModalPlayer(player);
     setModalAction(action);
     handleOpenModal();
@@ -259,7 +278,10 @@ export const usePHLFreeAgency = () => {
 
   const offerModal = useModal();
 
-  const handleOfferModal = (action: OfferAction, player: ProfessionalPlayer | NFLPlayer | NBAPlayer) => {
+  const handleOfferModal = (
+    action: OfferAction,
+    player: ProfessionalPlayer | NFLPlayer | NBAPlayer
+  ) => {
     setOfferAction(action);
     setModalPlayer(player);
     offerModal.handleOpenModal();
@@ -267,6 +289,7 @@ export const usePHLFreeAgency = () => {
 
   return {
     teamCapsheet,
+    adjustedTeamCapsheet,
     modalAction,
     isModalOpen,
     handleCloseModal,
@@ -297,6 +320,6 @@ export const usePHLFreeAgency = () => {
     setPlayerType,
     offerAction,
     offerModal,
-    handleOfferModal
+    handleOfferModal,
   };
 };

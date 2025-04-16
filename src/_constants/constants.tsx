@@ -60,10 +60,10 @@ export type ModalAction =
   | typeof Help2
   | typeof Help3
   | typeof Help4;
-export const FreeAgentOffer = 'FreeAgentOffer';
-export const WaiverOffer = 'WaiverOffer';
-export const Extension = 'Extension';
-export type OfferAction = 
+export const FreeAgentOffer = "FreeAgentOffer";
+export const WaiverOffer = "WaiverOffer";
+export const Extension = "Extension";
+export type OfferAction =
   | typeof FreeAgentOffer
   | typeof WaiverOffer
   | typeof Extension;
@@ -402,3 +402,6 @@ export const ScholarshipRevoked = "ScholarshipRevoked";
 
 export const ButtonGreen = "bg-[#189E5B]";
 export const TextGreen = "text-[#189E5B]";
+
+export const MIN_SALARY = 7.5;
+export const MAX_SALARY = 14;
