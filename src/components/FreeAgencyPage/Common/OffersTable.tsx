@@ -151,7 +151,11 @@ export const OfferTable: FC<OfferTableProps> = ({
     backgroundColor: string
   ) => {
     const player = playerMap[item.PlayerID] as PHLPlayer;
-    const attributes = getPHLAttributes(player, isMobile, category!, null);
+    const attributes = getPHLAttributes(player, isMobile, category!, null) as {
+      label: string;
+      value: number;
+      letter: string;
+    }[];
     const contract = getPHLContracts(item);
     const offers = offersByPlayer[item.PlayerID];
     let offerIds = [];
@@ -192,6 +196,8 @@ export const OfferTable: FC<OfferTableProps> = ({
               >
                 <Text variant="small">{attr.value}</Text>
               </span>
+            ) : attr.label === "Sta" || attr.label === "Inj" ? (
+              <Text variant="small">{attr.letter}</Text>
             ) : (
               <Text variant="small">{attr.value}</Text>
             )}

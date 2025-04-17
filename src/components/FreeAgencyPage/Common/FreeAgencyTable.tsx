@@ -125,7 +125,11 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getPHLAttributes(item, isMobile, category!, null);
+    const attributes = getPHLAttributes(item, isMobile, category!, null) as {
+      label: string;
+      value: number;
+      letter: string;
+    }[];
     const offers = offersByPlayer[item.ID];
     let offerIds = [];
     let logos: string[] = [];
@@ -166,6 +170,8 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
               >
                 <Text variant="small">{attr.value}</Text>
               </span>
+            ) : attr.label === "Sta" || attr.label === "Inj" ? (
+              <Text variant="small">{attr.letter}</Text>
             ) : (
               <Text variant="small">{attr.value}</Text>
             )}
