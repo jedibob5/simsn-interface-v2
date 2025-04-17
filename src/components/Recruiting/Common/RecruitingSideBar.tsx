@@ -13,7 +13,13 @@ import {
   CollegeTeam as HockeyTeam,
   RecruitingTeamProfile as HockeyTeamProfile,
 } from "../../../models/hockeyModels";
-import { League, SimCBB, SimCFB, SimCHL } from "../../../_constants/constants";
+import {
+  League,
+  navyBlueColor,
+  SimCBB,
+  SimCFB,
+  SimCHL,
+} from "../../../_constants/constants";
 
 interface RecruitingSideBarProps {
   TeamProfile: BasketballTeamProfile | HockeyTeamProfile | FootballTeamProfile;
@@ -68,8 +74,8 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
         direction="col"
         classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-start"
         styles={{
-          backgroundColor: teamColors.One,
-          borderColor: teamColors.Two,
+          borderColor: teamColors.One,
+          backgroundColor: navyBlueColor,
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
@@ -89,13 +95,19 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
           <Text variant="body-small">Rank: {classRank}</Text>
           <Text variant="body-small">Five Stars: {TeamProfile?.FiveStars}</Text>
           <Text variant="body-small">Four Stars: {TeamProfile?.FourStars}</Text>
-          <Text variant="body-small">Three Stars: {TeamProfile?.ThreeStars}</Text>
+          <Text variant="body-small">
+            Three Stars: {TeamProfile?.ThreeStars}
+          </Text>
         </div>
-        {league === SimCHL && 
+        {league === SimCHL && (
           <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
             <Text variant="h6">Team Values</Text>
-            <Text variant="body-small">Program Development: {programDevelopment}</Text>
-            <Text variant="body-small">Professional Development: {profDev}</Text>
+            <Text variant="body-small">
+              Program Development: {programDevelopment}
+            </Text>
+            <Text variant="body-small">
+              Professional Development: {profDev}
+            </Text>
             <Text variant="body-small">Traditions: {trad}</Text>
             <Text variant="body-small">Facilities: {fac}</Text>
             <Text variant="body-small">Atmosphere: {atm}</Text>
@@ -103,7 +115,8 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
             <Text variant="body-small">Conf. Prestige: {conf}</Text>
             <Text variant="body-small">Coach Rating: {coach}</Text>
             <Text variant="body-small">Season Momentum: {season}</Text>
-          </div>}
+          </div>
+        )}
       </Border>
     </div>
   );

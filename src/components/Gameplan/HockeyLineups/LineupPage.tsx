@@ -19,6 +19,7 @@ import {
   LineupF1,
   LineupSO,
   ModalAction,
+  navyBlueColor,
   SimCHL,
   Zone,
 } from "../../../_constants/constants";
@@ -176,8 +177,8 @@ export const CHLLineupPage = () => {
               direction="col"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-center"
               styles={{
-                backgroundColor,
-                borderColor,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup>
@@ -199,8 +200,8 @@ export const CHLLineupPage = () => {
               direction="col"
               classes="w-full max-[1024px]:px-2 px-4 max-[1024px]:pb-4 py-2 h-full items-center justify-center"
               styles={{
-                backgroundColor,
-                borderColor,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup classes="justify-center">
@@ -223,8 +224,8 @@ export const CHLLineupPage = () => {
             direction="row"
             classes="w-full max-[1024px]:px-2 px-4 py-2 h-full gap-x-2"
             styles={{
-              backgroundColor,
-              borderColor,
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
             }}
           >
             <div className="flex flex-col min-h-full w-full">
@@ -276,8 +277,8 @@ export const CHLLineupPage = () => {
           direction="col"
           classes="w-full px-4 py-3 min-h-full"
           styles={{
-            backgroundColor,
-            borderColor,
+            borderColor: teamColors.One,
+            backgroundColor: navyBlueColor,
           }}
         >
           <div className="flex flex-row mb-6 gap-x-2 justify-center w-full">
@@ -315,8 +316,8 @@ export const CHLLineupPage = () => {
             direction="col"
             classes="w-full max-[1024px]:px-2 px-4 py-4"
             styles={{
-              backgroundColor,
-              borderColor,
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
             }}
           >
             <div className="flex flex-row w-full justify-start items-center gap-x-2 mb-6">
