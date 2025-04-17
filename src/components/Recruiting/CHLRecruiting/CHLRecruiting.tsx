@@ -403,8 +403,8 @@ export const CHLRecruiting = () => {
                 direction="row"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">

@@ -336,7 +336,7 @@ export const CHLLineupPage = () => {
               </Button>
             </div>
             <div className="flex flex-col">
-              <div className="grid grid-cols-1 max-[768px]:grid-cols-1 max-[821px]:grid-cols-1 max-[1024px]:grid-cols-2 min-[1025px]:grid-cols-3 gap-4 px-4 w-full">
+              <div className="grid grid-cols-1 max-[541px]:grid-cols-1 max-[768px]:grid-cols-2 max-[854px]:grid-cols-2 max-[1024px]:grid-cols-3 min-[1025px]:grid-cols-3 gap-4 px-4 w-full">
                 {lineCategory !== LineupSO && (
                   <>
                     <LineupPlayer
@@ -414,7 +414,7 @@ export const CHLLineupPage = () => {
                   </>
                 )}
                 {lineCategory === LineupSO && (
-                  <div className="grid grid-cols-1 max-[420px]:grid-cols-1 max-[1024px]:grid-cols-1 min-[1025px]:grid-cols-3 gap-4">
+                  <>
                     {[1, 2, 3, 4, 5, 6].map((x) => (
                       <ShootoutPlayer
                         key={x}
@@ -429,7 +429,7 @@ export const CHLLineupPage = () => {
                         activatePlayer={activatePlayerModal}
                       />
                     ))}
-                  </div>
+                  </>
                 )}
               </div>
             </div>
