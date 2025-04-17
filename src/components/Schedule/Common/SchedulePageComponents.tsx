@@ -310,3 +310,91 @@ export const TeamStandings = ({ standings, team,
     </SectionCards>
   );
 }
+
+interface LeagueStatsProps {
+  league: League;
+  topPassers: any[];
+  topRushers: any[];
+  topReceivers: any[];
+  titles: string[];
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+  isLoadingTwo: boolean;
+}
+
+export const LeagueStats = ({
+  league,
+  topPassers,
+  topRushers,
+  topReceivers,
+  titles,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+  isLoadingTwo,
+}: LeagueStatsProps) => {
+  const renderStatCard = (title: string, stats: any[]) => (
+    <SectionCards
+      team={null}
+      header={title}
+      classes={`${textColorClass}`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      textColorClass={textColorClass}
+      darkerBackgroundColor={darkerBackgroundColor}
+    >
+      {isLoadingTwo ? (
+        <div className="flex justify-center items-center min-h-[5em]">
+          <Text variant="small" classes={`${textColorClass}`}>
+            Loading...
+          </Text>
+        </div>
+      ) : stats.length > 0 ? (
+        <div className="flex flex-col space-y-2">
+          {stats.map((player, index) => (
+            <div
+              key={index}
+              className="flex items-center p-2 rounded-lg border"
+              style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}
+            >
+                <div className={`flex my-1 items-center justify-center 
+                                    px-3 h-[2rem] min-h-[2rem] md:h-[4rem] w-[5rem] max-w-[5rem] rounded-lg border-2`} 
+                                    style={{ borderColor: borderColor, backgroundColor: "white" }}>
+                <PlayerPicture playerID={player.id} league={league} team={player.team} />
+              </div>
+              <div className="flex flex-col text-center items-center w-full">
+                <Text variant="xs" classes={`${textColorClass} font-semibold`}>
+                  {player.name} ({player.teamAbbr})
+                </Text>
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {player.stat1}: {player.stat1Value}
+                </Text>
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {player.stat2}: {player.stat2Value}
+                </Text>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Text variant="small" classes={`${textColorClass} pt-2`}>
+          No stats available.
+        </Text>
+      )}
+    </SectionCards>
+  );
+
+  return (
+    <div className="flex flex-col space-y-4">
+      {renderStatCard(titles[0], topPassers)}
+      {renderStatCard(titles[1], topRushers)}
+      {renderStatCard(titles[2], topReceivers)}
+    </div>
+  );
+};

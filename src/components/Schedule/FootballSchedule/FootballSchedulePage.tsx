@@ -19,7 +19,7 @@ import { isBrightColor } from "../../../_utility/isBrightColor";
 import { useMobile } from "../../../_hooks/useMobile";
 import { GetCurrentWeek } from "../../../_helper/teamHelper";
 import { getScheduleCFBData } from "../Common/SchedulePageHelper";
-import { TeamSchedule, TeamStandings } from "../Common/SchedulePageComponents";
+import { TeamSchedule, TeamStandings, LeagueStats } from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 
@@ -97,12 +97,51 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     setCategory(Overview);
   };
 
+  const leagueStatsData = useMemo(() => {
+    const processStats = (players: any[]) =>
+      players.slice(0, 3).map((player) => {
+        const team = cfbTeams.find((team) => team.ID === player.TeamID);
+  
+        return {
+          id: player.ID,
+          name: `${player.FirstName} ${player.LastName}`,
+          teamAbbr: player.TeamAbbr,
+          team,
+          stat1: player.SeasonStats.PassingYards
+            ? "Passing Yards"
+            : player.SeasonStats.RushingYards
+            ? "Rushing Yards"
+            : "Receiving Yards",
+          stat1Value: player.SeasonStats.PassingYards
+            ? player.SeasonStats.PassingYards
+            : player.SeasonStats.RushingYards
+            ? player.SeasonStats.RushingYards
+            : player.SeasonStats.ReceivingYards,
+          stat2: player.SeasonStats.PassingTDs
+            ? "Passing TDs"
+            : player.SeasonStats.RushingTDs
+            ? "Rushing TDs"
+            : "Receiving TDs",
+          stat2Value: player.SeasonStats.PassingTDs
+            ? player.SeasonStats.PassingTDs
+            : player.SeasonStats.RushingTDs
+            ? player.SeasonStats.RushingTDs
+            : player.SeasonStats.ReceivingTDs,
+        };
+      });
+  
+    return {
+      topPassers: processStats(topCFBPassers),
+      topRushers: processStats(topCFBRushers),
+      topReceivers: processStats(topCFBReceivers),
+    };
+  }, [topCFBPassers, topCFBRushers, topCFBReceivers, cfbTeams]);
+
   switch (league) {
     case SimCFB:
       ({
         teamStandings,
         teamSchedule,
-        teamStats,
       } = getScheduleCFBData(
         selectedTeam,
         currentWeek,
@@ -110,9 +149,6 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         allCFBStandings,
         allCFBGames,
         cfbTeams,
-        topCFBPassers,
-        topCFBRushers,
-        topCFBReceivers
       ));
       break;
 
@@ -122,8 +158,8 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   return (
     <>
-      <div className="grid grid-cols-[1.6fr_3fr_2.5fr]">
-        <div className="flex flex-col items-center gap-4 overflow-auto max-h-[85vh]">
+      <div className="grid grid-cols-10 gap-4">
+        <div className="flex flex-col items-center col-span-2 gap-4 overflow-auto max-h-[85vh]">
           <div className="flex gap-4 justify-center">
             <Button size="md" variant="success">
               Schedule
@@ -138,7 +174,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             onChange={selectTeamOption}
           />
         </div>
-        <div className="flex w-full h-full pl-8 overflow-auto max-h-[84vh]">
+        <div className="flex w-full justify-center col-span-3 h-full pl-8 overflow-auto max-h-[84vh]">
           <TeamSchedule   
             team={selectedTeam}
             currentUser={currentUser}
@@ -154,7 +190,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             isLoadingTwo={isLoading} 
           />
         </div>
-        <div className="flex w-full h-full overflow-auto max-h-[84vh]">
+        <div className="flex w-full justify-center col-span-2 h-full overflow-auto max-h-[84vh]">
           <TeamStandings   
             team={selectedTeam}
             currentUser={currentUser}
@@ -166,6 +202,21 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             textColorClass={textColorClass}
             darkerBackgroundColor={darkerBackgroundColor}
             isLoadingTwo={isLoading} 
+          />
+        </div>
+        <div className="flex col-span-2 justify-center w-full h-full max-h-[84vh]">
+          <LeagueStats
+            league={league}
+            topPassers={leagueStatsData.topPassers}
+            topRushers={leagueStatsData.topRushers}
+            topReceivers={leagueStatsData.topReceivers}
+            titles={["Passing Leaders", "Rushing Leaders", "Receiving Leaders"]}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
+            textColorClass={textColorClass}
+            darkerBackgroundColor={darkerBackgroundColor}
+            isLoadingTwo={isLoading}
           />
         </div>
       </div>

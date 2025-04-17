@@ -7,7 +7,7 @@ import {
   NFLGame, 
   CollegeTeam,
   NFLTeam,
-  CollegePlayer,
+  CollegePlayer as CFBPlayer,
   NFLPlayer,
   NewsLog 
 } from "../../../models/footballModels";
@@ -21,9 +21,6 @@ export const getScheduleCFBData = (
   allCFBStandings: CollegeStandings[],
   allCollegeGames: CollegeGame[],
   allCollegeTeams: CollegeTeam[],
-  topCFBPassers: CollegePlayer[],
-  topCFBRushers: CollegePlayer[],
-  topCFBReceivers: CollegePlayer[],
 ) => {
     // Team Standings
     const teamStandings = allCFBStandings
@@ -42,23 +39,113 @@ export const getScheduleCFBData = (
         AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
       }));
 
-    // Team Stats
-    const userPassers = topCFBPassers.filter((p) => p.TeamID === team.ID);
-    const userRushers = topCFBRushers.filter((r) => r.TeamID === team.ID);
-    const userReceivers = topCFBReceivers.filter((rcv) => rcv.TeamID === team.ID);
-    const topPasser = userPassers.length > 0 ? userPassers[0] : null;
-    const topRusher = userRushers.length > 0 ? userRushers[0] : null;
-    const topReceiver = userReceivers.length > 0 ? userReceivers[0] : null;
-
-    const teamStats = {
-      TopPasser: topPasser,
-      TopRusher: topRusher,
-      TopReceiver: topReceiver
-    };
-
   return { 
     teamStandings, 
     teamSchedule, 
-    teamStats, 
   };
+};
+
+export const getLeagueStats = (league: League, leagueStats: any) => {
+  let topPassers = [];
+  let topRushers = [];
+  let topReceivers = [];
+
+  switch (league) {
+    case "SimCFB":
+    case "SimNFL":
+      topPassers = leagueStats.TopPassers.slice(0, 3).map((player: CFBPlayer) => ({
+        id: player.ID,
+        name: `${player.FirstName} ${player.LastName}`,
+        teamAbbr: player.TeamAbbr,
+        stat1: "Passing Yards",
+        stat1Value: player.SeasonStats.PassingYards,
+        stat2: "Passing TDs",
+        stat2Value: player.SeasonStats.PassingTDs,
+      }));
+      topRushers = leagueStats.TopRushers.slice(0, 3).map((player: CFBPlayer) => ({
+        id: player.ID,
+        name: `${player.FirstName} ${player.LastName}`,
+        teamAbbr: player.TeamAbbr,
+        stat1: "Rushing Yards",
+        stat1Value: player.SeasonStats.RushingYards,
+        stat2: "Rushing TDs",
+        stat2Value: player.SeasonStats.RushingTDs,
+      }));
+      topReceivers = leagueStats.TopReceivers.slice(0, 3).map((player: CFBPlayer) => ({
+        id: player.ID,
+        name: `${player.FirstName} ${player.LastName}`,
+        stat1: "Receiving Yards",
+        stat1Value: player.SeasonStats.ReceivingYards,
+        stat2: "Receiving TDs",
+        stat2Value: player.SeasonStats.ReceivingTDs,
+      }));
+      break;
+
+    // case "SimCBB":
+    // case "SimNBA":
+    //   topPassers = leagueStats.TopPoints.slice(0, 3).map((player: BasketballPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Points Per Game",
+    //     stat1Value: player.SeasonStats.PPG.toFixed(1),
+    //     stat2: "Minutes Per Game",
+    //     stat2Value: player.SeasonStats.MinutesPerGame.toFixed(1),
+    //   }));
+    //   topRushers = leagueStats.TopAssists.slice(0, 3).map((player: BasketballPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Assists Per Game",
+    //     stat1Value: player.SeasonStats.AssistsPerGame.toFixed(1),
+    //     stat2: "Minutes Per Game",
+    //     stat2Value: player.SeasonStats.MinutesPerGame.toFixed(1),
+    //   }));
+    //   topReceivers = leagueStats.TopRebounds.slice(0, 3).map((player: BasketballPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Rebounds Per Game",
+    //     stat1Value: player.SeasonStats.ReboundsPerGame.toFixed(1),
+    //     stat2: "Minutes Per Game",
+    //     stat2Value: player.SeasonStats.MinutesPerGame.toFixed(1),
+    //   }));
+    //   break;
+
+    // case "SimCHL":
+    // case "SimPHL":
+    //   topPassers = leagueStats.TopPoints.slice(0, 3).map((player: HockeyPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Points",
+    //     stat1Value: player.SeasonStats.Points,
+    //     stat2: "Time On Ice",
+    //     stat2Value: player.SeasonStats.TimeOnIce.toFixed(1),
+    //   }));
+    //   topRushers = leagueStats.TopGoals.slice(0, 3).map((player: HockeyPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Goals",
+    //     stat1Value: player.SeasonStats.Goals,
+    //     stat2: "Time On Ice",
+    //     stat2Value: player.SeasonStats.TimeOnIce.toFixed(1),
+    //   }));
+    //   topReceivers = leagueStats.TopAssists.slice(0, 3).map((player: HockeyPlayer) => ({
+    //     name: `${player.FirstName} ${player.LastName}`,
+    //     teamAbbr: player.TeamAbbr,
+    //     logoUrl: player.TeamLogo,
+    //     stat1: "Assists",
+    //     stat1Value: player.SeasonStats.Assists,
+    //     stat2: "Time On Ice",
+    //     stat2Value: player.SeasonStats.TimeOnIce.toFixed(1),
+    //   }));
+    //   break;
+
+    default:
+      break;
+  }
+
+  return { topPassers, topRushers, topReceivers };
 };
