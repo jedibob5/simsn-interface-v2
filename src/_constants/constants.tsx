@@ -405,6 +405,7 @@ export const ScholarshipRevoked = "ScholarshipRevoked";
 
 export const ButtonGreen = "bg-[#189E5B]";
 export const TextGreen = "text-[#189E5B]";
+export const navyBlueColor = "#1f2937";
 
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;

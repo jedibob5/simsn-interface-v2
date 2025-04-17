@@ -7,6 +7,7 @@ import {
   Help1,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
+  navyBlueColor,
   Overview,
   Preferences,
   SimPHL,
@@ -136,6 +137,7 @@ export const PHLFreeAgency = () => {
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
               styles={{
                 borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
@@ -242,6 +244,7 @@ export const PHLFreeAgency = () => {
             classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
             styles={{
               borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
             }}
           >
             <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
@@ -283,6 +286,7 @@ export const PHLFreeAgency = () => {
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
               styles={{
                 borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <FreeAgentTable
@@ -328,6 +332,7 @@ export const PHLFreeAgency = () => {
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
                 styles={{
                   borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <OfferTable

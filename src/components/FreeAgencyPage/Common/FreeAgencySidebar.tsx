@@ -14,7 +14,13 @@ import {
   NBATeam,
   Timestamp as BBATimestamp,
 } from "../../../models/basketballModels";
-import { League, SimNBA, SimNFL, SimPHL } from "../../../_constants/constants";
+import {
+  League,
+  navyBlueColor,
+  SimNBA,
+  SimNFL,
+  SimPHL,
+} from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
 import { Text } from "../../../_design/Typography";
 import { CapsheetInfo } from "../../Team/TeamPageComponents";
@@ -78,6 +84,7 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
         classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-start"
         styles={{
           borderColor: teamColors.One,
+          backgroundColor: navyBlueColor,
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
