@@ -81,7 +81,7 @@ export const TeamSchedule = ({
     <SectionCards
       team={team}
       header={`${team.TeamAbbr} Schedule`}
-      classes={`w-3/4 ${textColorClass}`}
+      classes={`w-full ${textColorClass}`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -97,28 +97,27 @@ export const TeamSchedule = ({
       ) : (
         <div className="grid">
           <div
-            className="grid grid-cols-4 font-semibold border-b-2 pb-2"
+            className="grid grid-cols-5 font-semibold border-b-2 pb-2"
             style={{
               borderColor,
-              gridTemplateColumns: "3fr 4fr 3fr 1.5fr",
             }}
           >
-            <div className="text-left">
+            <div className="text-left col-span-1">
               <Text variant="xs" className={`${textColorClass}`}>
                 Week
               </Text>
             </div>
-            <div className="text-left">
+            <div className="text-left col-span-2">
               <Text variant="xs" className={`${textColorClass}`}>
                 Opponent
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1">
               <Text variant="xs" className={`${textColorClass}`}>
                 Result
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1">
               <Text variant="xs" className={`${textColorClass}`}>
                 Actions
               </Text>
@@ -127,34 +126,31 @@ export const TeamSchedule = ({
           {processedSchedule.map((game, index) => (
             <div
               key={index}
-              className="grid grid-cols-4 py-1 border-b border-b-[#34455d] items-center"
+              className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
               style={{
-                gridTemplateColumns: "3fr 4fr 4fr 1fr",
                 backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
               }}
             >
-              <div className="text-left">
+              <div className="text-left col-span-1">
                 <Text variant="xs" className="font-semibold">
                   Week {game.Week}
                 </Text>
               </div>
-              <div className="flex items-center justify-start text-center">
+              <div className="flex items-center col-span-2 justify-start text-center">
                 <Text variant="xs" className="font-semibold text-center">
                     {game.gameLocation}
                 </Text>
-                <div className="flex pl-4">
                   <Logo
                       variant="xs"
-                      classes="w-4 h-4 mr-2"
-                      containerClass="flex-shrink-0 p-0"
+                      classes="w-4 h-4"
+                      containerClass="flex-shrink-0 p-2"
                       url={game.opponentLogo}
                   />
                   <Text variant="xs" className="font-semibold text-center">
                     {game.opponentLabel}
                   </Text>
-                </div>
               </div>
-              <div className="text-center">
+              <div className="text-center col-span-1">
                 <Text
                   variant="xs"
                   className={`font-semibold ${
@@ -168,7 +164,7 @@ export const TeamSchedule = ({
                   {game.headerGameScore}
                 </Text>
               </div>
-              <div className="text-center">
+              <div className="flex text-center justify-center col-span-1">
                 <Button
                   size="sm"
                   classes={`flex bg-transparent rounded-full size-10 items-center ${
@@ -225,37 +221,37 @@ export const TeamStandings = ({ standings, team,
       ) : (
         <div className="grid">
           <div
-            className="grid grid-cols-6 font-semibold border-b-2 pb-2"
+            className="grid grid-cols-7 font-semibold border-b-2 pb-2"
             style={{
               borderColor,
             }}
           >
-            <div className="text-left">
+            <div className="text-left col-span-1 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 Rank
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-2 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 Team
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 C.W
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 C.L
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 T.W
               </Text>
             </div>
-            <div className="text-center">
+            <div className="text-center col-span-1 ">
               <Text variant="xs" className={`${textColorClass}`}>
                 T.L
               </Text>
@@ -264,41 +260,41 @@ export const TeamStandings = ({ standings, team,
           {standings.map((standing, index) => (
             <div
               key={index}
-              className="grid grid-cols-6 py-1 border-b border-b-[#34455d] items-center"
+              className="grid grid-cols-7 border-b border-b-[#34455d] items-center"
               style={{ backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor, }}
             >
-              <div className="text-left pl-1 flex items-center">
+              <div className="text-left pl-1 col-span-1 flex items-center">
                 <Text variant="xs" className="font-semibold">
                   {standing.Rank}
                 </Text>
               </div>
-              <div className="flex text-left pl-1 items-center">
+              <div className="flex text-left w-1/2 mx-auto justify-start col-span-2 pl-1 items-center">
                 <Logo
                   variant="xs"
-                  classes="w-4 h-4 mr-2"
-                  containerClass="flex-shrink-0 p-0"
-                  url={getLogo(league, standing.TeamID, false)}
+                  classes="w-4 h-4 p-0"
+                  containerClass="flex-shrink-0 p-2"
+                  url={getLogo(league, standing.TeamID, currentUser?.isRetro)}
                 />
                 <Text variant="xs" className="font-semibold">
                   {standing.TeamAbbr}
                 </Text>
               </div>
-              <div className="text-center flex items-center justify-center">
+              <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
                   {standing.ConferenceWins}
                 </Text>
               </div>
-              <div className="text-center flex items-center justify-center">
+              <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
                   {standing.ConferenceLosses}
                 </Text>
               </div>
-              <div className="text-center flex items-center justify-center">
+              <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
                   {standing.TotalWins}
                 </Text>
               </div>
-              <div className="text-center flex items-center justify-center">
+              <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
                   {standing.TotalLosses}
                 </Text>
@@ -350,27 +346,27 @@ export const LeagueStats = ({
       darkerBackgroundColor={darkerBackgroundColor}
     >
       {isLoadingTwo ? (
-        <div className="flex justify-center items-center min-h-[5em]">
+        <div className="flex justify-center items-center min-h-[5em] w-full">
           <Text variant="small" classes={`${textColorClass}`}>
             Loading...
           </Text>
         </div>
       ) : stats.length > 0 ? (
-        <div className="flex flex-col space-y-2">
+        <div className="flex items-center justify-center pt-2 gap-2">
           {stats.map((player, index) => (
             <div
               key={index}
-              className="flex items-center p-2 rounded-lg border"
+              className="flex flex-col justify-center items-center p-2 rounded-lg border w-[14em]"
               style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}
             >
                 <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[2rem] min-h-[2rem] md:h-[4rem] w-[5rem] max-w-[5rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] md:h-[6rem] w-[6rem] max-w-[5rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 <PlayerPicture playerID={player.id} league={league} team={player.team} />
               </div>
               <div className="flex flex-col text-center items-center w-full">
                 <Text variant="xs" classes={`${textColorClass} font-semibold`}>
-                  {player.name} ({player.teamAbbr})
+                  {player.name}, {player.teamAbbr}
                 </Text>
                 <Text variant="xs" classes={`${textColorClass}`}>
                   {player.stat1}: {player.stat1Value}

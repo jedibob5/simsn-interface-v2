@@ -56,7 +56,7 @@ export const StandingsTable = ({
           {<Logo
             variant="normal"
             classes="max-h-[2em] max-w-[2em] sm:max-h-full sm:max-w-full sm:ml-[-0.5em] sm:my-[-0.5em]"
-            containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[60px] sm:max-h-[60px]"
+            containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[60px] sm:max-h-[60px] p-4"
             url={logoUrl}
           />}
         </div>

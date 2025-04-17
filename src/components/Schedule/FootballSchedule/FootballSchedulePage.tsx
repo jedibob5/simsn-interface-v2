@@ -22,6 +22,7 @@ import { getScheduleCFBData } from "../Common/SchedulePageHelper";
 import { TeamSchedule, TeamStandings, LeagueStats } from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
+import { PaperAirplane } from "../../../_design/Icons";
 
 interface SchedulePageProps {
   league: League;
@@ -99,7 +100,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const leagueStatsData = useMemo(() => {
     const processStats = (players: any[]) =>
-      players.slice(0, 3).map((player) => {
+      players.slice(0, 1).map((player) => {
         const team = cfbTeams.find((team) => team.ID === player.TeamID);
   
         return {
@@ -158,66 +159,95 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   return (
     <>
-      <div className="grid grid-cols-10 gap-4">
-        <div className="flex flex-col items-center col-span-2 gap-4 overflow-auto max-h-[85vh]">
-          <div className="flex gap-4 justify-center">
-            <Button size="md" variant="success">
-              Schedule
-            </Button>
-            <Button size="md" variant="success">
-              Standings
-            </Button>
-          </div>             
-          <SelectDropdown
-            options={cfbTeamOptions}
-            placeholder="Select a team"
-            onChange={selectTeamOption}
-          />
-        </div>
-        <div className="flex w-full justify-center col-span-3 h-full pl-8 overflow-auto max-h-[84vh]">
-          <TeamSchedule   
-            team={selectedTeam}
-            currentUser={currentUser}
-            week={currentWeek}
-            league={league}
-            ts={ts}
-            schedule={teamSchedule}
-            backgroundColor={backgroundColor}
-            headerColor={headerColor}
-            borderColor={borderColor}
-            textColorClass={textColorClass}
-            darkerBackgroundColor={darkerBackgroundColor}
-            isLoadingTwo={isLoading} 
-          />
-        </div>
-        <div className="flex w-full justify-center col-span-2 h-full overflow-auto max-h-[84vh]">
-          <TeamStandings   
-            team={selectedTeam}
-            currentUser={currentUser}
-            league={league}
-            standings={teamStandings}
-            backgroundColor={backgroundColor}
-            headerColor={headerColor}
-            borderColor={borderColor}
-            textColorClass={textColorClass}
-            darkerBackgroundColor={darkerBackgroundColor}
-            isLoadingTwo={isLoading} 
-          />
-        </div>
-        <div className="flex col-span-2 justify-center w-full h-full max-h-[84vh]">
-          <LeagueStats
-            league={league}
-            topPassers={leagueStatsData.topPassers}
-            topRushers={leagueStatsData.topRushers}
-            topReceivers={leagueStatsData.topReceivers}
-            titles={["Passing Leaders", "Rushing Leaders", "Receiving Leaders"]}
-            backgroundColor={backgroundColor}
-            headerColor={headerColor}
-            borderColor={borderColor}
-            textColorClass={textColorClass}
-            darkerBackgroundColor={darkerBackgroundColor}
-            isLoadingTwo={isLoading}
-          />
+      <div className="flex flex-col w-full">
+        <div className="grid grid-cols-6 gap-4 w-full h-[82vh]">
+          <div className="flex flex-col w-full col-span-1 items-center gap-4 overflow-auto pb-2">
+            <div className="flex gap-4 justify-center">
+              <Button size="md" variant="success">
+                Schedule
+              </Button>
+              <Button size="md" variant="success">
+                Standings
+              </Button>
+            </div>
+            <div className="flex flex-col items-center gap-2 justify-center">
+              <Text variant="body">Teams</Text>
+              <SelectDropdown
+                options={cfbTeamOptions}
+                placeholder="Select Team..."
+                onChange={selectTeamOption}
+              />
+            </div>             
+            <div className="flex flex-col items-center gap-2 justify-center">
+              <Text variant="body">Seasons</Text>
+              <SelectDropdown
+                options={cfbTeamOptions}
+                placeholder="Select Season..."
+                onChange={selectTeamOption}
+              />
+            </div>
+            <div className="flex items-center w-[12em] gap-2 justify-center">
+              <Button size="md" classes="w-full" variant="primary">
+                College Poll
+              </Button>
+              <Button size="md" variant="warning" classes="opacity-50 h-full">
+                <PaperAirplane />
+              </Button> 
+            </div>
+            <div className="flex flex-col items-center gap-2 justify-center">
+              <Text variant="body">Export Day of Week</Text>
+              <SelectDropdown
+                options={cfbTeamOptions}
+                placeholder="Select Timeslot..."
+                onChange={selectTeamOption}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col h-full col-span-2">
+            <TeamSchedule
+              team={selectedTeam}
+              currentUser={currentUser}
+              week={currentWeek}
+              league={league}
+              ts={ts}
+              schedule={teamSchedule}
+              backgroundColor={backgroundColor}
+              headerColor={headerColor}
+              borderColor={borderColor}
+              textColorClass={textColorClass}
+              darkerBackgroundColor={darkerBackgroundColor}
+              isLoadingTwo={isLoading}
+            />
+          </div>
+          <div className="flex flex-col h-full col-span-2">
+            <TeamStandings
+              team={selectedTeam}
+              currentUser={currentUser}
+              league={league}
+              standings={teamStandings}
+              backgroundColor={backgroundColor}
+              headerColor={headerColor}
+              borderColor={borderColor}
+              textColorClass={textColorClass}
+              darkerBackgroundColor={darkerBackgroundColor}
+              isLoadingTwo={isLoading}
+            />
+          </div>
+          <div className="flex flex-col h-full col-span-1">
+            <LeagueStats
+              league={league}
+              topPassers={leagueStatsData.topPassers}
+              topRushers={leagueStatsData.topRushers}
+              topReceivers={leagueStatsData.topReceivers}
+              titles={["Passing Leader", "Rushing Leader", "Receiving Leader"]}
+              backgroundColor={backgroundColor}
+              headerColor={headerColor}
+              borderColor={borderColor}
+              textColorClass={textColorClass}
+              darkerBackgroundColor={darkerBackgroundColor}
+              isLoadingTwo={isLoading}
+            />
+          </div>
         </div>
       </div>
     </>

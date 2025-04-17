@@ -84,6 +84,7 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
             url={teamLogo}
             label={team.Abbreviation}
             classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
             textClass="text-small"
           />
         )}
@@ -330,6 +331,7 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
           url={teamLogo}
           label={team.Abbreviation}
           classes="h-[5rem] max-h-[5rem]"
+          containerClass="p-4"
           textClass="text-small"
         />
         )}
@@ -633,6 +635,7 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
               url={teamLogo}
               label={team.TeamAbbr}
               classes="h-[5rem] max-h-[5rem]"
+              containerClass="p-4"
               textClass="text-small"
             />
           )}
@@ -761,6 +764,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           url={teamLogo}
           label={team.TeamAbbr}
           classes="h-[5rem] max-h-[5rem]"
+          containerClass="p-4"
           textClass="text-small"
         />
         )}
@@ -935,6 +939,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             url={teamLogo}
             label={team.Abbreviation}
             classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
             textClass="text-small"
           />)}
       </div>
