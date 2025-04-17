@@ -18,6 +18,7 @@ import { League, SimNBA, SimNFL, SimPHL } from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
 import { Text } from "../../../_design/Typography";
 import { CapsheetInfo } from "../../Team/TeamPageComponents";
+import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 
 interface FreeAgencySideBarProps {
   Capsheet: ProCapsheet | NFLCapsheet | NBACapsheet;
@@ -36,6 +37,7 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
   league,
   ts,
 }) => {
+  const headerTextColorClass = getTextColorBasedOnBg(teamColors.One);
   let teamLabel = "";
   let coach = "";
   let season1 = 2025;
@@ -79,16 +81,40 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
-          <Text variant="h6">{teamLabel}</Text>
+          <div
+            className="mb-1 rounded-md text-center"
+            style={{
+              backgroundColor: teamColors.One,
+              borderColor: teamColors.One,
+            }}
+          >
+            <Text
+              variant="h4"
+              className={`font-semibold rounded-md py-1 ${headerTextColorClass}`}
+            >
+              {teamLabel}
+            </Text>
+          </div>
           <Text variant="body-small">Owner: {owner}</Text>
           {gm.length > 0 && <Text variant="body-small">GM: {gm}</Text>}
           {coach.length > 0 && <Text variant="body-small">Coach: {coach}</Text>}
           {scout.length > 0 && <Text variant="body-small">Scout: {scout}</Text>}
           <Text variant="body-small">State: {Team?.State}</Text>
         </div>
-        <Text variant="small" classes="mb-1">
-          Capsheet
-        </Text>
+        <div
+          className="w-full mb-1 rounded-md text-center"
+          style={{
+            backgroundColor: teamColors.One,
+            borderColor: teamColors.One,
+          }}
+        >
+          <Text
+            variant="body-small"
+            className={`font-semibold rounded-md py-1 mb-1 mt-1 ${headerTextColorClass}`}
+          >
+            Capsheet
+          </Text>
+        </div>
         <div className="mb-2">
           <CapsheetInfo
             ts={ts as HCKTimestamp}
@@ -100,18 +126,31 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
           />
         </div>
         <div className="flex flex-col">
-          <Text variant="small" classes="mb-1">
-            Adj. Capsheet After Offers
-          </Text>
           {AdjCapsheet.UpdatedAt !== Capsheet.UpdatedAt && (
-            <CapsheetInfo
-              ts={ts as HCKTimestamp}
-              capsheet={AdjCapsheet}
-              league={league}
-              backgroundColor={teamColors.Three}
-              borderColor={teamColors.Two}
-              textColorClass={teamColors.TextColorThree}
-            />
+            <>
+              <div
+                className="w-full mb-1 rounded-md text-center"
+                style={{
+                  backgroundColor: teamColors.One,
+                  borderColor: teamColors.One,
+                }}
+              >
+                <Text
+                  variant="body-small"
+                  className={`font-semibold py-1 mb-1 mt-1 ${headerTextColorClass}`}
+                >
+                  Adj. Capsheet After Offers
+                </Text>
+              </div>
+              <CapsheetInfo
+                ts={ts as HCKTimestamp}
+                capsheet={AdjCapsheet}
+                league={league}
+                backgroundColor={teamColors.Three}
+                borderColor={teamColors.Two}
+                textColorClass={teamColors.TextColorThree}
+              />
+            </>
           )}
         </div>
       </Border>

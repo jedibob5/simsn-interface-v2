@@ -4,6 +4,7 @@ import {
   Contracts,
   CountryOptions,
   FreeAgent,
+  Help1,
   HockeyArchetypeOptions,
   HockeyPositionOptions,
   Overview,
@@ -23,6 +24,7 @@ import { ProfessionalPlayer, Timestamp } from "../../../models/hockeyModels";
 import { ActionModal } from "../../Common/ActionModal";
 import { OfferModal } from "../../Common/OfferModal";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
+import { FreeAgencyHelpModal } from "../Common/FreeAgencyHelpModal";
 import { FreeAgencySidebar } from "../Common/FreeAgencySidebar";
 import { FreeAgentTable } from "../Common/FreeAgencyTable";
 import { OfferTable } from "../Common/OffersTable";
@@ -108,8 +110,16 @@ export const PHLFreeAgency = () => {
           teamID={modalPlayer.PreviousTeamID}
           modalAction={modalAction}
           player={modalPlayer}
+          offer={teamOfferMap[modalPlayer.ID]}
+          cancelFAOffer={CancelFreeAgencyOffer}
         />
       )}
+      <FreeAgencyHelpModal
+        isOpen={helpModal.isModalOpen}
+        onClose={helpModal.handleCloseModal}
+        league={SimPHL}
+        modalAction={Help1}
+      />
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <FreeAgencySidebar
           Capsheet={teamCapsheet}

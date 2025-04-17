@@ -295,12 +295,13 @@ export const TeamBreakdown = ({
   lineColor,
   textColorClass,
 }: any) => {
+  const notHockey = league !== SimCHL && league !== SimPHL;
   return (
     <div
       className="flex flex-col w-full h-[100%] border-2 rounded-lg py-5"
       style={{ borderColor, backgroundColor }}
     >
-      {TeamProfile && (
+      {TeamProfile && notHockey && (
         <div className="flex flex-row w-full pb-2 px-1">
           <div className="flex flex-col items-center w-full">
             <Text
@@ -326,43 +327,11 @@ export const TeamBreakdown = ({
           </div>
         </div>
       )}
-      <div
-        className="flex w-[90%] self-center border-t"
-        style={{ borderColor: lineColor }}
-      />
-      {TeamProfile && ts && (
-        <div className="flex flex-col w-full pt-1 px-1">
-          <Text
-            variant="body-small"
-            classes={`${textColorClass} font-semibold pb-1`}
-          >
-            Incoming Croots
-          </Text>
-          <div className="flex flex-row">
-            <div
-              className="flex flex-col items-center w-full border-r-2 pr-1"
-              style={{ borderColor }}
-            >
-              <Text variant="xs" classes={`${textColorClass} text-small`}>
-                ⭐⭐⭐
-              </Text>
-              <Text variant="xs" classes={`${textColorClass}`}>
-                {TeamProfile.OffensiveScheme || "N/A"}
-              </Text>
-            </div>
-            <div className="flex flex-col items-center w-full">
-              <Text
-                variant="body-small"
-                classes={`${textColorClass} font-semibold`}
-              >
-                Defensive Scheme
-              </Text>
-              <Text variant="xs" classes={`${textColorClass}`}>
-                {TeamProfile.DefensiveScheme || "N/A"}
-              </Text>
-            </div>
-          </div>
-        </div>
+      {notHockey && (
+        <div
+          className="flex w-[90%] self-center border-t"
+          style={{ borderColor: lineColor }}
+        />
       )}
       {TeamProfile && ts && (
         <div
@@ -624,6 +593,7 @@ export const TeamGrades = ({
   backgroundColor,
   gradeColor,
   borderColor,
+  league,
   Team,
 }: any) => {
   return (
