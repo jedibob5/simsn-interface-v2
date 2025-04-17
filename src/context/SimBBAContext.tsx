@@ -278,9 +278,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
 
   const bootstrapAllData = async () => {
     await getFirstBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
     await getSecondBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
     await getThirdBootstrapData();
     isFetching.current = false;
   };

@@ -11,9 +11,13 @@ interface RecruitingCategoryDropdownProps {
   isMobile?: boolean;
 }
 
-export const RecruitingCategoryDropdown: FC<
-  RecruitingCategoryDropdownProps
-> = ({ label, options, change, isMulti, isMobile = false }) => {
+export const CategoryDropdown: FC<RecruitingCategoryDropdownProps> = ({
+  label,
+  options,
+  change,
+  isMulti,
+  isMobile = false,
+}) => {
   return (
     <div className="flex flex-col">
       <Text variant="h6" classes="text-start">

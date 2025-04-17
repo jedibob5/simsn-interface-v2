@@ -321,6 +321,7 @@ export class NBAPlayerStats {
   }
 }
 export class NBAExtensionOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -378,6 +379,13 @@ export class NBAExtensionOffer {
     this.IsRejected = source["IsRejected"];
   }
 
+  updateField(name: string, value: number): NBAExtensionOffer {
+    const copy = new NBAExtensionOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
+  }
+
   convertValues(a: any, classs: any, asMap: boolean = false): any {
     if (!a) {
       return a;
@@ -397,6 +405,7 @@ export class NBAExtensionOffer {
   }
 }
 export class NBAWaiverOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -445,6 +454,7 @@ export class NBAWaiverOffer {
   }
 }
 export class NBAContractOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -498,6 +508,13 @@ export class NBAContractOffer {
     this.IsAccepted = source["IsAccepted"];
     this.IsRejected = source["IsRejected"];
     this.IsActive = source["IsActive"];
+  }
+
+  updateField(name: string, value: number): NBAContractOffer {
+    const copy = new NBAContractOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -323,8 +323,9 @@ export const useSideMenu = () => {
       {
         label: "Free Agency",
         isRoute: true,
-        route: "",
+        route: routes.PHL_FREE_AGENCY,
         league: SimPHL,
+        click: () => navigate(routes.PHL_FREE_AGENCY),
         toggle: () => toggleMenu(),
       },
       {

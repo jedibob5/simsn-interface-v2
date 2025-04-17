@@ -8,7 +8,7 @@ import {
   ModalAction,
   RecruitInfoType,
   RecruitingCategory,
-  RecruitingOverview,
+  Overview,
   Russia,
   RussiaRegionOptions,
   Sweden,
@@ -39,7 +39,7 @@ export const useCHLRecruiting = () => {
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [recruitingCategory, setRecruitingCategory] =
-    useState<RecruitingCategory>(RecruitingOverview);
+    useState<RecruitingCategory>(Overview);
   const [tableViewType, setTableViewType] = useState<string>(Attributes);
   const [country, setCountry] = useState<string>("");
   const [stars, setStars] = useState<number[]>([]);
