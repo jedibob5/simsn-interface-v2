@@ -25,6 +25,7 @@ import { Border } from "../../../_design/Borders";
 import { Text } from "../../../_design/Typography";
 import { CapsheetInfo } from "../../Team/TeamPageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
+import { TeamLabel } from "../../Common/Labels";
 
 interface FreeAgencySideBarProps {
   Capsheet: ProCapsheet | NFLCapsheet | NBACapsheet;
@@ -88,20 +89,12 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
-          <div
-            className="mb-1 rounded-md text-center"
-            style={{
-              backgroundColor: teamColors.One,
-              borderColor: teamColors.One,
-            }}
-          >
-            <Text
-              variant="h4"
-              className={`font-semibold rounded-md py-1 ${headerTextColorClass}`}
-            >
-              {teamLabel}
-            </Text>
-          </div>
+          <TeamLabel
+            team={teamLabel}
+            backgroundColor={teamColors.One}
+            borderColor={teamColors.One}
+            headerTextColorClass={headerTextColorClass}
+          />
           <Text variant="body-small">Owner: {owner}</Text>
           {gm.length > 0 && <Text variant="body-small">GM: {gm}</Text>}
           {coach.length > 0 && <Text variant="body-small">Coach: {coach}</Text>}

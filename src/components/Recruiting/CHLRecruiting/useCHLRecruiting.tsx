@@ -114,7 +114,10 @@ export const useCHLRecruiting = () => {
       ) {
         return true;
       }
-      if (country.length > 0 && country.includes(r.Country)) {
+      if (
+        country.length > 0 &&
+        (country.includes(r.Country) || country === "All")
+      ) {
         return true;
       }
       if (positions.length > 0 && positions.includes(r.Position)) {

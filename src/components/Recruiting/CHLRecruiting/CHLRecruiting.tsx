@@ -306,7 +306,7 @@ export const CHLRecruiting = () => {
                       label="Region"
                       options={regionOptions}
                       change={SelectRegionOptions}
-                      isMulti={false}
+                      isMulti={true}
                       isMobile={isMobile}
                     />
                   )}

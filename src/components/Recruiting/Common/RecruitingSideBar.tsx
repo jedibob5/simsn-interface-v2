@@ -20,6 +20,8 @@ import {
   SimCFB,
   SimCHL,
 } from "../../../_constants/constants";
+import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
+import { TeamLabel } from "../../Common/Labels";
 
 interface RecruitingSideBarProps {
   TeamProfile: BasketballTeamProfile | HockeyTeamProfile | FootballTeamProfile;
@@ -34,6 +36,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
   teamColors,
   league,
 }) => {
+  const headerTextColorClass = getTextColorBasedOnBg(teamColors.One);
   let teamLabel = "";
   let classRank = 0;
   let programDevelopment = 0;
@@ -79,7 +82,12 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
         }}
       >
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
-          <Text variant="h6">{teamLabel}</Text>
+          <TeamLabel
+            team={teamLabel}
+            backgroundColor={teamColors.One}
+            borderColor={teamColors.One}
+            headerTextColorClass={headerTextColorClass}
+          />
           <Text variant="body-small">Recruiter: {TeamProfile?.Recruiter}</Text>
           <Text variant="body-small">State: {Team?.State}</Text>
           <Text variant="body-small">
@@ -91,7 +99,12 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
           </Text>
         </div>
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start">
-          <Text variant="h6">Recruiting Needs</Text>
+          <TeamLabel
+            team="Recruiting Needs"
+            backgroundColor={teamColors.One}
+            borderColor={teamColors.One}
+            headerTextColorClass={headerTextColorClass}
+          />
           <Text variant="body-small">Rank: {classRank}</Text>
           <Text variant="body-small">Five Stars: {TeamProfile?.FiveStars}</Text>
           <Text variant="body-small">Four Stars: {TeamProfile?.FourStars}</Text>
@@ -101,7 +114,12 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
         </div>
         {league === SimCHL && (
           <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
-            <Text variant="h6">Team Values</Text>
+            <TeamLabel
+              team="Team Values"
+              backgroundColor={teamColors.One}
+              borderColor={teamColors.One}
+              headerTextColorClass={headerTextColorClass}
+            />
             <Text variant="body-small">
               Program Development: {programDevelopment}
             </Text>
