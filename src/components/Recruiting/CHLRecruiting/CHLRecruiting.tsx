@@ -19,6 +19,7 @@ import {
   SimCHL,
   StarOptions,
   StatusOptions,
+  navyBlueColor,
 } from "../../../_constants/constants";
 import { CategoryDropdown } from "../Common/RecruitingCategoryDropdown";
 import { RecruitTable } from "../Common/RecruitTable";
@@ -135,8 +136,8 @@ export const CHLRecruiting = () => {
               direction="row"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-2"
               styles={{
-                backgroundColor: teamColors.One,
-                borderColor: teamColors.Two,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup classes="sm:flex sm:flex-auto sm:flex-1">
@@ -208,8 +209,8 @@ export const CHLRecruiting = () => {
               direction="col"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center gap-x-8"
               styles={{
-                backgroundColor: teamColors.One,
-                borderColor: teamColors.Two,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <div className="sm:grid sm:grid-cols-2 w-full">
@@ -274,8 +275,8 @@ export const CHLRecruiting = () => {
                 direction="row"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
@@ -305,7 +306,7 @@ export const CHLRecruiting = () => {
                       label="Region"
                       options={regionOptions}
                       change={SelectRegionOptions}
-                      isMulti={false}
+                      isMulti={true}
                       isMobile={isMobile}
                     />
                   )}
@@ -329,8 +330,8 @@ export const CHLRecruiting = () => {
                 direction="col"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <RecruitTable
@@ -374,8 +375,8 @@ export const CHLRecruiting = () => {
                 direction="col"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <RecruitProfileTable
@@ -402,8 +403,8 @@ export const CHLRecruiting = () => {
                 direction="row"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
@@ -427,8 +428,8 @@ export const CHLRecruiting = () => {
                 direction="col"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <TeamRankingsTable
@@ -450,8 +451,8 @@ export const CHLRecruiting = () => {
                 direction="col"
                 classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center h-[50vh]"
                 styles={{
-                  backgroundColor: teamColors.One,
-                  borderColor: teamColors.Two,
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
                 }}
               >
                 <Text variant="h2" classes="mb-6">

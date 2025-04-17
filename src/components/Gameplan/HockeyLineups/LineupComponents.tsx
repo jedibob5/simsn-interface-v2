@@ -16,7 +16,7 @@ import {
   Lineup,
   ModalAction,
 } from "../../../_constants/constants";
-import { SingleValue } from "react-select";
+import { CSSObjectWithLabel, SingleValue } from "react-select";
 import { SelectOption, selectStyles } from "../../../_hooks/useSelectStyles";
 import { getShootoutOptionList, getShootoutPlaceholder } from "./lineupHelper";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
@@ -74,8 +74,9 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     },
     [ChangePlayerInput, playerID]
   );
+
   return (
-    <div className="flex flex-col px-4 min-[1025px]:h-full max-[1024px]:w-full max-[1024px]:mb-4 max-[1024px]:overflow-y-auto">
+    <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
       <>
         <div className="flex flex-row mb-2 gap-x-1 justify-end w-full items-end">
           <Button
@@ -88,6 +89,57 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
             onChange={GetValue}
             options={optionList}
             placeholder={`${player.Position} ${player.FirstName} ${player.LastName}`}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                minHeight: "32px", // shorter control
+                fontSize: "0.75rem", // smaller text
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+                width: "100%",
+              }),
+              valueContainer: (base: CSSObjectWithLabel) => ({
+                ...base,
+                padding: "0 6px", // tighter padding
+                width: "10rem",
+              }),
+              singleValue: (base: CSSObjectWithLabel) => ({
+                ...base,
+                fontSize: "0.75rem",
+                color: "#fff",
+              }),
+              placeholder: (base: CSSObjectWithLabel) => ({
+                ...base,
+                fontSize: "0.75rem",
+                color: "#fff",
+              }),
+              option: (base: any, state: { isFocused: any }) => ({
+                ...base,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#fff",
+                padding: "10px",
+                cursor: "pointer",
+                // etc.
+              }),
+              menu: (base: CSSObjectWithLabel) => ({
+                ...base,
+                fontSize: "0.75rem",
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+                color: "#fff",
+              }),
+              menuList: (provided: any) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+                color: "#fff",
+              }),
+            }}
           />
         </div>
         <div className="flex flex-col gap-y-2 flex-1">
@@ -204,7 +256,7 @@ export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
             }),
             placeholder: (provided) => ({
               ...provided,
-              color: "#A0AEC0",
+              color: "#ffffff",
             }),
           }}
         />
@@ -217,6 +269,45 @@ export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
           onChange={GetShootoutValue}
           options={getShootoutOptionList()}
           placeholder={shootoutPlaceholder}
+          styles={{
+            control: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+              borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+              color: "#ffffff",
+              width: "100%",
+              maxWidth: "300px",
+              padding: "0.3rem",
+              boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+              borderRadius: "8px",
+              transition: "all 0.2s ease",
+            }),
+            menu: (provided) => ({
+              ...provided,
+              backgroundColor: "#1a202c",
+              borderRadius: "8px",
+            }),
+            menuList: (provided) => ({
+              ...provided,
+              backgroundColor: "#1a202c",
+              padding: "0",
+            }),
+            option: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+              color: "#ffffff",
+              padding: "10px",
+              cursor: "pointer",
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              color: "#ffffff",
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              color: "#ffffff",
+            }),
+          }}
         />
       </div>
     </div>

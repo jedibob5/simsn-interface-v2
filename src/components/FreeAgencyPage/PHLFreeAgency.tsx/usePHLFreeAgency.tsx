@@ -215,7 +215,10 @@ export const usePHLFreeAgency = () => {
       ) {
         return true;
       }
-      if (country.length > 0 && country.includes(fa.Country)) {
+      if (
+        country.length > 0 &&
+        (country.includes(fa.Country) || country === "All")
+      ) {
         return true;
       }
       if (positions.length > 0 && positions.includes(fa.Position)) {
