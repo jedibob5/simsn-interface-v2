@@ -42,11 +42,11 @@ export const Table = <T,>({
   rowBgColor,
   darkerRowBgColor,
 }: TableProps<T>): JSX.Element => {
-  let backgroundColor = team?.ColorOne || "#4B5563";
+  let backgroundColor = "#1f2937";
   let borderColor = team?.ColorTwo || "#4B5563";
-  let tableBgColor = rowBgColor || "#242424";
+  let tableBgColor = rowBgColor || "#1f2937";
   let darkerTableBgColor =
-    darkerRowBgColor || darkenColor(tableBgColor, 5) || "#242424";
+    darkerRowBgColor || darkenColor(tableBgColor, -5) || "#1f2937";
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
@@ -95,7 +95,7 @@ export const Table = <T,>({
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg w-full">
+    <div className="overflow-x-auto w-full">
       <div
         className={`sm:table table-auto w-full border-b-2`}
         style={{ backgroundColor, borderColor }}
@@ -104,14 +104,14 @@ export const Table = <T,>({
         <div className="table-header-group sticky top-0">
           <div
             className={`table-row text-left ${textColorClass}`}
-            style={{ backgroundColor: darkerBackgroundColor, borderColor }}
+            style={{ backgroundColor: backgroundColor, borderColor }}
           >
             {columns.map((col) => (
               <div
                 key={col.accessor}
                 className="table-cell border-b-2 px-2 py-2 font-semibold whitespace-nowrap cursor-pointer"
                 style={{
-                  backgroundColor: darkerBackgroundColor,
+                  backgroundColor: backgroundColor,
                   borderColor: borderColor,
                 }}
                 onClick={() => handleSort(col.accessor)}
@@ -129,7 +129,7 @@ export const Table = <T,>({
         {/* Body */}
         <div className="table-row-group">
           {sortedData.map((item, index) => {
-            const bg = index % 2 === 0 ? tableBgColor : darkerTableBgColor;
+            const bg = index % 2 === 0 ? darkerTableBgColor : tableBgColor;
             return (
               <React.Fragment key={index}>
                 {rowRenderer(item, index, bg)}

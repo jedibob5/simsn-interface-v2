@@ -37,10 +37,11 @@ interface TeamLandingPageProps {
 
 export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
   const { currentUser } = useAuthStore();
-  let backgroundColor = team?.ColorOne || "#4B5563";
+  let backgroundColor = "#1f2937";
+  let headerColor = team?.ColorOne || "#4B5563";
   let borderColor = team?.ColorTwo || "#4B5563";
-    if (isBrightColor(backgroundColor)) {
-      [backgroundColor, borderColor] = [borderColor, backgroundColor];
+    if (isBrightColor(headerColor)) {
+      [headerColor, borderColor] = [borderColor, headerColor];
     }
   let darkerBackgroundColor = darkenColor(backgroundColor, -5)
   const textColorClass = getTextColorBasedOnBg(backgroundColor)
@@ -291,6 +292,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   ts={ts} 
                   currentUser={currentUser} 
                   backgroundColor={backgroundColor} 
+                  headerColor={headerColor}
                   borderColor={borderColor}
         />
         <div className="flex-col md:flex md:flex-row gap-4 items-start w-full justify-center">
@@ -309,6 +311,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                               currentUser={currentUser}
                               isLoadingTwo={isLoadingTwo}
                               backgroundColor={backgroundColor}
+                              headerColor={headerColor}
                               borderColor={borderColor}
                               textColorClass={textColorClass}
                               darkerBackgroundColor={darkerBackgroundColor}  
@@ -333,6 +336,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                             homeLabel={homeLabel}
                             awayLabel={awayLabel}
                             backgroundColor={backgroundColor}
+                            headerColor={headerColor}
                             borderColor={borderColor}
                             textColorClass={textColorClass}
                             darkerBackgroundColor={darkerBackgroundColor}  
@@ -350,6 +354,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   <TeamMailbox team={team}
                               notifications={teamNotifications}
                               backgroundColor={backgroundColor}
+                              headerColor={headerColor}
                               borderColor={borderColor}
                               textColorClass={textColorClass}
                               darkerBackgroundColor={darkerBackgroundColor}  
@@ -366,6 +371,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   <TeamNews team={team}
                                 teamNews={teamNews}
                                 backgroundColor={backgroundColor}
+                                headerColor={headerColor}
                                 borderColor={borderColor}
                                 textColorClass={textColorClass}
                                 darkerBackgroundColor={darkerBackgroundColor}  
@@ -375,7 +381,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
               </div>
             </div>
           </div>
-          <div className="flex md:flex-col items-center pt-1 md:pt-0 h-[28em] md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[26em] 3xl:max-w-[42em] justify-center gap-1">
+          <div className="flex md:flex-col items-center pt-1 md:pt-0 h-[28em] md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[26em] 3xl:max-w-[42em] justify-center gap-3">
             <Border
                 classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
                 styles={{
@@ -389,6 +395,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                           teamStats={teamStats}
                           titles={headers}
                           backgroundColor={backgroundColor}
+                          headerColor={headerColor}
                           borderColor={borderColor}
                           textColorClass={textColorClass}
                           darkerBackgroundColor={darkerBackgroundColor}  
@@ -408,6 +415,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   ts={ts}
                   currentUser={currentUser}
                   backgroundColor={backgroundColor}
+                  headerColor={headerColor}
                   borderColor={borderColor}
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}  

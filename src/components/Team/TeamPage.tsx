@@ -41,6 +41,7 @@ import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
 import { useMobile } from "../../_hooks/useMobile";
 import { getPHLShortenedValue } from "../../_utility/getPHLShortenedValue";
+import { darkenColor } from "../../_utility/getDarkerColor";
 
 interface TeamPageProps {
   league: League;
@@ -119,13 +120,13 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  let backgroundColor = teamColors.One;
+  let backgroundColor = "#1f2937";
+  let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
-
-  if (isBrightColor(backgroundColor)) {
-    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  if (isBrightColor(headerColor)) {
+    [headerColor, borderColor] = [borderColor, headerColor];
   }
+  const [isMobile] = useMobile();
 
   const secondaryBorderColor = teamColors.Three;
   const selectedRoster = useMemo(() => {
@@ -176,6 +177,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
           League={league}
+          Team={selectedTeam}
           ts={ts}
           isPro={false}
           Roster={selectedRoster}
@@ -185,8 +187,9 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Arena}
           Capacity={selectedTeam?.ArenaCapacity}
-          colorOne={backgroundColor}
-          colorTwo={borderColor}
+          backgroundColor={backgroundColor}
+          headerColor={headerColor}
+          borderColor={borderColor}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -195,7 +198,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="w-full p-2 gap-x-2"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <div className="flex w-full">
@@ -244,15 +247,16 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] max-w-[2000px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <CHLRosterTable
             team={selectedTeam}
             roster={selectedRoster}
             category={category}
-            colorOne={backgroundColor}
-            colorTwo={borderColor}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -285,10 +289,11 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  let backgroundColor = teamColors.One;
+  let backgroundColor = "#1f2937";
+  let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  if (isBrightColor(backgroundColor)) {
-    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  if (isBrightColor(headerColor)) {
+    [headerColor, borderColor] = [borderColor, headerColor];
   }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
@@ -366,6 +371,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
           Roster={selectedRoster}
+          Team={selectedTeam}
           League={league}
           ts={ts}
           isPro={true}
@@ -378,8 +384,9 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Arena}
           Capacity={selectedTeam?.ArenaCapacity}
-          colorOne={backgroundColor}
-          colorTwo={borderColor}
+          backgroundColor={backgroundColor}
+          headerColor={headerColor}
+          borderColor={borderColor}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -388,7 +395,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="w-full p-2 gap-x-2"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <div className="flex w-full">
@@ -445,7 +452,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
         styles={{
           backgroundColor: backgroundColor,
-          borderColor,
+          borderColor: headerColor,
         }}
       >
         <PHLRosterTable
@@ -454,8 +461,9 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           ts={ts}
           team={selectedTeam}
           category={category}
-          colorOne={backgroundColor}
-          colorTwo={borderColor}
+          backgroundColor={backgroundColor}
+          headerColor={headerColor}
+          borderColor={borderColor}
           openModal={openModal}
         />
       </Border>
@@ -486,13 +494,13 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  let backgroundColor = teamColors.One;
+  let backgroundColor = "#1f2937";
+  let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
-
-  if (isBrightColor(backgroundColor)) {
-    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  if (isBrightColor(headerColor)) {
+    [headerColor, borderColor] = [borderColor, headerColor];
   }
+  const [isMobile] = useMobile();
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && cfbRosterMap) {
@@ -545,6 +553,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           League={league}
           ts={ts}
           Roster={selectedRoster}
+          Team={selectedTeam}
           TeamProfile={selectedTeamProfile}
           isPro={false}
           TeamName={`${selectedTeam?.TeamName} ${selectedTeam?.Mascot}`}
@@ -552,8 +561,9 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Stadium}
           Capacity={selectedTeam?.StadiumCapacity}
-          colorOne={backgroundColor}
-          colorTwo={borderColor}
+          backgroundColor={backgroundColor}
+          headerColor={headerColor}
+          borderColor={borderColor}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -562,7 +572,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="w-full p-2 gap-x-2"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <div className="flex w-full">
@@ -601,15 +611,16 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <CFBRosterTable
             roster={selectedRoster}
             team={selectedTeam}
             category={category}
-            colorOne={backgroundColor}
-            colorTwo={borderColor}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
             openModal={openModal}
           />
         </Border>
@@ -641,13 +652,14 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     selectedTeam?.ColorTwo,
     selectedTeam?.ColorThree
   );
-  let backgroundColor = teamColors.One;
+  let backgroundColor = "#1f2937";
+  let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
-
-  if (isBrightColor(backgroundColor)) {
-    [backgroundColor, borderColor] = [borderColor, backgroundColor];
+  if (isBrightColor(headerColor)) {
+    [headerColor, borderColor] = [borderColor, headerColor];
   }
+  const [isMobile] = useMobile();
+  let darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && nflRosterMap) {
@@ -727,6 +739,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
           Roster={selectedRoster}
+          Team={selectedTeam}
           League={league}
           ts={ts}
           isPro={true}
@@ -739,8 +752,9 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           Conference={selectedTeam?.Conference}
           Arena={selectedTeam?.Stadium}
           Capacity={selectedTeam?.StadiumCapacity}
-          colorOne={backgroundColor}
-          colorTwo={borderColor}
+          backgroundColor={backgroundColor}
+          headerColor={headerColor}
+          borderColor={borderColor}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -749,7 +763,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="w-full p-2 gap-x-2"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <div className="flex w-full">
@@ -797,7 +811,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
-            borderColor,
+            borderColor: headerColor,
           }}
         >
           <NFLRosterTable
@@ -806,8 +820,9 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             ts={ts}
             team={selectedTeam}
             category={category}
-            colorOne={backgroundColor}
-            colorTwo={borderColor}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
             openModal={openModal}
           />
         </Border>

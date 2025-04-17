@@ -17,6 +17,7 @@ import { useMobile } from "../../_hooks/useMobile";
 interface TeamInfoProps {
   id?: number;
   TeamName?: string;
+  Team?: any;
   Owner?: string;
   Coach?: string;
   GM?: string;
@@ -32,8 +33,9 @@ interface TeamInfoProps {
   Capsheet?: any;
   League: League;
   ts: any;
-  colorOne?: string;
-  colorTwo?: string;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
   isRetro?: boolean;
 }
 
@@ -41,6 +43,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   isPro,
   id,
   TeamName = "",
+  Team,
   Owner = "None",
   Coach = "None",
   GM = "None",
@@ -55,17 +58,12 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   League,
   Roster,
   ts,
-  colorOne = "",
-  colorTwo = "",
+  backgroundColor,
+  headerColor,
+  borderColor,
   isRetro = false,
 }) => {
-  const backgroundColor = colorOne;
-  const borderColor = colorTwo;
-  const sectionBg = "#242424";
-  const darkerBorder =
-    backgroundColor === "#000000" || borderColor === "rgb(0, 0, 0)"
-      ? darkenColor(backgroundColor, 5)
-      : darkenColor(backgroundColor, -5);
+  const sectionBg = darkenColor("#1f2937", -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const logo = getLogo(League, id!!, isRetro);
   const [isMobile] = useMobile();
@@ -76,7 +74,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         classes="w-full p-8 justify-around"
         styles={{
           backgroundColor,
-          borderColor,
+          borderColor: headerColor,
         }}
       >
         {!isMobile && (
@@ -88,17 +86,17 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               scout={Scout}
               isPro={isPro}
               marketing={Marketing}
-              borderColor={borderColor}
+              borderColor={headerColor}
               backgroundColor={sectionBg}
               lineColor={borderColor}
             />
           </div>
         )}
-        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center pb-2">
-          <div className="flex flex-col max-w-1/4 p-2">
+        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center">
+          <div className="flex flex-col max-w-1/4 p-2 pt-6">
             <div
               className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
-              style={{ backgroundColor: sectionBg, borderColor: borderColor }}
+              style={{ backgroundColor: sectionBg, borderColor: headerColor }}
             >
               <Logo url={logo} variant="large" />
             </div>
@@ -107,17 +105,23 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             <Text variant="h5" classes={`${textColorClass}`}>
               {TeamName}
             </Text>
-            <div className="flex flex-row justify-center">
-              <Text variant="body-small" classes={`${textColorClass}`}>
+            <div className="flex flex-row justify-center pb-2">
+              <Text variant="small" classes={`${textColorClass}`}>
                 {Conference} Conference
               </Text>
               {Division && Division.length > 0 && (
-                <Text variant="body-small" classes={`${textColorClass}`}>
+                <Text variant="xs" classes={`${textColorClass}`}>
                   {Division}
                 </Text>
               )}
             </div>
           </div>
+          <TeamGrades
+            Team={Team}
+            backgroundColor={sectionBg}
+            gradeColor={backgroundColor}
+            borderColor={headerColor}
+          />
         </div>
         {!isMobile && (
           <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
@@ -126,7 +130,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
                 capsheet={Capsheet}
                 ts={ts}
                 league={League}
-                borderColor={borderColor}
+                borderColor={headerColor}
                 backgroundColor={sectionBg}
               />
             )}
@@ -136,7 +140,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
                 ts={ts}
                 league={League}
                 backgroundColor={sectionBg}
-                borderColor={borderColor}
+                borderColor={headerColor}
+                lineColor={borderColor}
               />
             )}
           </div>
@@ -147,7 +152,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         classes="w-full h-[1em] max-h-[5em] p-4 sm:p-6 sm:px-14 justify-center sm:justify-around"
         styles={{
           backgroundColor,
-          borderColor,
+          borderColor: headerColor,
         }}
       >
         <div className="flex w-full justify-center sm:justify-between items-center gap-x-2">
@@ -157,8 +162,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               arena={Arena}
               capacity={Capacity}
               textColorClass={textColorClass}
-              borderColor={borderColor}
-              backgroundColor={darkerBorder}
+              borderColor={headerColor}
+              backgroundColor={backgroundColor}
               isPro={isPro}
             />
           )}
@@ -166,8 +171,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             roster={Roster}
             league={League}
             textColorClass={textColorClass}
-            borderColor={borderColor}
-            backgroundColor={darkerBorder}
+            borderColor={headerColor}
+            backgroundColor={backgroundColor}
             isPro={isPro}
           />
         </div>
@@ -287,6 +292,7 @@ export const TeamBreakdown = ({
   league,
   backgroundColor,
   borderColor,
+  lineColor,
   textColorClass,
 }: any) => {
   return (
@@ -317,6 +323,44 @@ export const TeamBreakdown = ({
             <Text variant="xs" classes={`${textColorClass}`}>
               {TeamProfile.DefensiveScheme || "N/A"}
             </Text>
+          </div>
+        </div>
+      )}
+      <div
+        className="flex w-[90%] self-center border-t"
+        style={{ borderColor: lineColor }}
+      />
+      {TeamProfile && ts && (
+        <div className="flex flex-col w-full pt-1 px-1">
+          <Text
+            variant="body-small"
+            classes={`${textColorClass} font-semibold pb-1`}
+          >
+            Incoming Croots
+          </Text>
+          <div className="flex flex-row">
+            <div
+              className="flex flex-col items-center w-full border-r-2 pr-1"
+              style={{ borderColor }}
+            >
+              <Text variant="xs" classes={`${textColorClass} text-small`}>
+                ⭐⭐⭐
+              </Text>
+              <Text variant="xs" classes={`${textColorClass}`}>
+                {TeamProfile.OffensiveScheme || "N/A"}
+              </Text>
+            </div>
+            <div className="flex flex-col items-center w-full">
+              <Text
+                variant="body-small"
+                classes={`${textColorClass} font-semibold`}
+              >
+                Defensive Scheme
+              </Text>
+              <Text variant="xs" classes={`${textColorClass}`}>
+                {TeamProfile.DefensiveScheme || "N/A"}
+              </Text>
+            </div>
           </div>
         </div>
       )}
@@ -572,6 +616,101 @@ export const StadiumInfo = ({
           {capacity}
         </Text>
       </div>
+    </div>
+  );
+};
+
+export const TeamGrades = ({
+  backgroundColor,
+  gradeColor,
+  borderColor,
+  Team,
+}: any) => {
+  return (
+    <div
+      className="flex items-center w-full justify-center gap-5 p-2 sm:p-0 sm:pt-1 flex-shrink-1 rounded-lg border-2"
+      style={{ backgroundColor, borderColor }}
+    >
+      {Team && (
+        <div className="flex flex-col py-1 items-center">
+          <div
+            className={`flex items-center justify-center 
+                          size-6 md:size-8 rounded-full border-2`}
+            style={{ borderColor, backgroundColor: gradeColor }}
+          >
+            <Text variant="xs" classes={`font-semibold text-center`}>
+              {Team.OverallGrade ? Team.OverallGrade : "-"}
+            </Text>
+          </div>
+          <Text
+            variant="xs"
+            classes={`font-semibold 
+                    whitespace-nowrap`}
+          >
+            OVR
+          </Text>
+        </div>
+      )}
+      {Team && (
+        <div className="flex flex-col py-1 items-center">
+          <div
+            className={`flex items-center justify-center 
+                          size-6 md:size-8 rounded-full border-2`}
+            style={{ borderColor, backgroundColor: gradeColor }}
+          >
+            <Text variant="xs" classes={`font-semibold`}>
+              {Team.OffenseGrade ? Team.OffenseGrade : "-"}
+            </Text>
+          </div>
+          <Text
+            variant="xs"
+            classes={`font-semibold 
+                    whitespace-nowrap`}
+          >
+            OFF
+          </Text>
+        </div>
+      )}
+      {Team && (
+        <div className="flex flex-col py-1 items-center">
+          <div
+            className={`flex items-center justify-center 
+                          size-6 md:size-8 rounded-full border-2`}
+            style={{ borderColor, backgroundColor: gradeColor }}
+          >
+            <Text variant="xs" classes={`font-semibold text-center`}>
+              {Team.DefenseGrade ? Team.DefenseGrade : "-"}
+            </Text>
+          </div>
+          <Text
+            variant="xs"
+            classes={`font-semibold 
+                    whitespace-nowrap`}
+          >
+            DEF
+          </Text>
+        </div>
+      )}
+      {Team.SpecialTeamsGrade && (
+        <div className="flex flex-col py-1 items-center">
+          <div
+            className={`flex items-center justify-center 
+                          size-6 md:size-8 rounded-full border-2`}
+            style={{ borderColor, backgroundColor: gradeColor }}
+          >
+            <Text variant="xs" classes={`font-semibold`}>
+              {Team.SpecialTeamsGrade ? Team.SpecialTeamsGrade : "-"}
+            </Text>
+          </div>
+          <Text
+            variant="xs"
+            classes={`font-semibold 
+                    whitespace-nowrap`}
+          >
+            STU
+          </Text>
+        </div>
+      )}
     </div>
   );
 };
