@@ -10,6 +10,7 @@ interface SectionCardsProps {
   team: any;
   classes?: string;
   backgroundColor: string;
+  headerColor: string;
   darkerBackgroundColor: string;
   borderColor: string;
   textColorClass: string;
@@ -21,16 +22,18 @@ export const SectionCards: React.FC<SectionCardsProps> = ({
   team,
   classes="bg-[#1f2937]",
   backgroundColor,
+  headerColor,
   darkerBackgroundColor,
   textColorClass,
   borderColor
 }) => {
+  const headerTextColorClass = getTextColorBasedOnBg(headerColor)
   
   return (
     <div className={`flex flex-col rounded-lg p-4 max-w-[50em] h-full shadow-md border-2 ${classes}`}
-      style={{ borderColor, backgroundColor }}>
-      <div className="mb-4 rounded-md" style={{ backgroundColor, borderColor }}>
-        <Text variant="h4" className={`font-semibold rounded-md ${textColorClass}`}>
+      style={{ borderColor: headerColor, backgroundColor }}>
+      <div className="mb-4 rounded-md" style={{ backgroundColor: headerColor, borderColor: headerColor }}>
+        <Text variant="h4" className={`font-semibold rounded-md py-1 ${headerTextColorClass}`}>
           {header}
         </Text>
       </div>
