@@ -47,4 +47,8 @@ export const selectStyles = <IsMulti extends boolean = false>(): StylesConfig<
     ...provided,
     color: "#A0AEC0",
   }),
+  input: (provided) => ({
+    ...provided,
+    color: "#ffffff",
+  }),
 });

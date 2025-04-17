@@ -566,7 +566,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[7rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxOne.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxOne.id} league={league} />
@@ -602,7 +602,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[7rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxTwo.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxTwo.id} league={league} />
@@ -639,7 +639,7 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
             
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[7rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxThree.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxThree.id} league={league} />
