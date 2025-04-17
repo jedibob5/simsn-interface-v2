@@ -40,6 +40,7 @@ import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
 import { useMobile } from "../../_hooks/useMobile";
+import { getPHLShortenedValue } from "../../_utility/getPHLShortenedValue";
 import { darkenColor } from "../../_utility/getDarkerColor";
 
 interface TeamPageProps {
@@ -314,21 +315,11 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 
         return {
           ...contract,
-          Y1BaseSalary: contract.Y1BaseSalary
-            ? parseFloat((contract.Y1BaseSalary / 1_000_000).toFixed(2))
-            : 0,
-          Y2BaseSalary: contract.Y2BaseSalary
-            ? parseFloat((contract.Y2BaseSalary / 1_000_000).toFixed(2))
-            : 0,
-          Y3BaseSalary: contract.Y3BaseSalary
-            ? parseFloat((contract.Y3BaseSalary / 1_000_000).toFixed(2))
-            : 0,
-          Y4BaseSalary: contract.Y4BaseSalary
-            ? parseFloat((contract.Y4BaseSalary / 1_000_000).toFixed(2))
-            : 0,
-          Y5BaseSalary: contract.Y5BaseSalary
-            ? parseFloat((contract.Y5BaseSalary / 1_000_000).toFixed(2))
-            : 0,
+          Y1BaseSalary: getPHLShortenedValue(contract.Y1BaseSalary),
+          Y2BaseSalary: getPHLShortenedValue(contract.Y2BaseSalary),
+          Y3BaseSalary: getPHLShortenedValue(contract.Y3BaseSalary),
+          Y4BaseSalary: getPHLShortenedValue(contract.Y4BaseSalary),
+          Y5BaseSalary: getPHLShortenedValue(contract.Y5BaseSalary),
           convertValues: contract.convertValues,
         };
       })
@@ -668,7 +659,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     [headerColor, borderColor] = [borderColor, headerColor];
   }
   const [isMobile] = useMobile();
-  let darkerBackgroundColor = darkenColor(backgroundColor, -5)
+  let darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && nflRosterMap) {

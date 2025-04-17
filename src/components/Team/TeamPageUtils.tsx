@@ -3,7 +3,7 @@ import {
   Potentials,
   Preferences,
   Contracts,
-  Overview
+  Overview,
 } from "../../_constants/constants";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import {
@@ -13,8 +13,17 @@ import {
   getCFBOverall,
 } from "../../_utility/getLetterGrade";
 import { getYear } from "../../_utility/getYear";
-import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, ProContract as PHLContract, Croot } from "../../models/hockeyModels";
-import { CollegePlayer as CFBPlayer, NFLContract, NFLPlayer } from "../../models/footballModels";
+import {
+  CollegePlayer as CHLPlayer,
+  ProfessionalPlayer as PHLPlayer,
+  ProContract as PHLContract,
+  Croot,
+} from "../../models/hockeyModels";
+import {
+  CollegePlayer as CFBPlayer,
+  NFLContract,
+  NFLPlayer,
+} from "../../models/footballModels";
 import {
   Agility,
   Speed,
@@ -60,29 +69,32 @@ export const getCHLAttributes = (
     { label: "Ovr", value: getHockeyLetterGrade(player.Overall, player.Year) },
   ];
 
-  const overviewAttributes = !isMobile && category === Overview
-    ? [
-        { label: "Health", value: player.IsInjured },
-        {
-          label: "Injury",
-          value: player.InjuryType
-            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
-              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
-              : `None`
-            : "None",
-        },
-        { label: "Redshirt", value: player.IsRedshirting },
-        { label: "TransferStatus", value: player.TransferStatus },
-      ]
-    : [];
+  const overviewAttributes =
+    !isMobile && category === Overview
+      ? [
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+                : `None`
+              : "None",
+          },
+          { label: "Redshirt", value: player.IsRedshirting },
+          { label: "TransferStatus", value: player.TransferStatus },
+        ]
+      : [];
 
-  const additionalAttributes = !isMobile && category === Attributes
-    ? getAdditionalHockeyAttributes(player)
-    : [];
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalHockeyAttributes(player)
+      : [];
 
-  const potentialAttributes = !isMobile && category === Potentials
-    ? getAdditionalPotentialAttributes(player)
-    : [];
+  const potentialAttributes =
+    !isMobile && category === Potentials
+      ? getAdditionalPotentialAttributes(player)
+      : [];
 
   return [
     ...attributes,
@@ -96,7 +108,7 @@ export const getPHLAttributes = (
   player: PHLPlayer,
   isMobile: boolean,
   category: string,
-  contract?: any,
+  contract?: any
 ) => {
   const phlContract = contract as PHLContract;
   const attributes = [
@@ -107,44 +119,54 @@ export const getPHLAttributes = (
     { label: "Ovr", value: player.Overall },
   ];
 
-  const overviewAttributes = !isMobile && category === Overview && phlContract
-    ? [
-        { label: "Health", value: player.IsInjured },
-        {
-          label: "Injury",
-          value: player.InjuryType
-            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
-              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
-              : `None`
-            : "None",
-        },
-        {
-          label: "Current Year Salary",
-          value: `${(contract.Y1BaseSalary).toFixed(2)}M`,
-        },
-        { label: "Years Left", value: phlContract.ContractLength },
-        { label: "NTC", value: contract.NoTradeClause },
-        { label: "NMC", value: contract.NoMovementClause }
-      ]
-    : [];
+  const overviewAttributes =
+    !isMobile && category === Overview && phlContract
+      ? [
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+                : `None`
+              : "None",
+          },
+          {
+            label: "Current Year Salary",
+            value: `${contract.Y1BaseSalary.toFixed(2)}M`,
+          },
+          { label: "Years Left", value: phlContract.ContractLength },
+          { label: "NTC", value: contract.NoTradeClause },
+          { label: "NMC", value: contract.NoMovementClause },
+        ]
+      : [];
 
-  const additionalAttributes = !isMobile && category === Attributes
-    ? getAdditionalHockeyAttributes(player).map(attr => ({
-        ...attr,
-        letter: attr.value,
-        value: attr.raw,
-      }))
-    : [];
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalHockeyAttributes(player).map((attr) => ({
+          ...attr,
+          letter: attr.value,
+          value: attr.raw,
+        }))
+      : [];
 
-  const contractAttributes = !isMobile && category === Contracts && phlContract
-    ? getPHLContracts(phlContract)
-    : [];
+  const contractAttributes =
+    !isMobile && category === Contracts && phlContract
+      ? getPHLContracts(phlContract)
+      : [];
 
-  const potentialAttributes = !isMobile && category === Potentials
-    ? getAdditionalPotentialAttributes(player)
-    : [];
+  const potentialAttributes =
+    !isMobile && category === Potentials
+      ? getAdditionalPotentialAttributes(player)
+      : [];
 
-  return [...attributes, ...overviewAttributes, ...additionalAttributes, ...potentialAttributes, ...contractAttributes];
+  return [
+    ...attributes,
+    ...overviewAttributes,
+    ...additionalAttributes,
+    ...potentialAttributes,
+    ...contractAttributes,
+  ];
 };
 
 export const getPHLContracts = (contract: any) => {
@@ -155,8 +177,8 @@ export const getPHLContracts = (contract: any) => {
     { label: "Y4S", value: contract.Y4BaseSalary },
     { label: "Y5S", value: contract.Y5BaseSalary },
     { label: "Yrs Left", value: contract.ContractLength },
-    { label: "NTC", value: contract.NoTradeClause },
-    { label: "NMC", value: contract.NoMovementClause },
+    { label: "NTC", value: contract.NoTradeClause || "None" },
+    { label: "NMC", value: contract.NoMovementClause || "None" },
   ];
 };
 
@@ -237,17 +259,19 @@ export const getAdditionalHockeyAttributeGrades = (player: Croot) => {
   ];
 };
 
-export const getAdditionalHockeyAttributes = (player: CHLPlayer | PHLPlayer) => {
+export const getAdditionalHockeyAttributes = (
+  player: CHLPlayer | PHLPlayer
+) => {
   return [
-    { 
+    {
       label: "Agi",
-      raw: player.Agility, 
-      value: getHockeyLetterGrade(player.Agility, player.Year) 
+      raw: player.Agility,
+      value: getHockeyLetterGrade(player.Agility, player.Year),
     },
-    { 
+    {
       label: "FO",
-      raw: player.Faceoffs, 
-      value: getHockeyLetterGrade(player.Faceoffs, player.Year) 
+      raw: player.Faceoffs,
+      value: getHockeyLetterGrade(player.Faceoffs, player.Year),
     },
     {
       label: "LSA",
@@ -269,20 +293,21 @@ export const getAdditionalHockeyAttributes = (player: CHLPlayer | PHLPlayer) => 
       raw: player.CloseShotPower,
       value: getHockeyLetterGrade(player.CloseShotPower, player.Year),
     },
-    { 
-      label: "Pass", 
+    {
+      label: "Pass",
       raw: player.Passing,
-      value: getHockeyLetterGrade(player.Passing, player.Year) 
+      value: getHockeyLetterGrade(player.Passing, player.Year),
     },
     {
       label: "PH",
       raw: player.PuckHandling,
       value: getHockeyLetterGrade(player.PuckHandling, player.Year),
     },
-    { 
-      label: "Str", 
+    {
+      label: "Str",
       raw: player.Strength,
-      value: getHockeyLetterGrade(player.Strength, player.Year) },
+      value: getHockeyLetterGrade(player.Strength, player.Year),
+    },
     {
       label: "BChk",
       raw: player.BodyChecking,
@@ -308,20 +333,22 @@ export const getAdditionalHockeyAttributes = (player: CHLPlayer | PHLPlayer) => 
       raw: player.GoalieVision,
       value: getHockeyLetterGrade(player.GoalieVision, player.Year),
     },
-    { 
+    {
       label: "Sta",
-      raw: player.Stamina, 
-      value: getGeneralLetterGrade(player.Stamina) 
+      raw: player.Stamina,
+      value: getGeneralLetterGrade(player.Stamina),
     },
-    { 
+    {
       label: "Inj",
-      raw: player.InjuryRating, 
-      value: getGeneralLetterGrade(player.InjuryRating) 
+      raw: player.InjuryRating,
+      value: getGeneralLetterGrade(player.InjuryRating),
     },
   ];
 };
 
-export const getAdditionalPotentialAttributes = (player: CHLPlayer | PHLPlayer) => {
+export const getAdditionalPotentialAttributes = (
+  player: CHLPlayer | PHLPlayer
+) => {
   return [
     { label: "Agi", value: getGeneralLetterGrade(player.AgilityPotential) },
     { label: "FO", value: getGeneralLetterGrade(player.FaceoffsPotential) },
@@ -532,7 +559,7 @@ export const getNFLAttributes = (
   isMobile: boolean,
   category: string,
   showLetterGrade: boolean,
-  contract?: any,
+  contract?: any
 ) => {
   const nflPlayer = player as NFLPlayer;
   const nflContract = contract as NFLContract;
@@ -540,56 +567,65 @@ export const getNFLAttributes = (
     { label: "Name", value: `${nflPlayer.FirstName} ${nflPlayer.LastName}` },
     { label: "Pos", value: nflPlayer.Position },
     { label: "Arch", value: getArchetypeValue(nflPlayer.Archetype, isMobile) },
-    { label: "Yr", value: GetNFLYear(nflPlayer.Experience)},
-    { 
-      label: "Ovr", 
-      value: showLetterGrade 
-        ? GetNFLOverall(nflPlayer.Overall, true) 
-        : nflPlayer.Overall 
+    { label: "Yr", value: GetNFLYear(nflPlayer.Experience) },
+    {
+      label: "Ovr",
+      value: showLetterGrade
+        ? GetNFLOverall(nflPlayer.Overall, true)
+        : nflPlayer.Overall,
     },
   ];
 
-  const overviewAttributes = !isMobile && category === Overview && nflContract
-    ? [
-        { label: "Pot", value: player.PotentialGrade },
-        { label: "Health", value: player.IsInjured },
-        {
-          label: "Injury",
-          value: player.InjuryType
-            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
-              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
-              : `None`
-            : "None",
-        },
-        {
-          label: "Y1S",
-          value: `${(contract.Y1BaseSalary).toFixed(2)}M`
-        },
-        {
-          label: "Y1B",
-          value: `${(contract.Y1Bonus).toFixed(2)}M`
-        },
-        { label: "Years Left", value: nflContract.ContractLength },
-        { label: "Is Tagged", value: nflContract.IsTagged },
-      ]
-    : [];
+  const overviewAttributes =
+    !isMobile && category === Overview && nflContract
+      ? [
+          { label: "Pot", value: player.PotentialGrade },
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+                : `None`
+              : "None",
+          },
+          {
+            label: "Y1S",
+            value: `${contract.Y1BaseSalary.toFixed(2)}M`,
+          },
+          {
+            label: "Y1B",
+            value: `${contract.Y1Bonus.toFixed(2)}M`,
+          },
+          { label: "Years Left", value: nflContract.ContractLength },
+          { label: "Is Tagged", value: nflContract.IsTagged },
+        ]
+      : [];
 
-  const additionalAttributes = !isMobile && category === Attributes
-    ? getAdditionalNFLAttributes(nflPlayer).map(attr => ({
-        ...attr,
-        value: showLetterGrade 
-          ? GetNFLOverall(attr.value as number, true) 
-          : attr.value,
-      }))
-    : [];
-  
-  const nflContracts = !isMobile && category === Contracts
-    ? getNFLContracts(nflContract).map(attr => ({
-      ...attr,
-      value: attr.value,
-    })) : [];
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalNFLAttributes(nflPlayer).map((attr) => ({
+          ...attr,
+          value: showLetterGrade
+            ? GetNFLOverall(attr.value as number, true)
+            : attr.value,
+        }))
+      : [];
 
-  return [...nflPlayerAttributes, ...overviewAttributes, ...additionalAttributes, ...nflContracts];
+  const nflContracts =
+    !isMobile && category === Contracts
+      ? getNFLContracts(nflContract).map((attr) => ({
+          ...attr,
+          value: attr.value,
+        }))
+      : [];
+
+  return [
+    ...nflPlayerAttributes,
+    ...overviewAttributes,
+    ...additionalAttributes,
+    ...nflContracts,
+  ];
 };
 
 export const getNFLContracts = (contract: NFLContract) => {
@@ -638,18 +674,18 @@ export const getAdditionalNFLAttributes = (player: NFLPlayer) => {
 
 export const GetNFLOverall = (ovr: number, showLetterGrade: boolean) => {
   if (!showLetterGrade) return ovr;
-  if (ovr > 61) return 'A';
-  else if (ovr > 59) return 'A-';
-  else if (ovr > 57) return 'B+';
-  else if (ovr > 55) return 'B';
-  else if (ovr > 53) return 'B-';
-  else if (ovr > 51) return 'C+';
-  else if (ovr > 49) return 'C';
-  else if (ovr > 47) return 'C-';
-  else if (ovr > 45) return 'D+';
-  else if (ovr > 43) return 'D';
-  else if (ovr > 41) return 'D-';
-  return 'F';
+  if (ovr > 61) return "A";
+  else if (ovr > 59) return "A-";
+  else if (ovr > 57) return "B+";
+  else if (ovr > 55) return "B";
+  else if (ovr > 53) return "B-";
+  else if (ovr > 51) return "C+";
+  else if (ovr > 49) return "C";
+  else if (ovr > 47) return "C-";
+  else if (ovr > 45) return "D+";
+  else if (ovr > 43) return "D";
+  else if (ovr > 41) return "D-";
+  return "F";
 };
 
 export const getCFBAttributes = (
@@ -667,32 +703,30 @@ export const getCFBAttributes = (
     { label: "Ovr", value: getHockeyLetterGrade(player.Overall, player.Year) },
   ];
 
-  const overviewAttributes = !isMobile && category === Overview
-    ? [
-        { label: "Pot", value: player.PotentialGrade },
-        { label: "Health", value: player.IsInjured },
-        {
-          label: "Injury",
-          value: player.InjuryType
-            ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
-              ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
-              : `None`
-            : "None",
-        },
-        { label: "Redshirt", value: player.IsRedshirting },
-        { label: "TransferStatus", value: player.TransferStatus },
-      ]
-    : [];
+  const overviewAttributes =
+    !isMobile && category === Overview
+      ? [
+          { label: "Pot", value: player.PotentialGrade },
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+                : `None`
+              : "None",
+          },
+          { label: "Redshirt", value: player.IsRedshirting },
+          { label: "TransferStatus", value: player.TransferStatus },
+        ]
+      : [];
 
-  const additionalAttributes = !isMobile && category === Attributes
-    ? getAdditionalCFBAttributes(player)
-    : [];
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalCFBAttributes(player)
+      : [];
 
-  return [
-    ...attributes,
-    ...overviewAttributes,
-    ...additionalAttributes,
-  ];
+  return [...attributes, ...overviewAttributes, ...additionalAttributes];
 };
 
 export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
@@ -900,7 +934,7 @@ export const getAdditionalCFBAttributes = (player: CFBPlayer) => {
 };
 
 export const GetNFLYear = (data: number) => {
-  if (data < 2) return 'R';
+  if (data < 2) return "R";
   return Number(data);
 };
 
@@ -908,7 +942,7 @@ interface PriorityAttribute {
   Name: string;
   Value?: number | string;
   Letter?: string | number;
-};
+}
 
 export const setPriorityCFBAttributes = (
   player: CFBPlayer
@@ -1782,17 +1816,70 @@ const priorityAttributesMap: { [key: string]: string[] } = {
   RB: [Agility, Speed, Carrying, Catching, "PassBlock", Strength],
   FB: [Agility, Speed, Carrying, Catching, "PassBlock", Strength],
   WR: [Agility, Speed, Carrying, Catching, "RouteRunning", Strength],
-  TE: [Agility, Speed, Carrying, Catching, "RouteRunning", Strength, "PassBlock", "RunBlock"],
+  TE: [
+    Agility,
+    Speed,
+    Carrying,
+    Catching,
+    "RouteRunning",
+    Strength,
+    "PassBlock",
+    "RunBlock",
+  ],
   OT: [Agility, Strength, "PassBlock", "RunBlock"],
   OG: [Agility, Strength, "PassBlock", "RunBlock"],
   C: [Agility, Strength, "PassBlock", "RunBlock"],
   DE: [Agility, Tackle, Strength, "PassRush", "RunDefense"],
   DT: [Agility, Tackle, Strength, "PassRush", "RunDefense"],
-  ILB: [Agility, Speed, Tackle, Strength, "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
-  OLB: [Agility, Speed, Tackle, Strength, "PassRush", "RunDefense", "ZoneCoverage", "ManCoverage"],
-  CB: [Agility, Speed, Tackle, Strength, "ZoneCoverage", "ManCoverage", Catching],
-  FS: [Agility, Speed, Tackle, Strength, "RunDefense", "ZoneCoverage", "ManCoverage", Catching],
-  SS: [Agility, Speed, Tackle, Strength, "RunDefense", "ZoneCoverage", "ManCoverage", Catching],
+  ILB: [
+    Agility,
+    Speed,
+    Tackle,
+    Strength,
+    "PassRush",
+    "RunDefense",
+    "ZoneCoverage",
+    "ManCoverage",
+  ],
+  OLB: [
+    Agility,
+    Speed,
+    Tackle,
+    Strength,
+    "PassRush",
+    "RunDefense",
+    "ZoneCoverage",
+    "ManCoverage",
+  ],
+  CB: [
+    Agility,
+    Speed,
+    Tackle,
+    Strength,
+    "ZoneCoverage",
+    "ManCoverage",
+    Catching,
+  ],
+  FS: [
+    Agility,
+    Speed,
+    Tackle,
+    Strength,
+    "RunDefense",
+    "ZoneCoverage",
+    "ManCoverage",
+    Catching,
+  ],
+  SS: [
+    Agility,
+    Speed,
+    Tackle,
+    Strength,
+    "RunDefense",
+    "ZoneCoverage",
+    "ManCoverage",
+    Catching,
+  ],
   K: ["KickAccuracy", "KickPower"],
   P: ["PuntAccuracy", "PuntPower"],
   ATH: [Agility, Speed, Strength],
@@ -1804,14 +1891,14 @@ export const setPriorityNFLAttributes = (
 ): PriorityAttribute[] => {
   const position = player.Position;
   const attributesForPosition = priorityAttributesMap[position] || [];
-  const priorityAttributes = attributesForPosition.map(attrName => {
+  const priorityAttributes = attributesForPosition.map((attrName) => {
     const rawValue = (player as any)[attrName];
     return {
       Name: headerMap[attrName] || attrName,
       Value: showLetterGrade ? GetNFLOverall(rawValue, true) : rawValue,
     };
   });
-  
+
   if (player.Position === "QB") {
     priorityAttributes.push({
       Name: "Shotgun Rating",
@@ -1822,15 +1909,21 @@ export const setPriorityNFLAttributes = (
   priorityAttributes.push(
     {
       Name: "Football IQ",
-      Value: showLetterGrade ? GetNFLOverall(player.FootballIQ, true) : player.FootballIQ,
+      Value: showLetterGrade
+        ? GetNFLOverall(player.FootballIQ, true)
+        : player.FootballIQ,
     },
     {
       Name: "Stamina",
-      Value: showLetterGrade ? GetNFLOverall(player.Stamina, true) : player.Stamina,
+      Value: showLetterGrade
+        ? GetNFLOverall(player.Stamina, true)
+        : player.Stamina,
     },
     {
       Name: "Injury",
-      Value: showLetterGrade ? GetNFLOverall(player.Injury, true) : player.Injury,
+      Value: showLetterGrade
+        ? GetNFLOverall(player.Injury, true)
+        : player.Injury,
     }
   );
 

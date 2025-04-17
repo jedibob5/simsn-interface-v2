@@ -1,4 +1,5 @@
 import React, {
+  FC,
   ReactNode,
   useEffect,
   useLayoutEffect,
@@ -39,12 +40,13 @@ export const Table = <T,>({
   team,
   rowRenderer,
   rowBgColor,
-  darkerRowBgColor
+  darkerRowBgColor,
 }: TableProps<T>): JSX.Element => {
   let backgroundColor = "#1f2937";
   let borderColor = team?.ColorTwo || "#4B5563";
   let tableBgColor = rowBgColor || "#1f2937";
-  let darkerTableBgColor = darkerRowBgColor || darkenColor(tableBgColor, -5) || "#1f2937";
+  let darkerTableBgColor =
+    darkerRowBgColor || darkenColor(tableBgColor, -5) || "#1f2937";
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
   }
@@ -127,7 +129,7 @@ export const Table = <T,>({
         {/* Body */}
         <div className="table-row-group">
           {sortedData.map((item, index) => {
-          const bg = index % 2 === 0 ? darkerTableBgColor : tableBgColor;
+            const bg = index % 2 === 0 ? darkerTableBgColor : tableBgColor;
             return (
               <React.Fragment key={index}>
                 {rowRenderer(item, index, bg)}
@@ -136,6 +138,22 @@ export const Table = <T,>({
           })}
         </div>
       </div>
+    </div>
+  );
+};
+
+interface TableCellProps {
+  children: any;
+  classes?: string;
+}
+
+export const TableCell: FC<TableCellProps> = ({ children, classes }) => {
+  const extraClasses = classes ? classes : "";
+  return (
+    <div
+      className={`table-cell align-middle ${extraClasses} flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap`}
+    >
+      {children}
     </div>
   );
 };

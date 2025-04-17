@@ -13,14 +13,14 @@ import {
   HockeyPositionOptions,
   Potentials,
   Preferences,
-  RecruitingOverview,
+  Overview,
   RecruitingRankings,
   RecruitingTeamBoard,
   SimCHL,
   StarOptions,
   StatusOptions,
 } from "../../../_constants/constants";
-import { RecruitingCategoryDropdown } from "../Common/RecruitingCategoryDropdown";
+import { CategoryDropdown } from "../Common/RecruitingCategoryDropdown";
 import { RecruitTable } from "../Common/RecruitTable";
 import { ActionModal } from "../../Common/ActionModal";
 import { useMobile } from "../../../_hooks/useMobile";
@@ -143,11 +143,9 @@ export const CHLRecruiting = () => {
                 <Button
                   type="button"
                   variant={
-                    recruitingCategory === RecruitingOverview
-                      ? "success"
-                      : "secondary"
+                    recruitingCategory === Overview ? "success" : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(RecruitingOverview)}
+                  onClick={() => setRecruitingCategory(Overview)}
                 >
                   Overview
                 </Button>
@@ -270,7 +268,7 @@ export const CHLRecruiting = () => {
               </div>
             </Border>
           </div>
-          {!recruitingLocked && recruitingCategory === RecruitingOverview && (
+          {!recruitingLocked && recruitingCategory === Overview && (
             <>
               <Border
                 direction="row"
@@ -281,21 +279,21 @@ export const CHLRecruiting = () => {
                 }}
               >
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Positions"
                     options={HockeyPositionOptions}
                     change={SelectPositionOptions}
                     isMulti={true}
                     isMobile={isMobile}
                   />
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Archetype"
                     options={HockeyArchetypeOptions}
                     change={SelectArchetypeOptions}
                     isMulti={true}
                     isMobile={isMobile}
                   />
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Country"
                     options={CountryOptions}
                     change={SelectCountryOption}
@@ -303,7 +301,7 @@ export const CHLRecruiting = () => {
                     isMobile={isMobile}
                   />
                   {regionOptions.length > 0 && (
-                    <RecruitingCategoryDropdown
+                    <CategoryDropdown
                       label="Region"
                       options={regionOptions}
                       change={SelectRegionOptions}
@@ -311,14 +309,14 @@ export const CHLRecruiting = () => {
                       isMobile={isMobile}
                     />
                   )}
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Stars"
                     options={StarOptions}
                     change={SelectStarOptions}
                     isMulti={true}
                     isMobile={isMobile}
                   />
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Status"
                     options={StatusOptions}
                     change={SelectStatusOptions}
@@ -356,7 +354,7 @@ export const CHLRecruiting = () => {
                     >
                       Prev
                     </Button>
-                    <Text variant="body-small" className="flex items-center">
+                    <Text variant="body-small" classes="flex items-center">
                       {currentPage + 1}
                     </Text>
                     <Button
@@ -409,14 +407,14 @@ export const CHLRecruiting = () => {
                 }}
               >
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Conferences"
                     options={chlConferenceOptions}
                     change={SelectConferences}
                     isMulti={true}
                     isMobile={isMobile}
                   />
-                  <RecruitingCategoryDropdown
+                  <CategoryDropdown
                     label="Teams"
                     options={chlTeamOptions}
                     change={SelectTeams}

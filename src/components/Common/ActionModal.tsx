@@ -1,6 +1,7 @@
 import { FC } from "react";
 import {
   AddRecruitType,
+  CancelOffer,
   Cut,
   InfoType,
   League,
@@ -12,6 +13,7 @@ import {
   ScholarshipOffered,
   ScholarshipRevoked,
   ScoutAttributeType,
+  SimPHL,
   ToggleScholarshipType,
 } from "../../_constants/constants";
 import { Modal } from "../../_design/Modal";
@@ -32,6 +34,7 @@ interface ActionModalProps {
   attribute?: string;
   capsheet?: any;
   contract?: any;
+  offer?: any;
   cutPlayer?: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer?: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer?: (playerID: number, teamID: number) => Promise<void>;
@@ -39,6 +42,7 @@ interface ActionModalProps {
   removePlayerFromBoard?: (dto: any) => Promise<void>;
   toggleScholarship?: (dto: any) => Promise<void>;
   scoutAttribute?: (dto: any) => Promise<void>;
+  cancelFAOffer?: (dto: any) => Promise<void>;
 }
 
 export const ActionModal: FC<ActionModalProps> = ({
@@ -52,6 +56,7 @@ export const ActionModal: FC<ActionModalProps> = ({
   player,
   contract,
   capsheet,
+  offer,
   redshirtPlayer,
   cutPlayer,
   promisePlayer,
@@ -59,6 +64,7 @@ export const ActionModal: FC<ActionModalProps> = ({
   removePlayerFromBoard,
   toggleScholarship,
   scoutAttribute,
+  cancelFAOffer,
   attribute = "",
 }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -157,6 +163,14 @@ export const ActionModal: FC<ActionModalProps> = ({
         break;
       case InfoType:
         break;
+      case CancelOffer:
+        if (cancelFAOffer) {
+          const dto = {
+            ...offer,
+          };
+          await cancelFAOffer(dto);
+        }
+        break;
     }
     onClose();
   };
@@ -189,6 +203,9 @@ export const ActionModal: FC<ActionModalProps> = ({
       break;
     case ScoutAttributeType:
       title = `Scout ${attribute} Attribute?`;
+      break;
+    case CancelOffer:
+      title = `Cancel FA Offer for ${playerLabel}?`;
       break;
   }
   return (
@@ -317,12 +334,50 @@ export const ActionModal: FC<ActionModalProps> = ({
               ?
             </Text>
           </>
-          )}
+        )}
+        {modalAction === CancelOffer && (
+          <>
+            <Text className="mb4 text-start mb-1">
+              Are you sure you want to cancel the following Free Agency Offer
+              for{" "}
+              <strong>
+                {playerID} {playerLabel}
+              </strong>
+              ?
+            </Text>
+            {offer && league === SimPHL && (
+              <>
+                <div className="grid grid-cols-7">
+                  <Text variant="body-small">Length</Text>
+                  <Text variant="body-small">Y1</Text>
+                  <Text variant="body-small">Y2</Text>
+                  <Text variant="body-small">Y3</Text>
+                  <Text variant="body-small">Y4</Text>
+                  <Text variant="body-small">Y5</Text>
+                  <Text variant="body-small">CV</Text>
+                </div>
+                <div className="grid grid-cols-7">
+                  <Text variant="body-small">{offer.ContractLength}</Text>
+                  <Text variant="body-small">{offer.Y1BaseSalary}</Text>
+                  <Text variant="body-small">{offer.Y2BaseSalary}</Text>
+                  <Text variant="body-small">{offer.Y3BaseSalary}</Text>
+                  <Text variant="body-small">{offer.Y4BaseSalary}</Text>
+                  <Text variant="body-small">{offer.Y5BaseSalary}</Text>
+                  <Text variant="body-small">{offer.ContractValue}</Text>
+                </div>
+              </>
+            )}
+          </>
+        )}
         {modalAction === InfoType && (
-          <PlayerInfoModalBody league={league} player={player} contract={contract} />
+          <PlayerInfoModalBody
+            league={league}
+            player={player}
+            contract={contract}
+          />
         )}
         {modalAction === RecruitInfoType && (
-          <RecruitInfoModalBody league={league} player={player}/>
+          <RecruitInfoModalBody league={league} player={player} />
         )}
       </Modal>
     </>

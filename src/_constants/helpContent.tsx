@@ -1,4 +1,4 @@
-export const CHLRecrutingHelpContent: string[][] = [
+export const CHLRecruitingHelpContent: string[][] = [
   [
     "Welcome to the SimCHL Recruiting Page!",
     "This page is where you will build the future of your SimCHL program.",
@@ -26,5 +26,42 @@ export const CHLRecrutingHelpContent: string[][] = [
     "You can choose to adjust the minimum and maximum ratings for Star rating on the recruit, and how much points you would like to have allocated possible.",
     "The minimum range for star is at least 2 (So max range of 3-5 stars); and the minimum range for points is at least 5 points (So a range of 15-20 is possible, but a range of 18-20 points is not).",
     "When you're done adjusting the AI settings, click 'Confirm' to save your settings.",
+  ],
+];
+
+export const PHLFreeAgencyHelpContent: string[][] = [
+  [
+    "Welcome to the SimPHL Free Agency Page!",
+    "This page is where you can bolster your team's roster in both the regular season and off-season.",
+    "The top row controls the different views available on this page. The 'Overview' button handles the list of all recruits. The 'Contract' button displays all of your active contracts & offers.",
+    "The buttons in the middle control the type of free agent you can view. 'Free Agents', are not on any active active roster and can be bid on freely given the rules specified in the Offer Modal. 'Waivers' allow you to pick up players that were recently cut from their former team. 'Affiliate' players are players in the minor leagues - this content is still in development due to the early nature of the PHL.",
+  ],
+  [
+    "Overview Page",
+    "This page showcases over 200+ different free agents from all over the world are eligible and capable of playing in the SimPHL.",
+    "You can filter down the list further by using the different dropdowns showcased on the page. 'Positions' will filter the list by positions; 'Archetype' will filter the list further by the recruit's archetype. You can also filter the list by country in addition. If you select USA, Canada, Sweden, or Russia as a country, you may also in addition filter further by the different regions within each country.",
+    "To view more info on each player, click on their name. To place a bid on a free agent, click the green 'Plus' button. If you have already placed a bid on a free agent, the button will grey out.",
+  ],
+  [
+    "Contracts Page",
+    "This page displays all of your active offers within Free Agency. Here, you can view the specific players you've placed bids on, and can even actively adjust your contract here.",
+    "To update your offer, click on the green button.",
+    "To cancel an active offer on one of the players you are targeting click the red Cancel button.",
+  ],
+  [
+    "Table Views",
+    "The tables on the Free Agency Page are dynamic, and allow you to view different attributes towards the player at a time.",
+    "Attributes will showcase the player's active attributes. These can be viewed by any user on any active team.",
+    "Preferences will show you the biases the player may have during the active phase of Free Agency. In Free Agency, there are three characteristics that a player may attribute to - Market Preference, Competitive Preference, and Financial Preference. Please click the 'Next' Button for more info.",
+  ],
+  [
+    "Player Preferences",
+    "Market Preference is the bias a player may have towards the type of team they want to play on. Players may prefer to play for a 'large market' or 'small market' team. Players may also prefer to avoid either types! Players may also want to play closer to their home town -- or for international players, be on a roster where a large number of their countrymen are playing together.",
+    "Competitive Bias is the bias a player may have towards a specific roster. Some players will want to play actively on at least the first or second line. Younger players may seek out teams that are older, hoping to learn from older veteran players within the league. In vice-versa, veteran players may seek out younger rosters hoping to provide mentorship and coach younger players. Players may also veer towards teams that are setup for a competitive run in the upcoming season.",
+    "Financial Bias is the bias a player has towards their ideal offer. Some players, usually veterans, will seek out shorter contracts. Some players may seek out long-term contracts. Some players will prefer contracts where they are offering a substantial amount of value each year.",
+  ],
+  [
+    "AI Settings",
+    "This feature is in active development and will be added at a later, unspecified date.",
   ],
 ];
