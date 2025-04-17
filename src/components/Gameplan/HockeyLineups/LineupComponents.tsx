@@ -75,7 +75,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     [ChangePlayerInput, playerID]
   );
   return (
-    <div className="flex flex-col px-4 min-[1025px]:h-full max-[1024px]:w-full max-[1024px]:mb-4 max-[1024px]:overflow-y-auto">
+    <div className="flex flex-col px-4 h-full w-full">
       <>
         <div className="flex flex-row mb-2 gap-x-1 justify-end w-full items-end">
           <Button
