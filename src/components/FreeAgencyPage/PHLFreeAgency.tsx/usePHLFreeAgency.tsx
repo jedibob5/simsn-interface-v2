@@ -18,6 +18,7 @@ import {
   SwedenRegionOptions,
   USA,
   USARegionOptions,
+  Values,
   Waivers,
 } from "../../../_constants/constants";
 import {
@@ -68,6 +69,7 @@ export const usePHLFreeAgency = () => {
     for (let i = 0; i < freeAgents.length; i++) {
       dict[freeAgents[i].ID] = freeAgents[i];
     }
+    return dict;
   }, [freeAgents]);
 
   const waiverPlayers = useMemo(() => {
@@ -93,9 +95,9 @@ export const usePHLFreeAgency = () => {
 
   const freeAgentOfferMapByPlayer = useMemo(() => {
     const dict: Record<number, FreeAgencyOffer[]> = {};
-    for (let i = 0; i < freeAgentOffers.length; i) {
+    for (let i = 0; i < freeAgentOffers.length; i++) {
       const offer = freeAgentOffers[i];
-      if (dict[offer.PlayerID].length > 0) {
+      if (dict[offer.PlayerID] && dict[offer.PlayerID].length > 0) {
         dict[offer.PlayerID].push(offer);
       } else {
         dict[offer.PlayerID] = [offer];
@@ -106,9 +108,9 @@ export const usePHLFreeAgency = () => {
 
   const waiverOfferMapByPlayer = useMemo(() => {
     const dict: Record<number, WaiverOffer[]> = {};
-    for (let i = 0; i < waiverOffers.length; i) {
+    for (let i = 0; i < waiverOffers.length; i++) {
       const offer = waiverOffers[i];
-      if (dict[offer.PlayerID].length > 0) {
+      if (dict[offer.PlayerID] && dict[offer.PlayerID].length > 0) {
         dict[offer.PlayerID].push(offer);
       } else {
         dict[offer.PlayerID] = [offer];
@@ -119,8 +121,8 @@ export const usePHLFreeAgency = () => {
 
   const teamFreeAgentOfferMap = useMemo(() => {
     const dict: Record<number, FreeAgencyOffer> = {};
-    for (let i = 0; i < freeAgentOffers.length; i) {
-      const offer = freeAgentOffers[i];
+    for (let i = 0; i < teamFreeAgentOffers.length; i++) {
+      const offer = teamFreeAgentOffers[i];
       dict[offer.PlayerID] = offer;
     }
     return dict;
@@ -128,7 +130,7 @@ export const usePHLFreeAgency = () => {
 
   const teamWaiverOfferMap = useMemo(() => {
     const dict: Record<number, WaiverOffer> = {};
-    for (let i = 0; i < waiverOffers.length; i) {
+    for (let i = 0; i < waiverOffers.length; i++) {
       const offer = waiverOffers[i];
       dict[offer.PlayerID] = offer;
     }
@@ -163,10 +165,18 @@ export const usePHLFreeAgency = () => {
     const adjCapsheet = { ...teamCapsheet } as ProCapsheet;
     for (let i = 0; i < teamFreeAgentOffers.length; i++) {
       adjCapsheet.Y1Salary += teamFreeAgentOffers[i].ContractValue;
-      adjCapsheet.Y2Salary += teamFreeAgentOffers[i].ContractValue;
-      adjCapsheet.Y3Salary += teamFreeAgentOffers[i].ContractValue;
-      adjCapsheet.Y4Salary += teamFreeAgentOffers[i].ContractValue;
-      adjCapsheet.Y5Salary += teamFreeAgentOffers[i].ContractValue;
+      if (teamFreeAgentOffers[i].ContractLength > 1) {
+        adjCapsheet.Y2Salary += teamFreeAgentOffers[i].ContractValue;
+      }
+      if (teamFreeAgentOffers[i].ContractLength > 2) {
+        adjCapsheet.Y3Salary += teamFreeAgentOffers[i].ContractValue;
+      }
+      if (teamFreeAgentOffers[i].ContractLength > 3) {
+        adjCapsheet.Y4Salary += teamFreeAgentOffers[i].ContractValue;
+      }
+      if (teamFreeAgentOffers[i].ContractLength > 4) {
+        adjCapsheet.Y5Salary += teamFreeAgentOffers[i].ContractValue;
+      }
     }
     adjCapsheet.UpdatedAt = new Date();
     return adjCapsheet;
@@ -287,6 +297,13 @@ export const usePHLFreeAgency = () => {
     offerModal.handleOpenModal();
   };
 
+  const handleFreeAgencyCategory = (cat: string) => {
+    setFreeAgencyCategory(cat);
+    if (tableViewType === Values && cat === Overview) {
+      setTableViewType(Attributes);
+    }
+  };
+
   return {
     teamCapsheet,
     adjustedTeamCapsheet,
@@ -294,7 +311,7 @@ export const usePHLFreeAgency = () => {
     isModalOpen,
     handleCloseModal,
     freeAgencyCategory,
-    setFreeAgencyCategory,
+    handleFreeAgencyCategory,
     tableViewType,
     setTableViewType,
     goToPreviousPage,

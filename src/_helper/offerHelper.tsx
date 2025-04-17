@@ -1,8 +1,23 @@
-import { MAX_SALARY, MIN_SALARY } from "../_constants/constants";
+import {
+  FreeAgentOffer,
+  League,
+  MAX_SALARY,
+  MIN_SALARY,
+  SimNBA,
+  SimNFL,
+  SimPHL,
+  WaiverOffer,
+} from "../_constants/constants";
+import { NBAContractOffer, NBAWaiverOffer } from "../models/basketballModels";
+import {
+  FreeAgencyOffer as NFLFreeAgencyOffer,
+  NFLWaiverOffer,
+} from "../models/footballModels";
 import {
   FreeAgencyOffer as PHLFreeAgencyOffer,
   ProCapsheet,
   Timestamp,
+  WaiverOffer as PHLWaiverOffer,
 } from "../models/hockeyModels";
 
 export const getPHLSalaryData = (offer: PHLFreeAgencyOffer) => {
@@ -194,4 +209,35 @@ export const GeneratePHLFAErrorList = (
   if (capError) errors.push(capError);
 
   return errors;
+};
+
+export const createOffer = (
+  league: League,
+  action: string,
+  existingOffer?:
+    | PHLFreeAgencyOffer
+    | PHLWaiverOffer
+    | NFLFreeAgencyOffer
+    | NFLWaiverOffer
+    | NBAContractOffer
+    | NBAWaiverOffer
+) => {
+  const props = existingOffer ? { ...existingOffer } : undefined;
+
+  if (league === SimNFL && action === FreeAgentOffer) {
+    return new NFLFreeAgencyOffer(props);
+  }
+  if (league === SimNFL && action === WaiverOffer) {
+    return new NFLWaiverOffer(props);
+  }
+  if (league === SimNBA && action === FreeAgentOffer) {
+    return new NBAContractOffer(props);
+  }
+  if (league === SimNBA && action === WaiverOffer) {
+    return new NBAWaiverOffer(props);
+  }
+  if (league === SimPHL && action === WaiverOffer) {
+    return new PHLWaiverOffer(props);
+  }
+  return new PHLFreeAgencyOffer(props);
 };

@@ -168,8 +168,8 @@ export const RecruitTable: FC<RecruitTableProps> = ({
   return (
     <Table
       columns={columns}
-      data={croots as HockeyCroot[]}
-      rowRenderer={rowRenderer(SimCHL)}
+      data={croots}
+      rowRenderer={rowRenderer(league)}
       team={team}
     />
   );

@@ -9,6 +9,7 @@ import {
   Overview,
   Preferences,
   SimPHL,
+  Values,
   Waivers,
 } from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
@@ -18,12 +19,13 @@ import { useMobile } from "../../../_hooks/useMobile";
 import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
-import { Timestamp } from "../../../models/hockeyModels";
+import { ProfessionalPlayer, Timestamp } from "../../../models/hockeyModels";
 import { ActionModal } from "../../Common/ActionModal";
 import { OfferModal } from "../../Common/OfferModal";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { FreeAgencySidebar } from "../Common/FreeAgencySidebar";
 import { FreeAgentTable } from "../Common/FreeAgencyTable";
+import { OfferTable } from "../Common/OffersTable";
 import { usePHLFreeAgency } from "./usePHLFreeAgency";
 
 export const PHLFreeAgency = () => {
@@ -44,7 +46,7 @@ export const PHLFreeAgency = () => {
     isModalOpen,
     handleCloseModal,
     freeAgencyCategory,
-    setFreeAgencyCategory,
+    handleFreeAgencyCategory,
     tableViewType,
     setTableViewType,
     goToPreviousPage,
@@ -132,7 +134,7 @@ export const PHLFreeAgency = () => {
                   variant={
                     freeAgencyCategory === Overview ? "success" : "secondary"
                   }
-                  onClick={() => setFreeAgencyCategory(Overview)}
+                  onClick={() => handleFreeAgencyCategory(Overview)}
                 >
                   Overview
                 </Button>
@@ -141,7 +143,7 @@ export const PHLFreeAgency = () => {
                   variant={
                     freeAgencyCategory === Contracts ? "success" : "secondary"
                   }
-                  onClick={() => setFreeAgencyCategory(Contracts)}
+                  onClick={() => handleFreeAgencyCategory(Contracts)}
                 >
                   Contracts
                 </Button>
@@ -199,6 +201,15 @@ export const PHLFreeAgency = () => {
                 >
                   Preferences
                 </Button>
+                {freeAgencyCategory === Contracts && (
+                  <Button
+                    type="button"
+                    variant={tableViewType === Values ? "success" : "secondary"}
+                    onClick={() => setTableViewType(Values)}
+                  >
+                    {Values}
+                  </Button>
+                )}
                 <Button
                   type="button"
                   variant="primary"
@@ -299,6 +310,33 @@ export const PHLFreeAgency = () => {
                 </ButtonGroup>
               </div>
             </Border>
+          )}
+          {freeAgencyCategory === Contracts && (
+            <>
+              <Border
+                direction="col"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
+                styles={{
+                  borderColor: teamColors.One,
+                }}
+              >
+                <OfferTable
+                  offers={teamFreeAgentOffers}
+                  playerMap={freeAgentMap}
+                  offersByPlayer={offerMapByPlayerType}
+                  colorOne={teamColors.One}
+                  colorTwo={teamColors.Two}
+                  colorThree={teamColors.Three}
+                  team={phlTeam!!}
+                  category={tableViewType}
+                  league={SimPHL}
+                  teamMap={phlTeamMap}
+                  openModal={handleFAModal}
+                  handleOfferModal={handleOfferModal}
+                  isMobile={isMobile}
+                />
+              </Border>
+            </>
           )}
         </div>
       </div>

@@ -37,6 +37,7 @@ export const AddFreeAgentType = "Add Free Agent";
 export const RemoveRecruitType = "Remove Recruit";
 export const ToggleScholarshipType = "Toggle Scholarship";
 export const ScoutAttributeType = "Scout Attribute";
+export const CancelOffer = "Cancel Offer";
 export const PracticeSquad = "Practice Squad";
 export const Affiliate = "Affiliate";
 export const Help1 = "Help1";
@@ -54,6 +55,7 @@ export type ModalAction =
   | typeof RemoveRecruitType
   | typeof ToggleScholarshipType
   | typeof ScoutAttributeType
+  | typeof CancelOffer
   | typeof PracticeSquad
   | typeof Affiliate
   | typeof Help1
@@ -108,6 +110,7 @@ export type RecruitingCategory =
   | typeof RecruitingTeamBoard
   | typeof RecruitingRankings;
 export const Attributes = "Attributes";
+export const Values = "Values";
 export const Preferences = "Preferences";
 export const Potentials = "Potentials";
 export const Contracts = "Contracts";
@@ -403,5 +406,5 @@ export const ScholarshipRevoked = "ScholarshipRevoked";
 export const ButtonGreen = "bg-[#189E5B]";
 export const TextGreen = "text-[#189E5B]";
 
-export const MIN_SALARY = 7.5;
+export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;

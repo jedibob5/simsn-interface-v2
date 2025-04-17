@@ -80,3 +80,40 @@ export const getPlaytimePreferenceLabel = (value: number) => {
       return "Distracted";
   }
 };
+
+export const getFAMarketPreference = (value: number): string => {
+  const valueMap: Record<number, string> = {
+    1: "Average",
+    2: "Close to Home",
+    3: "CountryMen",
+    4: "Large Market",
+    5: "No Large Market",
+    6: "Small Market",
+    7: "No Small Market",
+    8: "Loyal to Team",
+    9: "Avoiding Prev. Team",
+  };
+  return valueMap[value];
+};
+
+export const getFACompetitivePreference = (value: number): string => {
+  const valueMap: Record<number, string> = {
+    1: "Average",
+    2: "Seeking Mentorship",
+    3: "Veteran Mentor",
+    4: "First Line",
+    5: "Second Line",
+    6: "Competitive Team",
+  };
+  return valueMap[value];
+};
+
+export const getFAFinancialPreference = (value: number): string => {
+  const valueMap: Record<number, string> = {
+    1: "Average",
+    2: "Short Contract",
+    3: "Long Contract",
+    4: "Large AAV",
+  };
+  return valueMap[value];
+};

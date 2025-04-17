@@ -86,27 +86,34 @@ export const FreeAgencySidebar: FC<FreeAgencySideBarProps> = ({
           {scout.length > 0 && <Text variant="body-small">Scout: {scout}</Text>}
           <Text variant="body-small">State: {Team?.State}</Text>
         </div>
-        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
-          TEST
-        </div>
-        <CapsheetInfo
-          ts={ts as HCKTimestamp}
-          capsheet={Capsheet}
-          league={league}
-          backgroundColor={teamColors.Three}
-          borderColor={teamColors.Two}
-          textColorClass={teamColors.TextColorThree}
-        />
-        {AdjCapsheet.UpdatedAt !== Capsheet.UpdatedAt && (
+        <Text variant="small" classes="mb-1">
+          Capsheet
+        </Text>
+        <div className="mb-2">
           <CapsheetInfo
             ts={ts as HCKTimestamp}
-            capsheet={AdjCapsheet}
+            capsheet={Capsheet}
             league={league}
             backgroundColor={teamColors.Three}
             borderColor={teamColors.Two}
             textColorClass={teamColors.TextColorThree}
           />
-        )}
+        </div>
+        <div className="flex flex-col">
+          <Text variant="small" classes="mb-1">
+            Adj. Capsheet After Offers
+          </Text>
+          {AdjCapsheet.UpdatedAt !== Capsheet.UpdatedAt && (
+            <CapsheetInfo
+              ts={ts as HCKTimestamp}
+              capsheet={AdjCapsheet}
+              league={league}
+              backgroundColor={teamColors.Three}
+              borderColor={teamColors.Two}
+              textColorClass={teamColors.TextColorThree}
+            />
+          )}
+        </div>
       </Border>
     </div>
   );

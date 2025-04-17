@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   FreeAgentOffer,
   League,
@@ -14,6 +14,7 @@ import {
   WaiverOffer as PHLWaiverOffer,
   Timestamp as HCKTimestamp,
   ProCapsheet,
+  FreeAgencyOfferDTO,
 } from "../../models/hockeyModels";
 import {
   FreeAgencyOffer as NFLFreeAgencyOffer,
@@ -35,6 +36,7 @@ import { Border } from "../../_design/Borders";
 import { Input } from "../../_design/Inputs";
 import { Button, ButtonGroup } from "../../_design/Buttons";
 import {
+  createOffer,
   GeneratePHLFAErrorList,
   getPHLSalaryData,
 } from "../../_helper/offerHelper";
@@ -66,7 +68,9 @@ export const OfferModal: FC<OfferModalProps> = ({
   existingOffer,
   ts,
   capsheet,
+  confirmOffer,
 }) => {
+  console.log({ existingOffer });
   const [offer, setOffer] = useState<
     | PHLFreeAgencyOffer
     | PHLWaiverOffer
@@ -75,8 +79,20 @@ export const OfferModal: FC<OfferModalProps> = ({
     | NBAContractOffer
     | NBAWaiverOffer
   >(() => {
-    if (existingOffer) {
-      return existingOffer;
+    if (league === SimNFL && action === FreeAgentOffer) {
+      return new NFLFreeAgencyOffer({ existingOffer });
+    }
+    if (league === SimNFL && action === WaiverOffer) {
+      return new NFLWaiverOffer({ existingOffer });
+    }
+    if (league === SimNBA && action === FreeAgentOffer) {
+      return new NBAContractOffer({ existingOffer });
+    }
+    if (league === SimNBA && action === WaiverOffer) {
+      return new NBAWaiverOffer({ existingOffer });
+    }
+    if (league === SimPHL && action === WaiverOffer) {
+      return new PHLWaiverOffer({ existingOffer });
     }
     if (league === SimNFL && action === FreeAgentOffer) {
       return new NFLFreeAgencyOffer();
@@ -95,6 +111,10 @@ export const OfferModal: FC<OfferModalProps> = ({
     }
     return new PHLFreeAgencyOffer();
   });
+
+  useEffect(() => {
+    setOffer(createOffer(league, action, existingOffer));
+  }, [existingOffer, league, action]);
 
   const playerLabel = `${player.Age} year, ${player.Position} ${player.FirstName} ${player.LastName}`;
   let title = "";
@@ -153,12 +173,12 @@ export const OfferModal: FC<OfferModalProps> = ({
         Y5BaseSalary,
       } = offer;
       if (!ContractLength || ContractLength === 0) return 0;
-      const total =
-        Y1BaseSalary +
-        Y2BaseSalary +
-        Y3BaseSalary +
-        Y4BaseSalary +
-        Y5BaseSalary;
+      let y1 = Y1BaseSalary ? Y1BaseSalary : 0;
+      let y2 = Y2BaseSalary ? Y2BaseSalary : 0;
+      let y3 = Y3BaseSalary ? Y3BaseSalary : 0;
+      let y4 = Y4BaseSalary ? Y4BaseSalary : 0;
+      let y5 = Y5BaseSalary ? Y5BaseSalary : 0;
+      const total = y1 + y2 + y3 + y4 + y5;
       if (isNaN(total)) return 0;
       return total / ContractLength;
     }
@@ -176,8 +196,6 @@ export const OfferModal: FC<OfferModalProps> = ({
     }
     return list;
   }, [offer, capsheet, ts]);
-
-  console.log({ errors });
 
   const ChangeInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +217,7 @@ export const OfferModal: FC<OfferModalProps> = ({
     [league]
   );
 
-  const Confirm = () => {
+  const Confirm = async () => {
     if (league === SimPHL) {
       const { totalComp, ContractLength } = getPHLSalaryData(
         offer as PHLFreeAgencyOffer
@@ -208,7 +226,15 @@ export const OfferModal: FC<OfferModalProps> = ({
         onClose();
         return;
       }
+      const dto = new FreeAgencyOfferDTO({
+        ...offer,
+        PlayerID: player.ID,
+        TeamID: capsheet.ID,
+      });
+      await confirmOffer(dto);
     }
+
+    onClose();
   };
   return (
     <>

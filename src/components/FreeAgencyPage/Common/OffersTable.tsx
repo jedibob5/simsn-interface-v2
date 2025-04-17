@@ -1,14 +1,7 @@
 import { FC, ReactNode, useMemo } from "react";
 import {
-  FreeAgencyOffer as PHLFreeAgencyOffer,
-  ProfessionalPlayer as PHLPlayer,
-  WaiverOffer as PHLWaiverOffer,
-} from "../../../models/hockeyModels";
-import { NFLPlayer } from "../../../models/footballModels";
-import { NBAPlayer } from "../../../models/basketballModels";
-import {
-  AddFreeAgentType,
   Attributes,
+  CancelOffer,
   FreeAgentOffer,
   InfoType,
   League,
@@ -16,13 +9,24 @@ import {
   OfferAction,
   Preferences,
   SimPHL,
+  Values,
 } from "../../../_constants/constants";
+import { NBAContractOffer, NBAPlayer } from "../../../models/basketballModels";
+import {
+  FreeAgencyOffer as NFLFreeAgencyOffer,
+  NFLPlayer,
+} from "../../../models/footballModels";
+import {
+  FreeAgencyOffer as PHLFreeAgencyOffer,
+  ProfessionalPlayer as PHLPlayer,
+  WaiverOffer as PHLWaiverOffer,
+} from "../../../models/hockeyModels";
+import { getPHLAttributes, getPHLContracts } from "../../Team/TeamPageUtils";
+import { getLogo } from "../../../_utility/getLogo";
 import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
-import { getPHLAttributes } from "../../Team/TeamPageUtils";
-import { Button } from "../../../_design/Buttons";
-import { ActionLock, Plus } from "../../../_design/Icons";
-import { getLogo } from "../../../_utility/getLogo";
+import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { CrossCircle, CurrencyDollar } from "../../../_design/Icons";
 import { Logo } from "../../../_design/Logo";
 import {
   getFACompetitivePreference,
@@ -30,14 +34,15 @@ import {
   getFAMarketPreference,
 } from "../../../_helper/utilHelper";
 
-interface FreeAgentTableProps {
-  players: PHLPlayer[] | NFLPlayer[] | NBAPlayer[];
+interface OfferTableProps {
+  offers: PHLFreeAgencyOffer[] | NFLFreeAgencyOffer[] | NBAContractOffer[];
+  playerMap:
+    | Record<number, PHLPlayer>
+    | Record<number, NFLPlayer>
+    | Record<number, NBAPlayer>;
   offersByPlayer:
     | Record<number, PHLWaiverOffer[]>
     | Record<number, PHLFreeAgencyOffer[]>;
-  teamOfferMap:
-    | Record<number, PHLWaiverOffer>
-    | Record<number, PHLFreeAgencyOffer>;
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
@@ -56,12 +61,12 @@ interface FreeAgentTableProps {
   isMobile?: boolean;
 }
 
-export const FreeAgentTable: FC<FreeAgentTableProps> = ({
-  players,
+export const OfferTable: FC<OfferTableProps> = ({
+  offers,
   colorOne,
   teamMap,
-  teamOfferMap,
   offersByPlayer,
+  playerMap,
   team,
   category,
   openModal,
@@ -108,6 +113,20 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       ]);
     }
 
+    if (!isMobile && category === Values && league === SimPHL) {
+      columns = columns.concat([
+        { header: "Y1", accessor: "Y1BaseSalary" },
+        { header: "Y2", accessor: "Y2BaseSalary" },
+        { header: "Y3", accessor: "Y3BaseSalary" },
+        { header: "Y4", accessor: "Y4BaseSalary" },
+        { header: "Y5", accessor: "Y5BaseSalary" },
+        { header: "Yrs", accessor: "ContractLength" },
+        { header: "NTC", accessor: "NoTradeClause" },
+        { header: "NMC", accessor: "NoMovementClause" },
+        { header: "CV", accessor: "ContractValue" },
+      ]);
+    }
+
     columns.push({ header: "Min. Value", accessor: "minimum value" });
     columns.push({ header: "Interest", accessor: "LeadingTeams" });
     columns.push({ header: "Actions", accessor: "actions" });
@@ -115,25 +134,32 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
   }, [isMobile, category]);
 
   const NFLRowRenderer = (
-    item: NFLPlayer,
+    item: NFLFreeAgencyOffer,
+    index: number,
+    backgroundColor: string
+  ) => <></>;
+
+  const NBARowRenderer = (
+    item: NBAContractOffer,
     index: number,
     backgroundColor: string
   ) => <></>;
 
   const PHLRowRenderer = (
-    item: PHLPlayer,
+    item: PHLFreeAgencyOffer,
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getPHLAttributes(item, isMobile, category!, null);
-    const offers = offersByPlayer[item.ID];
+    const player = playerMap[item.PlayerID] as PHLPlayer;
+    const attributes = getPHLAttributes(player, isMobile, category!, null);
+    const contract = getPHLContracts(item);
+    const offers = offersByPlayer[item.PlayerID];
     let offerIds = [];
     let logos: string[] = [];
     if (offers) {
       offerIds = offers && offers.map((x) => x.TeamID);
       logos = offers && offerIds.map((id) => getLogo(SimPHL, id, false));
     }
-    const actionVariant = !teamOfferMap[item.ID] ? "success" : "secondary";
 
     return (
       <div
@@ -145,13 +171,13 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
           <TableCell
             key={idx}
             classes={`min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
-        text-wrap sm:max-w-full ${
-          category === Attributes && idx === 6
-            ? "text-left"
-            : idx !== 0
-            ? "text-center"
-            : ""
-        }`}
+          text-wrap sm:max-w-full ${
+            category === Attributes && idx === 6
+              ? "text-left"
+              : idx !== 0
+              ? "text-center"
+              : ""
+          }`}
           >
             {attr.label === "Name" ? (
               <span
@@ -162,7 +188,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
                 onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "";
                 }}
-                onClick={() => openModal(InfoType, item)}
+                onClick={() => openModal(InfoType, player)}
               >
                 <Text variant="small">{attr.value}</Text>
               </span>
@@ -175,36 +201,54 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
           <>
             <TableCell>
               <Text variant="small">
-                {getFAMarketPreference(item.MarketPreference)}
+                {getFAMarketPreference(player.MarketPreference)}
               </Text>
             </TableCell>
             <TableCell>
               <Text variant="small">
-                {getFACompetitivePreference(item.CompetitivePreference)}
+                {getFACompetitivePreference(player.CompetitivePreference)}
               </Text>
             </TableCell>
             <TableCell>
               <Text variant="small">
-                {getFAFinancialPreference(item.FinancialPreference)}
+                {getFAFinancialPreference(player.FinancialPreference)}
               </Text>
             </TableCell>
           </>
         )}
-        <TableCell>{item.MinimumValue}</TableCell>
+        {category === Values && (
+          <>
+            {contract.map((x) => (
+              <TableCell>{x.value}</TableCell>
+            ))}
+            <TableCell>{item.ContractValue}</TableCell>
+          </>
+        )}
+        <TableCell>{player.MinimumValue}</TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
           {!offers || (offers.length === 0 && "None")}
           {logos.length > 0 &&
             logos.map((url) => <Logo url={url} variant="tiny" />)}
         </TableCell>
-        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
-          <Button
-            variant={actionVariant}
-            size="xs"
-            onClick={() => handleOfferModal(FreeAgentOffer, item as PHLPlayer)}
-            disabled={!!teamOfferMap[item.ID]}
-          >
-            {teamOfferMap[item.ID] ? <ActionLock /> : <Plus />}
-          </Button>
+        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[7rem]">
+          <ButtonGroup direction="row" classes="">
+            <Button
+              variant="success"
+              size="xs"
+              onClick={() =>
+                handleOfferModal(FreeAgentOffer, player as PHLPlayer)
+              }
+            >
+              <CurrencyDollar />
+            </Button>
+            <Button
+              variant="danger"
+              size="xs"
+              onClick={() => openModal(CancelOffer, player as PHLPlayer)}
+            >
+              <CrossCircle />
+            </Button>
+          </ButtonGroup>
         </TableCell>
       </div>
     );
@@ -218,14 +262,15 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
     }
     return NFLRowRenderer;
   };
-
   return (
-    <Table
-      columns={rosterColumns}
-      data={players}
-      rowRenderer={rowRenderer(league)}
-      backgroundColor={backgroundColor}
-      team={team}
-    />
+    <>
+      <Table
+        columns={rosterColumns}
+        data={offers}
+        rowRenderer={rowRenderer(league)}
+        backgroundColor={backgroundColor}
+        team={team}
+      />
+    </>
   );
 };
