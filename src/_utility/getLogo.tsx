@@ -1906,6 +1906,18 @@ export const getCHLLogo = (id: number, isRetro: boolean) => {
       return logos.Tennessee_State;
     case 66:
       return logos.Binghamton;
+    case 67:
+      return HCKLogos.SFU;
+    case 68:
+      return HCKLogos.UAH;
+    case 69:
+      return logos.UNLV;
+    case 70:
+      return HCKLogos.StOlafs;
+    case 71:
+      return logos.West_Virginia;
+    case 72:
+      return HCKLogos.Minot;
 
     default:
       return logoObj.Unknown;
