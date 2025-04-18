@@ -25,6 +25,8 @@ const mobileFriendlySelectStyles = {
     boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
     borderRadius: "8px",
     transition: "all 0.2s ease",
+    width: "100%",
+    maxWidth: "300px",
   }),
   valueContainer: (base: CSSObjectWithLabel) => ({
     ...base,
@@ -38,7 +40,7 @@ const mobileFriendlySelectStyles = {
   placeholder: (base: CSSObjectWithLabel) => ({
     ...base,
     fontSize: "0.75rem",
-    color: "#A0AEC0",
+    color: "#fff",
   }),
   option: (base: any, state: { isFocused: any }) => ({
     ...base,

@@ -23,7 +23,6 @@ import {
   ProfessionalPlayer,
   ProCapsheet,
   ProfessionalGame,
-  FreeAgencyResponse,
   ProTeamRequest,
   Timestamp,
   CollegeLineup,
@@ -35,6 +34,10 @@ import {
   ProContract,
   ExtensionOffer,
   UpdateRecruitingBoardDTO,
+  FreeAgencyOffer,
+  WaiverOffer,
+  FreeAgencyOfferDTO,
+  WaiverOfferDTO,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -50,6 +53,7 @@ import { PlayerService } from "../_services/playerService";
 import { GameplanService } from "../_services/gameplanService";
 import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
+import { FreeAgencyService } from "../_services/freeAgencyService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -87,7 +91,9 @@ interface SimHCKContextProps {
   currentProStandings: ProfessionalStandings[];
   proStandingsMap: Record<number, ProfessionalStandings>;
   proRosterMap: Record<number, ProfessionalPlayer[]>;
-  freeAgency: FreeAgencyResponse | null;
+  affiliatePlayers: ProfessionalPlayer[];
+  freeAgentOffers: FreeAgencyOffer[];
+  waiverOffers: WaiverOffer[];
   capsheetMap: Record<number, ProCapsheet>;
   proInjuryReport: ProfessionalPlayer[];
   proNews: NewsLog[];
@@ -111,6 +117,10 @@ interface SimHCKContextProps {
   toggleScholarship: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   scoutCrootAttribute: (dto: any) => Promise<void>;
+  SaveFreeAgencyOffer: (dto: any) => Promise<void>;
+  CancelFreeAgencyOffer: (dto: any) => Promise<void>;
+  SaveWaiverWireOffer: (dto: any) => Promise<void>;
+  CancelWaiverWireOffer: (dto: any) => Promise<void>;
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   playerFaces: {
@@ -156,7 +166,9 @@ const defaultContext: SimHCKContextProps = {
   currentProStandings: [],
   proStandingsMap: {},
   proRosterMap: {},
-  freeAgency: null,
+  affiliatePlayers: [],
+  freeAgentOffers: [],
+  waiverOffers: [],
   capsheetMap: {},
   proInjuryReport: [],
   proNews: [],
@@ -182,6 +194,10 @@ const defaultContext: SimHCKContextProps = {
   scoutCrootAttribute: async () => {},
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
+  SaveFreeAgencyOffer: async () => {},
+  CancelFreeAgencyOffer: async () => {},
+  SaveWaiverWireOffer: async () => {},
+  CancelWaiverWireOffer: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -271,13 +287,17 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [proRosterMap, setProRosterMap] = useState<
     Record<number, ProfessionalPlayer[]>
   >({});
-  const [freeAgency, setFreeAgency] = useState<FreeAgencyResponse | null>(null);
+  const [freeAgentOffers, setFreeAgentOffers] = useState<FreeAgencyOffer[]>([]);
+  const [waiverOffers, setWaiverOffers] = useState<WaiverOffer[]>([]);
   const [capsheetMap, setCapsheetMap] = useState<Record<number, ProCapsheet>>(
     {}
   );
   const [proInjuryReport, setProInjuryReport] = useState<ProfessionalPlayer[]>(
     []
   );
+  const [affiliatePlayers, setAffiliatePlayers] = useState<
+    ProfessionalPlayer[]
+  >([]);
   const [proNews, setProNews] = useState<NewsLog[]>([]);
   const [allProGames, setAllProGames] = useState<ProfessionalGame[]>([]);
   const [currentProSeasonGames, setCurrentProSeasonGames] = useState<
@@ -332,7 +352,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setTeamProfileMap(res.TeamProfileMap);
     setCHLRosterMap(res.CollegeRosterMap);
     setProRosterMap(res.ProRosterMap);
-    setFreeAgency(res.FreeAgency);
+    setFreeAgentOffers(res.FreeAgentOffers);
+    setWaiverOffers(res.WaiverWireOffers);
+    setAffiliatePlayers(res.AffiliatePlayers);
     setPortalPlayers(res.PortalPlayers);
     setRecruits(res.Recruits);
     setRecruitProfiles(res.RecruitProfiles);
@@ -727,10 +749,80 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     [chlTeamMap]
   );
 
+  const SaveFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
+    const res = await FreeAgencyService.HCKSaveFreeAgencyOffer(dto);
+    if (res) {
+      enqueueSnackbar("Free Agency Offer Created!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setFreeAgentOffers((prevOffers) => {
+        const offers = [...prevOffers];
+        const index = offers.findIndex((offer) => offer.ID === res.ID);
+        if (index > -1) {
+          offers[index] = new FreeAgencyOffer({ ...res });
+        } else {
+          offers.push(res);
+        }
+        return offers;
+      });
+    }
+  }, []);
+
+  const CancelFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
+    const res = await FreeAgencyService.HCKCancelFreeAgencyOffer(dto);
+    if (res) {
+      enqueueSnackbar("Free Agency Offer Cancelled!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      console.log({ res, dto });
+      setFreeAgentOffers((prevOffers) => {
+        const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
+        return offers;
+      });
+    }
+  }, []);
+
+  const SaveWaiverWireOffer = useCallback(async (dto: WaiverOfferDTO) => {
+    const res = await FreeAgencyService.HCKSaveWaiverWireOffer(dto);
+    if (res) {
+      enqueueSnackbar("Waiver Offer Created!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setWaiverOffers((prevOffers) => {
+        const offers = [...prevOffers];
+        const index = offers.findIndex((offer) => offer.ID === res.ID);
+        if (index > -1) {
+          offers[index] = new WaiverOffer({ ...res });
+        } else {
+          offers.push(res);
+        }
+        return offers;
+      });
+    }
+  }, []);
+
+  const CancelWaiverWireOffer = useCallback(async (dto: WaiverOfferDTO) => {
+    const res = await FreeAgencyService.HCKCancelWaiverWireOffer(dto);
+    if (res) {
+      enqueueSnackbar("Waiver Offer Cancelled!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setWaiverOffers((prevOffers) => {
+        const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
+        return offers;
+      });
+    }
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
         hck_Timestamp,
+        affiliatePlayers,
         isLoading,
         chlTeam,
         phlTeam,
@@ -764,7 +856,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         currentProStandings,
         proStandingsMap,
         proRosterMap,
-        freeAgency,
+        freeAgentOffers,
+        waiverOffers,
         capsheetMap,
         proInjuryReport,
         proNews,
@@ -793,6 +886,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         proContractMap,
         proExtensionMap,
         SaveAIRecruitingSettings,
+        SaveFreeAgencyOffer,
+        CancelFreeAgencyOffer,
+        SaveWaiverWireOffer,
+        CancelWaiverWireOffer,
       }}
     >
       {children}

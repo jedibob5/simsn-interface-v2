@@ -33,9 +33,11 @@ export const Redshirt = "Redshirt";
 export const InfoType = "Info";
 export const RecruitInfoType = "Recruit Info";
 export const AddRecruitType = "Add Recruit";
+export const AddFreeAgentType = "Add Free Agent";
 export const RemoveRecruitType = "Remove Recruit";
 export const ToggleScholarshipType = "Toggle Scholarship";
 export const ScoutAttributeType = "Scout Attribute";
+export const CancelOffer = "Cancel Offer";
 export const PracticeSquad = "Practice Squad";
 export const Affiliate = "Affiliate";
 export const Help1 = "Help1";
@@ -49,15 +51,24 @@ export type ModalAction =
   | typeof InfoType
   | typeof RecruitInfoType
   | typeof AddRecruitType
+  | typeof AddFreeAgentType
   | typeof RemoveRecruitType
   | typeof ToggleScholarshipType
   | typeof ScoutAttributeType
+  | typeof CancelOffer
   | typeof PracticeSquad
   | typeof Affiliate
   | typeof Help1
   | typeof Help2
   | typeof Help3
   | typeof Help4;
+export const FreeAgentOffer = "FreeAgentOffer";
+export const WaiverOffer = "WaiverOffer";
+export const Extension = "Extension";
+export type OfferAction =
+  | typeof FreeAgentOffer
+  | typeof WaiverOffer
+  | typeof Extension;
 
 export const LineupF1 = "Forwards 1";
 export const LineupF2 = "Forwards 2";
@@ -99,10 +110,15 @@ export type RecruitingCategory =
   | typeof RecruitingTeamBoard
   | typeof RecruitingRankings;
 export const Attributes = "Attributes";
+export const Values = "Values";
 export const Preferences = "Preferences";
 export const Potentials = "Potentials";
 export const Contracts = "Contracts";
 export const Overview = "Overview";
+export const FreeAgent = "FreeAgent";
+export const Waivers = "Waivers";
+export const GLeague = "GLeague";
+export const International = "International";
 export const USA = "USA";
 export const Canada = "Canada";
 export const Sweden = "Sweden";
@@ -125,6 +141,7 @@ export const HockeyArchetypeOptions = [
   { label: "Sniper", value: "Sniper" },
 ];
 export const USARegionOptions = [
+  { label: "All", value: "All" },
   { label: "Alabama", value: "AL" },
   { label: "Alaska", value: "AK" },
   { label: "Arizona", value: "AZ" },
@@ -178,6 +195,7 @@ export const USARegionOptions = [
 ];
 
 export const CanadaRegionOptions = [
+  { label: "All", value: "All" },
   { label: "Alberta", value: "AB" },
   { label: "British Columbia", value: "BC" },
   { label: "Manitoba", value: "MB" },
@@ -194,6 +212,7 @@ export const CanadaRegionOptions = [
 ];
 
 export const RussiaRegionOptions = [
+  { label: "All", value: "All" },
   { label: "Karelia", value: "Karelia" },
   { label: "Moscow", value: "Moscow" },
   { label: "Saint Petersburg", value: "Saint Petersburg" },
@@ -269,6 +288,7 @@ export const RussiaRegionOptions = [
 ];
 
 export const SwedenRegionOptions = [
+  { label: "All", value: "All" },
   { label: "Uppland", value: "Uppland" },
   { label: "Skane", value: "Skane" },
   { label: "Vastergotland", value: "Vastergotland" },
@@ -298,11 +318,11 @@ export const SwedenRegionOptions = [
 ];
 
 export const CountryOptions = [
+  { label: "All", value: "All" },
   { label: "Canada", value: "Canada" },
   { label: "Russia", value: "Russia" },
   { label: "Sweden", value: "Sweden" },
   { label: "USA", value: "USA" },
-  { label: "None", value: "" },
   { label: "Australia", value: "Australia" },
   { label: "Belarus", value: "Belarus" },
   { label: "Brazil", value: "Brazil" },
@@ -383,5 +403,9 @@ export type ButtonColor =
 export const ScholarshipOffered = "ScholarshipOffered";
 export const ScholarshipRevoked = "ScholarshipRevoked";
 
-export const ButtonGreen = "bg-[#189E5B]"
-export const TextGreen = "text-[#189E5B]"
+export const ButtonGreen = "bg-[#189E5B]";
+export const TextGreen = "text-[#189E5B]";
+export const navyBlueColor = "#1f2937";
+
+export const MIN_SALARY = 0.75;
+export const MAX_SALARY = 14;

@@ -9,6 +9,8 @@ export interface ModalProps {
   title: string;
   children: ReactNode;
   actions?: ReactNode;
+  maxWidth?: string;
+  classes?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -17,6 +19,8 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
   actions,
+  classes = "",
+  maxWidth = "max-w-[36rem]",
 }) => {
   // ✅ Strongly Typed Ref
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -49,7 +53,7 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-[36rem] p-6"
+        className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full ${maxWidth} p-6 ${classes}`}
       >
         {/* ✅ Modal Header */}
         <div className="flex justify-between items-center border-b pb-3">
@@ -70,7 +74,9 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* ✅ Modal Content */}
-        <div className="mt-4 text-gray-700 dark:text-gray-300">{children}</div>
+        <div className="mt-4 text-gray-700 dark:text-gray-300 h-full">
+          {children}
+        </div>
 
         {/* ✅ Modal Actions */}
         {actions && (

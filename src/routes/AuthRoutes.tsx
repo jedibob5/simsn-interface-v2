@@ -18,6 +18,7 @@ import {
 import { GameplanPage } from "../components/Gameplan/GameplanPage";
 import { RecruitingPage } from "../components/Recruiting/RecruitingPage";
 import { SchedulePage } from "../components/Schedule/SchedulePage";
+import { FreeAgencyPage } from "../components/FreeAgencyPage/FreeAgencyPage";
 
 // Will Add More Pages here for authorized users (Logged in)
 export const AuthRoutes = [
@@ -130,23 +131,23 @@ export const AuthRoutes = [
     }
   />,
   <Route
-  key="CHL Recruiting"
-  path={routes.CHL_RECRUITING}
-  element={
-    <AuthGuard>
-      <RecruitingPage league={SimCHL} />
-    </AuthGuard>
-  }
-/>,
+    key="CHL Recruiting"
+    path={routes.CHL_RECRUITING}
+    element={
+      <AuthGuard>
+        <RecruitingPage league={SimCHL} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="CBB Recruiting"
-  path={routes.CBB_RECRUITING}
-  element={
-    <AuthGuard>
-      <RecruitingPage league={SimCBB} />
-    </AuthGuard>
-  }
-/>,
+    key="CBB Recruiting"
+    path={routes.CBB_RECRUITING}
+    element={
+      <AuthGuard>
+        <RecruitingPage league={SimCBB} />
+      </AuthGuard>
+    }
+  />,
   <Route
   key="CFB Recruiting"
   path={routes.CFB_RECRUITING}
@@ -210,5 +211,41 @@ export const AuthRoutes = [
     </AuthGuard>
   }
 />,
+<Route
+    key="CFB Recruiting"
+    path={routes.CFB_RECRUITING}
+    element={
+      <AuthGuard>
+        <RecruitingPage league={SimCFB} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="PHL Free Agency"
+    path={routes.PHL_FREE_AGENCY}
+    element={
+      <AuthGuard>
+        <FreeAgencyPage league={SimPHL} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="NBA Free Agency"
+    path={routes.NBA_FREE_AGENCY}
+    element={
+      <AuthGuard>
+        <FreeAgencyPage league={SimNBA} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="NFL Free Agency"
+    path={routes.NFL_FREE_AGENCY}
+    element={
+      <AuthGuard>
+        <FreeAgencyPage league={SimNFL} />
+      </AuthGuard>
+    }
+  />,
 ];
 

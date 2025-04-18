@@ -11,6 +11,7 @@ import { Button } from "../../_design/Buttons";
 import { League } from "../../_constants/constants";
 import PlayerPicture from "../../_utility/usePlayerFaces";
 import { getLandingBoxStats } from "./TeamLandingPageHelper";
+import { SimCFB, SimNFL } from "../../_constants/constants";
 
 interface GamesBarProps {
   games: any[];
@@ -253,7 +254,6 @@ export const TeamMatchUp = ({
       borderColor={borderColor}
       textColorClass={textColorClass}
       darkerBackgroundColor={darkerBackgroundColor}
-
     >
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
@@ -263,38 +263,50 @@ export const TeamMatchUp = ({
         </div>
       ) : matchUp.length > 0 ? (
         <>
-          <div className="flex justify-center">
-            <div className="flex-col pb-2">
-              <Logo variant="large" containerClass="max-w-24 w-24 p-4" url={homeLogo} />
+          <div className="grid grid-cols-7 items-center text-center pb-4">
+            <div className="flex justify-end col-span-3">
+              <div className="flex flex-col items-center">
+                <Logo variant="large" 
+                      containerClass="max-w-24 w-24" 
+                      url={homeLogo} />
+                <Text
+                  variant="small"
+                  classes={`${textColorClass} font-semibold`}
+                  className="pr-1"
+                >
+                  {homeLabel}
+                </Text>
+                <Text variant="xs" 
+                      classes="opacity-70">
+                  {`HC ${coaches[0]}`}
+                </Text>
+              </div>
+            </div>
+            <div className="flex flex-col col-span-1 items-center">
               <Text
                 variant="small"
                 classes={`${textColorClass} font-semibold`}
-                className="pr-1"
               >
-                {homeLabel}
-              </Text>
-              <Text variant="xs" classes="opacity-70">
-                {`HC ${coaches[0]}`}
+                {gameLocation}
               </Text>
             </div>
-            <Text
-              variant="small"
-              classes={`${textColorClass} self-center font-semibold`}
-            >
-              {gameLocation}
-            </Text>
-            <div className="flex-col">
-              <Logo variant="large" containerClass="max-w-24 p-4" url={awayLogo} />
-              <Text
-                variant="small"
-                classes={`${textColorClass} font-semibold`}
-                className="pl-1"
-              >
-                {awayLabel}
-              </Text>
-              <Text variant="xs" classes="opacity-70">
-                {`HC ${coaches[1]}`}
-              </Text>
+            <div className="flex justify-start col-span-3">
+              <div className="flex flex-col items-center">
+                <Logo variant="large" 
+                      containerClass="max-w-24 w-24" 
+                      url={awayLogo} />
+                <Text
+                  variant="small"
+                  classes={`${textColorClass} font-semibold`}
+                  className="pl-1"
+                >
+                  {awayLabel}
+                </Text>
+                <Text variant="xs" 
+                      classes="opacity-70">
+                  {`HC ${coaches[1]}`}
+                </Text>
+              </div>
             </div>
           </div>
           <div className="flex-col items-center">
@@ -304,15 +316,17 @@ export const TeamMatchUp = ({
                 classes={`${resultColor} font-semibold`}
                 style={{
                   textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                               -0.5px -0.5px 0 ${borderColor}, 
-                               0.5px -0.5px 0 ${borderColor}, 
-                               -0.5px 0.5px 0 ${borderColor}`,
+                              -0.5px -0.5px 0 ${borderColor}, 
+                              0.5px -0.5px 0 ${borderColor}, 
+                              -0.5px 0.5px 0 ${borderColor}`,
                 }}
               >
                 {`${gameScore}`}
               </Text>
             )}
-            <Text variant="small">{`Week ${week}`}</Text>
+            <Text variant="small">
+              {`Week ${week}`}
+            </Text>
             <Text variant="small">
               {matchUp[0].IsConference
                 ? matchUp[0].IsDivisional
@@ -356,7 +370,7 @@ export const TeamOverview = ({ team, league, ts,
                            currentUser, backgroundColor, headerColor, 
                            borderColor, textColorClass, darkerBackgroundColor, isLoadingTwo }: 
                            TeamOverviewProps) => {
-  
+  console.log(league)
   return (
     <SectionCards
                 team={team}
@@ -376,59 +390,78 @@ export const TeamOverview = ({ team, league, ts,
       </div>
     ) : (
       <div className="flex-col p-1 md:p-3">
-        <div className="flex-col">
+        <div className="flex flex-col sm:flex-row justify-center sm:items-end sm:gap-4">
+          <div className="flex flex-col py-1 pb-4 sm:pb-1 items-center">
+            <div className={`flex items-center justify-center 
+                              size-12 md:size-16 rounded-full border-2`} 
+                              style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
+              <Text variant="body" 
+                    classes={`${textColorClass} font-semibold`}>
+                      {team.OverallGrade ? team.OverallGrade : "-"}
+              </Text>
+            </div>
+            <Text
+              variant="alternate"
+              classes={`${textColorClass} font-semibold 
+                        whitespace-nowrap`}
+            >
+              OVR
+            </Text>
+          </div>
           <div className="flex md:flex-row flex-col py-1 gap-4 justify-center">
             <div className="flex flex-col py-1 items-center">
-              <div className={`flex items-center justify-center 
-                                size-12 md:size-16 rounded-full border-2`} 
-                                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-                <Text variant="body" 
-                      classes={`${textColorClass} font-semibold`}>
-                        {team.OverallGrade ? team.OverallGrade : "N/A"}
-                </Text>
-              </div>
-              <Text
-                variant="alternate"
-                classes={`${textColorClass} font-semibold 
-                          whitespace-nowrap`}
-              >
-                Overall
-              </Text>
-            </div>
-            <div className="flex flex-col py-1 items-center">
-              <div className={`flex items-center justify-center size-12 md:size-16
+              <div className={`flex items-center justify-center size-8 md:size-12
                                rounded-full border-2`} 
                                 style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-                <Text variant="body" 
+                <Text variant="small" 
                       classes={`${textColorClass} font-semibold`}>
-                        {team.OffenseGrade ? team.OffenseGrade : "N/A"}
+                        {team.OffenseGrade ? team.OffenseGrade : "-"}
                 </Text>
               </div>
               <Text
-                variant="alternate"
+                variant="small"
                 classes={`${textColorClass} font-semibold whitespace-nowrap`}
               >
-                Offense
+                OFF
               </Text>
             </div>
             <div className="flex flex-col py-1 items-center">
               <div className={`flex items-center justify-center 
-                                size-12 md:size-16 rounded-full border-2`} 
+                                size-8 md:size-12 rounded-full border-2`} 
                                 style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-                <Text variant="body" 
+                <Text variant="small" 
                       classes=
                       {`${textColorClass} font-semibold`}>
-                        {team.DefenseGrade ? team.DefenseGrade : "N/A"}
+                        {team.DefenseGrade ? team.DefenseGrade : "-"}
                 </Text>
               </div>
               <Text
-                variant="alternate"
+                variant="small"
                 classes={`${textColorClass} 
                           font-semibold whitespace-nowrap`}
               >
-                Defense
+                DEF
               </Text>
             </div>
+          {team.SpecialTeamsGrade && (
+            <div className="flex flex-col py-1 items-center">
+              <div className={`flex items-center justify-center 
+                                size-8 md:size-12 rounded-full border-2`} 
+                                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
+                <Text variant="small" 
+                      classes={`${textColorClass} font-semibold`}>
+                        {team.SpecialTeamsGrade ? team.SpecialTeamsGrade : "-"}
+                </Text>
+              </div>
+              <Text
+                variant="small"
+                classes={`${textColorClass} font-semibold 
+                          whitespace-nowrap`}
+              >
+                STU
+              </Text>
+            </div>
+          )}
           </div>
         </div>
       </div>
@@ -531,25 +564,29 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
         <div className="flex-col items-center justify-center py-3 space-y-2 md:space-y-4">
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-            <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[0]}</Text>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[5rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxOne.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxOne.id} league={league} />
                 )}
               </div>
               <div className="flex-col w-3/4">
+                <Text variant="body" classes={`${textColorClass} font-semibold`}>
+                  {titles[0]}
+                </Text>
+                <div className="flex w-3/4 py-0.5 border-b mx-auto"
+                     style={{borderColor }} />
                 <div className="flex space-x-1 justify-center">
+                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
+                    {`${boxOne.position}`}
+                  </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                     {`${boxOne.firstName}`}
                   </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                   {`${boxOne.lastName}`}
-                  </Text>
-                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
-                    {`${boxOne.position}`}
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
@@ -563,25 +600,29 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
           </div>
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-            <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[1]}</Text>
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[5rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxTwo.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxTwo.id} league={league} />
                 )}
               </div>
               <div className="flex-col w-3/4">
+                <Text variant="body" classes={`${textColorClass} font-semibold`}>
+                  {titles[1]}
+                </Text>
+                <div className="flex w-3/4 py-0.5 border-b mx-auto"
+                     style={{borderColor }} />
                 <div className="flex space-x-1 justify-center">
+                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
+                    {`${boxTwo.position}`}
+                  </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                     {`${boxTwo.firstName}`}
                   </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                     {`${boxTwo.lastName}`}
-                  </Text>
-                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
-                    {`${boxTwo.position}`}
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
@@ -595,25 +636,30 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
           </div>
           <div className={`flex-col items-center p-2 rounded-lg border-2`}
                style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}>
-            <Text variant="body" classes={`${textColorClass} font-semibold`}>{titles[2]}</Text>
+            
             <div className="flex">
               <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[5rem] rounded-lg border-2`} 
+                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`} 
                                     style={{ borderColor: borderColor, backgroundColor: "white" }}>
                 {boxThree.id !== undefined && (
                 <PlayerPicture team={team} playerID={boxThree.id} league={league} />
                 )}
               </div>
               <div className="flex-col w-3/4">
+                <Text variant="body" classes={`${textColorClass} font-semibold`}>
+                  {titles[2]}
+                </Text>
+                <div className="flex w-3/4 py-0.5 border-b mx-auto"
+                     style={{borderColor }} />
                 <div className="flex space-x-1 justify-center">
+                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
+                    {`${boxThree.position}`}
+                  </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                     {`${boxThree.firstName}`}
                   </Text>
                   <Text variant="small" classes={`${textColorClass} font-semibold text-center`}>
                     {`${boxThree.lastName}`}
-                  </Text>
-                  <Text variant="small" classes={`${textColorClass} opacity-85`}>
-                    {`${boxThree.position}`}
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass} font-semibold`}>

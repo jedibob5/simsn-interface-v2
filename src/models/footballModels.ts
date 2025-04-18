@@ -444,49 +444,6 @@ export class FreeAgentResponse {
     return a;
   }
 }
-export class FreeAgencyResponse {
-  FreeAgents: FreeAgentResponse[];
-  WaiverPlayers: WaiverWirePlayerResponse[];
-  PracticeSquad: FreeAgentResponse[];
-  TeamOffers: FreeAgencyOffer[];
-  RosterCount: number;
-
-  constructor(source: any = {}) {
-    if ("string" === typeof source) source = JSON.parse(source);
-    this.FreeAgents = this.convertValues(
-      source["FreeAgents"],
-      FreeAgentResponse
-    );
-    this.WaiverPlayers = this.convertValues(
-      source["WaiverPlayers"],
-      WaiverWirePlayerResponse
-    );
-    this.PracticeSquad = this.convertValues(
-      source["PracticeSquad"],
-      FreeAgentResponse
-    );
-    this.TeamOffers = this.convertValues(source["TeamOffers"], FreeAgencyOffer);
-    this.RosterCount = source["RosterCount"];
-  }
-
-  convertValues(a: any, classs: any, asMap: boolean = false): any {
-    if (!a) {
-      return a;
-    }
-    if (Array.isArray(a)) {
-      return (a as any[]).map((elem) => this.convertValues(elem, classs));
-    } else if ("object" === typeof a) {
-      if (asMap) {
-        for (const key of Object.keys(a)) {
-          a[key] = new classs(a[key]);
-        }
-        return a;
-      }
-      return new classs(a);
-    }
-    return a;
-  }
-}
 export class NFLStandings {
   ID: number;
   CreatedAt: Time;
@@ -878,6 +835,7 @@ export class NFLGameplan {
   }
 }
 export class NFLExtensionOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -956,6 +914,7 @@ export class NFLExtensionOffer {
   }
 }
 export class NFLWaiverOffer {
+  [key: string]: any;
   ID: number;
   TeamID: number;
   Team: string;
@@ -972,8 +931,15 @@ export class NFLWaiverOffer {
     this.NFLPlayerID = source["NFLPlayerID"];
     this.IsActive = source["IsActive"];
   }
+  updateField(name: string, value: number): NFLWaiverOffer {
+    const copy = new NFLWaiverOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
+  }
 }
 export class FreeAgencyOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -1023,6 +989,13 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.IsActive = source["IsActive"];
+  }
+
+  updateField(name: string, value: number): FreeAgencyOffer {
+    const copy = new FreeAgencyOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -5232,8 +5205,10 @@ export class BootstrapData {
   ProStandings: NFLStandings[];
   ProRosterMap: { [key: number]: NFLPlayer[] } | null;
   CapsheetMap: { [key: number]: NFLCapsheet } | null;
-  FreeAgency: FreeAgencyResponse | null;
+  PracticeSquadPlayers: NFLPlayer[];
   ProInjuryReport: NFLPlayer[];
+  FreeAgentOffers: FreeAgencyOffer[];
+  WaiverWireOffers: NFLWaiverOffer[];
   ProNews: NewsLog[];
   ProNotifications: Notification[];
   AllProGames: NFLGame[];
@@ -5294,8 +5269,18 @@ export class BootstrapData {
     this.ProRosterMap = source["ProRosterMap"] || null;
     this.CapsheetMap =
       this.convertValues(source["CapsheetMap"], NFLCapsheet, true) || null;
-    this.FreeAgency =
-      this.convertValues(source["FreeAgency"], FreeAgencyResponse) || null;
+    this.PracticeSquadPlayers = this.convertValues(
+      source["PracticeSquadPlayers"],
+      NFLPlayer
+    );
+    this.FreeAgentOffers = this.convertValues(
+      source["FreeAgentOffers"],
+      FreeAgencyOffer
+    );
+    this.WaiverWireOffers = this.convertValues(
+      source["WaiverWireOffers"],
+      NFLWaiverOffer
+    );
     this.ProInjuryReport =
       this.convertValues(source["ProInjuryReport"], NFLPlayer) || [];
     this.ProNews = this.convertValues(source["ProNews"], NewsLog) || [];

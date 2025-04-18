@@ -768,4 +768,3 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
     />
   );
 };
-

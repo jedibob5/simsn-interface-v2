@@ -1,7 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { useModal } from "../../../_hooks/useModal";
-import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
-import { useAuthStore } from "../../../context/AuthContext";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import {
   CollegeLineup,
@@ -21,6 +19,7 @@ import {
   LineupF1,
   LineupSO,
   ModalAction,
+  navyBlueColor,
   SimCHL,
   Zone,
 } from "../../../_constants/constants";
@@ -178,8 +177,8 @@ export const CHLLineupPage = () => {
               direction="col"
               classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-center"
               styles={{
-                backgroundColor,
-                borderColor,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup>
@@ -201,8 +200,8 @@ export const CHLLineupPage = () => {
               direction="col"
               classes="w-full max-[1024px]:px-2 px-4 max-[1024px]:pb-4 py-2 h-full items-center justify-center"
               styles={{
-                backgroundColor,
-                borderColor,
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
               }}
             >
               <ButtonGroup classes="justify-center">
@@ -225,8 +224,8 @@ export const CHLLineupPage = () => {
             direction="row"
             classes="w-full max-[1024px]:px-2 px-4 py-2 h-full gap-x-2"
             styles={{
-              backgroundColor,
-              borderColor,
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
             }}
           >
             <div className="flex flex-col min-h-full w-full">
@@ -273,13 +272,13 @@ export const CHLLineupPage = () => {
         player={modalPlayer}
       />
 
-      <div className="flex flex-col md:flex-row w-full max-[1024px]:gap-x-2 min-[1025px]:gap-x-4">
+      <div className="grid grid-cols-1 max-[1024px]:grid-cols-1 min-[1025px]:grid-cols-[1fr_3fr] gap-4 w-full">
         <Border
           direction="col"
-          classes="max-[1024px]:w-full w-1/4 max-[1024px]:px-2 px-4 min-h-full py-3"
+          classes="w-full px-4 py-3 min-h-full"
           styles={{
-            backgroundColor,
-            borderColor,
+            borderColor: teamColors.One,
+            backgroundColor: navyBlueColor,
           }}
         >
           <div className="flex flex-row mb-6 gap-x-2 justify-center w-full">
@@ -315,45 +314,29 @@ export const CHLLineupPage = () => {
         {chlTeamRosterMap && (
           <Border
             direction="col"
-            classes="w-full max-[1024px]:px-2 px-4 py-3"
+            classes="w-full max-[1024px]:px-2 px-4 py-4"
             styles={{
-              backgroundColor,
-              borderColor,
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
             }}
           >
-            {isMobile && (
-              <div className="flex flex-row w-full justify-center items-center gap-x-2 mb-6">
-                <Text variant="h6" classes="flex">
-                  {lineCategory} Players
-                </Text>
-                <Button
-                  type="button"
-                  classes=""
-                  onClick={() => {
-                    setModalAction(Help3);
-                    handleOpenModal();
-                  }}
-                >
-                  Help
-                </Button>
-              </div>
-            )}
+            <div className="flex flex-row w-full justify-start items-center gap-x-2 mb-6">
+              <Text variant="h6" classes="flex">
+                {lineCategory} Players
+              </Text>
+              <Button
+                type="button"
+                classes=""
+                onClick={() => {
+                  setModalAction(Help3);
+                  handleOpenModal();
+                }}
+              >
+                Help
+              </Button>
+            </div>
             <div className="flex flex-col">
-              <div className="flex max-[1024px]:flex-row md:flex-row flex-col justify-start gap-x-2 max-[1024px]:px-0 px-6 flex-wrap max-[1024px]:w-full max-[1024px]:gap-y-2">
-                {!isMobile && (
-                  <div className="">
-                    <Button
-                      type="button"
-                      classes="flex"
-                      onClick={() => {
-                        setModalAction(Help3);
-                        handleOpenModal();
-                      }}
-                    >
-                      Help
-                    </Button>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 max-[541px]:grid-cols-1 max-[768px]:grid-cols-2 max-[854px]:grid-cols-2 max-[1024px]:grid-cols-3 min-[1025px]:grid-cols-3 gap-4 px-4 w-full">
                 {lineCategory !== LineupSO && (
                   <>
                     <LineupPlayer
@@ -431,7 +414,7 @@ export const CHLLineupPage = () => {
                   </>
                 )}
                 {lineCategory === LineupSO && (
-                  <div className="grid grid-cols-1 max-[420px]:grid-cols-1 max-[1024px]:grid-cols-1 min-[1025px]:grid-cols-3 gap-4">
+                  <>
                     {[1, 2, 3, 4, 5, 6].map((x) => (
                       <ShootoutPlayer
                         key={x}
@@ -446,7 +429,7 @@ export const CHLLineupPage = () => {
                         activatePlayer={activatePlayerModal}
                       />
                     ))}
-                  </div>
+                  </>
                 )}
               </div>
             </div>
