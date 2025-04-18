@@ -591,10 +591,10 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
                   {`${boxOne.lastName}`}
                   </Text>
                 </div>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxOne.topStat} ${titles[3]}`}
                 </Text>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxOne.bottomStat} ${titles[4]}`}
                 </Text>
               </div>
@@ -627,10 +627,10 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
                     {`${boxTwo.lastName}`}
                   </Text>
                 </div>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxTwo.topStat} ${titles[5]}`}
                 </Text>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxTwo.bottomStat} ${titles[6]}`}
                 </Text>
               </div>
@@ -664,10 +664,10 @@ export const TeamStats = ({ team, league, header, teamStats, titles,
                     {`${boxThree.lastName}`}
                   </Text>
                 </div>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxThree.topStat} ${titles[7]}`}
                 </Text>
-                <Text variant="alternate" classes={`${textColorClass} font-semibold`}>
+                <Text variant="alternate" classes={`${textColorClass}`}>
                     {`${boxThree.bottomStat} ${titles[8]}`}
                 </Text>
               </div>
