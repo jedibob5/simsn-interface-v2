@@ -17,6 +17,7 @@ import {
 } from "../../_constants/constants";
 import { SelectDropdown } from "../../_design/Select";
 import { CheckCircle, CrossCircle, ShieldCheck, User } from "../../_design/Icons";
+import { SimNFL } from "../../_constants/constants";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -605,7 +606,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Exp", accessor: "Year" },
+      { header: "Exp", accessor: "Experience" },
       { header: "Ovr", accessor: "Overall" },
     ];
 
@@ -670,7 +671,11 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   }, [isMobile, category]);
 
   const sortedRoster = useMemo(() => {
-    return [...roster].sort((a, b) => b.Overall - a.Overall);
+    return [...roster].sort((a, b) => {
+      if (a.ShowLetterGrade && !b.ShowLetterGrade) return 1;
+      if (!a.ShowLetterGrade && b.ShowLetterGrade) return -1;
+      return b.Overall - a.Overall;
+    });
   }, [roster]);
 
   const rowRenderer = (
@@ -765,6 +770,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       rowRenderer={rowRenderer}
       backgroundColor={backgroundColor}
       team={team}
+      league={SimNFL}
     />
   );
 };
