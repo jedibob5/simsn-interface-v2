@@ -253,7 +253,7 @@ export const WeeklySchedule = ({
   return (
     <SectionCards
       team={team}
-      header={`${team.TeamAbbr} Schedule`}
+      header={`Week ${week} Schedule`}
       classes={`w-full ${textColorClass}`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
@@ -479,6 +479,198 @@ export const TeamStandings = ({ standings, team,
     </SectionCards>
   );
 }
+
+interface LeagueStandingsProps {
+  standings: any[];
+  league: League;
+  currentUser: any;
+  isLoadingTwo: boolean;
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+}
+
+export const LeagueStandings = ({
+  standings,
+  league,
+  currentUser,
+  isLoadingTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+}: LeagueStandingsProps) => {
+  const customOrder = [
+    "ACC",
+    "Big Ten",
+    "Big 12",
+    "SEC",
+    "Pac-12",
+    "Independent",
+    "American",
+    "C-USA",
+    "MAC",
+    "Mountain West",
+    "SunBelt",
+  ];
+
+  const groupedStandings = standings.reduce((acc: any, team) => {
+    if (!acc[team.ConferenceName]) {
+      acc[team.ConferenceName] = [];
+    }
+    acc[team.ConferenceName].push(team);
+    return acc;
+  }, {});
+
+  const sortedConferenceNames = Object.keys(groupedStandings).sort((a, b) => {
+    const indexA = customOrder.indexOf(a);
+    const indexB = customOrder.indexOf(b);
+
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+
+    return a.localeCompare(b);
+  });
+
+  return (
+    <div className="flex flex-wrap gap-4">
+      {isLoadingTwo ? (
+        <div className="flex justify-center items-center w-full">
+          <Text variant="small" classes={`${textColorClass}`}>
+            Loading...
+          </Text>
+        </div>
+      ) : (
+        sortedConferenceNames.map((conferenceName) => {
+          const conferenceStandings = groupedStandings[conferenceName].map(
+            (team: any, index: number) => ({
+              ...team,
+              Rank: index + 1,
+            })
+          );
+
+          return (
+            <div
+              key={conferenceName}
+              className="flex flex-row items-stretch"
+            >
+              <SectionCards
+                team={null}
+                header={`${conferenceName} Standings`}
+                classes={`${textColorClass}, h-full w-[40em]`}
+                backgroundColor={backgroundColor}
+                headerColor={headerColor}
+                borderColor={borderColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              >
+                <div className="grid">
+                  <div
+                    className="grid grid-cols-7 font-semibold border-b-2 pb-2"
+                    style={{
+                      borderColor,
+                    }}
+                  >
+                    <div className="text-left col-span-1 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        Rank
+                      </Text>
+                    </div>
+                    <div className="text-center col-span-2 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        Team
+                      </Text>
+                    </div>
+                    <div className="text-center col-span-1 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        C.W
+                      </Text>
+                    </div>
+                    <div className="text-center col-span-1 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        C.L
+                      </Text>
+                    </div>
+                    <div className="text-center col-span-1 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        T.W
+                      </Text>
+                    </div>
+                    <div className="text-center col-span-1 ">
+                      <Text variant="xs" className={`${textColorClass}`}>
+                        T.L
+                      </Text>
+                    </div>
+                  </div>
+                  {conferenceStandings.map((standing: any, index: number) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-7 border-b border-b-[#34455d] items-center"
+                      style={{
+                        backgroundColor:
+                          index % 2 === 0
+                            ? darkerBackgroundColor
+                            : backgroundColor,
+                      }}
+                    >
+                      <div className="text-left pl-1 col-span-1 flex items-center">
+                        <Text variant="xs" className="font-semibold">
+                          {standing.Rank}
+                        </Text>
+                      </div>
+                      <div className="flex text-left w-1/2 mx-auto justify-start col-span-2 pl-1 items-center">
+                        <Logo
+                          variant="xs"
+                          classes="w-4 h-4 p-0"
+                          containerClass="flex-shrink-0 p-2"
+                          url={getLogo(
+                            league,
+                            standing.TeamID,
+                            currentUser?.isRetro
+                          )}
+                        />
+                        <Text variant="xs" className="font-semibold">
+                          {standing.TeamAbbr}
+                        </Text>
+                      </div>
+                      <div className="text-center flex col-span-1 items-center justify-center">
+                        <Text variant="xs" className="font-semibold">
+                          {standing.ConferenceWins}
+                        </Text>
+                      </div>
+                      <div className="text-center flex col-span-1 items-center justify-center">
+                        <Text variant="xs" className="font-semibold">
+                          {standing.ConferenceLosses}
+                        </Text>
+                      </div>
+                      <div className="text-center flex col-span-1 items-center justify-center">
+                        <Text variant="xs" className="font-semibold">
+                          {standing.TotalWins}
+                        </Text>
+                      </div>
+                      <div className="text-center flex col-span-1 items-center justify-center">
+                        <Text variant="xs" className="font-semibold">
+                          {standing.TotalLosses}
+                        </Text>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </SectionCards>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+};
 
 interface LeagueStatsProps {
   league: League;

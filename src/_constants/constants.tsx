@@ -413,3 +413,19 @@ export const navyBlueColor = "#1f2937";
 
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;
+
+export const Seasons: { label: string; value: string }[] = [
+  { label: "2021", value: "2021" },
+  { label: "2022", value: "2022" },
+  { label: "2023", value: "2023" },
+  { label: "2024", value: "2024" },
+  { label: "2025", value: "2025" },
+  { label: "2026", value: "2026" },
+  { label: "2027", value: "2027" },
+];
+
+export const Weeks: { label: string; value: string }[] = Array.from(
+  { length: 20 }, (_, i) => ({
+      label: (i + 1).toString(),
+      value: (i + 1).toString(),
+  }));

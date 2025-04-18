@@ -17,6 +17,8 @@ import { League } from "../../../_constants/constants";
 export const getScheduleCFBData = (
   team: any,
   currentWeek: any,
+  selectedWeek: any,
+  selectedSeason: any,
   league: League,
   allCFBStandings: CollegeStandings[],
   allCollegeGames: CollegeGame[],
