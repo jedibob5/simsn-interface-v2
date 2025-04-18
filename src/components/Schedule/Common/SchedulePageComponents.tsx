@@ -183,6 +183,179 @@ export const TeamSchedule = ({
   );
 };
 
+interface WeeklyScheduleProps {
+  team: any;
+  week: any;
+  currentUser: any;
+  league: League
+  ts: any;
+  schedule: any[];
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+  isLoadingTwo: boolean;
+}
+
+export const WeeklySchedule = ({
+  team,
+  currentUser,
+  week,
+  league,
+  ts,
+  schedule,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+  isLoadingTwo,
+}: WeeklyScheduleProps) => {
+  const processedSchedule = schedule.map((game) => {
+    const revealResult = RevealFBResults(game, ts, league);
+    const isHomeGame = game.HomeTeamID === team.ID;
+    const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
+    const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
+
+    let userWin = false;
+    let userLoss = false;
+    let gameScore = "TBC";
+    let headerGameScore = "TBC";
+
+    if (revealResult) {
+      const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
+      const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
+      userWin = userTeamScore > opponentScore;
+      userLoss = userTeamScore < opponentScore;
+
+      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+        gameScore = "TBC";
+        headerGameScore = "TBC";
+      } else {
+        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+        headerGameScore = `${userTeamScore} - ${opponentScore}`;
+      }
+    }
+
+    return {
+      ...game,
+      opponentLabel,
+      opponentLogo,
+      userWin,
+      userLoss,
+      gameScore,
+      headerGameScore,
+      gameLocation: isHomeGame ? "vs" : "@",
+    };
+  });
+
+  return (
+    <SectionCards
+      team={team}
+      header={`${team.TeamAbbr} Schedule`}
+      classes={`w-full ${textColorClass}`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      textColorClass={textColorClass}
+      darkerBackgroundColor={darkerBackgroundColor}
+    >
+      {isLoadingTwo ? (
+        <div className="flex justify-center items-center pb-2">
+          <Text variant="small" classes={`${textColorClass}`}>
+            Loading...
+          </Text>
+        </div>
+      ) : (
+        <div className="grid">
+          <div
+            className="grid grid-cols-5 font-semibold border-b-2 pb-2"
+            style={{
+              borderColor,
+            }}
+          >
+            <div className="text-left col-span-1">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Week
+              </Text>
+            </div>
+            <div className="text-left col-span-2">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Opponent
+              </Text>
+            </div>
+            <div className="text-center col-span-1">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Result
+              </Text>
+            </div>
+            <div className="text-center col-span-1">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Actions
+              </Text>
+            </div>
+          </div>
+          {processedSchedule.map((game, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
+              style={{
+                backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+              }}
+            >
+              <div className="text-left col-span-1">
+                <Text variant="xs" className="font-semibold">
+                  Week {game.Week}
+                </Text>
+              </div>
+              <div className="flex items-center col-span-2 justify-start text-center">
+                <Text variant="xs" className="font-semibold text-center">
+                    {game.gameLocation}
+                </Text>
+                  <Logo
+                      variant="xs"
+                      classes="w-4 h-4"
+                      containerClass="flex-shrink-0 p-2"
+                      url={game.opponentLogo}
+                  />
+                  <Text variant="xs" className="font-semibold text-center">
+                    {game.opponentLabel}
+                  </Text>
+              </div>
+              <div className="text-center col-span-1">
+                <Text
+                  variant="xs"
+                  className={`font-semibold ${
+                    game.userWin
+                      ? "text-green-500"
+                      : game.userLoss
+                      ? "text-red-500"
+                      : textColorClass
+                  } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
+                >
+                  {game.headerGameScore}
+                </Text>
+              </div>
+              <div className="flex text-center justify-center col-span-1">
+                <Button
+                  size="sm"
+                  classes={`flex bg-transparent rounded-full size-10 items-center ${
+                    game.gameScore === "TBC" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={game.gameScore === "TBC"}
+                >
+                  <InformationCircle />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCards>
+  );
+};
+
 interface TeamStandingsProps {
   standings: any[];
   team: any;

@@ -4,13 +4,17 @@ import {
   SimCFB,
   SimNFL,
   Overview,
+  Schedule,
+  Standings,
+  WeeklyGames,
+  TeamGames
 } from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
 import { useAuthStore } from "../../../context/AuthContext";
 import { SelectDropdown } from "../../../_design/Select";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
-import { Button } from "../../../_design/Buttons";
+import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
 import { CollegePlayer, NFLPlayer } from "../../../models/footballModels";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
@@ -23,6 +27,7 @@ import { TeamSchedule, TeamStandings, LeagueStats } from "../Common/SchedulePage
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { PaperAirplane } from "../../../_design/Icons";
+import { ToggleSwitch } from "../../../_design/Inputs";
 
 interface SchedulePageProps {
   league: League;
@@ -67,6 +72,9 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
   const [category, setCategory] = useState(Overview);
+  const [view, setView] = useState(TeamGames);
+  const [isChecked, setIsChecked] = useState(false);
+  console.log(view)
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
     selectedTeam?.ColorTwo,
@@ -163,13 +171,43 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         <div className="grid grid-cols-6 gap-4 w-full h-[82vh]">
           <div className="flex flex-col w-full col-span-1 items-center gap-4 overflow-auto pb-2">
             <div className="flex gap-4 justify-center">
-              <Button size="md" variant="success">
-                Schedule
-              </Button>
-              <Button size="md" variant="success">
-                Standings
-              </Button>
+              <ButtonGroup>
+                <Button size="sm"
+                        variant="primary" 
+                        onClick={() => setCategory(Overview)}
+                        isSelected={category === Overview}
+                        classes="px-3 py-2"
+                >
+                  <Text variant="xs">
+                    Overview
+                  </Text>
+                </Button>                
+                <Button size="sm" 
+                        variant="primary" 
+                        onClick={() => setCategory(Standings)}
+                        isSelected={category === Standings}
+                        classes="px-3 py-2"
+                >
+                  <Text variant="xs">
+                    Standings
+                  </Text>
+                </Button>
+              </ButtonGroup>
             </div>
+            {category === Overview && (
+              <div className="flex justify-center items-center gap-2">
+                <ToggleSwitch 
+                onChange={(checked) => {
+                  setView(checked ? WeeklyGames : TeamGames);
+                  setIsChecked(checked);
+                }}
+                  checked={isChecked}
+                />
+                <Text variant="small">
+                  Weekly Games
+                </Text>
+              </div>
+            )}
             <div className="flex flex-col items-center gap-2 justify-center">
               <Text variant="body">Teams</Text>
               <SelectDropdown
@@ -204,6 +242,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             </div>
           </div>
           <div className="flex flex-col h-full col-span-2">
+          {category === Overview && (
             <TeamSchedule
               team={selectedTeam}
               currentUser={currentUser}
@@ -218,8 +257,10 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               darkerBackgroundColor={darkerBackgroundColor}
               isLoadingTwo={isLoading}
             />
+           )}
           </div>
           <div className="flex flex-col h-full col-span-2">
+          {category === Overview && (
             <TeamStandings
               team={selectedTeam}
               currentUser={currentUser}
@@ -232,8 +273,10 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               darkerBackgroundColor={darkerBackgroundColor}
               isLoadingTwo={isLoading}
             />
+          )}
           </div>
           <div className="flex flex-col h-full col-span-1">
+          {category === Overview && (
             <LeagueStats
               league={league}
               topPassers={leagueStatsData.topPassers}
@@ -247,6 +290,7 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               darkerBackgroundColor={darkerBackgroundColor}
               isLoadingTwo={isLoading}
             />
+          )}
           </div>
         </div>
       </div>
