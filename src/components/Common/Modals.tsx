@@ -31,6 +31,7 @@ import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import { getYear } from "../../_utility/getYear";
 import { CheckCircle, CrossCircle } from "../../_design/Icons";
 import PlayerPicture from "../../_utility/usePlayerFaces";
+import { GetNFLOverall } from "../Team/TeamPageUtils";
 
 interface PlayerInfoModalBodyProps {
   league: League;
@@ -904,7 +905,9 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           Overall
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {player.Overall}
+          {player.ShowLetterGrade
+            ? GetNFLOverall(player.Overall, true)
+            : player.Overall}
         </Text>
       </div>
       <div className="flex flex-col">
