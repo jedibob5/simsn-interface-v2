@@ -10,6 +10,7 @@ import { getTextColorBasedOnBg } from "../_utility/getBorderClass";
 import { darkenColor } from "../_utility/getDarkerColor";
 import { Text } from "./Typography";
 import { isBrightColor } from "../_utility/isBrightColor";
+import { League, SimNFL } from "../_constants/constants";
 
 export interface SortState {
   key: string | null;
@@ -32,6 +33,7 @@ export interface TableProps<T> {
   rowRenderer: (item: T, index: number, backgroundColor: string) => ReactNode;
   rowBgColor?: string;
   darkerRowBgColor?: string;
+  league?: League;
 }
 
 export const Table = <T,>({
@@ -41,6 +43,7 @@ export const Table = <T,>({
   rowRenderer,
   rowBgColor,
   darkerRowBgColor,
+  league,
 }: TableProps<T>): JSX.Element => {
   let backgroundColor = "#1f2937";
   let borderColor = team?.ColorTwo || "#4B5563";
@@ -77,6 +80,11 @@ export const Table = <T,>({
     }
     const { key, order } = sortState;
     const sorted = [...data].sort((a: any, b: any) => {
+      if (league === SimNFL && key === "Overall") {
+        if (a.ShowLetterGrade && !b.ShowLetterGrade) return 1;
+        if (!a.ShowLetterGrade && b.ShowLetterGrade) return -1;
+      }
+
       if (a[key] < b[key]) return order === "asc" ? -1 : 1;
       if (a[key] > b[key]) return order === "asc" ? 1 : -1;
       return 0;
