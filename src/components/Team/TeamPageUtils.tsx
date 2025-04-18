@@ -700,7 +700,7 @@ export const getCFBAttributes = (
     { label: "Arch", value: player.Archetype },
     { label: "Yr", value: getYear(player.Year, player.IsRedshirt) },
     { label: "Stars", value: player.Stars },
-    { label: "Ovr", value: getHockeyLetterGrade(player.Overall, player.Year) },
+    { label: "Ovr", value: getCFBOverall(player.Overall, player.Year) },
   ];
 
   const overviewAttributes =
