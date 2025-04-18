@@ -708,6 +708,7 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
             url={teamLogo}
             label={team.TeamAbbr}
             classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
             textClass="text-small"
           />
         )}

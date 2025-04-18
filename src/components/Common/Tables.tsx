@@ -135,7 +135,7 @@ export const GamesTable = ({
         }`}
       >
         <td className="pl-3 py-1">
-          <Logo variant="tiny" url={logoUrl} />
+          <Logo variant="tiny" url={logoUrl} containerClass="p-4" />
         </td>
         <td className="flex px-2 py-3">
           <span className="">

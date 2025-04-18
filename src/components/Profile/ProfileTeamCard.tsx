@@ -55,13 +55,13 @@ const ProfileTeamCard: React.FC<ProfileTeamCardProps> = ({
   return (
     <>
       <Border classes="w-full" styles={{ backgroundColor, borderColor }}>
-        <div className="flex flex-row flex-grow h-[12rem] w-full">
+        <div className="flex flex-row flex-grow h-[12rem] w-full p-2">
           <Border
             styles={{ borderColor: secondaryBorderColor }}
             classes="items-center justify-center self-center mt-1"
           >
-            <div className="w-[8rem] h-[8rem]">
-              <Logo url={logoUrl} variant="normal" classes="" />
+            <div className="w-full p-4">
+              <Logo url={logoUrl} variant="normal" classes="" containerClass="p-4 items-center justify-center" />
             </div>
           </Border>
           <div className="flex flex-col justify-center p-2 mx-auto mr-[1rem] flex-grow">

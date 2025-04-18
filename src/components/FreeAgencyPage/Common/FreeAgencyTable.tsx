@@ -200,7 +200,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
           {!offers || (offers.length === 0 && "None")}
           {logos.length > 0 &&
-            logos.map((url) => <Logo url={url} variant="tiny" />)}
+            logos.map((url) => <Logo url={url} variant="tiny" containerClass="p-4" />)}
         </TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
           <Button

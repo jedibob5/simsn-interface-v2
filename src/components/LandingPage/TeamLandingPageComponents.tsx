@@ -91,7 +91,9 @@ export const GamesBar = ({ games, league, team, ts,
            style={{ borderColor: headerColor }}>
         <div className="flex-col px-2 overflow-auto">
           <div className="flex-col items-center justify-center">
-            <Logo variant="xs" containerClass="pb-1 max-w-[4em] p-4" url={opponentLogoUrl} />
+            <Logo variant="xs" 
+                  containerClass="pb-1 max-w-[4em] p-4" 
+                  url={opponentLogoUrl} />
             <Text variant="small">{gameScore}</Text>
             <Text variant="small" classes="">
               {gameDetails}
@@ -267,7 +269,7 @@ export const TeamMatchUp = ({
             <div className="flex justify-end col-span-3">
               <div className="flex flex-col items-center">
                 <Logo variant="large" 
-                      containerClass="max-w-24 w-24" 
+                      containerClass="max-w-24 w-24 p-4" 
                       url={homeLogo} />
                 <Text
                   variant="small"
@@ -293,7 +295,7 @@ export const TeamMatchUp = ({
             <div className="flex justify-start col-span-3">
               <div className="flex flex-col items-center">
                 <Logo variant="large" 
-                      containerClass="max-w-24 w-24" 
+                      containerClass="max-w-24 w-24 p-4" 
                       url={awayLogo} />
                 <Text
                   variant="small"
