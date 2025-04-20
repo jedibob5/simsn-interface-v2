@@ -111,6 +111,7 @@ interface SimHCKContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
+  updateProRosterMap: (newMap: Record<number, ProfessionalPlayer[]>) => void;
   saveCHLGameplan: (dto: any) => Promise<void>;
   savePHLGameplan: (dto: any) => Promise<void>;
   addRecruitToBoard: (dto: any) => Promise<void>;
@@ -185,6 +186,7 @@ const defaultContext: SimHCKContextProps = {
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCHLRosterMap: () => {},
+  updateProRosterMap: () => {},
   saveCHLGameplan: async () => {},
   savePHLGameplan: async () => {},
   addRecruitToBoard: async () => {},
@@ -578,6 +580,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setCHLRosterMap(newMap);
   };
 
+  const updateProRosterMap = (newMap: Record<number, ProfessionalPlayer[]>) => {
+    setProRosterMap(newMap);
+  };
+
   const saveCHLGameplan = async (dto: any) => {
     const res = await GameplanService.SaveCHLGameplan(dto);
     setCHLLineups(dto.CHLLineups);
@@ -874,6 +880,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         promisePlayer,
         cutPHLPlayer,
         updateCHLRosterMap,
+        updateProRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
         addRecruitToBoard,

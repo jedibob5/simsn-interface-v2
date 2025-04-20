@@ -82,8 +82,6 @@ export const AdminCHLTeamCard: React.FC<AdminCHLTeamCardProps> = ({
     const userName = team.Coach;
     await removeUser(team.ID);
     handleCloseModal();
-    const user = { ...currentUser, CHLTeamID: 0, username: userName };
-    setCurrentUser(user as CurrentUser);
     const payload = {
       CHLTeamID: 0,
     };
@@ -172,8 +170,6 @@ export const AdminPHLTeamCard: React.FC<AdminPHLTeamCardProps> = ({
       PHLTeamID: 0,
       PHLRole: "",
     };
-    const user = { ...currentUser, PHLTeamID: 0, PHLRole: "" };
-    setCurrentUser(user as CurrentUser);
     await updateUserByUsername(userName, payload);
     handleCloseModal();
     return await removeUser(dto);

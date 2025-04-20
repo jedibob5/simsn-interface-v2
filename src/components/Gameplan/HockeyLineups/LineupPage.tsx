@@ -5,8 +5,11 @@ import {
   CollegeLineup,
   CollegePlayer,
   CollegeShootoutLineup,
+  ProfessionalLineup,
+  ProfessionalPlayer,
+  ProfessionalShootoutLineup,
 } from "../../../models/hockeyModels";
-import { useLineupUtils } from "./useLineupUtils";
+import { useCHLLineupUtils, usePHLLineupUtils } from "./useLineupUtils";
 import { Border } from "../../../_design/Borders";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import {
@@ -76,7 +79,7 @@ export const CHLLineupPage = () => {
     lineupCategories,
     zoneCategories,
     errors,
-  } = useLineupUtils(chlTeam!, chlRosterMap, currentLineups);
+  } = useCHLLineupUtils(chlTeam!, chlRosterMap, currentLineups);
   const [isMobile] = useMobile();
 
   const chlTeamRosterOptions = useMemo(() => {
@@ -441,5 +444,133 @@ export const CHLLineupPage = () => {
 };
 
 export const PHLLineupPage = () => {
+  const hkStore = useSimHCKStore();
+  const {
+    phlTeam,
+    proRosterMap,
+    updateProRosterMap,
+    phlLineups,
+    phlShootoutLineup,
+    savePHLGameplan,
+  } = hkStore;
+  const [lineCategory, setLineCategory] = useState<Lineup>(LineupF1);
+  const [zoneCategory, setZoneCategory] = useState<Zone>(DefendingGoalZone);
+  const [originalLineups, setOriginalLineups] = useState(phlLineups);
+  const [originalShootoutLineups, setOriginalShootoutLineups] =
+    useState(phlShootoutLineup);
+  const [currentLineups, setCurrentLineups] = useState(phlLineups);
+  const [currentShootoutLineups, setCurrentShootoutLineups] =
+    useState(phlShootoutLineup);
+  const [modalAction, setModalAction] = useState<ModalAction>(Help1);
+  const [modalPlayer, setModalPlayer] = useState<ProfessionalPlayer>(
+    {} as ProfessionalPlayer
+  );
+  const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
+
+  const teamColors = useTeamColors(
+    phlTeam?.ColorOne,
+    phlTeam?.ColorTwo,
+    phlTeam?.ColorThree
+  );
+  const backgroundColor = teamColors.One;
+  const borderColor = teamColors.Two;
+
+  const {
+    phlTeamRosterMap,
+    phlTeamRoster,
+    lineupCategories,
+    zoneCategories,
+    errors,
+  } = usePHLLineupUtils(phlTeam!, proRosterMap, currentLineups);
+  const [isMobile] = useMobile();
+
+  const phlTeamRosterOptions = useMemo(() => {
+    if (phlTeamRoster) {
+      return getLineupDropdownOptions(phlTeamRoster);
+    }
+  }, [phlTeamRoster]);
+
+  const zoneInputList = useMemo(
+    () => getZoneInputList(zoneCategory),
+    [zoneCategory]
+  );
+
+  const lineupIdx = useMemo(() => {
+    return getLineupIdx(lineCategory);
+  }, [lineCategory]);
+
+  const lineup = useMemo(() => {
+    return currentLineups[lineupIdx] || ({} as CollegeLineup);
+  }, [lineupIdx, currentLineups]);
+
+  const Save = async () => {
+    if (phlTeam) {
+      setOriginalLineups(currentLineups);
+      setOriginalShootoutLineups(currentShootoutLineups);
+      const dto = {
+        PHLTeamID: phlTeam.ID,
+        PHLLineups: currentLineups,
+        PHLShootoutLineup: currentShootoutLineups,
+        ProPlayers: proRosterMap[phlTeam.ID],
+      };
+      await savePHLGameplan(dto);
+    }
+  };
+
+  const ResetLineups = () => {
+    setCurrentLineups(originalLineups);
+    setCurrentShootoutLineups(originalShootoutLineups);
+    // Will need to also reset the player ids -- actually, those will be reset automatically. Or should be.
+  };
+
+  const ChangeValueInShootoutLineup = (value: number, key: string) => {
+    const lus = new ProfessionalShootoutLineup({ ...currentShootoutLineups });
+    lus[key] = value;
+    setCurrentShootoutLineups(lus);
+  };
+
+  const ChangeLineupInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    const numericValue = Number(value);
+    ChangeLineupValue(numericValue, name);
+  };
+
+  const ChangeLineupValue = useCallback(
+    (value: number, key: string) => {
+      setCurrentLineups((prevLineups) =>
+        prevLineups.map((lineup, index) =>
+          index === lineupIdx
+            ? new ProfessionalLineup({ ...lineup, [key]: value })
+            : lineup
+        )
+      );
+    },
+    [lineupIdx]
+  );
+
+  const ChangePlayerInput = useCallback(
+    (playerID: number, key: string, value: number) => {
+      const updatedRosterMap = { ...proRosterMap };
+      updatedRosterMap[phlTeam!.ID] = [...updatedRosterMap[phlTeam!.ID]];
+      const playerIdx = updatedRosterMap[phlTeam!.ID]?.findIndex(
+        (x) => x.ID === playerID
+      );
+
+      if (playerIdx && playerIdx > -1) {
+        updatedRosterMap[phlTeam!.ID][playerIdx] = new ProfessionalPlayer({
+          ...updatedRosterMap[phlTeam!.ID][playerIdx],
+          [key]: value,
+        });
+        updateProRosterMap(updatedRosterMap);
+      }
+    },
+    [proRosterMap, updateProRosterMap, phlTeam]
+  );
+
+  const activatePlayerModal = (player: ProfessionalPlayer) => {
+    setModalAction(InfoType);
+    setModalPlayer(player);
+    handleOpenModal();
+  };
   return <></>;
 };
