@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { getLogo } from "../../../_utility/getLogo";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
@@ -5,14 +6,18 @@ import { darkenColor } from "../../../_utility/getDarkerColor";
 import { RevealFBResults } from "../../../_helper/teamHelper";
 import { StandingsTable } from "../../Common/Tables";
 import { Button } from "../../../_design/Buttons";
-import { League } from "../../../_constants/constants";
+import { League, SimCHL } from "../../../_constants/constants";
 import { SectionCards } from "../../../_design/SectionCards";
 import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
+import { Stadium } from "../../../models/footballModels";
+import { processLeagueStandings } from "./SchedulePageHelper";
+import { WeeklyGames } from "../../../_constants/constants";
 
 interface TeamScheduleProps {
   team: any;
   Abbr?: string;
+  category?: string;
   week: any;
   currentUser: any;
   league: League
@@ -29,6 +34,7 @@ interface TeamScheduleProps {
 export const TeamSchedule = ({
   team,
   Abbr,
+  category,
   currentUser,
   week,
   league,
@@ -41,7 +47,6 @@ export const TeamSchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
-  
   return (
     <SectionCards
       header={`${Abbr} Schedule`}
@@ -69,7 +74,7 @@ export const TeamSchedule = ({
           >
             <div className="text-left col-span-1">
               <Text variant="xs" className={`${textColorClass}`}>
-                Week
+                {category === WeeklyGames ? "Game" : "Week"}
               </Text>
             </div>
             <div className="text-left col-span-2">
@@ -98,7 +103,7 @@ export const TeamSchedule = ({
             >
               <div className="text-left col-span-1">
                 <Text variant="xs" className="font-semibold">
-                  Week {game.Week}
+                  {category === WeeklyGames ? game.GameID : game.weekLabel}
                 </Text>
               </div>
               <div className="flex items-center col-span-2 justify-start text-center">
@@ -148,77 +153,27 @@ export const TeamSchedule = ({
   );
 };
 
-interface WeeklyScheduleProps {
-  team: any;
-  week: any;
-  currentUser: any;
-  league: League
-  ts: any;
-  schedule: any[];
-  backgroundColor: string;
-  headerColor: string;
-  borderColor: string;
-  textColorClass: string;
-  darkerBackgroundColor: string;
-  isLoadingTwo: boolean;
-}
-
 export const WeeklySchedule = ({
   team,
+  Abbr,
+  category,
   currentUser,
   week,
   league,
   ts,
-  schedule,
+  processedSchedule,
   backgroundColor,
   headerColor,
   borderColor,
   textColorClass,
   darkerBackgroundColor,
   isLoadingTwo,
-}: WeeklyScheduleProps) => {
-  const processedSchedule = schedule.map((game) => {
-    const revealResult = RevealFBResults(game, ts, league);
-    const isHomeGame = game.HomeTeamID === team.ID;
-    const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
-    const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
-
-    let userWin = false;
-    let userLoss = false;
-    let gameScore = "TBC";
-    let headerGameScore = "TBC";
-
-    if (revealResult) {
-      const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
-      const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
-      userWin = userTeamScore > opponentScore;
-      userLoss = userTeamScore < opponentScore;
-
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
-        gameScore = "TBC";
-        headerGameScore = "TBC";
-      } else {
-        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
-        headerGameScore = `${userTeamScore} - ${opponentScore}`;
-      }
-    }
-
-    return {
-      ...game,
-      opponentLabel,
-      opponentLogo,
-      userWin,
-      userLoss,
-      gameScore,
-      headerGameScore,
-      gameLocation: isHomeGame ? "vs" : "@",
-    };
-  });
-
+}: TeamScheduleProps) => {
+  console.log(processedSchedule)
   return (
     <SectionCards
+      header={`Week ${week}`}
       team={team}
-      header={`Week ${week} Schedule`}
       classes={`w-full ${textColorClass}`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
@@ -245,9 +200,14 @@ export const WeeklySchedule = ({
                 Week
               </Text>
             </div>
-            <div className="text-left col-span-2">
+            <div className="text-left col-span-1 pl-4">
               <Text variant="xs" className={`${textColorClass}`}>
-                Opponent
+                Home
+              </Text>
+            </div>
+            <div className="text-left col-span-1 pl-4">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Away
               </Text>
             </div>
             <div className="text-center col-span-1">
@@ -271,22 +231,30 @@ export const WeeklySchedule = ({
             >
               <div className="text-left col-span-1">
                 <Text variant="xs" className="font-semibold">
-                  Week {game.Week}
+                  {week}{game.GameDay}
                 </Text>
               </div>
-              <div className="flex items-center col-span-2 justify-start text-center">
-                <Text variant="xs" className="font-semibold text-center">
-                    {game.gameLocation}
+              <div className="flex items-center col-span-1 text-left">
+                <Logo
+                  variant="xs"
+                  classes="w-4 h-4"
+                  containerClass="flex-shrink-0 p-2"
+                  url={getLogo(league, game.HomeTeamID, currentUser?.isRetro)}
+                />
+                <Text variant="xs" className="font-semibold text-left">
+                  {game.HomeTeamAbbr}
                 </Text>
-                  <Logo
-                      variant="xs"
-                      classes="w-4 h-4"
-                      containerClass="flex-shrink-0 p-2"
-                      url={game.opponentLogo}
-                  />
-                  <Text variant="xs" className="font-semibold text-center">
-                    {game.opponentLabel}
-                  </Text>
+              </div>
+              <div className="flex items-center col-span-1 text-left">
+                <Logo
+                  variant="xs"
+                  classes="w-4 h-4"
+                  containerClass="flex-shrink-0 p-2"
+                  url={getLogo(league, game.AwayTeamID, currentUser?.isRetro)}
+                />
+                <Text variant="xs" className="font-semibold text-center">
+                  {game.AwayTeamAbbr}
+                </Text>
               </div>
               <div className="text-center col-span-1">
                 <Text
@@ -338,7 +306,7 @@ export const TeamStandings = ({ standings, team,
                                 league, currentUser, isLoadingTwo, 
                                 backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor }: 
                                 TeamStandingsProps) => {
-  
+  console.log(standings)
   return (
     <SectionCards
       team={team}
@@ -447,7 +415,9 @@ export const TeamStandings = ({ standings, team,
 
 interface LeagueStandingsProps {
   standings: any[];
+  conferenceNames?: any[];
   league: League;
+  category?: string;
   currentUser: any;
   isLoadingTwo: boolean;
   backgroundColor: string;
@@ -459,7 +429,9 @@ interface LeagueStandingsProps {
 
 export const LeagueStandings = ({
   standings,
+  conferenceNames,
   league,
+  category,
   currentUser,
   isLoadingTwo,
   backgroundColor,
@@ -468,42 +440,15 @@ export const LeagueStandings = ({
   textColorClass,
   darkerBackgroundColor,
 }: LeagueStandingsProps) => {
-  const customOrder = [
-    "ACC",
-    "Big Ten",
-    "Big 12",
-    "SEC",
-    "Pac-12",
-    "Independent",
-    "American",
-    "C-USA",
-    "MAC",
-    "Mountain West",
-    "SunBelt",
-  ];
-
-  const groupedStandings = standings.reduce((acc: any, team) => {
-    if (!acc[team.ConferenceName]) {
-      acc[team.ConferenceName] = [];
-    }
-    acc[team.ConferenceName].push(team);
-    return acc;
-  }, {});
-
-  const sortedConferenceNames = Object.keys(groupedStandings).sort((a, b) => {
-    const indexA = customOrder.indexOf(a);
-    const indexB = customOrder.indexOf(b);
-
-    if (indexA !== -1 && indexB !== -1) {
-      return indexA - indexB;
-    }
-
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-
-    return a.localeCompare(b);
-  });
-
+  const { groupedStandings, sortedGroupNames } = useMemo(() => {
+    const customOrder =
+      category === "Divisions"
+        ? ["Atlantic", "Metropolitan", "Central", "Pacific"]
+        : ["ACC", "Big Ten", "Big 12", "SEC", "Pac-12", "Independent", "American", "C-USA", "MAC", "Mountain West", "SunBelt"];
+  
+    return processLeagueStandings(standings, customOrder, league, category);
+  }, [standings, league, category]);
+  
   return (
     <div className="flex flex-wrap gap-4">
       {isLoadingTwo ? (
@@ -513,22 +458,19 @@ export const LeagueStandings = ({
           </Text>
         </div>
       ) : (
-        sortedConferenceNames.map((conferenceName) => {
-          const conferenceStandings = groupedStandings[conferenceName].map(
+        sortedGroupNames.map((groupName) => {
+          const groupStandings = groupedStandings[groupName].map(
             (team: any, index: number) => ({
               ...team,
               Rank: index + 1,
             })
           );
-
+  
           return (
-            <div
-              key={conferenceName}
-              className="flex flex-row items-stretch"
-            >
+            <div key={groupName} className="flex flex-row items-stretch">
               <SectionCards
                 team={null}
-                header={`${conferenceName} Standings`}
+                header={`${groupName} Standings`}
                 classes={`${textColorClass}, h-full w-[40em]`}
                 backgroundColor={backgroundColor}
                 headerColor={headerColor}
@@ -574,7 +516,7 @@ export const LeagueStandings = ({
                       </Text>
                     </div>
                   </div>
-                  {conferenceStandings.map((standing: any, index: number) => (
+                  {groupStandings.map((standing: any, index: number) => (
                     <div
                       key={index}
                       className="grid grid-cols-7 border-b border-b-[#34455d] items-center"
@@ -635,7 +577,7 @@ export const LeagueStandings = ({
       )}
     </div>
   );
-};
+}
 
 interface LeagueStatsProps {
   league: League;

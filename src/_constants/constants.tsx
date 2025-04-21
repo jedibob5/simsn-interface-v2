@@ -117,6 +117,8 @@ export const Contracts = "Contracts";
 export const Overview = "Overview";
 export const Schedule = "Schedule";
 export const Standings = "Standings";
+export const Divisions = "Divisions";
+export const Conferences = "Conferences";
 export const WeeklyGames = "WeeklyGames";
 export const TeamGames = "TeamGames";
 export const FreeAgent = "FreeAgent";
@@ -414,6 +416,28 @@ export const navyBlueColor = "#1f2937";
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;
 
+export const CHLConferenceNames = [
+  { label: "ConferenceID", value: "1", name: "AHA" },
+  { label: "ConferenceID", value: "2", name: "Big Ten" },
+  { label: "ConferenceID", value: "3", name: "CCHA" },
+  { label: "ConferenceID", value: "4", name: "ECAC" },
+  { label: "ConferenceID", value: "5", name: "Hockey East" },
+  { label: "ConferenceID", value: "6", name: "NCHC" },
+  { label: "ConferenceID", value: "7", name: "Independant" },
+];
+
+export const PHLConferenceNames = [
+  { label: "ConferenceID", value: "1", name: "Eastern" },
+  { label: "ConferenceID", value: "2", name: "Western" },
+];
+
+export const PHLDivisionNames = [
+  { label: "DivisionID", value: "1", name: "Atlantic" },
+  { label: "DivisionID", value: "2", name: "Metropolitan" },
+  { label: "DivisionID", value: "3", name: "Central" },
+  { label: "DivisionID", value: "4", name: "Pacific" },
+];
+
 export const Seasons: { label: string; value: string }[] = [
   { label: "2021", value: "2021" },
   { label: "2022", value: "2022" },
@@ -430,8 +454,17 @@ export const FootballWeeks: { label: string; value: string }[] = Array.from(
       value: (i + 1).toString(),
   }));
 
-  export const HockeyWeeks: { label: string; value: string }[] = Array.from(
-    { length: 22 }, (_, i) => ({
-        label: (i + 1).toString(),
-        value: (i + 1).toString(),
-    }));
+export const CHLWeeks: { label: string; value: string }[] = Array.from(
+  { length: 22 }, (_, i) => [
+    { label: `${i + 1}A`, value: `${i + 1}A` },
+    { label: `${i + 1}B`, value: `${i + 1}B` },
+  ]
+).flat();
+
+export const PHLWeeks: { label: string; value: string }[] = Array.from(
+  { length: 22 }, (_, i) => [
+    { label: `${i + 1}A`, value: `${i + 1}A` },
+    { label: `${i + 1}B`, value: `${i + 1}B` },
+    { label: `${i + 1}C`, value: `${i + 1}C` },
+  ]
+).flat();

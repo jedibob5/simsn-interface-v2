@@ -14,8 +14,8 @@ import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { useSimBBAStore } from "../../context/SimBBAContext";
-import { FootballSchedulePage } from "./FootballSchedule/FootballSchedulePage";
-import { HockeySchedulePage } from "./HockeySchedule/HockeySchedulePage";
+import { CFBSchedulePage, NFLSchedulePage } from "./FootballSchedule/FootballSchedulePage";
+import { CHLSchedulePage, PHLSchedulePage } from "./HockeySchedule/HockeySchedulePage";
 import { BasketballSchedulePage } from "./BasketballSchedule/BasketballSchedulePage";
 
 interface SchedulePageProps {
@@ -62,16 +62,16 @@ export const SchedulePage: FC<SchedulePageProps> = ({ league }) => {
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Schedule">
         {selectedLeague === SimCFB && cfbTeam && (
-          <FootballSchedulePage league={league} ts={ts} />
+          <CFBSchedulePage league={league} ts={ts} />
         )}
         {selectedLeague === SimNFL && nflTeam && (
-          <FootballSchedulePage league={league} ts={ts} />
+          <NFLSchedulePage league={league} ts={ts} />
         )}
         {selectedLeague === SimCHL && chlTeam && (
-          <HockeySchedulePage league={league} ts={ts} />
+          <CHLSchedulePage league={league} ts={ts} />
         )}
         {selectedLeague === SimPHL && phlTeam && (
-          <HockeySchedulePage league={league} ts={ts} />
+          <PHLSchedulePage league={league} ts={ts} />
         )}
         {selectedLeague === SimCBB && cbbTeam && (
           <BasketballSchedulePage league={league} ts={ts} />

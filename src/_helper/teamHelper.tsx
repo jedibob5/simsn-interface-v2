@@ -9,7 +9,7 @@ import {
 } from "../_constants/constants";
 import { Timestamp as BKTimestamp, Match } from "../models/basketballModels";
 import { Timestamp as FBTimestamp } from "../models/footballModels";
-import { Timestamp as HCKTimestamp } from "../models/hockeyModels";
+import { Timestamp as HCKTimestamp, CollegeGame as CHLGame, ProfessionalGame as PHLGame } from "../models/hockeyModels";
 
 export const GetTeamLabel = (league: League, team: any): String => {
   if (league === SimCFB || league === SimNFL) {
@@ -168,5 +168,25 @@ export const RevealFBResults = (game: Game, ts: Timestamp, league: League): bool
     return true;
   if (TimeSlot === 'Monday Night Football' && ts.NFLMondayEvening)
     return true;
+  return false;
+};
+
+export const RevealHCKResults = (
+  game: CHLGame | PHLGame,
+  timestamp: HCKTimestamp,
+): boolean => {
+  const currentWeek = timestamp.Week
+  if (game.Week < currentWeek || game.SeasonID < timestamp.SeasonID)
+    return true;
+  const { GameDay, GameComplete } = game;
+  if (CHLGame){
+    if (GameDay === "A" && timestamp.GamesARan) return GameComplete;
+    if (GameDay === "B" && timestamp.GamesBRan) return GameComplete;
+  }
+  if (PHLGame){
+    if (GameDay === "A" && timestamp.GamesARan) return GameComplete;
+    if (GameDay === "B" && timestamp.GamesBRan) return GameComplete;
+    if (GameDay === "C" && timestamp.GamesCRan) return GameComplete;
+  }
   return false;
 };
