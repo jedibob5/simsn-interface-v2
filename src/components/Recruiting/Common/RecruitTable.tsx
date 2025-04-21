@@ -2,14 +2,12 @@ import { FC, ReactNode } from "react";
 import {
   AddRecruitType,
   Attributes,
-  InfoType,
   League,
   ModalAction,
   Preferences,
   RecruitInfoType,
   SimCHL,
 } from "../../../_constants/constants";
-import { useMobile } from "../../../_hooks/useMobile";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
@@ -17,8 +15,8 @@ import { Croot as HockeyCroot } from "../../../models/hockeyModels";
 import { getCHLCrootAttributes } from "../../Team/TeamPageUtils";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { ActionLock, Info, Plus } from "../../../_design/Icons";
-import { Table } from "../../../_design/Table";
-import { useSimHCKStore } from "../../../context/SimHockeyContext";
+import { Table, TableCell } from "../../../_design/Table";
+import { Text } from "../../../_design/Typography";
 
 const getRecruitingColumns = (
   league: League,
@@ -129,19 +127,29 @@ export const RecruitTable: FC<RecruitTableProps> = ({
         style={{ backgroundColor }}
       >
         {selection.map((attr, idx) => (
-          <div key={idx} className="table-cell px-2 py-1 whitespace-nowrap">
-            <span className="text-sm">{attr.value}</span>
-          </div>
+          <TableCell>
+            {attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                  }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                  }}
+                onClick={() => openModal(RecruitInfoType, item)}
+                >
+                  <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : <span className="text-sm">{attr.value}</span>}
+          </TableCell>
         ))}
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        <TableCell>
           {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">None</div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>None</TableCell>
+        <TableCell>
           <ButtonGroup classes="flex-nowrap">
-            <Button size="xs" onClick={() => openModal(RecruitInfoType, item)}>
-              <Info />
-            </Button>
             <Button
               variant={actionVariant}
               size="xs"
@@ -151,7 +159,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
               {recruitOnBoardMap[item.ID] ? <ActionLock /> : <Plus />}
             </Button>
           </ButtonGroup>
-        </div>
+        </TableCell>
       </div>
     );
   };

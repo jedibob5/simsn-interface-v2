@@ -661,7 +661,7 @@ export const TeamGrades = ({
           </Text>
         </div>
       )}
-      {Team.SpecialTeamsGrade && (
+      {Team && Team.SpecialTeamsGrade && (
         <div className="flex flex-col py-1 items-center">
           <div
             className={`flex items-center justify-center 

@@ -27,6 +27,9 @@ export const GetCurrentWeek = (league: League, ts: any) => {
   if (league === SimCBB || league === SimNBA) {
     return GetBKCurrentWeek(league, ts as BKTimestamp);
   }
+  if (league === SimCHL || league === SimPHL) {
+    return GetHCKCurrentWeek(ts as HCKTimestamp);
+  }
 };
 
 export const GetFBCurrentWeek = (league: League, ts: FBTimestamp) => {
@@ -45,6 +48,10 @@ export const GetBKCurrentWeek = (league: League, ts: BKTimestamp) => {
     return ts.NBAWeek;
   }
   return 0;
+};
+
+export const GetHCKCurrentWeek = (ts: HCKTimestamp) => {
+  return ts.Week;
 };
 
 export const GetLeagueTS = (
@@ -128,14 +135,18 @@ interface Timestamp {
   NFLSeasonID: number;
 }
 
-export const RevealFBResults = (game: Game, ts: Timestamp, league: League): boolean => {
+export const RevealFBResults = (
+  game: Game,
+  ts: Timestamp,
+  league: League
+): boolean => {
   const { TimeSlot, Week, SeasonID } = game;
   let currentWeek, currentSeasonID;
 
-  if (league === 'SimCFB') {
+  if (league === "SimCFB") {
     currentWeek = ts.CollegeWeek;
     currentSeasonID = ts.CollegeSeasonID;
-  } else if (league === 'SimNFL') {
+  } else if (league === "SimNFL") {
     currentWeek = ts.NFLWeek;
     currentSeasonID = ts.NFLSeasonID;
   } else {
@@ -146,27 +157,16 @@ export const RevealFBResults = (game: Game, ts: Timestamp, league: League): bool
     return true;
   }
 
-  if (TimeSlot === 'Thursday Night' && ts.ThursdayGames)
-    return true;
-  if (TimeSlot === 'Thursday Night Football' && ts.NFLThursday)
-    return true;
-  if (TimeSlot === 'Friday Night' && ts.FridayGames)
-    return true;
-  if (TimeSlot === 'Saturday Morning' && ts.SaturdayMorning)
-    return true;
-  if (TimeSlot === 'Saturday Afternoon' && ts.SaturdayNoon)
-    return true;
-  if (TimeSlot === 'Saturday Evening' && ts.SaturdayEvening)
-    return true;
-  if (TimeSlot === 'Saturday Night' && ts.SaturdayNight)
-    return true;
-  if (TimeSlot === 'Sunday Noon' && ts.NFLSundayNoon)
-    return true;
-  if (TimeSlot === 'Sunday Afternoon' && ts.NFLSundayAfternoon)
-    return true;
-  if (TimeSlot === 'Sunday Night Football' && ts.NFLSundayEvening)
-    return true;
-  if (TimeSlot === 'Monday Night Football' && ts.NFLMondayEvening)
-    return true;
+  if (TimeSlot === "Thursday Night" && ts.ThursdayGames) return true;
+  if (TimeSlot === "Thursday Night Football" && ts.NFLThursday) return true;
+  if (TimeSlot === "Friday Night" && ts.FridayGames) return true;
+  if (TimeSlot === "Saturday Morning" && ts.SaturdayMorning) return true;
+  if (TimeSlot === "Saturday Afternoon" && ts.SaturdayNoon) return true;
+  if (TimeSlot === "Saturday Evening" && ts.SaturdayEvening) return true;
+  if (TimeSlot === "Saturday Night" && ts.SaturdayNight) return true;
+  if (TimeSlot === "Sunday Noon" && ts.NFLSundayNoon) return true;
+  if (TimeSlot === "Sunday Afternoon" && ts.NFLSundayAfternoon) return true;
+  if (TimeSlot === "Sunday Night Football" && ts.NFLSundayEvening) return true;
+  if (TimeSlot === "Monday Night Football" && ts.NFLMondayEvening) return true;
   return false;
 };
