@@ -39,7 +39,7 @@ interface LineupPlayerProps {
     value: number
   ) => void;
   property: string;
-  activatePlayer: (player: CollegePlayer) => void;
+  activatePlayer: (player: CollegePlayer | ProfessionalPlayer) => void;
 }
 
 export const LineupPlayer: FC<LineupPlayerProps> = ({
@@ -81,7 +81,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
         <div className="flex flex-row mb-2 gap-x-1 justify-end w-full items-end">
           <Button
             classes="h-full"
-            onClick={() => activatePlayer(player as CollegePlayer)}
+            onClick={() => activatePlayer(player)}
           >
             <Info />
           </Button>

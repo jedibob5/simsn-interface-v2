@@ -23,7 +23,7 @@ import {
   Croot as FootballCroot,
   RecruitPlayerProfile as FootballCrootProfile,
 } from "../../../models/footballModels";
-import { Table } from "../../../_design/Table";
+import { Table, TableCell } from "../../../_design/Table";
 import {
   getAdditionalCrootPreferenceAttributes,
   getAdditionalHockeyAttributeGrades,
@@ -210,45 +210,52 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
         className="table-row border-b dark:border-gray-700 text-left"
         style={{ backgroundColor }}
       >
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        <TableCell>
           <span className={`text-sm`}>{croot.ID}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
-          <span className={`text-sm`}>
+        </TableCell>
+        <TableCell>
+          <span className={`text-sm cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                  }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                  }}
+                onClick={() => openModal(RecruitInfoType, croot)}>
             {croot.FirstName} {croot.LastName}
           </span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.Position}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.Archetype}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.Stars}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.Country}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.State}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{croot.OverallGrade}</span>
-        </div>
+        </TableCell>
         {category === Attributes && (
           <>
             {attrList.map((attr) => (
-              <div className="table-cell px-2 py-1 whitespace-nowrap">
+              <TableCell>
                 <span className={`text-sm`}>{attr.value}</span>
-              </div>
+              </TableCell>
             ))}
           </>
         )}
         {category === Potentials && (
           <>
             {attrList.map((attr) => (
-              <div className="table-cell px-2 py-1 whitespace-nowrap">
+              <TableCell>
                 {item[attr.label] ? (
                   <span className={`text-sm`}>{attr.value}</span>
                 ) : (
@@ -260,28 +267,28 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
                     ?
                   </Button>
                 )}
-              </div>
+              </TableCell>
             ))}
           </>
         )}
         {category === Preferences && (
           <>
             {prefList.map((attr, idx) => (
-              <div key={idx} className="table-cell px-2 py-1 whitespace-nowrap">
+              <TableCell key={idx}>
                 <span className="text-sm">{attr.value}</span>
-              </div>
+              </TableCell>
             ))}
           </>
         )}
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        <TableCell>
           <span className={`text-sm`}>{croot.RecruitingStatus}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>
             {croot.LeadingTeams && croot.LeadingTeams.length}
           </span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <div className="w-[1rem]">
             <Input
               type="number"
@@ -293,18 +300,15 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
               onChange={ChangeCurrentWeekPointsInput}
             />
           </div>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{modValue.toFixed(4)}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <span className={`text-sm`}>{item.TotalPoints}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
+        </TableCell>
+        <TableCell>
           <ButtonGroup classes="flex-nowrap">
-            <Button size="xs" onClick={() => openModal(RecruitInfoType, croot)}>
-              <Info />
-            </Button>
             <Button
               variant={toggleVariant as ButtonColor}
               size="xs"
@@ -321,7 +325,7 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
               <TrashCan />
             </Button>
           </ButtonGroup>
-        </div>
+        </TableCell>
       </div>
     );
   };
