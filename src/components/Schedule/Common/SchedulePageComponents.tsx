@@ -12,11 +12,12 @@ import PlayerPicture from "../../../_utility/usePlayerFaces";
 
 interface TeamScheduleProps {
   team: any;
+  Abbr?: string;
   week: any;
   currentUser: any;
   league: League
   ts: any;
-  schedule: any[];
+  processedSchedule: any[];
   backgroundColor: string;
   headerColor: string;
   borderColor: string;
@@ -27,11 +28,12 @@ interface TeamScheduleProps {
 
 export const TeamSchedule = ({
   team,
+  Abbr,
   currentUser,
   week,
   league,
   ts,
-  schedule,
+  processedSchedule,
   backgroundColor,
   headerColor,
   borderColor,
@@ -39,48 +41,11 @@ export const TeamSchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
-  const processedSchedule = schedule.map((game) => {
-    const revealResult = RevealFBResults(game, ts, league);
-    const isHomeGame = game.HomeTeamID === team.ID;
-    const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
-    const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
-
-    let userWin = false;
-    let userLoss = false;
-    let gameScore = "TBC";
-    let headerGameScore = "TBC";
-
-    if (revealResult) {
-      const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
-      const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
-      userWin = userTeamScore > opponentScore;
-      userLoss = userTeamScore < opponentScore;
-
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
-        gameScore = "TBC";
-        headerGameScore = "TBC";
-      } else {
-        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
-        headerGameScore = `${userTeamScore} - ${opponentScore}`;
-      }
-    }
-
-    return {
-      ...game,
-      opponentLabel,
-      opponentLogo,
-      userWin,
-      userLoss,
-      gameScore,
-      headerGameScore,
-      gameLocation: isHomeGame ? "vs" : "@",
-    };
-  });
-
+  
   return (
     <SectionCards
+      header={`${Abbr} Schedule`}
       team={team}
-      header={`${team.TeamAbbr} Schedule`}
       classes={`w-full ${textColorClass}`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
@@ -138,17 +103,17 @@ export const TeamSchedule = ({
               </div>
               <div className="flex items-center col-span-2 justify-start text-center">
                 <Text variant="xs" className="font-semibold text-center">
-                    {game.gameLocation}
+                  {game.gameLocation}
                 </Text>
-                  <Logo
-                      variant="xs"
-                      classes="w-4 h-4"
-                      containerClass="flex-shrink-0 p-2"
-                      url={game.opponentLogo}
-                  />
-                  <Text variant="xs" className="font-semibold text-center">
-                    {game.opponentLabel}
-                  </Text>
+                <Logo
+                  variant="xs"
+                  classes="w-4 h-4"
+                  containerClass="flex-shrink-0 p-2"
+                  url={game.opponentLogo}
+                />
+                <Text variant="xs" className="font-semibold text-center">
+                  {game.opponentLabel}
+                </Text>
               </div>
               <div className="text-center col-span-1">
                 <Text

@@ -9,7 +9,7 @@ import {
   WeeklyGames,
   TeamGames,
   Seasons,
-  Weeks
+  FootballWeeks as Weeks
 } from "../../../_constants/constants";
 import { Border } from "../../../_design/Borders";
 import { useAuthStore } from "../../../context/AuthContext";
@@ -30,6 +30,8 @@ import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { PaperAirplane } from "../../../_design/Icons";
 import { ToggleSwitch } from "../../../_design/Inputs";
+import { RevealFBResults } from "../../../_helper/teamHelper";
+import { getLogo } from "../../../_utility/getLogo";
 
 interface SchedulePageProps {
   league: League;
@@ -172,6 +174,53 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
       break;
   }
 
+  const processSchedule = (schedule: any[], team: any, ts: any, league: League) => {
+    return schedule.map((game) => {
+      const revealResult = RevealFBResults(game, ts, league);
+      const isHomeGame = game.HomeTeamID === team.ID;
+      const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
+      const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
+  
+      let userWin = false;
+      let userLoss = false;
+      let gameScore = "TBC";
+      let headerGameScore = "TBC";
+  
+      if (revealResult) {
+        const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
+        const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
+        userWin = userTeamScore > opponentScore;
+        userLoss = userTeamScore < opponentScore;
+  
+        if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+          gameScore = "TBC";
+          headerGameScore = "TBC";
+        } else {
+          gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+          headerGameScore = `${userTeamScore} - ${opponentScore}`;
+        }
+      }
+  
+      return {
+        ...game,
+        opponentLabel,
+        opponentLogo,
+        userWin,
+        userLoss,
+        gameScore,
+        headerGameScore,
+        gameLocation: isHomeGame ? "vs" : "@",
+      };
+    });
+  };
+  
+  const processedSchedule = useMemo(() => processSchedule(teamSchedule, selectedTeam, ts, league), [
+    teamSchedule,
+    selectedTeam,
+    ts,
+    league,
+  ]);
+
   return (
     <>
       <div className="flex flex-col w-full">
@@ -287,11 +336,12 @@ export const FootballSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           {category === Overview && view === TeamGames && (
             <TeamSchedule
               team={selectedTeam}
+              Abbr={selectedTeam?.TeamAbbr}
               currentUser={currentUser}
               week={currentWeek}
               league={league}
               ts={ts}
-              schedule={teamSchedule}
+              processedSchedule={processedSchedule}
               backgroundColor={backgroundColor}
               headerColor={headerColor}
               borderColor={borderColor}

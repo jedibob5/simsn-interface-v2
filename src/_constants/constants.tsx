@@ -424,8 +424,14 @@ export const Seasons: { label: string; value: string }[] = [
   { label: "2027", value: "2027" },
 ];
 
-export const Weeks: { label: string; value: string }[] = Array.from(
+export const FootballWeeks: { label: string; value: string }[] = Array.from(
   { length: 20 }, (_, i) => ({
       label: (i + 1).toString(),
       value: (i + 1).toString(),
   }));
+
+  export const HockeyWeeks: { label: string; value: string }[] = Array.from(
+    { length: 22 }, (_, i) => ({
+        label: (i + 1).toString(),
+        value: (i + 1).toString(),
+    }));
