@@ -10,6 +10,7 @@ import {
 } from "../../_constants/constants";
 import routes from "../../_constants/routes";
 import { useNavigate } from "react-router-dom";
+import { useDeepLink } from "../../context/DeepLinkContext";
 
 // ✅ Types
 interface DropdownItem {
@@ -25,6 +26,7 @@ export const useSideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const {goToTeamPage} = useDeepLink();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
@@ -36,7 +38,7 @@ export const useSideMenu = () => {
         route: routes.CFB_TEAM,
         league: SimCFB,
         toggle: () => toggleMenu(),
-        click: () => navigate(routes.CFB_TEAM),
+        click: () => goToTeamPage(SimCFB),
       },
       {
         label: "Gameplan",
@@ -91,10 +93,11 @@ export const useSideMenu = () => {
     ],
     SimNFL: [
       {
-        label: "Roster",
+        label: "Team",
         isRoute: true,
         route: routes.NFL_TEAM,
         league: SimNFL,
+        click: () => goToTeamPage(SimNFL),
         toggle: () => toggleMenu(),
       },
       {
@@ -153,6 +156,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.CBB_TEAM,
         league: SimCBB,
+        click: () => goToTeamPage(SimCBB),
         toggle: () => toggleMenu(),
       },
       {
@@ -205,6 +209,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.NBA_TEAM,
         league: SimNBA,
+        click: () => goToTeamPage(SimNBA),
         toggle: () => toggleMenu(),
       },
       {
@@ -256,7 +261,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.CHL_TEAM,
         league: SimCHL,
-        click: () => navigate(routes.CHL_TEAM),
+        click: () => goToTeamPage(SimCHL),
         toggle: () => toggleMenu(),
       },
       {
@@ -303,6 +308,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.PHL_TEAM,
         league: SimPHL,
+        click: () => goToTeamPage(SimPHL),
         toggle: () => toggleMenu(),
       },
       {

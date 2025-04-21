@@ -112,7 +112,7 @@ export const AuthRoutes = [
     }
   />,
   <Route
-    key="CHL Team"
+    key="CHL Gameplan"
     path={routes.CHL_GAMEPLAN}
     element={
       <AuthGuard>
@@ -121,7 +121,7 @@ export const AuthRoutes = [
     }
   />,
   <Route
-    key="PHL Team"
+    key="PHL Gameplan"
     path={routes.PHL_GAMEPLAN}
     element={
       <AuthGuard>
