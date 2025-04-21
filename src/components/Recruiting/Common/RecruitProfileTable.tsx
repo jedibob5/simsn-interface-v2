@@ -32,7 +32,7 @@ import {
 import { Input } from "../../../_design/Inputs";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
-import { Info, SadFace, Scholarship, TrashCan } from "../../../_design/Icons";
+import { SadFace, Scholarship, TrashCan } from "../../../_design/Icons";
 
 const getRecruitProfileColumns = (
   league: League,

@@ -42,6 +42,7 @@ import { ActionModal } from "../Common/ActionModal";
 import { useMobile } from "../../_hooks/useMobile";
 import { getPHLShortenedValue } from "../../_utility/getPHLShortenedValue";
 import { darkenColor } from "../../_utility/getDarkerColor";
+import { useParams } from "react-router-dom";
 
 interface TeamPageProps {
   league: League;
@@ -97,6 +98,7 @@ export const TeamPage: FC<TeamPageProps> = ({ league }) => {
 };
 
 const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
+  const {teamId} = useParams<{teamId?: string}>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -113,7 +115,14 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
-  const [selectedTeam, setSelectedTeam] = useState(chlTeam);
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    console.log({teamId})
+    if (teamId) {
+      const id = Number(teamId);
+      return chlTeamMap[id]
+    }
+    return chlTeam;
+  });
   const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -266,6 +275,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
+  const {teamId} = useParams<{teamId?: string}>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -282,7 +292,13 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<PHLPlayer | null>(null);
-  const [selectedTeam, setSelectedTeam] = useState(phlTeam);
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    if (teamId) {
+      const id = Number(teamId);
+      return phlTeamMap[id]
+    }
+    return phlTeam;
+  });
   const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -472,6 +488,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
+  const {teamId} = useParams<{teamId?: string}>();
+
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
   const {
@@ -487,7 +505,13 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CollegePlayer | null>(null);
-  const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    if (teamId && cfbTeamMap) {
+      const id = Number(teamId);
+      return cfbTeamMap[id]
+    }
+    return cfbTeam;
+  });
   const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -630,6 +654,8 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
+  const {teamId} = useParams<{teamId?: string}>();
+
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
   const {
@@ -645,7 +671,13 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<NFLPlayer | null>(null);
-  const [selectedTeam, setSelectedTeam] = useState(nflTeam);
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    if (teamId && nflTeamMap) {
+      const id = Number(teamId);
+      return nflTeamMap[id]
+    }
+    return nflTeam;
+  });
   const [category, setCategory] = useState(Overview);
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,

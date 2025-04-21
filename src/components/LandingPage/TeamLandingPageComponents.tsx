@@ -20,6 +20,8 @@ import { getLandingBoxStats } from "./TeamLandingPageHelper";
 import { SimCFB, SimNFL } from "../../_constants/constants";
 import { useNavigate } from "react-router-dom";
 import routes from "../../_constants/routes";
+import { useDeepLink } from "../../context/DeepLinkContext";
+import { ClickableTeamLabel } from "../Common/Labels";
 
 interface GamesBarProps {
   games: any[];
@@ -279,13 +281,16 @@ export const TeamMatchUp = ({
   let coaches: string[] = [];
   let isHomeGame = false;
   const navigate = useNavigate();
-
+  let homeID = 0;
+  let awayID = 0;
   if (matchUp?.length > 0) {
     const userGame = matchUp[0];
     isHomeGame = matchUp[0].HomeTeamID === team.ID;
     coaches = isHomeGame
       ? [userGame.HomeTeamCoach, userGame.AwayTeamCoach]
       : [userGame.AwayTeamCoach, userGame.HomeTeamCoach];
+    homeID = isHomeGame ? userGame.HomeTeamID : userGame.AwayTeamID;
+    awayID = isHomeGame ? userGame.AwayTeamID : userGame.HomeTeamID;
     gameLocation = isHomeGame ? "VS" : "AT";
 
     if (revealResult) {
@@ -352,13 +357,7 @@ export const TeamMatchUp = ({
                   containerClass="max-w-24 w-24"
                   url={homeLogo}
                 />
-                <Text
-                  variant="small"
-                  classes={`${textColorClass} font-semibold`}
-                  className="pr-1"
-                >
-                  {homeLabel}
-                </Text>
+                <ClickableTeamLabel label={homeLabel} teamID={homeID} textColorClass={textColorClass} league={league} />
                 <Text variant="xs" classes="opacity-70">
                   {`HC ${coaches[0]}`}
                 </Text>
@@ -376,13 +375,7 @@ export const TeamMatchUp = ({
                   containerClass="max-w-24 w-24"
                   url={awayLogo}
                 />
-                <Text
-                  variant="small"
-                  classes={`${textColorClass} font-semibold`}
-                  className="pl-1"
-                >
-                  {awayLabel}
-                </Text>
+                <ClickableTeamLabel label={awayLabel} teamID={awayID} textColorClass={textColorClass} league={league} />
                 <Text variant="xs" classes="opacity-70">
                   {`HC ${coaches[1]}`}
                 </Text>

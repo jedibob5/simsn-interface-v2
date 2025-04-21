@@ -2,7 +2,6 @@ import { FC, ReactNode } from "react";
 import {
   AddRecruitType,
   Attributes,
-  InfoType,
   League,
   ModalAction,
   Preferences,
@@ -138,7 +137,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
                 onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "";
                   }}
-                onClick={() => openModal(InfoType, item)}
+                onClick={() => openModal(RecruitInfoType, item)}
                 >
                   <Text variant="small">{attr.value}</Text>
               </span>

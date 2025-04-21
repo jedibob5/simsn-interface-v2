@@ -43,10 +43,13 @@ import { TeamService } from "../_services/teamService";
 import {
   Coach,
   GM,
+  League,
   Marketing,
   Owner,
   Scout,
+  SimCHL,
   SimHCK,
+  SimPHL,
 } from "../_constants/constants";
 import { hck_ws } from "../_constants/urls";
 import { PlayerService } from "../_services/playerService";
@@ -54,6 +57,8 @@ import { GameplanService } from "../_services/gameplanService";
 import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
+import { useNavigate } from "react-router-dom";
+import routes from "../_constants/routes";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
