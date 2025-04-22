@@ -98,7 +98,7 @@ export const TeamPage: FC<TeamPageProps> = ({ league }) => {
 };
 
 const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -116,10 +116,10 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(() => {
-    console.log({teamId})
+    console.log({ teamId });
     if (teamId) {
       const id = Number(teamId);
-      return chlTeamMap[id]
+      return chlTeamMap[id];
     }
     return chlTeam;
   });
@@ -253,7 +253,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] max-w-[2000px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,
@@ -275,7 +275,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -295,7 +295,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId) {
       const id = Number(teamId);
-      return phlTeamMap[id]
+      return phlTeamMap[id];
     }
     return phlTeam;
   });
@@ -465,7 +465,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         </Border>
       </div>
       <Border
-        classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+        classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
         styles={{
           backgroundColor: backgroundColor,
           borderColor: headerColor,
@@ -488,7 +488,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
 
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
@@ -508,7 +508,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && cfbTeamMap) {
       const id = Number(teamId);
-      return cfbTeamMap[id]
+      return cfbTeamMap[id];
     }
     return cfbTeam;
   });
@@ -632,7 +632,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,
@@ -654,7 +654,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
 
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
@@ -674,7 +674,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && nflTeamMap) {
       const id = Number(teamId);
-      return nflTeamMap[id]
+      return nflTeamMap[id];
     }
     return nflTeam;
   });
@@ -840,7 +840,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,

@@ -84,6 +84,16 @@ export const Table = <T,>({
         if (a.ShowLetterGrade && !b.ShowLetterGrade) return 1;
         if (!a.ShowLetterGrade && b.ShowLetterGrade) return -1;
       }
+      if (
+        key.includes("Y1") ||
+        key.includes("Y2") ||
+        key.includes("Y3") ||
+        key.includes("Y4") ||
+        key.includes("Y5")
+      ) {
+        if (a.Contract[key] > b.Contract[key]) return order === "asc" ? -1 : 1;
+        if (a.Contract[key] < b.Contract[key]) return order === "asc" ? 1 : -1;
+      }
 
       if (a[key] < b[key]) return order === "asc" ? -1 : 1;
       if (a[key] > b[key]) return order === "asc" ? 1 : -1;

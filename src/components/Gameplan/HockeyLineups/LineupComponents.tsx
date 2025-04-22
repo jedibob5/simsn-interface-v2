@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 import {
   CollegePlayer,
   CollegeShootoutLineup,
@@ -59,10 +59,20 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
   }
   const player = rosterMap[playerID];
   const GetValue = useCallback(
-    (opts: SingleValue<SelectOption>) =>
-      ChangeState(Number(opts!.value), property),
+    (opts: SingleValue<SelectOption>) => {
+      if (opts) {
+        ChangeState(Number(opts.value), property);
+      }
+    },
     [ChangeState, property]
   );
+
+  const placeHolder = useMemo(() => {
+    if (player && playerID > 0) {
+      return `${player.Position} ${player.FirstName} ${player.LastName}`;
+    }
+    return "None";
+  }, [player, playerID]);
 
   const ChangeInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,6 +85,10 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     [ChangePlayerInput, playerID]
   );
 
+  const selectedOption = useMemo(() => {
+    return optionList.find((opt) => Number(opt.value) === playerID) || null;
+  }, [optionList, playerID]);
+
   return (
     <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
       <>
@@ -82,13 +96,15 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
           <Button
             classes="h-full"
             onClick={() => activatePlayer(player)}
+            disabled={!player}
           >
             <Info />
           </Button>
           <SelectDropdown
+            value={selectedOption}
             onChange={GetValue}
             options={optionList}
-            placeholder={`${player.Position} ${player.FirstName} ${player.LastName}`}
+            placeholder={placeHolder}
             styles={{
               control: (base, state) => ({
                 ...base,
@@ -142,18 +158,20 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
             }}
           />
         </div>
-        <div className="flex flex-col gap-y-2 flex-1">
-          {zoneInputList.map((x) => (
-            <Input
-              type="number"
-              key={x.key}
-              label={x.label}
-              name={x.key}
-              value={player[x.key] as number}
-              onChange={ChangeInput}
-            />
-          ))}
-        </div>
+        {player && (
+          <div className="flex flex-col gap-y-2 flex-1">
+            {zoneInputList.map((x) => (
+              <Input
+                type="number"
+                key={x.key}
+                label={x.label}
+                name={x.key}
+                value={player[x.key] as number}
+                onChange={ChangeInput}
+              />
+            ))}
+          </div>
+        )}
       </>
     </div>
   );
@@ -168,7 +186,7 @@ interface ShootoutPlayerProps {
   ChangeState: (value: number, property: string) => void;
   property: string;
   shootoutProperty: string;
-  activatePlayer: (player: CollegePlayer) => void;
+  activatePlayer: (player: CollegePlayer | ProfessionalPlayer) => void;
 }
 
 export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
@@ -182,25 +200,47 @@ export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
   lineCategory,
   activatePlayer,
 }) => {
-  if (playerID === 0) {
-    return <></>;
-  }
+  // if (playerID === 0) {
+  //   return <></>;
+  // }
   const player = rosterMap[playerID];
+
+  const placeHolder = useMemo(() => {
+    if (player && playerID > 0) {
+      return `${player.Position} ${player.FirstName} ${player.LastName}`;
+    }
+    return "None";
+  }, [player, playerID]);
+
   const GetValue = useCallback(
-    (opts: SingleValue<SelectOption>) =>
-      ChangeState(Number(opts?.value), property),
+    (opts: SingleValue<SelectOption>) => {
+      if (opts) {
+        ChangeState(Number(opts.value), property);
+      }
+    },
     [ChangeState, property]
   );
-
   const GetShootoutValue = useCallback(
     (opts: SingleValue<SelectOption>) =>
       ChangeState(Number(opts?.value), shootoutProperty),
     [ChangeState, shootoutProperty]
   );
 
-  const shootoutPlaceholder = getShootoutPlaceholder(
-    lineCategory[shootoutProperty]
-  );
+  const shootoutPlaceholder = useMemo(() => {
+    return getShootoutPlaceholder(lineCategory[shootoutProperty]);
+  }, [lineCategory]);
+
+  const selectedOption = useMemo(() => {
+    return optionList.find((opt) => Number(opt.value) === playerID) || null;
+  }, [optionList, lineCategory, property, playerID]);
+
+  const shotTypeSelectedOption = useMemo(() => {
+    return (
+      getShootoutOptionList().find(
+        (opt) => Number(opt.value) === lineCategory[shootoutProperty]
+      ) || null
+    );
+  }, [lineCategory, shootoutProperty]);
 
   return (
     <div className="flex flex-col gap-2 px-4 pb-2">
@@ -212,14 +252,17 @@ export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
       <div className="flex flex-row gap-x-2">
         <Button
           classes=""
-          onClick={() => activatePlayer(player as CollegePlayer)}
+          onClick={() => activatePlayer(player)}
+          disabled={!player}
         >
           <Info />
         </Button>
         <SelectDropdown
+          key={`${property}-${playerID}`}
+          value={selectedOption}
           onChange={GetValue}
           options={optionList}
-          placeholder={`${player.Position} ${player.FirstName} ${player.LastName}`}
+          placeholder={`${placeHolder}`}
           styles={{
             control: (provided, state) => ({
               ...provided,
@@ -266,6 +309,7 @@ export const ShootoutPlayer: FC<ShootoutPlayerProps> = ({
           Shot Type {idx}
         </label>
         <SelectDropdown
+          value={shotTypeSelectedOption}
           onChange={GetShootoutValue}
           options={getShootoutOptionList()}
           placeholder={shootoutPlaceholder}

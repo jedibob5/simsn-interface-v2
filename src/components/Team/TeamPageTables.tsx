@@ -1,11 +1,32 @@
 import { FC, useMemo } from "react";
 import { Table } from "../../_design/Table";
 import { Text } from "../../_design/Typography";
-import { CollegePlayer as CHLPlayer, ProfessionalPlayer as PHLPlayer, ProContract as PHLContract } from "../../models/hockeyModels";
-import { CollegePlayer as CFBPlayer, NFLPlayer, NFLContract, Timestamp } from "../../models/footballModels";
+import {
+  CollegePlayer as CHLPlayer,
+  ProfessionalPlayer as PHLPlayer,
+  ProContract as PHLContract,
+} from "../../models/hockeyModels";
+import {
+  CollegePlayer as CFBPlayer,
+  NFLPlayer,
+  NFLContract,
+  Timestamp,
+} from "../../models/footballModels";
 import { useMobile } from "../../_hooks/useMobile";
-import { Attributes, Potentials, Contracts, Overview, ButtonGreen, TextGreen } from "../../_constants/constants";
-import { getCHLAttributes, getPHLAttributes, getCFBAttributes, getNFLAttributes } from "./TeamPageUtils";
+import {
+  Attributes,
+  Potentials,
+  Contracts,
+  Overview,
+  ButtonGreen,
+  TextGreen,
+} from "../../_constants/constants";
+import {
+  getCHLAttributes,
+  getPHLAttributes,
+  getCFBAttributes,
+  getNFLAttributes,
+} from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { useModal } from "../../_hooks/useModal";
 import {
@@ -16,7 +37,12 @@ import {
   Redshirt,
 } from "../../_constants/constants";
 import { SelectDropdown } from "../../_design/Select";
-import { CheckCircle, CrossCircle, ShieldCheck, User } from "../../_design/Icons";
+import {
+  CheckCircle,
+  CrossCircle,
+  ShieldCheck,
+  User,
+} from "../../_design/Icons";
 import { SimNFL } from "../../_constants/constants";
 
 interface CHLRosterTableProps {
@@ -38,7 +64,6 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   category,
   openModal,
 }) => {
-
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -61,7 +86,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
       ]);
     }
 
-    if (!isMobile  && category === Attributes || category === Potentials) {
+    if ((!isMobile && category === Attributes) || category === Potentials) {
       columns = columns.concat([
         { header: "Agi", accessor: "Agility" },
         { header: "FO", accessor: "Faceoffs" },
@@ -82,7 +107,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
       ]);
     }
     columns.push({ header: "Actions", accessor: "actions" });
-  return columns;
+    return columns;
   }, [isMobile, category]);
 
   const sortedRoster = useMemo(() => {
@@ -102,9 +127,9 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
         style={{ backgroundColor }}
       >
         {attributes.map((attr, idx) => (
-        <div
-        key={idx}
-        className={`table-cell 
+          <div
+            key={idx}
+            className={`table-cell 
         align-middle 
         min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
         text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
@@ -114,60 +139,77 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
             ? "text-center"
             : ""
         }`}
-      >
-          {attr.label === "Redshirt" ? (
-          <>
-            {attr.value === true ? (
-              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
-            ) : (
-              <CrossCircle textColorClass="w-full text-center text-red-500" />
-            )}
-          </>
-        ) : attr.label === "Health" ? (
-          <>
-            {attr.value === true ? (
-              <User textColorClass="w-full text-center text-red-500" />
-            ) : (
-              <User textColorClass={`w-full text-center ${TextGreen}`} />
-            )}
-          </>
-        ) : attr.label === "TransferStatus" ? (
-          <>
-            {attr.value === 0 ? (
-              <ShieldCheck textColorClass={`w-full text-center ${TextGreen}`} />
-            ) : (
-              <ShieldCheck textColorClass="w-full text-center text-red-500" />
-            )}
-          </>
-        ) : attr.label === "Name" ? (
-          <span
-            className={`cursor-pointer font-semibold`}
-            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "#fcd53f";
-            }}
-            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "";
-            }}
-            onClick={() => openModal(InfoType, item)}
           >
-            <Text variant="small">{attr.value}</Text>
-          </span>
-        ) : (
-          <Text variant="small">{attr.value}</Text>
-        )}
+            {attr.label === "Redshirt" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "TransferStatus" ? (
+              <>
+                {attr.value === 0 ? (
+                  <ShieldCheck
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <ShieldCheck textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small">{attr.value}</Text>
+            )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
             options={[
-              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
               ...(item.IsRedshirting || item.IsRedshirt
                 ? []
-                : [{ value: "redshirt", label: `Redshirt - ${item.FirstName} ${item.LastName}` }]),
+                : [
+                    {
+                      value: "redshirt",
+                      label: `Redshirt - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
               ...(item.TransferStatus === 0
                 ? []
-                : [{ value: "promise", label: `Send Promise - ${item.FirstName} ${item.LastName}` }]),
+                : [
+                    {
+                      value: "promise",
+                      label: `Send Promise - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
             ]}
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
@@ -175,11 +217,10 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
               }
               if (selectedOption?.value === "redshirt") {
                 openModal(Redshirt, item);
-              } 
-              if (selectedOption?.value === "promise"){
-                openModal(Promise, item);
               }
-              else {
+              if (selectedOption?.value === "promise") {
+                openModal(Promise, item);
+              } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
@@ -228,61 +269,61 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
 
   const rosterColumns = useMemo(() => {
     let columns = [
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-    { header: "Exp", accessor: "Year" },
-    { header: "Ovr", accessor: "Overall" },
-  ];
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: "Exp", accessor: "Year" },
+      { header: "Ovr", accessor: "Overall" },
+    ];
 
-  if (!isMobile && category === Overview) {
-    columns = columns.concat([
-      { header: "Health", accessor: "isInjured" },
-      { header: "Injury", accessor: "InjuryType" },
-      { header: `${ts.Season} $`, accessor: "Y1BaseSalary" },
-      { header: "Yrs Left", accessor: "ContractLength" },
-      { header: "NTC", accessor: "NoTradeClause" },
-      { header: "NMC", accessor: "NoMovementClause" },
-    ]);
-  }
+    if (!isMobile && category === Overview) {
+      columns = columns.concat([
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: `${ts.Season} $`, accessor: "Y1BaseSalary" },
+        { header: "Yrs Left", accessor: "ContractLength" },
+        { header: "NTC", accessor: "NoTradeClause" },
+        { header: "NMC", accessor: "NoMovementClause" },
+      ]);
+    }
 
-  if (!isMobile && category === Attributes || category === Potentials) {
-    columns = columns.concat([
-      { header: "Agi", accessor: "Agility" },
-      { header: "FO", accessor: "Faceoffs" },
-      { header: "LSA", accessor: "LongShotAccuracy" },
-      { header: "LSP", accessor: "LongShotPower" },
-      { header: "CSA", accessor: "CloseShotAccuracy" },
-      { header: "CSP", accessor: "CloseShotPower" },
-      { header: "Pass", accessor: "Passing" },
-      { header: "PH", accessor: "PuckHandling" },
-      { header: "Str", accessor: "Strength" },
-      { header: "BChk", accessor: "BodyChecking" },
-      { header: "SChk", accessor: "StickChecking" },
-      { header: "SB", accessor: "ShotBlocking" },
-      { header: "GK", accessor: "Goalkeeping" },
-      { header: "GV", accessor: "GoalieVision" },
-      { header: "Sta", accessor: "Stamina" },
-      { header: "Inj", accessor: "Injury" },
-    ]);
-  }
+    if ((!isMobile && category === Attributes) || category === Potentials) {
+      columns = columns.concat([
+        { header: "Agi", accessor: "Agility" },
+        { header: "FO", accessor: "Faceoffs" },
+        { header: "LSA", accessor: "LongShotAccuracy" },
+        { header: "LSP", accessor: "LongShotPower" },
+        { header: "CSA", accessor: "CloseShotAccuracy" },
+        { header: "CSP", accessor: "CloseShotPower" },
+        { header: "Pass", accessor: "Passing" },
+        { header: "PH", accessor: "PuckHandling" },
+        { header: "Str", accessor: "Strength" },
+        { header: "BChk", accessor: "BodyChecking" },
+        { header: "SChk", accessor: "StickChecking" },
+        { header: "SB", accessor: "ShotBlocking" },
+        { header: "GK", accessor: "Goalkeeping" },
+        { header: "GV", accessor: "GoalieVision" },
+        { header: "Sta", accessor: "Stamina" },
+        { header: "Inj", accessor: "Injury" },
+      ]);
+    }
 
-  if (!isMobile && category === Contracts) {
-    columns = columns.concat([
-      { header: "Y1 S", accessor: "Y1BaseSalary" },
-      { header: "Y2 S", accessor: "Y2BaseSalary" },
-      { header: "Y3 S", accessor: "Y3BaseSalary" },
-      { header: "Y4 S", accessor: "Y4BaseSalary" },
-      { header: "Y5 S", accessor: "Y5BaseSalary" },
-      { header: "Yrs", accessor: "ContractLength" },
-      { header: "NTC", accessor: "NoTradeClause" },
-      { header: "NMC", accessor: "NoMovementClause" },
-    ]);
-  }
+    if (!isMobile && category === Contracts) {
+      columns = columns.concat([
+        { header: "Y1 S", accessor: "Y1BaseSalary" },
+        { header: "Y2 S", accessor: "Y2BaseSalary" },
+        { header: "Y3 S", accessor: "Y3BaseSalary" },
+        { header: "Y4 S", accessor: "Y4BaseSalary" },
+        { header: "Y5 S", accessor: "Y5BaseSalary" },
+        { header: "Yrs", accessor: "ContractLength" },
+        { header: "NTC", accessor: "NoTradeClause" },
+        { header: "NMC", accessor: "NoMovementClause" },
+      ]);
+    }
 
-  columns.push({ header: "Actions", accessor: "actions" });
-  return columns;
-}, [isMobile, category]);
+    columns.push({ header: "Actions", accessor: "actions" });
+    return columns;
+  }, [isMobile, category]);
 
   const sortedRoster = useMemo(() => {
     return [...roster].sort((a, b) => b.Overall - a.Overall);
@@ -293,18 +334,26 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const playerContract = contracts?.find(contract => contract.PlayerID === item.ID);
-    const attributes = getPHLAttributes(item, isMobile, category!, playerContract);
+    const playerContract = contracts?.find(
+      (contract) => contract.PlayerID === item.ID
+    );
+    item.Contract = playerContract!!;
+    const attributes = getPHLAttributes(
+      item,
+      isMobile,
+      category!,
+      playerContract
+    );
     return (
       <div
-    key={item.ID}
-    className={`table-row border-b dark:border-gray-700 text-left`}
-    style={{ backgroundColor }}
-  >
-    {attributes.map((attr, idx) => (
-        <div
-        key={idx}
-        className={`table-cell 
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
         align-middle 
         min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
         text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
@@ -314,51 +363,71 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
             ? "text-center"
             : ""
         }`}
-      >
-        {attr.label === "NTC" || attr.label === "NMC" ? (
-          <>
-            {attr.value === true ? (
-              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
-            ) : (
-              <CrossCircle textColorClass="w-full text-center text-red-500" />
-            )}
-          </>
-        ) : attr.label === "Health" ? (
-          <>
-            {attr.value === true ? (
-              <User textColorClass="w-full text-center text-red-500" />
-            ) : (
-              <User textColorClass={`w-full text-center ${TextGreen}`} />
-            )}
-          </>
-        ) : attr.label === "Name" ? (
-          <span
-            className={`cursor-pointer font-semibold`}
-            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "#fcd53f";
-            }}
-            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "";
-            }}
-            onClick={() => openModal(InfoType, item)}
           >
-            <Text variant="small">{attr.value}</Text>
-          </span>
-        ) : (
-          <Text variant="small">{attr.value}</Text>
-        )}
-      </div>
-    ))}
+            {attr.label === "NTC" || attr.label === "NMC" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small">{attr.value}</Text>
+            )}
+          </div>
+        ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
             options={[
-              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
-              { value: "extension", label: `Offer Extension - ${item.FirstName} ${item.LastName}` },
-              { value: "franchise", label: `Franchise Tag - ${item.FirstName} ${item.LastName}` },
-              { value: "injuredReserve", label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}` },
-              { value: "practiceSquad", label: `Demote to Practice Squad - ${item.FirstName} ${item.LastName}` },
-              { value: "tradeBlock", label: `Trade Block - ${item.FirstName} ${item.LastName}` },
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "extension",
+                label: `Offer Extension - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "franchise",
+                label: `Franchise Tag - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "injuredReserve",
+                label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "practiceSquad",
+                label: `Demote to Practice Squad - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "tradeBlock",
+                label: `Trade Block - ${item.FirstName} ${item.LastName}`,
+              },
             ]}
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
@@ -384,7 +453,6 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   );
 };
 
-
 interface CFBRosterTableProps {
   roster: CFBPlayer[];
   backgroundColor?: string;
@@ -409,53 +477,53 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
 
   let rosterColumns = useMemo(() => {
     let columns = [
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-    { header: "Yr", accessor: "Year" },
-    { header: "⭐", accessor: "Stars" },
-    { header: "Ovr", accessor: "Overall" },
-  ];
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: "Yr", accessor: "Year" },
+      { header: "⭐", accessor: "Stars" },
+      { header: "Ovr", accessor: "Overall" },
+    ];
 
-  if (!isMobile && category === Overview) {
-    columns = columns.concat([
-      { header: "Pot", accessor: "PotentialGrade" },
-      { header: "Health", accessor: "isInjured" },
-      { header: "Injury", accessor: "InjuryType" },
-      { header: "Redshirt", accessor: "isRedshirting" },
-      { header: "Mood", accessor: "TransferStatus" },
-    ]);
-  }
+    if (!isMobile && category === Overview) {
+      columns = columns.concat([
+        { header: "Pot", accessor: "PotentialGrade" },
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: "Redshirt", accessor: "isRedshirting" },
+        { header: "Mood", accessor: "TransferStatus" },
+      ]);
+    }
 
-  if (!isMobile && category === Attributes) {
-    columns = columns.concat([
-      { header: "Pot", accessor: "PotentialGrade" },
-      { header: "FIQ", accessor: "FootballIQ" },
-      { header: "SPD", accessor: "Speed" },
-      { header: "AGI", accessor: "Agility" },
-      { header: "CAR", accessor: "Carrying" },
-      { header: "CTH", accessor: "Catching" },
-      { header: "RTE", accessor: "RouteRunning" },
-      { header: "THP", accessor: "ThrowPower" },
-      { header: "THA", accessor: "ThrowAccuracy" },
-      { header: "PBK", accessor: "PassBlock" },
-      { header: "RBK", accessor: "RunBlock" },
-      { header: "STR", accessor: "Strength" },
-      { header: "TKL", accessor: "Tackle" },
-      { header: "ZCV", accessor: "ZoneCoverage" },
-      { header: "MCV", accessor: "ManCoverage" },
-      { header: "RSH", accessor: "PassRush" },
-      { header: "RDF", accessor: "RunDefense" },
-      { header: "KP", accessor: "KickPower" },
-      { header: "KA", accessor: "KickAccuracy" },
-      { header: "PP", accessor: "PuntPower" },
-      { header: "PA", accessor: "PuntAccuracy" },
-      { header: "STA", accessor: "Stamina" },
-      { header: "INJ", accessor: "Injury" },
-    ]);
-  }
+    if (!isMobile && category === Attributes) {
+      columns = columns.concat([
+        { header: "Pot", accessor: "PotentialGrade" },
+        { header: "FIQ", accessor: "FootballIQ" },
+        { header: "SPD", accessor: "Speed" },
+        { header: "AGI", accessor: "Agility" },
+        { header: "CAR", accessor: "Carrying" },
+        { header: "CTH", accessor: "Catching" },
+        { header: "RTE", accessor: "RouteRunning" },
+        { header: "THP", accessor: "ThrowPower" },
+        { header: "THA", accessor: "ThrowAccuracy" },
+        { header: "PBK", accessor: "PassBlock" },
+        { header: "RBK", accessor: "RunBlock" },
+        { header: "STR", accessor: "Strength" },
+        { header: "TKL", accessor: "Tackle" },
+        { header: "ZCV", accessor: "ZoneCoverage" },
+        { header: "MCV", accessor: "ManCoverage" },
+        { header: "RSH", accessor: "PassRush" },
+        { header: "RDF", accessor: "RunDefense" },
+        { header: "KP", accessor: "KickPower" },
+        { header: "KA", accessor: "KickAccuracy" },
+        { header: "PP", accessor: "PuntPower" },
+        { header: "PA", accessor: "PuntAccuracy" },
+        { header: "STA", accessor: "Stamina" },
+        { header: "INJ", accessor: "Injury" },
+      ]);
+    }
     columns.push({ header: "Actions", accessor: "actions" });
-  return columns;
+    return columns;
   }, [isMobile, category]);
 
   const sortedRoster = useMemo(() => {
@@ -474,10 +542,10 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
         className={`table-row border-b dark:border-gray-700 text-start`}
         style={{ backgroundColor }}
       >
-      {attributes.map((attr, idx) => (
-        <div
-        key={idx}
-        className={`table-cell 
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
         align-middle 
         min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
         text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
@@ -487,60 +555,77 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
             ? "text-center"
             : ""
         }`}
-      >
-          {attr.label === "Redshirt" ? (
-          <>
-            {attr.value === true ? (
-              <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
-            ) : (
-              <CrossCircle textColorClass="w-full text-center text-red-500" />
-            )}
-          </>
-        ) : attr.label === "Health" ? (
-          <>
-            {attr.value === true ? (
-              <User textColorClass="w-full text-center text-red-500" />
-            ) : (
-              <User textColorClass={`w-full text-center ${TextGreen}`} />
-            )}
-          </>
-        ) : attr.label === "TransferStatus" ? (
-          <>
-            {attr.value === 0 ? (
-              <ShieldCheck textColorClass={`w-full text-center ${TextGreen}`} />
-            ) : (
-              <ShieldCheck textColorClass="w-full text-center text-red-500" />
-            )}
-          </>
-        ) : attr.label === "Name" ? (
-          <span
-            className={`cursor-pointer font-semibold`}
-            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "#fcd53f";
-            }}
-            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "";
-            }}
-            onClick={() => openModal(InfoType, item)}
           >
-            <Text variant="small">{attr.value}</Text>
-          </span>
-        ) : (
-          <Text variant="small">{attr.value}</Text>
-        )}
+            {attr.label === "Redshirt" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "TransferStatus" ? (
+              <>
+                {attr.value === 0 ? (
+                  <ShieldCheck
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <ShieldCheck textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small">{attr.value}</Text>
+            )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
             options={[
-              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
               ...(item.IsRedshirting || item.IsRedshirt
                 ? []
-                : [{ value: "redshirt", label: `Redshirt - ${item.FirstName} ${item.LastName}` }]),
+                : [
+                    {
+                      value: "redshirt",
+                      label: `Redshirt - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
               ...(item.TransferStatus === 0
                 ? []
-                : [{ value: "promise", label: `Send Promise - ${item.FirstName} ${item.LastName}` }]),
+                : [
+                    {
+                      value: "promise",
+                      label: `Send Promise - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
             ]}
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
@@ -548,11 +633,10 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
               }
               if (selectedOption?.value === "redshirt") {
                 openModal(Redshirt, item);
-              } 
-              if (selectedOption?.value === "promise"){
-                openModal(Promise, item);
               }
-              else {
+              if (selectedOption?.value === "promise") {
+                openModal(Promise, item);
+              } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
@@ -572,7 +656,6 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
     />
   );
 };
-
 
 interface NFLRosterTableProps {
   roster: NFLPlayer[];
@@ -597,7 +680,6 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   category,
   openModal,
 }) => {
-
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const [isMobile] = useMobile();
 
@@ -681,20 +763,29 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   const rowRenderer = (
     item: NFLPlayer,
     index: number,
-    backgroundColor: string,
+    backgroundColor: string
   ) => {
-    const playerContract = contracts?.find(contract => contract.PlayerID === item.ID);
-    const attributes = getNFLAttributes(item, isMobile, category!, item.ShowLetterGrade, playerContract);
+    const playerContract = contracts?.find(
+      (contract) => contract.PlayerID === item.ID
+    );
+    item.Contract = playerContract!!;
+    const attributes = getNFLAttributes(
+      item,
+      isMobile,
+      category!,
+      item.ShowLetterGrade,
+      playerContract
+    );
     return (
       <div
         key={item.ID}
         className={`table-row border-b dark:border-gray-700 text-left`}
         style={{ backgroundColor }}
       >
-      {attributes.map((attr, idx) => (
-        <div
-          key={idx}
-          className={`table-cell 
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
           align-middle 
           min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
           text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
@@ -704,51 +795,71 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
               ? "text-center"
               : ""
           }`}
-        >
-      {attr.label === "Is Tagged" ? (
-        <>
-          {attr.value === true ? (
-            <CheckCircle textColorClass={`w-full text-center ${TextGreen}`} />
-          ) : (
-            <CrossCircle textColorClass="w-full text-center text-red-500" />
-          )}
-        </>
-      ) : attr.label === "Health" ? (
-        <>
-          {attr.value === true ? (
-            <User textColorClass="w-full text-center text-red-500" />
-          ) : (
-            <User textColorClass={`w-full text-center ${TextGreen}`} />
-          )}
-        </>
-      ) : attr.label === "Name" ? (
-        <span
-          className={`cursor-pointer font-semibold`}
-          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-            (e.target as HTMLElement).style.color = "#fcd53f";
-          }}
-          onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-            (e.target as HTMLElement).style.color = "";
-          }}
-          onClick={() => openModal(InfoType, item)}
-        >
-          <Text variant="small">{attr.value}</Text>
-        </span>
-      ) : (
-        <Text variant="small">{attr.value}</Text>
-      )}
-    </div>
-  ))}
+          >
+            {attr.label === "Is Tagged" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small">{attr.value}</Text>
+            )}
+          </div>
+        ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
             placeholder={isMobile ? "Action" : "Select an action"}
             options={[
-              { value: "cut", label: `Cut - ${item.FirstName} ${item.LastName}` },
-              { value: "extension", label: `Offer Extension - ${item.FirstName} ${item.LastName}` },
-              { value: "franchise", label: `Franchise Tag - ${item.FirstName} ${item.LastName}` },
-              { value: "injuredReserve", label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}` },
-              { value: "practiceSquad", label: `Demote to Reserves - ${item.FirstName} ${item.LastName}` },
-              { value: "tradeBlock", label: `Trade Block - ${item.FirstName} ${item.LastName}` },
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "extension",
+                label: `Offer Extension - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "franchise",
+                label: `Franchise Tag - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "injuredReserve",
+                label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "practiceSquad",
+                label: `Demote to Reserves - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "tradeBlock",
+                label: `Trade Block - ${item.FirstName} ${item.LastName}`,
+              },
             ]}
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {

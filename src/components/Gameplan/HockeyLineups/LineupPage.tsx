@@ -32,6 +32,7 @@ import {
   getLineupDropdownOptions,
   getLineupIdx,
   getZoneInputList,
+  updateLineupFieldWithClass,
 } from "./lineupHelper";
 import {
   LineupHelpModal,
@@ -58,11 +59,11 @@ export const CHLLineupPage = () => {
     useState(chlShootoutLineup);
   const [currentLineups, setCurrentLineups] = useState(chlLineups);
   const [currentShootoutLineups, setCurrentShootoutLineups] =
-    useState(chlShootoutLineup);
+    useState<CollegeShootoutLineup>(chlShootoutLineup);
   const [modalAction, setModalAction] = useState<ModalAction>(Help1);
-  const [modalPlayer, setModalPlayer] = useState<CollegePlayer | ProfessionalPlayer>(
-    {} as CollegePlayer
-  );
+  const [modalPlayer, setModalPlayer] = useState<
+    CollegePlayer | ProfessionalPlayer
+  >({} as CollegePlayer);
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
 
   const teamColors = useTeamColors(
@@ -122,9 +123,12 @@ export const CHLLineupPage = () => {
   };
 
   const ChangeValueInShootoutLineup = (value: number, key: string) => {
-    const lus = new CollegeShootoutLineup({ ...currentShootoutLineups });
-    lus[key] = value;
-    setCurrentShootoutLineups(lus);
+    updateLineupFieldWithClass(
+      setCurrentShootoutLineups,
+      CollegeShootoutLineup,
+      key,
+      value
+    );
   };
 
   const ChangeLineupInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -420,15 +424,15 @@ export const CHLLineupPage = () => {
                   <>
                     {[1, 2, 3, 4, 5, 6].map((x) => (
                       <ShootoutPlayer
-                        key={x}
+                        key={`${x}-${currentShootoutLineups[`Shooter${x}ID`]}`}
                         idx={x}
-                        playerID={chlShootoutLineup[`Shooter${x}ID`]}
+                        playerID={currentShootoutLineups[`Shooter${x}ID`]}
                         rosterMap={chlTeamRosterMap}
                         optionList={chlTeamRosterOptions!.shootoutOptions}
                         property={`Shooter${x}ID`}
                         shootoutProperty={`Shooter${x}ShotType`}
                         ChangeState={ChangeValueInShootoutLineup}
-                        lineCategory={chlShootoutLineup}
+                        lineCategory={currentShootoutLineups}
                         activatePlayer={activatePlayerModal}
                       />
                     ))}
@@ -460,11 +464,12 @@ export const PHLLineupPage = () => {
     useState(phlShootoutLineup);
   const [currentLineups, setCurrentLineups] = useState(phlLineups);
   const [currentShootoutLineups, setCurrentShootoutLineups] =
-    useState(phlShootoutLineup);
+    useState<ProfessionalShootoutLineup>(phlShootoutLineup);
+  console.log({ phlShootoutLineup });
   const [modalAction, setModalAction] = useState<ModalAction>(Help1);
-  const [modalPlayer, setModalPlayer] = useState<CollegePlayer | ProfessionalPlayer>(
-    {} as ProfessionalPlayer
-  );
+  const [modalPlayer, setModalPlayer] = useState<
+    CollegePlayer | ProfessionalPlayer
+  >({} as ProfessionalPlayer);
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
 
   const teamColors = useTeamColors(
@@ -472,8 +477,6 @@ export const PHLLineupPage = () => {
     phlTeam?.ColorTwo,
     phlTeam?.ColorThree
   );
-  const backgroundColor = teamColors.One;
-  const borderColor = teamColors.Two;
 
   const {
     phlTeamRosterMap,
@@ -500,7 +503,7 @@ export const PHLLineupPage = () => {
   }, [lineCategory]);
 
   const lineup = useMemo(() => {
-    return currentLineups[lineupIdx] || ({} as CollegeLineup);
+    return currentLineups[lineupIdx] || ({} as ProfessionalLineup);
   }, [lineupIdx, currentLineups]);
 
   const Save = async () => {
@@ -524,9 +527,12 @@ export const PHLLineupPage = () => {
   };
 
   const ChangeValueInShootoutLineup = (value: number, key: string) => {
-    const lus = new ProfessionalShootoutLineup({ ...currentShootoutLineups });
-    lus[key] = value;
-    setCurrentShootoutLineups(lus);
+    updateLineupFieldWithClass(
+      setCurrentShootoutLineups,
+      ProfessionalShootoutLineup,
+      key,
+      value
+    );
   };
 
   const ChangeLineupInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -572,272 +578,274 @@ export const PHLLineupPage = () => {
     setModalPlayer(player);
     handleOpenModal();
   };
-  return (<>
-  <div className="grid grid-flow-row max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[6fr_4fr] grid-auto-rows-fr h-full max-[1024px]:gap-x-1 gap-x-2 mb-2">
-    <div className="flex flex-col w-full h-full max-[1024px]:gap-y-2">
-      <div className="flex flex-row md:flex-col w-full h-full">
-        <Border
-          direction="col"
-          classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-4 py-2 h-full items-center justify-center"
-          styles={{
-            borderColor: teamColors.One,
-            backgroundColor: navyBlueColor,
-          }}
-        >
-          <ButtonGroup>
-            {lineupCategories.map((x) => (
-              <Button
-                key={x}
-                size="sm"
-                isSelected={lineCategory === x}
-                onClick={() => setLineCategory(x as Lineup)}
-              >
-                <Text variant="small">{x}</Text>
-              </Button>
-            ))}
-          </ButtonGroup>
-        </Border>
-      </div>
-      <div className="flex flex-row md:flex-col w-full h-full">
-        <Border
-          direction="col"
-          classes="w-full max-[1024px]:px-2 px-4 max-[1024px]:pb-4 py-2 h-full items-center justify-center"
-          styles={{
-            borderColor: teamColors.One,
-            backgroundColor: navyBlueColor,
-          }}
-        >
-          <ButtonGroup classes="justify-center">
-            {zoneCategories.map((x) => (
-              <Button
-                key={x}
-                size="sm"
-                isSelected={zoneCategory === x}
-                onClick={() => setZoneCategory(x as Zone)}
-              >
-                <Text variant="small">{x}</Text>
-              </Button>
-            ))}
-          </ButtonGroup>
-        </Border>
-      </div>
-    </div>
-    <div className="flex flex-col w-full h-full">
-      <Border
-        direction="row"
-        classes="w-full max-[1024px]:px-2 px-4 py-2 h-full gap-x-2"
-        styles={{
-          borderColor: teamColors.One,
-          backgroundColor: navyBlueColor,
-        }}
-      >
-        <div className="flex flex-col min-h-full w-full">
-          <Border classes="h-full w-full">
-            {errors.length === 0 && "No Errors"}
-            {errors.length > 0 &&
-              errors.map((err) => (
-                <Text key={err} variant="small">
-                  {err}
-                </Text>
-              ))}
-          </Border>
-        </div>
-        <ButtonGroup classes="mb-2 justify-end w-1/5">
-          <Button
-            classes="w-full"
-            disabled={errors.length > 0}
-            variant={errors.length > 0 ? "danger" : "success"}
-            onClick={Save}
-          >
-            <Text variant="small">Save</Text>
-          </Button>
-          <Button classes="w-full" onClick={ResetLineups}>
-            <Text variant="small">Reset</Text>
-          </Button>
-          <Button
-            classes="w-full"
-            onClick={() => {
-              setModalAction(Help1);
-              handleOpenModal();
-            }}
-          >
-            <Text variant="small">Help</Text>
-          </Button>
-        </ButtonGroup>
-      </Border>
-    </div>
-  </div>
-  <LineupHelpModal
-    isOpen={isModalOpen}
-    onClose={handleCloseModal}
-    league={SimCHL}
-    modalAction={modalAction}
-    player={modalPlayer}
-  />
-
-  <div className="grid grid-cols-1 max-[1024px]:grid-cols-1 min-[1025px]:grid-cols-[1fr_3fr] gap-4 w-full">
-    <Border
-      direction="col"
-      classes="w-full px-4 py-3 min-h-full"
-      styles={{
-        borderColor: teamColors.One,
-        backgroundColor: navyBlueColor,
-      }}
-    >
-      <div className="flex flex-row mb-6 gap-x-2 justify-center w-full">
-        <Text
-          variant="body-small"
-          classes="flex items-center justify-center"
-        >
-          <strong>{zoneCategory} Inputs</strong>
-        </Text>
-        <Button
-          classes="justify-end"
-          onClick={() => {
-            setModalAction(Help2);
-            handleOpenModal();
-          }}
-        >
-          <Text variant="small">Help</Text>
-        </Button>
-      </div>
-      <div className="flex flex-col gap-y-2 flex-1">
-        {zoneInputList.map((x) => (
-          <Input
-            key={x.key}
-            type="number"
-            label={x.label}
-            name={x.key}
-            value={lineup[x.key] as number}
-            onChange={ChangeLineupInput}
-          />
-        ))}
-      </div>
-    </Border>
-    {phlTeamRosterMap && (
-      <Border
-        direction="col"
-        classes="w-full max-[1024px]:px-2 px-4 py-4"
-        styles={{
-          borderColor: teamColors.One,
-          backgroundColor: navyBlueColor,
-        }}
-      >
-        <div className="flex flex-row w-full justify-start items-center gap-x-2 mb-6">
-          <Text variant="h6" classes="flex">
-            {lineCategory} Players
-          </Text>
-          <Button
-            type="button"
-            classes=""
-            onClick={() => {
-              setModalAction(Help3);
-              handleOpenModal();
-            }}
-          >
-            Help
-          </Button>
-        </div>
-        <div className="flex flex-col">
-          <div className="grid grid-cols-1 max-[541px]:grid-cols-1 max-[768px]:grid-cols-2 max-[854px]:grid-cols-2 max-[1024px]:grid-cols-3 min-[1025px]:grid-cols-3 gap-4 px-4 w-full">
-            {lineCategory !== LineupSO && (
-              <>
-                <LineupPlayer
-                  playerID={lineup.CenterID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.centerOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="CenterID"
-                  activatePlayer={activatePlayerModal}
-                />
-                <LineupPlayer
-                  playerID={lineup.Forward1ID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.forwardOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="Forward1ID"
-                  activatePlayer={activatePlayerModal}
-                />
-                <LineupPlayer
-                  playerID={lineup.Forward2ID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.forwardOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="Forward2ID"
-                  activatePlayer={activatePlayerModal}
-                />
-                <LineupPlayer
-                  playerID={lineup.Defender1ID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.defenderOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="Defender1ID"
-                  activatePlayer={activatePlayerModal}
-                />
-                <LineupPlayer
-                  playerID={lineup.Defender2ID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.defenderOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="Defender2ID"
-                  activatePlayer={activatePlayerModal}
-                />
-                <LineupPlayer
-                  playerID={lineup.GoalieID}
-                  rosterMap={phlTeamRosterMap}
-                  zoneInputList={zoneInputList}
-                  lineCategory={lineCategory}
-                  lineIDX={lineupIdx}
-                  optionList={phlTeamRosterOptions!.goalieOptions}
-                  ChangeState={ChangeLineupValue}
-                  ChangePlayerInput={ChangePlayerInput}
-                  property="GoalieID"
-                  activatePlayer={activatePlayerModal}
-                />
-              </>
-            )}
-            {lineCategory === LineupSO && (
-              <>
-                {[1, 2, 3, 4, 5, 6].map((x) => (
-                  <ShootoutPlayer
+  return (
+    <>
+      <div className="grid grid-flow-row max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[6fr_4fr] grid-auto-rows-fr h-full max-[1024px]:gap-x-1 gap-x-2 mb-2">
+        <div className="flex flex-col w-full h-full max-[1024px]:gap-y-2">
+          <div className="flex flex-row md:flex-col w-full h-full">
+            <Border
+              direction="col"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 px-3 py-2 h-full items-center justify-center"
+              styles={{
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
+              }}
+            >
+              <ButtonGroup>
+                {lineupCategories.map((x) => (
+                  <Button
                     key={x}
-                    idx={x}
-                    playerID={phlShootoutLineup[`Shooter${x}ID`]}
-                    rosterMap={phlTeamRosterMap}
-                    optionList={phlTeamRosterOptions!.shootoutOptions}
-                    property={`Shooter${x}ID`}
-                    shootoutProperty={`Shooter${x}ShotType`}
-                    ChangeState={ChangeValueInShootoutLineup}
-                    lineCategory={phlShootoutLineup}
-                    activatePlayer={activatePlayerModal}
-                  />
+                    size="sm"
+                    isSelected={lineCategory === x}
+                    onClick={() => setLineCategory(x as Lineup)}
+                  >
+                    <Text variant="small">{x}</Text>
+                  </Button>
                 ))}
-              </>
-            )}
+              </ButtonGroup>
+            </Border>
+          </div>
+          <div className="flex flex-row md:flex-col w-full h-full">
+            <Border
+              direction="col"
+              classes="w-full max-[1024px]:px-2 px-4 max-[1024px]:pb-4 py-2 h-full items-center justify-center"
+              styles={{
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
+              }}
+            >
+              <ButtonGroup classes="justify-center">
+                {zoneCategories.map((x) => (
+                  <Button
+                    key={x}
+                    size="sm"
+                    isSelected={zoneCategory === x}
+                    onClick={() => setZoneCategory(x as Zone)}
+                  >
+                    <Text variant="small">{x}</Text>
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </Border>
           </div>
         </div>
-      </Border>
-    )}
-  </div>
-</>);
+        <div className="flex flex-col w-full h-full">
+          <Border
+            direction="row"
+            classes="w-full max-[1024px]:px-2 px-4 py-2 h-full gap-x-2"
+            styles={{
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
+            }}
+          >
+            <div className="flex flex-col min-h-full w-full">
+              <Border classes="h-full w-full">
+                {errors.length === 0 && "No Errors"}
+                {errors.length > 0 &&
+                  errors.map((err) => (
+                    <Text key={err} variant="small">
+                      {err}
+                    </Text>
+                  ))}
+              </Border>
+            </div>
+            <ButtonGroup classes="mb-2 justify-end w-1/5">
+              <Button
+                classes="w-full"
+                disabled={errors.length > 0}
+                variant={errors.length > 0 ? "danger" : "success"}
+                onClick={Save}
+              >
+                <Text variant="small">Save</Text>
+              </Button>
+              <Button classes="w-full" onClick={ResetLineups}>
+                <Text variant="small">Reset</Text>
+              </Button>
+              <Button
+                classes="w-full"
+                onClick={() => {
+                  setModalAction(Help1);
+                  handleOpenModal();
+                }}
+              >
+                <Text variant="small">Help</Text>
+              </Button>
+            </ButtonGroup>
+          </Border>
+        </div>
+      </div>
+      <LineupHelpModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        league={SimCHL}
+        modalAction={modalAction}
+        player={modalPlayer}
+      />
+
+      <div className="grid grid-cols-1 max-[1024px]:grid-cols-1 min-[1025px]:grid-cols-[1fr_3fr] gap-4 w-full">
+        <Border
+          direction="col"
+          classes="w-full px-4 py-3 min-h-full"
+          styles={{
+            borderColor: teamColors.One,
+            backgroundColor: navyBlueColor,
+          }}
+        >
+          <div className="flex flex-row mb-6 gap-x-2 justify-center w-full">
+            <Text
+              variant="body-small"
+              classes="flex items-center justify-center"
+            >
+              <strong>{zoneCategory} Inputs</strong>
+            </Text>
+            <Button
+              classes="justify-end"
+              onClick={() => {
+                setModalAction(Help2);
+                handleOpenModal();
+              }}
+            >
+              <Text variant="small">Help</Text>
+            </Button>
+          </div>
+          <div className="flex flex-col gap-y-2 flex-1">
+            {zoneInputList.map((x) => (
+              <Input
+                key={x.key}
+                type="number"
+                label={x.label}
+                name={x.key}
+                value={lineup[x.key] as number}
+                onChange={ChangeLineupInput}
+              />
+            ))}
+          </div>
+        </Border>
+        {phlTeamRosterMap && (
+          <Border
+            direction="col"
+            classes="w-full max-[1024px]:px-2 px-4 py-4"
+            styles={{
+              borderColor: teamColors.One,
+              backgroundColor: navyBlueColor,
+            }}
+          >
+            <div className="flex flex-row w-full justify-start items-center gap-x-2 mb-6">
+              <Text variant="h6" classes="flex">
+                {lineCategory} Players
+              </Text>
+              <Button
+                type="button"
+                classes=""
+                onClick={() => {
+                  setModalAction(Help3);
+                  handleOpenModal();
+                }}
+              >
+                Help
+              </Button>
+            </div>
+            <div className="flex flex-col">
+              <div className="grid grid-cols-1 max-[541px]:grid-cols-1 max-[768px]:grid-cols-2 max-[854px]:grid-cols-2 max-[1024px]:grid-cols-3 min-[1025px]:grid-cols-3 gap-4 px-4 w-full">
+                {lineCategory !== LineupSO && (
+                  <>
+                    <LineupPlayer
+                      playerID={lineup.CenterID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.centerOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="CenterID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                    <LineupPlayer
+                      playerID={lineup.Forward1ID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.forwardOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="Forward1ID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                    <LineupPlayer
+                      playerID={lineup.Forward2ID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.forwardOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="Forward2ID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                    <LineupPlayer
+                      playerID={lineup.Defender1ID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.defenderOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="Defender1ID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                    <LineupPlayer
+                      playerID={lineup.Defender2ID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.defenderOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="Defender2ID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                    <LineupPlayer
+                      playerID={lineup.GoalieID}
+                      rosterMap={phlTeamRosterMap}
+                      zoneInputList={zoneInputList}
+                      lineCategory={lineCategory}
+                      lineIDX={lineupIdx}
+                      optionList={phlTeamRosterOptions!.goalieOptions}
+                      ChangeState={ChangeLineupValue}
+                      ChangePlayerInput={ChangePlayerInput}
+                      property="GoalieID"
+                      activatePlayer={activatePlayerModal}
+                    />
+                  </>
+                )}
+                {lineCategory === LineupSO && (
+                  <>
+                    {[1, 2, 3, 4, 5, 6].map((x) => (
+                      <ShootoutPlayer
+                        key={`${x}-${currentShootoutLineups[`Shooter${x}ID`]}`}
+                        idx={x}
+                        playerID={currentShootoutLineups[`Shooter${x}ID`]}
+                        rosterMap={phlTeamRosterMap}
+                        optionList={phlTeamRosterOptions!.shootoutOptions}
+                        property={`Shooter${x}ID`}
+                        shootoutProperty={`Shooter${x}ShotType`}
+                        ChangeState={ChangeValueInShootoutLineup}
+                        lineCategory={currentShootoutLineups}
+                        activatePlayer={activatePlayerModal}
+                      />
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
+          </Border>
+        )}
+      </div>
+    </>
+  );
 };

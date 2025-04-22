@@ -77,6 +77,39 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           borderColor: headerColor,
         }}
       >
+        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center">
+          <div className="flex flex-row max-w-1/4 p-2 pt-6 gap-x-4">
+            <div
+              className="max-w-[6rem] 5xl:max-w-[10rem] w-[10rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
+              style={{ backgroundColor: sectionBg, borderColor: headerColor }}
+            >
+              <Logo
+                url={logo}
+                variant="large"
+                containerClass="items-center justify-center h-full"
+              />
+            </div>
+            <div className="flex flex-col justify-center pb-2">
+              <Text variant="h5" classes={`${textColorClass}`}>
+                {TeamName}
+              </Text>
+              <Text variant="small" classes={`${textColorClass} mb-2`}>
+                {Conference} Conference
+              </Text>
+              {Division && Division.length > 0 && (
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {Division}
+                </Text>
+              )}
+              <TeamGrades
+                Team={Team}
+                backgroundColor={sectionBg}
+                gradeColor={backgroundColor}
+                borderColor={headerColor}
+              />
+            </div>
+          </div>
+        </div>
         {!isMobile && (
           <div className="flex flex-col w-1/3 gap-2 justify-center items-center gap-x-2">
             <FrontOfficeInfo
@@ -92,37 +125,6 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             />
           </div>
         )}
-        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center">
-          <div className="flex flex-col max-w-1/4 p-2 pt-6">
-            <div
-              className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
-              style={{ backgroundColor: sectionBg, borderColor: headerColor }}
-            >
-              <Logo url={logo} variant="large" />
-            </div>
-          </div>
-          <div className="flex flex-col max-w-1/2">
-            <Text variant="h5" classes={`${textColorClass}`}>
-              {TeamName}
-            </Text>
-            <div className="flex flex-row justify-center pb-2">
-              <Text variant="small" classes={`${textColorClass}`}>
-                {Conference} Conference
-              </Text>
-              {Division && Division.length > 0 && (
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {Division}
-                </Text>
-              )}
-            </div>
-          </div>
-          <TeamGrades
-            Team={Team}
-            backgroundColor={sectionBg}
-            gradeColor={backgroundColor}
-            borderColor={headerColor}
-          />
-        </div>
         {!isMobile && (
           <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
             {isPro && (

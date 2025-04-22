@@ -354,7 +354,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setCollegeNotifications(res.CollegeNotifications);
     setAllCHLStandings(res.CollegeStandings);
     setCHLLineups(res.CollegeTeamLineups);
+    setPHLLineups(res.ProTeamLineups);
     setCHLShootoutLineup(res.CollegeTeamShootoutLineup);
+    setPHLShootoutLineup(res.ProTeamShootoutLineup);
     setAllProStandings(res.ProStandings);
     setTeamProfileMap(res.TeamProfileMap);
     setCHLRosterMap(res.CollegeRosterMap);
@@ -601,7 +603,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
 
   const savePHLGameplan = async (dto: any) => {
     const res = await GameplanService.SaveCHLGameplan(dto);
-    setPHLLineups(dto.CHLLineups);
+    setPHLLineups(dto.PHLLineups);
     setPHLShootoutLineup(dto.CHLShootoutLineup);
     enqueueSnackbar("Lineups saved!", {
       variant: "success",
