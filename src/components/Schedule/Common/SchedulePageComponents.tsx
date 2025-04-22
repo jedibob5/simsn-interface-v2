@@ -467,11 +467,11 @@ export const LeagueStandings = ({
           );
   
           return (
-            <div key={groupName} className="flex flex-row items-stretch">
+            <div key={groupName} className="flex flex-row sm:items-stretch">
               <SectionCards
                 team={null}
                 header={`${groupName} Standings`}
-                classes={`${textColorClass}, h-full w-[40em]`}
+                classes={`${textColorClass}, h-full w-[95vw] sm:w-[40em]`}
                 backgroundColor={backgroundColor}
                 headerColor={headerColor}
                 borderColor={borderColor}

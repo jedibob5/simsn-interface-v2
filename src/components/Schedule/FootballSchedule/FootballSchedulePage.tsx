@@ -159,32 +159,40 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   return (
     <>
       <div className="flex flex-col w-full">
-        <div className="grid grid-cols-6 gap-4 w-full h-[82vh]">
-          <div className="flex flex-col w-full col-span-1 items-center gap-4 overflow-auto pb-2">
-            <div className="flex gap-4 justify-center">
-              <ButtonGroup>
-                <Button size="sm"
+        <div className="sm:grid sm:grid-cols-6 sm:gap-4 w-full h-[82vh]">
+          <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
+            <div className="flex gap-4 justify-center items-center sm:w-full">
+              <ButtonGroup classes="flex justify-center w-full">
+                <Button size="md"
                         variant="primary" 
                         onClick={() => setCategory(Overview)}
                         isSelected={category === Overview}
-                        classes="px-3 py-2"
+                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="xs">
+                  <Text variant="small">
                     Overview
                   </Text>
                 </Button>                
-                <Button size="sm" 
+                <Button size="md" 
                         variant="primary" 
                         onClick={() => setCategory(Standings)}
                         isSelected={category === Standings}
-                        classes="px-3 py-2"
+                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="xs">
+                  <Text variant="small">
                     Standings
+                  </Text>
+                </Button>
+                <Button size="md" 
+                        variant="primary"
+                        classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]">
+                  <Text variant="small">
+                    College Poll
                   </Text>
                 </Button>
               </ButtonGroup>
             </div>
+            <div className="flex flex-col gap-2 sm:gap-4 items-center">
             {category === Overview && (
               <div className="flex justify-center items-center gap-2">
                 <ToggleSwitch 
@@ -199,56 +207,53 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 </Text>
               </div>
             )}
-            <div className="flex flex-col items-center gap-2 justify-center">
-              {view === TeamGames ? (
-                <>
-                  <Text variant="body">Teams</Text>
+              <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
+                <div className="flex flex-col items-center gap-2 justify-center">
+                  {view === TeamGames ? (
+                    <>
+                      <Text variant="body">Teams</Text>
+                      <SelectDropdown
+                        options={cfbTeamOptions}
+                        placeholder="Select Team..."
+                        onChange={selectTeamOption}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text variant="body">Week</Text>
+                      <SelectDropdown
+                        options={Weeks}
+                        placeholder="Select Week..."
+                        onChange={(selectedOption) => {
+                          const selectedWeek = Number(selectedOption?.value);
+                          setSelectedWeek(selectedWeek);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>            
+                <div className="flex flex-col items-center gap-2 justify-center">
+                  <Text variant="body">Seasons</Text>
                   <SelectDropdown
-                    options={cfbTeamOptions}
-                    placeholder="Select Team..."
-                    onChange={selectTeamOption}
-                  />
-                </>
-              ) : (
-                <>
-                  <Text variant="body">Week</Text>
-                  <SelectDropdown
-                    options={Weeks}
-                    placeholder="Select Week..."
+                    options={FootballSeasons}
+                    placeholder="Select Season..."
                     onChange={(selectedOption) => {
-                      const selectedWeek = Number(selectedOption?.value);
-                      setSelectedWeek(selectedWeek);
+                      const selectedSeason = Number(selectedOption?.value);
+                      setSelectedWeek(selectedSeason);
                     }}
                   />
-                </>
-              )}
-            </div>            
-            <div className="flex flex-col items-center gap-2 justify-center">
-              <Text variant="body">Seasons</Text>
-              <SelectDropdown
-                options={FootballSeasons}
-                placeholder="Select Season..."
-                onChange={(selectedOption) => {
-                  const selectedSeason = Number(selectedOption?.value);
-                  setSelectedWeek(selectedSeason);
-                }}
-              />
-            </div>
-            <div className="flex items-center w-[12em] gap-2 justify-center">
-              <Button size="md" classes="w-full" variant="primary">
-                College Poll
-              </Button>
-              <Button size="md" variant="warning" classes="opacity-50 h-full">
-                <PaperAirplane />
-              </Button> 
-            </div>
-            <div className="flex flex-col items-center gap-2 justify-center">
+                </div>
+              </div>
+            {!isMobile && (
+              <div className="flex flex-col items-center gap-2 justify-center">
               <Text variant="body">Export Day of Week</Text>
               <SelectDropdown
                 options={cfbTeamOptions}
                 placeholder="Select Timeslot..."
                 onChange={selectTeamOption}
               />
+              </div>
+              )}
             </div>
           </div>
         {category === Standings && (
@@ -267,7 +272,7 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         </div>
           )}
           {category === Overview && (
-            <div className="flex flex-col h-full col-span-2 overflow-auto">
+            <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
             {view === TeamGames && (
               <TeamSchedule
                 team={selectedTeam}
@@ -307,7 +312,7 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           </div>
         )}
         {category === Overview && (
-          <div className="flex flex-col h-full col-span-2">
+          <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2">
             <TeamStandings
               team={selectedTeam}
               currentUser={currentUser}
@@ -322,7 +327,7 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             />
           </div>
         )}
-        {category === Overview && (
+        {category === Overview && !isMobile && (
           <div className="flex flex-col h-full col-span-1">
             <LeagueStats
               league={league}
@@ -472,27 +477,27 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   return (
     <>
       <div className="flex flex-col w-full">
-        <div className="grid grid-cols-6 gap-4 w-full h-[82vh]">
-          <div className="flex flex-col w-full col-span-1 items-center gap-4 overflow-auto pb-2">
-            <div className="flex gap-4 justify-center">
-              <ButtonGroup>
-                <Button size="sm"
+        <div className="sm:grid sm:grid-cols-6 sm:gap-4 w-full h-[82vh]">
+          <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
+            <div className="flex gap-4 justify-center items-center sm:w-full">
+              <ButtonGroup classes="flex justify-center w-full">
+                <Button size="md"
                         variant="primary" 
                         onClick={() => setCategory(Overview)}
                         isSelected={category === Overview}
-                        classes="px-3 py-2"
+                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="xs">
+                  <Text variant="small">
                     Overview
                   </Text>
                 </Button>                
-                <Button size="sm" 
+                <Button size="md" 
                         variant="primary" 
                         onClick={() => setCategory(Standings)}
                         isSelected={category === Standings}
-                        classes="px-3 py-2"
+                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="xs">
+                  <Text variant="small">
                     Standings
                   </Text>
                 </Button>
@@ -522,41 +527,44 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               <Text variant="small">Divisions</Text>
             </div>
           )}
-            <div className="flex flex-col items-center gap-2 justify-center">
-              {scheduleView === TeamGames ? (
-                <>
-                  <Text variant="body">Teams</Text>
-                  <SelectDropdown
-                    options={nflTeamOptions}
-                    placeholder="Select Team..."
-                    onChange={selectTeamOption}
-                  />
-                </>
-              ) : (
-                <>
-                  <Text variant="body">Week</Text>
-                  <SelectDropdown
-                    options={Weeks}
-                    placeholder="Select Week..."
-                    onChange={(selectedOption) => {
-                      const selectedWeek = Number(selectedOption?.value);
-                      setSelectedWeek(selectedWeek);
-                    }}
-                  />
-                </>
-              )}
-            </div>            
-            <div className="flex flex-col items-center gap-2 justify-center">
-              <Text variant="body">Seasons</Text>
-              <SelectDropdown
-                options={FootballSeasons}
-                placeholder="Select Season..."
-                onChange={(selectedOption) => {
-                  const selectedSeason = Number(selectedOption?.value);
-                  setSelectedWeek(selectedSeason);
-                }}
-              />
+            <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
+              <div className="flex flex-col items-center gap-2 justify-center">
+                {scheduleView === TeamGames ? (
+                  <>
+                    <Text variant="body">Teams</Text>
+                    <SelectDropdown
+                      options={nflTeamOptions}
+                      placeholder="Select Team..."
+                      onChange={selectTeamOption}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Text variant="body">Week</Text>
+                    <SelectDropdown
+                      options={Weeks}
+                      placeholder="Select Week..."
+                      onChange={(selectedOption) => {
+                        const selectedWeek = Number(selectedOption?.value);
+                        setSelectedWeek(selectedWeek);
+                      }}
+                    />
+                  </>
+                )}
+              </div>            
+              <div className="flex flex-col items-center gap-2 justify-center">
+                <Text variant="body">Seasons</Text>
+                <SelectDropdown
+                  options={FootballSeasons}
+                  placeholder="Select Season..."
+                  onChange={(selectedOption) => {
+                    const selectedSeason = Number(selectedOption?.value);
+                    setSelectedWeek(selectedSeason);
+                  }}
+                />
+              </div>
             </div>
+          {!isMobile && (  
             <div className="flex flex-col items-center gap-2 justify-center">
               <Text variant="body">Export Day of Week</Text>
               <SelectDropdown
@@ -565,6 +573,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 onChange={selectTeamOption}
               />
             </div>
+          )}
           </div>
           {category === Standings && (
             <div className="flex flex-col h-full col-span-5">
@@ -583,7 +592,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           </div>
            )}
           {category === Overview && (
-          <div className="flex flex-col h-full col-span-2 overflow-auto">
+          <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
           {scheduleView === TeamGames && (
             <TeamSchedule
               team={selectedTeam}
@@ -623,7 +632,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           </div>
         )}
         {category === Overview && (
-          <div className="flex flex-col h-full col-span-2">
+          <div className="flex pb-4 sm:pb-0 flex-col h-full col-span-2">
             <TeamStandings
               team={selectedTeam}
               currentUser={currentUser}
@@ -638,7 +647,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             />
           </div>
         )}
-        {category === Overview && (
+        {category === Overview && !isMobile && (
           <div className="flex flex-col h-full col-span-1">
             <LeagueStats
               league={league}
