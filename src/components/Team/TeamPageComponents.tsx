@@ -7,6 +7,8 @@ import {
   SimNFL,
   SimCHL,
   SimPHL,
+  MAX_TEAM_INFO_COLUMNS,
+  MAX_TEAM_PHL_INFO_COLUMNS,
 } from "../../_constants/constants";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
@@ -71,7 +73,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
     <div className="flex flex-col w-full max-w-[2000px]">
       <Border
         direction="row"
-        classes="w-full p-8 justify-around"
+        classes="w-full py-6 px-4 justify-around gap-x-4"
         styles={{
           backgroundColor,
           borderColor: headerColor,
@@ -80,10 +82,14 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center">
           <div className="flex flex-row max-w-1/4 p-2 pt-6 gap-x-4">
             <div
-              className="max-w-[6rem] 5xl:max-w-[10rem] w-[10rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
+              className="max-w-[10rem] 5xl:max-w-[12rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
               style={{ backgroundColor: sectionBg, borderColor: headerColor }}
             >
-              <Logo url={logo} variant="large" containerClass="p-4" />
+              <Logo
+                url={logo}
+                variant="large"
+                containerClass="p-4 items-center justify-center h-full"
+              />
             </div>
             <div className="flex flex-col justify-center pb-2">
               <Text variant="h5" classes={`${textColorClass}`}>
@@ -107,7 +113,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           </div>
         </div>
         {!isMobile && (
-          <div className="flex flex-col w-1/3 gap-2 justify-center items-center gap-x-2">
+          <div className="flex flex-col w-1/4 gap-2 justify-center items-center gap-x-2">
             <FrontOfficeInfo
               owner={Owner}
               gm={GM}
@@ -121,8 +127,24 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             />
           </div>
         )}
+        <div
+          className="flex flex-col w-1/4 justify-start items-start px-4 py-6 rounded-lg border-2"
+          style={{ borderColor: headerColor, backgroundColor: sectionBg }}
+        >
+          {!isMobile && (
+            <AdditionalTeamInfo
+              league={League}
+              arena={Arena}
+              capacity={Capacity}
+              textColorClass={textColorClass}
+              borderColor={headerColor}
+              backgroundColor={backgroundColor}
+              isPro={isPro}
+            />
+          )}
+        </div>
         {!isMobile && (
-          <div className="flex flex-col w-1/3 items-center justify-center gap-x-2">
+          <div className="flex flex-col w-1/4 items-center justify-center gap-x-2">
             {isPro && (
               <CapsheetInfo
                 capsheet={Capsheet}
@@ -144,36 +166,6 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             )}
           </div>
         )}
-      </Border>
-      <Border
-        direction="row"
-        classes="w-full h-[1em] max-h-[5em] p-4 sm:p-6 sm:px-14 justify-center sm:justify-around"
-        styles={{
-          backgroundColor,
-          borderColor: headerColor,
-        }}
-      >
-        <div className="flex w-full justify-center sm:justify-between items-center gap-x-2">
-          {!isMobile && (
-            <StadiumInfo
-              league={League}
-              arena={Arena}
-              capacity={Capacity}
-              textColorClass={textColorClass}
-              borderColor={headerColor}
-              backgroundColor={backgroundColor}
-              isPro={isPro}
-            />
-          )}
-          <RosterInfo
-            roster={Roster}
-            league={League}
-            textColorClass={textColorClass}
-            borderColor={headerColor}
-            backgroundColor={backgroundColor}
-            isPro={isPro}
-          />
-        </div>
       </Border>
     </div>
   );
@@ -409,18 +401,8 @@ export const FrontOfficeInfo = ({
         { role: "Coach", value: coach },
         { role: "Assistant", value: scout },
         ...(league === SimPHL ? [{ role: "Marketing", value: marketing }] : []),
-      ]
-        .filter(({ value }) => value)
-        .reduce((acc: Record<string, string[]>, { role, value }) => {
-          if (!acc[value]) {
-            acc[value] = [];
-          }
-          acc[value].push(role);
-          return acc;
-        }, {})
-    : {
-        [coach || "AI"]: ["Coach"],
-      };
+      ].filter(({ value }) => value)
+    : [{ role: "Coach", value: coach || "AI" }];
 
   const vacancies = isPro
     ? [
@@ -437,6 +419,14 @@ export const FrontOfficeInfo = ({
     ? "Coach"
     : "None";
 
+  const filledPersonnel = [...personnelRoles];
+  while (
+    (league !== SimPHL && filledPersonnel.length < MAX_TEAM_INFO_COLUMNS) ||
+    (league === SimPHL && filledPersonnel.length < MAX_TEAM_PHL_INFO_COLUMNS)
+  ) {
+    filledPersonnel.push({ role: "", value: "" });
+  }
+
   return (
     <div
       className="flex w-full h-full py-5 px-4 border-2 rounded-lg flex-row"
@@ -445,33 +435,33 @@ export const FrontOfficeInfo = ({
       <div className="table-fixed w-full">
         <div className="table-header-group">
           <div className="table-row">
-            <div className="table-cell w-[6em] font-semibold text-left">
+            <div className="table-cell w-[5em] font-semibold text-left">
+              <Text variant="body-small" classes={`${textColorClass}`}>
+                User
+              </Text>
+            </div>
+            {filledPersonnel.map(({ value }, idx) => (
+              <div key={`user-${idx}`} className="table-cell text-left w-[6em]">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {value || "-"}
+                </Text>
+              </div>
+            ))}
+          </div>
+          <div className="table-row">
+            <div className="table-cell font-semibold text-left">
               <Text variant="body-small" classes={`${textColorClass}`}>
                 Role
               </Text>
             </div>
-            <div className="table-cell font-semibold text-left">
-              <Text variant="body-small" classes={`${textColorClass}`}>
-                Personnel
-              </Text>
-            </div>
+            {filledPersonnel.map(({ role }, idx) => (
+              <div key={`role-${idx}`} className="table-cell text-left w-[6em]">
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {role || "-"}
+                </Text>
+              </div>
+            ))}
           </div>
-        </div>
-        <div className="table-row-group">
-          {Object.entries(personnelRoles).map(([person, roles]) => (
-            <div key={person} className="table-row">
-              <div className="table-cell text-left">
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {roles.join("/")}
-                </Text>
-              </div>
-              <div className="table-cell text-left">
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {person}
-                </Text>
-              </div>
-            </div>
-          ))}
         </div>
         <div
           className="flex my-2 border-t"
@@ -553,20 +543,37 @@ export const RosterInfo = ({
   );
 };
 
-export const StadiumInfo = ({
+export const AdditionalTeamInfo = ({
   backgroundColor,
   borderColor,
   arena,
   capacity,
   league,
+  roster,
+  isPro,
   textColorClass,
 }: any) => {
-  const home = league === SimCFB || league === SimNFL ? "Stadium:" : "Arena:";
+  const home = league === SimCFB || league === SimNFL ? "Stadium" : "Arena";
+  const totalPlayers = roster?.length || 0;
+  const specialPlayersCount =
+    roster?.filter((player: any) => {
+      if (isPro) {
+        if (league === SimNFL) {
+          return player?.IsPracticeSquad || false;
+        }
+        if (league === SimPHL) {
+          return player?.IsAffiliatePlayer || false;
+        }
+      } else {
+        return player?.IsRedshirting || false;
+      }
+    }).length || 0;
+  const activeRoster = totalPlayers - specialPlayersCount;
   return (
-    <div className="flex gap-4">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-row gap-4">
+      <div className="flex flex-col">
         <Text
-          variant="xs"
+          variant="small"
           classes={`${textColorClass} font-semibold text-left`}
         >
           {`${home}`}
@@ -575,12 +582,34 @@ export const StadiumInfo = ({
           {arena}
         </Text>
       </div>
-      <div className="flex items-center gap-2">
-        <Text variant="xs" classes={`${textColorClass} font-semibold`}>
-          Capacity:
+      <div className="flex flex-col">
+        <Text variant="small" classes={`${textColorClass} font-semibold`}>
+          Capacity
         </Text>
         <Text variant="xs" classes={`${textColorClass}`}>
           {capacity}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="small" classes={`${textColorClass} font-semibold`}>
+          Active Roster
+        </Text>
+        <Text variant="xs" classes={`${textColorClass}`}>
+          {activeRoster}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="small" classes={`${textColorClass} font-semibold`}>
+          {isPro
+            ? league === SimNFL
+              ? "Practice Squad"
+              : league === SimPHL
+              ? "Reserves"
+              : "Unknown"
+            : "Redshirts"}
+        </Text>
+        <Text variant="xs" classes={`${textColorClass}`}>
+          {specialPlayersCount}
         </Text>
       </div>
     </div>

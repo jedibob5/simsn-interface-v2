@@ -457,22 +457,29 @@ export const HockeySeasons: { label: string; value: string }[] = [
 ];
 
 export const FootballWeeks: { label: string; value: string }[] = Array.from(
-  { length: 20 }, (_, i) => ({
-      label: (i + 1).toString(),
-      value: (i + 1).toString(),
-  }));
+  { length: 20 },
+  (_, i) => ({
+    label: (i + 1).toString(),
+    value: (i + 1).toString(),
+  })
+);
 
 export const CHLWeeks: { label: string; value: string }[] = Array.from(
-  { length: 22 }, (_, i) => [
+  { length: 22 },
+  (_, i) => [
     { label: `${i + 1}A`, value: `${i + 1}A` },
     { label: `${i + 1}B`, value: `${i + 1}B` },
   ]
 ).flat();
 
 export const PHLWeeks: { label: string; value: string }[] = Array.from(
-  { length: 22 }, (_, i) => [
+  { length: 22 },
+  (_, i) => [
     { label: `${i + 1}A`, value: `${i + 1}A` },
     { label: `${i + 1}B`, value: `${i + 1}B` },
     { label: `${i + 1}C`, value: `${i + 1}C` },
   ]
 ).flat();
+
+export const MAX_TEAM_INFO_COLUMNS = 4;
+export const MAX_TEAM_PHL_INFO_COLUMNS = 5;
