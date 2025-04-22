@@ -76,7 +76,7 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
         </div>
         <div className="table-cell px-2 py-1 whitespace-nowrap items-center space-x-2">
           <div className="flex items-center space-x-2">
-            <Logo url={logo} variant="xs" />
+            <Logo url={logo} variant="xs" containerClass="p-4" />
             <span className={`text-sm ${textColorClass}`}>
               {chlTeam.TeamName}
             </span>

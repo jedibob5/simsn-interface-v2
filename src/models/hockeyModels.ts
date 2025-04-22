@@ -5408,6 +5408,7 @@ export class Timestamp {
   Season: number;
   GamesARan: boolean;
   GamesBRan: boolean;
+  GamesCRan: boolean;
   CollegePollRan: boolean;
   RecruitingSynced: boolean;
   GMActionsCompleted: boolean;
@@ -5446,6 +5447,7 @@ export class Timestamp {
     this.Season = source["Season"];
     this.GamesARan = source["GamesARan"];
     this.GamesBRan = source["GamesBRan"];
+    this.GamesCRan = source["GamesCRan"];
     this.CollegePollRan = source["CollegePollRan"];
     this.RecruitingSynced = source["RecruitingSynced"];
     this.GMActionsCompleted = source["GMActionsCompleted"];

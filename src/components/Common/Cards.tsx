@@ -58,7 +58,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
               label={`${team}`}
               url={logo}
               classes="max-h-[2.5rem] max-w-[4rem] md:max-w-[4rem] lg:max-w-[8rem] md:max-h-[4.5rem] lg:max-h-[5rem]"
-              containerClass="md:items-center"
+              containerClass="md:items-center p-4"
               textClass={`${textColorClass} text-center md:text-[0.8rem]`}
             />
             <Text

@@ -83,11 +83,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               className="max-w-[6rem] 5xl:max-w-[10rem] w-[10rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
               style={{ backgroundColor: sectionBg, borderColor: headerColor }}
             >
-              <Logo
-                url={logo}
-                variant="large"
-                containerClass="items-center justify-center h-full"
-              />
+              <Logo url={logo} variant="large" containerClass="p-4" />
             </div>
             <div className="flex flex-col justify-center pb-2">
               <Text variant="h5" classes={`${textColorClass}`}>
