@@ -7,7 +7,6 @@ import {
 import { NFLPlayer } from "../../../models/footballModels";
 import { NBAPlayer } from "../../../models/basketballModels";
 import {
-  AddFreeAgentType,
   Attributes,
   FreeAgentOffer,
   InfoType,

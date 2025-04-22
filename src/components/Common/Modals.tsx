@@ -21,7 +21,7 @@ import { useAuthStore } from "../../context/AuthContext";
 import { Logo } from "../../_design/Logo";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { useSimFBAStore } from "../../context/SimFBAContext";
-import { getHockeyLetterGrade } from "../../_utility/getLetterGrade";
+import { getCFBOverall, getHockeyLetterGrade } from "../../_utility/getLetterGrade";
 import {
   setPriorityCFBAttributes,
   setPriorityNFLAttributes,
@@ -767,7 +767,7 @@ export const CFBPlayerInfoModalBody: FC<CFBPlayerInfoModalBodyProps> = ({
           Overall
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {getHockeyLetterGrade(player.Overall, player.Year)}
+          {getCFBOverall(player.Overall, player.Year)}
         </Text>
       </div>
       <div className="flex flex-col">
@@ -906,7 +906,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
           {player.ShowLetterGrade
-            ? GetNFLOverall(player.Overall, true)
+            ? GetNFLOverall(player.Overall, player.ShowLetterGrade)
             : player.Overall}
         </Text>
       </div>

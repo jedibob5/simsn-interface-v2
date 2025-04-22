@@ -43,10 +43,13 @@ import { TeamService } from "../_services/teamService";
 import {
   Coach,
   GM,
+  League,
   Marketing,
   Owner,
   Scout,
+  SimCHL,
   SimHCK,
+  SimPHL,
 } from "../_constants/constants";
 import { hck_ws } from "../_constants/urls";
 import { PlayerService } from "../_services/playerService";
@@ -54,6 +57,8 @@ import { GameplanService } from "../_services/gameplanService";
 import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
+import { useNavigate } from "react-router-dom";
+import routes from "../_constants/routes";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -111,6 +116,7 @@ interface SimHCKContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
+  updateProRosterMap: (newMap: Record<number, ProfessionalPlayer[]>) => void;
   saveCHLGameplan: (dto: any) => Promise<void>;
   savePHLGameplan: (dto: any) => Promise<void>;
   addRecruitToBoard: (dto: any) => Promise<void>;
@@ -185,6 +191,7 @@ const defaultContext: SimHCKContextProps = {
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCHLRosterMap: () => {},
+  updateProRosterMap: () => {},
   saveCHLGameplan: async () => {},
   savePHLGameplan: async () => {},
   addRecruitToBoard: async () => {},
@@ -578,6 +585,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setCHLRosterMap(newMap);
   };
 
+  const updateProRosterMap = (newMap: Record<number, ProfessionalPlayer[]>) => {
+    setProRosterMap(newMap);
+  };
+
   const saveCHLGameplan = async (dto: any) => {
     const res = await GameplanService.SaveCHLGameplan(dto);
     setCHLLineups(dto.CHLLineups);
@@ -874,6 +885,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         promisePlayer,
         cutPHLPlayer,
         updateCHLRosterMap,
+        updateProRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
         addRecruitToBoard,
