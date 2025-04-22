@@ -113,7 +113,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           </div>
         </div>
         {!isMobile && (
-          <div className="flex flex-col w-1/4 gap-2 justify-center items-center gap-x-2">
+          <div className="flex flex-col sm:w-1/4 gap-2 justify-center items-center gap-x-2">
             <FrontOfficeInfo
               owner={Owner}
               gm={GM}
@@ -127,11 +127,11 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             />
           </div>
         )}
-        <div
-          className="flex flex-col w-1/4 justify-start items-start px-4 py-6 rounded-lg border-2"
-          style={{ borderColor: headerColor, backgroundColor: sectionBg }}
-        >
-          {!isMobile && (
+        {!isMobile && (
+          <div
+            className="flex flex-col sm:w-1/4 justify-start items-start px-4 py-6 rounded-lg border-2"
+            style={{ borderColor: headerColor, backgroundColor: sectionBg }}
+          >
             <AdditionalTeamInfo
               league={League}
               arena={Arena}
@@ -141,10 +141,10 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               backgroundColor={backgroundColor}
               isPro={isPro}
             />
-          )}
-        </div>
+          </div>
+        )}
         {!isMobile && (
-          <div className="flex flex-col w-1/4 items-center justify-center gap-x-2">
+          <div className="flex flex-col sm:w-1/4 items-center justify-center gap-x-2">
             {isPro && (
               <CapsheetInfo
                 capsheet={Capsheet}

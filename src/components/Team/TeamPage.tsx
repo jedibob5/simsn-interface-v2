@@ -840,7 +840,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
+          classes="px-2 min-[320px]:min-w-full min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,
