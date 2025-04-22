@@ -18,6 +18,8 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   BarsArrowDownIcon,
+  InformationCircleIcon,
+  PaperAirplaneIcon
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -189,3 +191,16 @@ export const BarsArrowDown: React.FC<LockIconProps> = ({
 }) => {
   return <BarsArrowDownIcon className={`size-5 ${textColorClass}`} />;
 };
+
+export const InformationCircle: React.FC<LockIconProps> = ({
+  textColorClass = "text-white", // Default color is black
+}) => {
+  return <InformationCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const PaperAirplane: React.FC<LockIconProps> = ({
+  textColorClass = "text-white", // Default color is black
+}) => {
+  return <PaperAirplaneIcon className={`size-5 ${textColorClass}`} />;
+};
+

@@ -38,7 +38,7 @@ export const AdminTeamCard: React.FC<AdminTeamCardProps> = ({
           styles={{ backgroundColor, borderColor }}
         >
           <div className="flex flex-col w-[6rem] h-[6rem] items-center justify-center">
-            <Logo url={logo} variant="normal" classes="" />
+            <Logo url={logo} variant="normal" classes="" containerClass="p-4" />
           </div>
         </Border>
         <div className="flex flex-col justify-center p-2 mx-auto mr-[1rem] flex-grow">
@@ -113,8 +113,8 @@ export const AdminRequestCard: React.FC<AdminRequestCardProps> = ({
           classes="items-center justify-center mt-1"
           styles={{ backgroundColor, borderColor }}
         >
-          <div className="flex flex-col w-[6rem] h-[6rem] items-center justify-center">
-            <Logo url={requestLogo} variant="normal" classes="" />
+          <div className="flex flex-col w-full items-center justify-center p-4">
+            <Logo url={requestLogo} variant="normal" classes="" containerClass="p-4" />
           </div>
         </Border>
         <div className="flex flex-col justify-center p-2 flex-1">

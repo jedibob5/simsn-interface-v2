@@ -98,7 +98,9 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               className="max-w-[6rem] 5xl:max-w-[10rem] w-[5.5em] h-[5.5rem] rounded-lg border-2"
               style={{ backgroundColor: sectionBg, borderColor: headerColor }}
             >
-              <Logo url={logo} variant="large" />
+              <Logo url={logo} 
+                    variant="large"
+                    containerClass="p-4" />
             </div>
           </div>
           <div className="flex flex-col max-w-1/2">
