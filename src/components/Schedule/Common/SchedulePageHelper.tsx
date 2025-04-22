@@ -59,9 +59,23 @@ export const getScheduleCFBData = (
         AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
       }));
 
+    // Weekly Games
+    const groupedWeeklyGames = allCollegeGames.reduce((acc: any, game) => {
+      if (!acc[game.Week]) {
+        acc[game.Week] = [];
+      }
+      acc[game.Week].push({
+        ...game,
+        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      });
+      return acc;
+    }, {});
+
   return { 
     teamStandings, 
     teamSchedule, 
+    groupedWeeklyGames
   };
 };
 
@@ -92,9 +106,23 @@ export const getScheduleNFLData = (
         AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
       }));
 
+    // Weekly Games
+     const groupedWeeklyGames = allNFLGames.reduce((acc: any, game) => {
+      if (!acc[game.Week]) {
+        acc[game.Week] = [];
+      }
+      acc[game.Week].push({
+        ...game,
+        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      });
+      return acc;
+    }, {});
+
   return { 
     teamStandings, 
-    teamSchedule, 
+    teamSchedule,
+    groupedWeeklyGames 
   };
 };
 
@@ -174,15 +202,29 @@ export const getSchedulePHLData = (
         AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
       }));
 
+    // Weekly Games
+     const groupedWeeklyGames = allPHLGames.reduce((acc: any, game) => {
+      if (!acc[game.Week]) {
+        acc[game.Week] = [];
+      }
+      acc[game.Week].push({
+        ...game,
+        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      });
+      return acc;
+    }, {});
+
+
   return { 
     teamStandings, 
-    teamSchedule, 
+    teamSchedule,
+    groupedWeeklyGames 
   };
 };
 
 export const processSchedule = (schedule: any[], team: any, ts: any, league: League) => {
   let weekCounter: { [key: number]: number } = {};
-console.log(team)
   return schedule.map((game) => {
     const revealResult =
       league === SimCHL || league === SimPHL
@@ -245,6 +287,55 @@ console.log(team)
       weekLabel,
     };
   });
+};
+
+export const processWeeklyGames = (schedule: any[], ts: any, league: League) => {
+  const sortGames = (games: any[]) => {
+    if (league === SimCHL || league === SimPHL) {
+      return games.sort((a, b) => (a.GameDay > b.GameDay ? 1 : -1));
+    }
+    return games;
+  };
+
+  const processedGames = schedule.map((game) => {
+    const revealResult =
+      league === SimCHL || league === SimPHL
+        ? RevealHCKResults(game, ts)
+        : RevealFBResults(game, ts, league);
+
+    const homeTeamLogo = getLogo(league, game.HomeTeamID, false);
+    const awayTeamLogo = getLogo(league, game.AwayTeamID, false);
+
+    let gameScore = "TBC";
+    let headerGameScore = "TBC";
+
+    if (revealResult) {
+      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+        gameScore = "TBC";
+        headerGameScore = "TBC";
+      } else {
+        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+      }
+    }
+
+    return {
+      ...game,
+      homeTeam: {
+        id: game.HomeTeamID,
+        abbr: game.HomeTeamAbbr,
+        logo: homeTeamLogo,
+      },
+      awayTeam: {
+        id: game.AwayTeamID,
+        abbr: game.AwayTeamAbbr,
+        logo: awayTeamLogo,
+      },
+      gameScore,
+      headerGameScore,
+    };
+  });
+  return sortGames(processedGames);
 };
 
 export const processLeagueStandings = (

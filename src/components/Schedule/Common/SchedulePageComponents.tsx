@@ -74,7 +74,7 @@ export const TeamSchedule = ({
           >
             <div className="text-left col-span-1">
               <Text variant="xs" className={`${textColorClass}`}>
-                {category === WeeklyGames ? "Game" : "Week"}
+                Week
               </Text>
             </div>
             <div className="text-left col-span-2">
@@ -103,7 +103,7 @@ export const TeamSchedule = ({
             >
               <div className="text-left col-span-1">
                 <Text variant="xs" className="font-semibold">
-                  {category === WeeklyGames ? game.GameID : game.weekLabel}
+                  {game.weekLabel}
                 </Text>
               </div>
               <div className="flex items-center col-span-2 justify-start text-center">

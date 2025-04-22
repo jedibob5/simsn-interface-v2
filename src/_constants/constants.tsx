@@ -438,7 +438,7 @@ export const PHLDivisionNames = [
   { label: "DivisionID", value: "4", name: "Pacific" },
 ];
 
-export const Seasons: { label: string; value: string }[] = [
+export const FootballSeasons: { label: string; value: string }[] = [
   { label: "2021", value: "2021" },
   { label: "2022", value: "2022" },
   { label: "2023", value: "2023" },
@@ -446,6 +446,14 @@ export const Seasons: { label: string; value: string }[] = [
   { label: "2025", value: "2025" },
   { label: "2026", value: "2026" },
   { label: "2027", value: "2027" },
+];
+
+export const HockeySeasons: { label: string; value: string }[] = [
+  { label: "2025", value: "2025" },
+  { label: "2026", value: "2026" },
+  { label: "2027", value: "2027" },
+  { label: "2028", value: "2028" },
+  { label: "2029", value: "2029" },
 ];
 
 export const FootballWeeks: { label: string; value: string }[] = Array.from(

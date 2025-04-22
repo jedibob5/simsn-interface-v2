@@ -5,7 +5,7 @@ import {
   Standings,
   WeeklyGames,
   TeamGames,
-  Seasons,
+  HockeySeasons,
   CHLWeeks,
   PHLWeeks,
   Divisions,
@@ -22,7 +22,7 @@ import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { isBrightColor } from "../../../_utility/isBrightColor";
 import { useMobile } from "../../../_hooks/useMobile";
 import { GetCurrentWeek, RevealFBResults } from "../../../_helper/teamHelper";
-import { getScheduleCHLData, getSchedulePHLData, processSchedule } from "../Common/SchedulePageHelper";
+import { getScheduleCHLData, getSchedulePHLData, processSchedule, processWeeklyGames } from "../Common/SchedulePageHelper";
 import { TeamSchedule, TeamStandings, LeagueStats, LeagueStandings, WeeklySchedule } from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
@@ -55,8 +55,8 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [category, setCategory] = useState(Overview);
   const [view, setView] = useState(TeamGames);
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
-  const [selectedSeason, setSelectedSeason] = useState(currentSeason)
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
+  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025)
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -108,6 +108,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
       allCHLStandings, 
       allCHLGames, 
       chlTeams]);
+
     const processedSchedule = useMemo(() => processSchedule(teamSchedule, selectedTeam, ts, league), [
       teamSchedule,
       selectedTeam,
@@ -118,8 +119,8 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     const weeklyGames = useMemo(() => {
       if (!selectedWeek) return [];
       const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
-      return gamesForWeek.sort((a: CHLGame, b: CHLGame) => (a.GameDay > b.GameDay ? 1 : -1));
-    }, [groupedWeeklyGames, selectedWeek]);
+      return processWeeklyGames(gamesForWeek, ts, league);
+    }, [groupedWeeklyGames, selectedWeek, ts, league]);
 
   return (
     <>
@@ -194,7 +195,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             <div className="flex flex-col items-center gap-2 justify-center">
               <Text variant="body">Seasons</Text>
               <SelectDropdown
-                options={Seasons}
+                options={HockeySeasons}
                 placeholder="Select Season..."
                 onChange={(selectedOption) => {
                   const selectedSeason = Number(selectedOption?.value);
@@ -234,7 +235,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             />
           </div>
            )}
-                {category === Overview && (
+        {category === Overview && (
           <div className="flex flex-col h-full col-span-2 overflow-auto">
             {view === TeamGames && (
               <TeamSchedule
@@ -316,8 +317,8 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [category, setCategory] = useState(Overview);
   const [scheduleView, setScheduleView] = useState(TeamGames);
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek)
-  const [selectedSeason, setSelectedSeason] = useState(currentSeason)
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1)
+  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025)
   const [standingsView, setStandingsView] = useState(Conferences)
 
   const teamColors = useTeamColors(
@@ -351,7 +352,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     setCategory(Overview);
   };
 
-  const { teamStandings, teamSchedule } = useMemo(() => {
+  const { teamStandings, teamSchedule, groupedWeeklyGames } = useMemo(() => {
     return getSchedulePHLData(
       selectedTeam,
       currentWeek,
@@ -360,7 +361,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
       league,
       allPHLStandings,
       allPHLGames,
-      phlTeams
+      phlTeams,
     );
   }, [selectedTeam, currentWeek, selectedWeek, selectedSeason, league, allPHLStandings, allPHLGames, phlTeams]);
 
@@ -370,6 +371,12 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     ts,
     league,
   ]);
+
+  const weeklyGames = useMemo(() => {
+    if (!selectedWeek) return [];
+    const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
+    return processWeeklyGames(gamesForWeek, ts, league);
+  }, [groupedWeeklyGames, selectedWeek, ts, league]);
 
   return (
     <>
@@ -438,7 +445,10 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 <>
                   <Text variant="body">Week</Text>
                   <SelectDropdown
-                    options={PHLWeeks}
+                    options={Array.from({ length: 22 }, (_, i) => ({
+                      label: `${i + 1}`,
+                      value: (i + 1).toString(),
+                    }))}
                     placeholder="Select Week..."
                     onChange={(selectedOption) => {
                       const selectedWeek = Number(selectedOption?.value);
@@ -451,7 +461,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             <div className="flex flex-col items-center gap-2 justify-center">
               <Text variant="body">Seasons</Text>
               <SelectDropdown
-                options={Seasons}
+                options={HockeySeasons}
                 placeholder="Select Season..."
                 onChange={(selectedOption) => {
                   const selectedSeason = Number(selectedOption?.value);
@@ -505,15 +515,15 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             />
            )}
           {category === Overview && scheduleView === WeeklyGames && (
-            <WeeklySchedule
+              <WeeklySchedule
               team={selectedTeam}
               Abbr={selectedTeam?.Abbreviation}
               category={scheduleView}
               currentUser={currentUser}
-              week={currentWeek}
+              week={selectedWeek}
               league={league}
               ts={ts}
-              processedSchedule={processedSchedule}
+              processedSchedule={weeklyGames}
               backgroundColor={backgroundColor}
               headerColor={headerColor}
               borderColor={borderColor}
