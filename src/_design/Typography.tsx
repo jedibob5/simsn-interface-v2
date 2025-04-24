@@ -55,7 +55,7 @@ const sizes: Record<TextVariant, string> = {
   h6: "text-base sm:text-xl 3xl:text-2xl font-semibold",
   body: "text-base sm:text-lg 3xl:text-xl",
   "body-small": "text-sm sm:text-base 3xl:text-lg",
-  small: "text-xs sm:text-sm 3xl:text-lg",
+  small: "text-xs sm:text-sm 3xl:text-md",
   xs: "text-[0.5em] sm:text-[0.7em] 3xl:text-base",
   alternate: "text-xs sm:text-lg 3xl:text-xl",
   primary: "text-base",

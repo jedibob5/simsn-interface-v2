@@ -9,7 +9,7 @@ import {
   CHLWeeks,
   PHLWeeks,
   Divisions,
-  Conferences
+  Conferences,
 } from "../../../_constants/constants";
 import { useAuthStore } from "../../../context/AuthContext";
 import { SelectDropdown } from "../../../_design/Select";
@@ -20,16 +20,30 @@ import { Text } from "../../../_design/Typography";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { isBrightColor } from "../../../_utility/isBrightColor";
-import { useMobile } from "../../../_hooks/useMobile";
-import { GetCurrentWeek, RevealFBResults } from "../../../_helper/teamHelper";
-import { getScheduleCHLData, getSchedulePHLData, processSchedule, processWeeklyGames } from "../Common/SchedulePageHelper";
-import { TeamSchedule, TeamStandings, LeagueStats, LeagueStandings, WeeklySchedule } from "../Common/SchedulePageComponents";
+import { useResponsive } from "../../../_hooks/useMobile";
+import { GetCurrentWeek, RevealResults } from "../../../_helper/teamHelper";
+import {
+  getScheduleCHLData,
+  getSchedulePHLData,
+  processSchedule,
+  processWeeklyGames,
+} from "../Common/SchedulePageHelper";
+import {
+  TeamSchedule,
+  TeamStandings,
+  LeagueStats,
+  LeagueStandings,
+  WeeklySchedule,
+} from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { PaperAirplane } from "../../../_design/Icons";
 import { ToggleSwitch } from "../../../_design/Inputs";
 import { getLogo } from "../../../_utility/getLogo";
-import { CollegeGame as CHLGame, ProfessionalGame as PHLGame } from "../../../models/hockeyModels";
+import {
+  CollegeGame as CHLGame,
+  ProfessionalGame as PHLGame,
+} from "../../../models/hockeyModels";
 interface SchedulePageProps {
   league: League;
   ts: any;
@@ -38,7 +52,7 @@ interface SchedulePageProps {
 export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
-  const currentWeek = GetCurrentWeek(league, ts)
+  const currentWeek = GetCurrentWeek(league, ts);
   const currentSeason = ts.Season;
   const {
     chlTeam,
@@ -48,7 +62,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     chlTeamOptions,
     allCHLStandings,
     allCollegeGames: allCHLGames,
-    isLoading
+    isLoading,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
@@ -56,7 +70,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [view, setView] = useState(TeamGames);
   const [isChecked, setIsChecked] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
-  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025)
+  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -66,7 +80,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   let backgroundColor = "#1f2937";
   let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   if (isBrightColor(headerColor)) {
     [headerColor, borderColor] = [borderColor, headerColor];
@@ -100,27 +114,27 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
       allCHLGames,
       chlTeams
     );
-  }, [selectedTeam, 
-      currentWeek, 
-      selectedWeek, 
-      selectedSeason, 
-      league, 
-      allCHLStandings, 
-      allCHLGames, 
-      chlTeams]);
+  }, [
+    selectedTeam,
+    currentWeek,
+    selectedWeek,
+    selectedSeason,
+    league,
+    allCHLStandings,
+    allCHLGames,
+    chlTeams,
+  ]);
 
-    const processedSchedule = useMemo(() => processSchedule(teamSchedule, selectedTeam, ts, league), [
-      teamSchedule,
-      selectedTeam,
-      ts,
-      league,
-    ]);
+  const processedSchedule = useMemo(
+    () => processSchedule(teamSchedule, selectedTeam, ts, league),
+    [teamSchedule, selectedTeam, ts, league]
+  );
 
-    const weeklyGames = useMemo(() => {
-      if (!selectedWeek) return [];
-      const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
-      return processWeeklyGames(gamesForWeek, ts, league);
-    }, [groupedWeeklyGames, selectedWeek, ts, league]);
+  const weeklyGames = useMemo(() => {
+    if (!selectedWeek) return [];
+    const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
+    return processWeeklyGames(gamesForWeek, ts, league);
+  }, [groupedWeeklyGames, selectedWeek, ts, league]);
 
   return (
     <>
@@ -129,50 +143,46 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
             <div className="flex gap-4 justify-center items-center sm:w-full">
               <ButtonGroup classes="flex justify-center w-full">
-                <Button size="md"
-                        variant="primary" 
-                        onClick={() => setCategory(Overview)}
-                        isSelected={category === Overview}
-                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={() => setCategory(Overview)}
+                  isSelected={category === Overview}
+                  classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="small">
-                    Overview
-                  </Text>
-                </Button>                
-                <Button size="md" 
-                        variant="primary" 
-                        onClick={() => setCategory(Standings)}
-                        isSelected={category === Standings}
-                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
-                >
-                  <Text variant="small">
-                    Standings
-                  </Text>
+                  <Text variant="small">Overview</Text>
                 </Button>
-                <Button size="md" 
-                        variant="primary"
-                        classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]">
-                  <Text variant="small">
-                    College Poll
-                  </Text>
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={() => setCategory(Standings)}
+                  isSelected={category === Standings}
+                  classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
+                >
+                  <Text variant="small">Standings</Text>
+                </Button>
+                <Button
+                  size="md"
+                  variant="primary"
+                  classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]"
+                >
+                  <Text variant="small">College Poll</Text>
                 </Button>
               </ButtonGroup>
             </div>
             <div className="flex flex-col gap-2 sm:gap-4 items-center">
-            {category === Overview && (
-              <div className="flex justify-center items-center gap-2">
-                <ToggleSwitch 
-                onChange={(checked) => {
-                  setView(checked ? WeeklyGames : TeamGames);
-                  setIsChecked(checked);
-                }}
-                  checked={isChecked}
-                />
-                <Text variant="small">
-                  Weekly Games
-                </Text>
-              </div>
-            )}
+              {category === Overview && (
+                <div className="flex justify-center items-center gap-2">
+                  <ToggleSwitch
+                    onChange={(checked) => {
+                      setView(checked ? WeeklyGames : TeamGames);
+                      setIsChecked(checked);
+                    }}
+                    checked={isChecked}
+                  />
+                  <Text variant="small">Weekly Games</Text>
+                </div>
+              )}
               <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
                 <div className="flex flex-col items-center gap-2 justify-center">
                   {view === TeamGames ? (
@@ -200,7 +210,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       />
                     </>
                   )}
-                </div>            
+                </div>
                 <div className="flex flex-col items-center gap-2 justify-center">
                   <Text variant="body">Seasons</Text>
                   <SelectDropdown
@@ -213,16 +223,16 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   />
                 </div>
               </div>
-            {!isMobile && (
-              <div className="flex flex-col items-center gap-2 justify-center">
-                <Text variant="body">Export Day of Week</Text>
-                <SelectDropdown
-                  options={chlTeamOptions}
-                  placeholder="Select Timeslot..."
-                  onChange={selectTeamOption}
-                />
-            </div>
-            )}
+              {!isMobile && (
+                <div className="flex flex-col items-center gap-2 justify-center">
+                  <Text variant="body">Export Day of Week</Text>
+                  <SelectDropdown
+                    options={chlTeamOptions}
+                    placeholder="Select Timeslot..."
+                    onChange={selectTeamOption}
+                  />
+                </div>
+              )}
             </div>
           </div>
           {category === Standings && (
@@ -237,21 +247,56 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 textColorClass={textColorClass}
                 darkerBackgroundColor={darkerBackgroundColor}
                 isLoadingTwo={isLoading}
-            />
-          </div>
-           )}
-        {category === Overview && (
-          <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
-            {view === TeamGames && (
-              <TeamSchedule
+              />
+            </div>
+          )}
+          {category === Overview && (
+            <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
+              {view === TeamGames && (
+                <TeamSchedule
+                  team={selectedTeam}
+                  Abbr={selectedTeam?.Abbreviation}
+                  category={view}
+                  currentUser={currentUser}
+                  week={currentWeek}
+                  league={league}
+                  ts={ts}
+                  processedSchedule={processedSchedule}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoading}
+                />
+              )}
+              {view === WeeklyGames && (
+                <WeeklySchedule
+                  team={selectedTeam}
+                  Abbr={selectedTeam?.Abbreviation}
+                  category={view}
+                  currentUser={currentUser}
+                  week={selectedWeek}
+                  league={league}
+                  ts={ts}
+                  processedSchedule={weeklyGames}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoading}
+                />
+              )}
+            </div>
+          )}
+          {category === Overview && (
+            <div className="flex flex-col h-full col-span-2">
+              <TeamStandings
                 team={selectedTeam}
-                Abbr={selectedTeam?.Abbreviation}
-                category={view}
                 currentUser={currentUser}
-                week={currentWeek}
                 league={league}
-                ts={ts}
-                processedSchedule={processedSchedule}
+                standings={teamStandings}
                 backgroundColor={backgroundColor}
                 headerColor={headerColor}
                 borderColor={borderColor}
@@ -259,43 +304,8 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 darkerBackgroundColor={darkerBackgroundColor}
                 isLoadingTwo={isLoading}
               />
-            )}
-            {view === WeeklyGames && (
-              <WeeklySchedule
-                team={selectedTeam}
-                Abbr={selectedTeam?.Abbreviation}
-                category={view}
-                currentUser={currentUser}
-                week={selectedWeek}
-                league={league}
-                ts={ts}
-                processedSchedule={weeklyGames}
-                backgroundColor={backgroundColor}
-                headerColor={headerColor}
-                borderColor={borderColor}
-                textColorClass={textColorClass}
-                darkerBackgroundColor={darkerBackgroundColor}
-                isLoadingTwo={isLoading}
-              />
-            )}
-          </div>
-        )}
-        {category === Overview && (
-          <div className="flex flex-col h-full col-span-2">
-            <TeamStandings
-              team={selectedTeam}
-              currentUser={currentUser}
-              league={league}
-              standings={teamStandings}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading}
-            />
-          </div>
-        )}
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -305,7 +315,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
-  const currentWeek = GetCurrentWeek(league, ts)
+  const currentWeek = GetCurrentWeek(league, ts);
   const currentSeason = ts.Season;
   const {
     phlTeam,
@@ -315,16 +325,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     phlTeamOptions,
     allProStandings: allPHLStandings,
     allProGames: allPHLGames,
-    isLoading
+    isLoading,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
   const [category, setCategory] = useState(Overview);
   const [scheduleView, setScheduleView] = useState(TeamGames);
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1)
-  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025)
-  const [standingsView, setStandingsView] = useState(Conferences)
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
+  const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
+  const [standingsView, setStandingsView] = useState(Conferences);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -334,7 +344,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   let backgroundColor = "#1f2937";
   let headerColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   if (isBrightColor(headerColor)) {
     [headerColor, borderColor] = [borderColor, headerColor];
@@ -366,16 +376,23 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
       league,
       allPHLStandings,
       allPHLGames,
-      phlTeams,
+      phlTeams
     );
-  }, [selectedTeam, currentWeek, selectedWeek, selectedSeason, league, allPHLStandings, allPHLGames, phlTeams]);
-
-  const processedSchedule = useMemo(() => processSchedule(teamSchedule, selectedTeam, ts, league), [
-    teamSchedule,
+  }, [
     selectedTeam,
-    ts,
+    currentWeek,
+    selectedWeek,
+    selectedSeason,
     league,
+    allPHLStandings,
+    allPHLGames,
+    phlTeams,
   ]);
+
+  const processedSchedule = useMemo(
+    () => processSchedule(teamSchedule, selectedTeam, ts, league),
+    [teamSchedule, selectedTeam, ts, league]
+  );
 
   const weeklyGames = useMemo(() => {
     if (!selectedWeek) return [];
@@ -390,52 +407,50 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
             <div className="flex gap-4 justify-center items-center sm:w-full">
               <ButtonGroup classes="flex justify-center w-full">
-                <Button size="md"
-                        variant="primary" 
-                        onClick={() => setCategory(Overview)}
-                        isSelected={category === Overview}
-                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={() => setCategory(Overview)}
+                  isSelected={category === Overview}
+                  classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="small">
-                    Overview
-                  </Text>
-                </Button>                
-                <Button size="md" 
-                        variant="primary" 
-                        onClick={() => setCategory(Standings)}
-                        isSelected={category === Standings}
-                        classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
+                  <Text variant="small">Overview</Text>
+                </Button>
+                <Button
+                  size="md"
+                  variant="primary"
+                  onClick={() => setCategory(Standings)}
+                  isSelected={category === Standings}
+                  classes="px-5 py-2 sm:w-[45%] sm:max-w-[175px]"
                 >
-                  <Text variant="small">
-                    Standings
-                  </Text>
+                  <Text variant="small">Standings</Text>
                 </Button>
               </ButtonGroup>
             </div>
-          {category === Overview && (
-            <div className="flex justify-center items-center gap-2">
-              <ToggleSwitch
-                onChange={(checked) => {
-                  setScheduleView(checked ? WeeklyGames : TeamGames);
-                  setIsChecked(checked);
-                }}
-                checked={isChecked}
-              />
-              <Text variant="small">Weekly Games</Text>
-            </div>
-          )}
-          {category === Standings && (
-            <div className="flex justify-center items-center gap-2">
-              <ToggleSwitch
-                onChange={(checked) => {
-                  setStandingsView(checked ? Divisions : Conferences);
-                  setIsChecked(checked);
-                }}
-                checked={isChecked}
-              />
-              <Text variant="small">Divisions</Text>
-            </div>
-          )}
+            {category === Overview && (
+              <div className="flex justify-center items-center gap-2">
+                <ToggleSwitch
+                  onChange={(checked) => {
+                    setScheduleView(checked ? WeeklyGames : TeamGames);
+                    setIsChecked(checked);
+                  }}
+                  checked={isChecked}
+                />
+                <Text variant="small">Weekly Games</Text>
+              </div>
+            )}
+            {category === Standings && (
+              <div className="flex justify-center items-center gap-2">
+                <ToggleSwitch
+                  onChange={(checked) => {
+                    setStandingsView(checked ? Divisions : Conferences);
+                    setIsChecked(checked);
+                  }}
+                  checked={isChecked}
+                />
+                <Text variant="small">Divisions</Text>
+              </div>
+            )}
             <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
               <div className="flex flex-col items-center gap-2 justify-center">
                 {scheduleView === TeamGames ? (
@@ -463,7 +478,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                     />
                   </>
                 )}
-              </div>            
+              </div>
               <div className="flex flex-col items-center gap-2 justify-center">
                 <Text variant="body">Seasons</Text>
                 <SelectDropdown
@@ -476,89 +491,89 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 />
               </div>
             </div>
-          {!isMobile && (
-            <div className="flex flex-col items-center gap-2 justify-center">
-              <Text variant="body">Export Day of Week</Text>
-              <SelectDropdown
-                options={phlTeamOptions}
-                placeholder="Select Timeslot..."
-                onChange={selectTeamOption}
-              />
-            </div>
-          )}
+            {!isMobile && (
+              <div className="flex flex-col items-center gap-2 justify-center">
+                <Text variant="body">Export Day of Week</Text>
+                <SelectDropdown
+                  options={phlTeamOptions}
+                  placeholder="Select Timeslot..."
+                  onChange={selectTeamOption}
+                />
+              </div>
+            )}
           </div>
           {category === Standings && (
             <div className="flex flex-col h-full col-span-5">
-            <LeagueStandings
-              currentUser={currentUser}
-              league={league}
-              category={standingsView}
-              standings={allPHLStandings}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading}
-            />
-          </div>
-           )}
-        {category === Overview && (
-          <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
-          {category === Overview && scheduleView === TeamGames && (
-            <TeamSchedule
-              team={selectedTeam}
-              Abbr={selectedTeam?.Abbreviation}
-              category={scheduleView}
-              currentUser={currentUser}
-              week={currentWeek}
-              league={league}
-              ts={ts}
-              processedSchedule={processedSchedule}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading}
-            />
-           )}
-          {category === Overview && scheduleView === WeeklyGames && (
-              <WeeklySchedule
-              team={selectedTeam}
-              Abbr={selectedTeam?.Abbreviation}
-              category={scheduleView}
-              currentUser={currentUser}
-              week={selectedWeek}
-              league={league}
-              ts={ts}
-              processedSchedule={weeklyGames}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading}
-            />
-           )}
-          </div>
-        )}
-        {category === Overview && (
-          <div className="flex flex-col h-full col-span-2">
-            <TeamStandings
-              team={selectedTeam}
-              currentUser={currentUser}
-              league={league}
-              standings={teamStandings}
-              backgroundColor={backgroundColor}
-              headerColor={headerColor}
-              borderColor={borderColor}
-              textColorClass={textColorClass}
-              darkerBackgroundColor={darkerBackgroundColor}
-              isLoadingTwo={isLoading}
-            />
-          </div>
-        )}
+              <LeagueStandings
+                currentUser={currentUser}
+                league={league}
+                category={standingsView}
+                standings={allPHLStandings}
+                backgroundColor={backgroundColor}
+                headerColor={headerColor}
+                borderColor={borderColor}
+                textColorClass={textColorClass}
+                darkerBackgroundColor={darkerBackgroundColor}
+                isLoadingTwo={isLoading}
+              />
+            </div>
+          )}
+          {category === Overview && (
+            <div className="flex flex-col pb-4 sm:pb-0 h-full col-span-2 overflow-auto">
+              {category === Overview && scheduleView === TeamGames && (
+                <TeamSchedule
+                  team={selectedTeam}
+                  Abbr={selectedTeam?.Abbreviation}
+                  category={scheduleView}
+                  currentUser={currentUser}
+                  week={currentWeek}
+                  league={league}
+                  ts={ts}
+                  processedSchedule={processedSchedule}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoading}
+                />
+              )}
+              {category === Overview && scheduleView === WeeklyGames && (
+                <WeeklySchedule
+                  team={selectedTeam}
+                  Abbr={selectedTeam?.Abbreviation}
+                  category={scheduleView}
+                  currentUser={currentUser}
+                  week={selectedWeek}
+                  league={league}
+                  ts={ts}
+                  processedSchedule={weeklyGames}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoading}
+                />
+              )}
+            </div>
+          )}
+          {category === Overview && (
+            <div className="flex flex-col h-full col-span-2">
+              <TeamStandings
+                team={selectedTeam}
+                currentUser={currentUser}
+                league={league}
+                standings={teamStandings}
+                backgroundColor={backgroundColor}
+                headerColor={headerColor}
+                borderColor={borderColor}
+                textColorClass={textColorClass}
+                darkerBackgroundColor={darkerBackgroundColor}
+                isLoadingTwo={isLoading}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

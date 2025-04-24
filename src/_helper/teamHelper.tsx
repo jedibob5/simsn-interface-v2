@@ -9,7 +9,12 @@ import {
 } from "../_constants/constants";
 import { Timestamp as BKTimestamp, Match } from "../models/basketballModels";
 import { Timestamp as FBTimestamp } from "../models/footballModels";
-import { Timestamp as HCKTimestamp, CollegeGame as CHLGame, ProfessionalGame as PHLGame } from "../models/hockeyModels";
+import {
+  Timestamp as HCKTimestamp,
+  CollegeGame as CHLGame,
+  ProfessionalGame as PHLGame,
+  CollegeGame,
+} from "../models/hockeyModels";
 
 export const GetTeamLabel = (league: League, team: any): String => {
   if (league === SimCFB || league === SimNFL) {
@@ -112,78 +117,108 @@ export const GetGameIndex = (ts: any, matches: Match[]): number => {
 
 interface Game {
   TimeSlot: string;
+  GameDay: string;
+  MatchOfWeek: string;
   RevealGame: boolean;
   Week: number;
   SeasonID: number;
 }
 
-interface Timestamp {
-  ThursdayGames?: boolean;
-  NFLThursday?: boolean;
-  FridayGames?: boolean;
-  SaturdayMorning?: boolean;
-  SaturdayNoon?: boolean;
-  SaturdayEvening?: boolean;
-  SaturdayNight?: boolean;
-  NFLSundayNoon?: boolean;
-  NFLSundayAfternoon?: boolean;
-  NFLSundayEvening?: boolean;
-  NFLMondayEvening?: boolean;
-  CollegeWeek: number;
-  CollegeSeasonID: number;
-  NFLWeek: number;
-  NFLSeasonID: number;
-}
-
-export const RevealFBResults = (
+export const RevealResults = (
   game: Game,
-  ts: Timestamp,
+  ts: FBTimestamp | BKTimestamp | HCKTimestamp,
   league: League
 ): boolean => {
   const { TimeSlot, Week, SeasonID } = game;
-  let currentWeek, currentSeasonID;
-
-  if (league === "SimCFB") {
-    currentWeek = ts.CollegeWeek;
-    currentSeasonID = ts.CollegeSeasonID;
-  } else if (league === "SimNFL") {
-    currentWeek = ts.NFLWeek;
-    currentSeasonID = ts.NFLSeasonID;
-  } else {
-    return false;
+  let gameDay = "";
+  let currentWeek = 0,
+    currentSeasonID = 0;
+  let timestamp = ts;
+  if (league === SimCFB) {
+    timestamp = timestamp as FBTimestamp;
+    currentWeek = timestamp.CollegeWeek;
+    currentSeasonID = timestamp.CollegeSeasonID;
+  } else if (league === SimNFL) {
+    timestamp = timestamp as FBTimestamp;
+    currentWeek = timestamp.NFLWeek;
+    currentSeasonID = timestamp.NFLSeasonID;
+  } else if (league === SimCHL || league === SimPHL) {
+    timestamp = timestamp as HCKTimestamp;
+    currentWeek = timestamp.Week;
+    currentSeasonID = timestamp.SeasonID;
+  } else if (league === SimCBB) {
+    timestamp = timestamp as BKTimestamp;
+    currentWeek = timestamp.CollegeWeek;
+    currentSeasonID = timestamp.SeasonID;
+  } else if (league === SimNBA) {
+    timestamp = timestamp as BKTimestamp;
+    currentWeek = timestamp.NBAWeek;
+    currentSeasonID = timestamp.SeasonID;
   }
 
   if (Week < currentWeek || SeasonID < currentSeasonID) {
     return true;
   }
-
-  if (TimeSlot === "Thursday Night" && ts.ThursdayGames) return true;
-  if (TimeSlot === "Thursday Night Football" && ts.NFLThursday) return true;
-  if (TimeSlot === "Friday Night" && ts.FridayGames) return true;
-  if (TimeSlot === "Saturday Morning" && ts.SaturdayMorning) return true;
-  if (TimeSlot === "Saturday Afternoon" && ts.SaturdayNoon) return true;
-  if (TimeSlot === "Saturday Evening" && ts.SaturdayEvening) return true;
-  if (TimeSlot === "Saturday Night" && ts.SaturdayNight) return true;
-  if (TimeSlot === "Sunday Noon" && ts.NFLSundayNoon) return true;
-  if (TimeSlot === "Sunday Afternoon" && ts.NFLSundayAfternoon) return true;
-  if (TimeSlot === "Sunday Night Football" && ts.NFLSundayEvening) return true;
-  if (TimeSlot === "Monday Night Football" && ts.NFLMondayEvening) return true;
+  console.log({ game });
+  if (league === SimCFB || league === SimNFL) {
+    timestamp = timestamp as FBTimestamp;
+    if (TimeSlot === "Thursday Night" && timestamp.ThursdayGames) return true;
+    if (TimeSlot === "Thursday Night Football" && timestamp.NFLThursday)
+      return true;
+    if (TimeSlot === "Friday Night" && timestamp.FridayGames) return true;
+    if (TimeSlot === "Saturday Morning" && timestamp.SaturdayMorning)
+      return true;
+    if (TimeSlot === "Saturday Afternoon" && timestamp.SaturdayNoon)
+      return true;
+    if (TimeSlot === "Saturday Evening" && timestamp.SaturdayEvening)
+      return true;
+    if (TimeSlot === "Saturday Night" && timestamp.SaturdayNight) return true;
+    if (TimeSlot === "Sunday Noon" && timestamp.NFLSundayNoon) return true;
+    if (TimeSlot === "Sunday Afternoon" && timestamp.NFLSundayAfternoon)
+      return true;
+    if (TimeSlot === "Sunday Night Football" && timestamp.NFLSundayEvening)
+      return true;
+    if (TimeSlot === "Monday Night Football" && timestamp.NFLMondayEvening)
+      return true;
+  } else {
+    timestamp = timestamp as BKTimestamp;
+    if (
+      (game.GameDay === "A" || game.MatchOfWeek === "A") &&
+      timestamp.GamesARan
+    )
+      return true;
+    if (
+      (game.GameDay === "B" || game.MatchOfWeek === "B") &&
+      timestamp.GamesBRan
+    )
+      return true;
+    if (
+      (game.GameDay === "C" || game.MatchOfWeek === "C") &&
+      timestamp.GamesCRan
+    )
+      return true;
+    if (
+      (game.GameDay === "D" || game.MatchOfWeek === "D") &&
+      timestamp.GamesDRan
+    )
+      return true;
+  }
   return false;
 };
 
 export const RevealHCKResults = (
   game: CHLGame | PHLGame,
-  timestamp: HCKTimestamp,
+  timestamp: HCKTimestamp
 ): boolean => {
-  const currentWeek = timestamp.Week
+  const currentWeek = timestamp.Week;
   if (game.Week < currentWeek || game.SeasonID < timestamp.SeasonID)
     return true;
   const { GameDay, GameComplete } = game;
-  if (CHLGame){
+  if (CHLGame) {
     if (GameDay === "A" && timestamp.GamesARan) return GameComplete;
     if (GameDay === "B" && timestamp.GamesBRan) return GameComplete;
   }
-  if (PHLGame){
+  if (PHLGame) {
     if (GameDay === "A" && timestamp.GamesARan) return GameComplete;
     if (GameDay === "B" && timestamp.GamesBRan) return GameComplete;
     if (GameDay === "C" && timestamp.GamesCRan) return GameComplete;

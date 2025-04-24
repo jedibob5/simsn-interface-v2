@@ -17,7 +17,7 @@ import {
 import { Border } from "../../../_design/Borders";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
-import { useMobile } from "../../../_hooks/useMobile";
+import { useResponsive } from "../../../_hooks/useMobile";
 import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
@@ -77,7 +77,7 @@ export const PHLFreeAgency = () => {
     offerModal,
     handleOfferModal,
   } = usePHLFreeAgency();
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
   const teamColors = useTeamColors(
     phlTeam?.ColorOne,
     phlTeam?.ColorTwo,

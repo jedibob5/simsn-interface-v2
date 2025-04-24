@@ -14,7 +14,7 @@ import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
-import { useMobile } from "../../_hooks/useMobile";
+import { useResponsive } from "../../_hooks/useMobile";
 
 interface TeamInfoProps {
   id?: number;
@@ -68,52 +68,50 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   const sectionBg = darkenColor("#1f2937", -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const logo = getLogo(League, id!!, isRetro);
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
   return (
-    <div className="flex flex-col w-full max-w-[2000px]">
-      <Border
-        direction="row"
-        classes="w-full py-6 px-4 justify-around gap-x-4"
-        styles={{
-          backgroundColor,
-          borderColor: headerColor,
-        }}
-      >
-        <div className="flex flex-col sm:w-1/4 5xl:max-w-[10rem] justify-center items-center">
-          <div className="flex flex-row max-w-1/4 p-2 pt-6 gap-x-4">
-            <div
-              className="max-w-[10rem] 5xl:max-w-[12rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
-              style={{ backgroundColor: sectionBg, borderColor: headerColor }}
-            >
-              <Logo
-                url={logo}
-                variant="large"
-                containerClass="p-4 items-center justify-center h-full"
-              />
-            </div>
-            <div className="flex flex-col justify-center pb-2">
-              <Text variant="h5" classes={`${textColorClass}`}>
-                {TeamName}
+    <Border
+      direction="row"
+      classes="w-full py-6 px-4 justify-around gap-x-4"
+      styles={{
+        backgroundColor,
+        borderColor: headerColor,
+      }}
+    >
+      <div className="w-full grid grid-cols-1 min-[769px]:grid-cols-2 min-[1025px]:grid-cols-4 lg:gap-y-0 md:gap-y-4 gap-x-4">
+        <div className="flex flex-row justify-center items-center p-2 pt-6 gap-x-4">
+          <div
+            className="max-w-[10rem] 5xl:max-w-[12rem] h-[7.5rem] items-center justify-center rounded-lg border-2"
+            style={{ backgroundColor: sectionBg, borderColor: headerColor }}
+          >
+            <Logo
+              url={logo}
+              variant="large"
+              containerClass="p-4 items-center justify-center h-full"
+            />
+          </div>
+          <div className="flex flex-col justify-center pb-2">
+            <Text variant="h5" classes={`${textColorClass}`}>
+              {TeamName}
+            </Text>
+            <Text variant="small" classes={`${textColorClass} mb-2`}>
+              {Conference} Conference
+            </Text>
+            {Division && Division.length > 0 && (
+              <Text variant="xs" classes={`${textColorClass}`}>
+                {Division}
               </Text>
-              <Text variant="small" classes={`${textColorClass} mb-2`}>
-                {Conference} Conference
-              </Text>
-              {Division && Division.length > 0 && (
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {Division}
-                </Text>
-              )}
-              <TeamGrades
-                Team={Team}
-                backgroundColor={sectionBg}
-                gradeColor={backgroundColor}
-                borderColor={headerColor}
-              />
-            </div>
+            )}
+            <TeamGrades
+              Team={Team}
+              backgroundColor={sectionBg}
+              gradeColor={backgroundColor}
+              borderColor={headerColor}
+            />
           </div>
         </div>
         {!isMobile && (
-          <div className="flex flex-col sm:w-1/4 gap-2 justify-center items-center gap-x-2">
+          <div className="flex flex-col gap-2 justify-center items-center gap-x-2">
             <FrontOfficeInfo
               owner={Owner}
               gm={GM}
@@ -129,7 +127,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
         )}
         {!isMobile && (
           <div
-            className="flex flex-col sm:w-1/4 justify-start items-start px-4 py-6 rounded-lg border-2"
+            className="flex flex-col justify-start items-start px-4 py-6 rounded-lg border-2"
             style={{ borderColor: headerColor, backgroundColor: sectionBg }}
           >
             <AdditionalTeamInfo
@@ -144,7 +142,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
           </div>
         )}
         {!isMobile && (
-          <div className="flex flex-col sm:w-1/4 items-center justify-center gap-x-2">
+          <div className="flex flex-col items-center justify-center gap-x-2">
             {isPro && (
               <CapsheetInfo
                 capsheet={Capsheet}
@@ -166,8 +164,8 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             )}
           </div>
         )}
-      </Border>
-    </div>
+      </div>
+    </Border>
   );
 };
 
@@ -625,7 +623,7 @@ export const TeamGrades = ({
 }: any) => {
   return (
     <div
-      className="flex items-center w-full justify-center gap-5 p-2 sm:p-0 sm:pt-1 flex-shrink-1 rounded-lg border-2"
+      className="flex items-center w-full justify-center gap-5 p-2 mx-2 sm:p-0 sm:pt-1 flex-shrink-1 rounded-lg border-2"
       style={{ backgroundColor, borderColor }}
     >
       {Team && (

@@ -15,7 +15,7 @@ export const LoadingMessages = [
   "Gathering information...",
   "Gathering all croots...",
   "Fetching all players...",
-  "Considering all simulations...",
+  "Booting up all simulations...",
   "Checking all systems...",
   "Checking all simulations...",
   "Fun Fact: Brown was the first FCS team to beat an FBS team. Can you guess which team they beat?",

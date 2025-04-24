@@ -1,35 +1,35 @@
 import { useEffect, useState } from "react";
-import { 
+import {
   CollegeStandings,
-  NFLStandings, 
+  NFLStandings,
   CollegeGame,
-  NFLGame, 
+  NFLGame,
   CollegeTeam,
   NFLTeam,
   CollegePlayer as CFBPlayer,
-  NFLPlayer, 
+  NFLPlayer,
 } from "../../../models/footballModels";
-import { 
+import {
   CollegeStandings as CHLStandings,
-  ProfessionalStandings as PHLStandings, 
+  ProfessionalStandings as PHLStandings,
   CollegeGame as CHLGame,
-  ProfessionalGame as PHLGame, 
+  ProfessionalGame as PHLGame,
   CollegeTeam as CHLTeam,
   ProfessionalTeam as PHLTeam,
   CollegePlayer as CHLPlayer,
-  ProfessionalPlayer as PHLPlayer, 
+  ProfessionalPlayer as PHLPlayer,
 } from "../../../models/hockeyModels";
 import { League } from "../../../_constants/constants";
-import { RevealFBResults, RevealHCKResults } from "../../../_helper/teamHelper";
+import { RevealResults, RevealHCKResults } from "../../../_helper/teamHelper";
 import { getLogo } from "../../../_utility/getLogo";
-import { 
-  SimCHL, 
-  SimPHL, 
-  SimNFL, 
-  Divisions, 
-  CHLConferenceNames, 
-  PHLConferenceNames, 
-  PHLDivisionNames 
+import {
+  SimCHL,
+  SimPHL,
+  SimNFL,
+  Divisions,
+  CHLConferenceNames,
+  PHLConferenceNames,
+  PHLDivisionNames,
 } from "../../../_constants/constants";
 
 export const getScheduleCFBData = (
@@ -40,42 +40,45 @@ export const getScheduleCFBData = (
   league: League,
   allCFBStandings: CollegeStandings[],
   allCollegeGames: CollegeGame[],
-  allCollegeTeams: CollegeTeam[],
+  allCollegeTeams: CollegeTeam[]
 ) => {
-    // Team Standings
-    const teamStandings = allCFBStandings
-      .filter((standings) => standings.ConferenceID === team.ConferenceID)
-      .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+  // Team Standings
+  const teamStandings = allCFBStandings
+    .filter((standings) => standings.ConferenceID === team.ConferenceID)
+    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
 
-    const teamAbbrMap = new Map(allCollegeTeams.map((team) => [team.ID, team.TeamAbbr]));
+  const teamAbbrMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.TeamAbbr])
+  );
 
-    // Team Schedule
-    const teamSchedule = allCollegeGames
-      .filter((game) => game.HomeTeamID === team.ID || 
-                        game.AwayTeamID === team.ID)
-      .map((game) => ({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      }));
+  // Team Schedule
+  const teamSchedule = allCollegeGames
+    .filter(
+      (game) => game.HomeTeamID === team.ID || game.AwayTeamID === team.ID
+    )
+    .map((game) => ({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    }));
 
-    // Weekly Games
-    const groupedWeeklyGames = allCollegeGames.reduce((acc: any, game) => {
-      if (!acc[game.Week]) {
-        acc[game.Week] = [];
-      }
-      acc[game.Week].push({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      });
-      return acc;
-    }, {});
+  // Weekly Games
+  const groupedWeeklyGames = allCollegeGames.reduce((acc: any, game) => {
+    if (!acc[game.Week]) {
+      acc[game.Week] = [];
+    }
+    acc[game.Week].push({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    });
+    return acc;
+  }, {});
 
-  return { 
-    teamStandings, 
-    teamSchedule, 
-    groupedWeeklyGames
+  return {
+    teamStandings,
+    teamSchedule,
+    groupedWeeklyGames,
   };
 };
 
@@ -87,42 +90,45 @@ export const getScheduleNFLData = (
   league: League,
   allNFLStandings: NFLStandings[],
   allNFLGames: NFLGame[],
-  allNFLTeams: NFLTeam[],
+  allNFLTeams: NFLTeam[]
 ) => {
-    // Team Standings
-    const teamStandings = allNFLStandings
-      .filter((standings) => standings.ConferenceID === team.ConferenceID)
-      .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+  // Team Standings
+  const teamStandings = allNFLStandings
+    .filter((standings) => standings.ConferenceID === team.ConferenceID)
+    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
 
-    const teamAbbrMap = new Map(allNFLTeams.map((team) => [team.ID, team.TeamAbbr]));
+  const teamAbbrMap = new Map(
+    allNFLTeams.map((team) => [team.ID, team.TeamAbbr])
+  );
 
-    // Team Schedule
-    const teamSchedule = allNFLGames
-      .filter((game) => game.HomeTeamID === team.ID || 
-                        game.AwayTeamID === team.ID)
-      .map((game) => ({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      }));
+  // Team Schedule
+  const teamSchedule = allNFLGames
+    .filter(
+      (game) => game.HomeTeamID === team.ID || game.AwayTeamID === team.ID
+    )
+    .map((game) => ({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    }));
 
-    // Weekly Games
-     const groupedWeeklyGames = allNFLGames.reduce((acc: any, game) => {
-      if (!acc[game.Week]) {
-        acc[game.Week] = [];
-      }
-      acc[game.Week].push({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      });
-      return acc;
-    }, {});
+  // Weekly Games
+  const groupedWeeklyGames = allNFLGames.reduce((acc: any, game) => {
+    if (!acc[game.Week]) {
+      acc[game.Week] = [];
+    }
+    acc[game.Week].push({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    });
+    return acc;
+  }, {});
 
-  return { 
-    teamStandings, 
+  return {
+    teamStandings,
     teamSchedule,
-    groupedWeeklyGames 
+    groupedWeeklyGames,
   };
 };
 
@@ -134,44 +140,46 @@ export const getScheduleCHLData = (
   league: League,
   allCHLStandings: CHLStandings[],
   allCollegeGames: CHLGame[],
-  allCollegeTeams: CHLTeam[],
+  allCollegeTeams: CHLTeam[]
 ) => {
-  
-    // Team Standings
-    console.log(allCHLStandings)
-    const teamStandings = allCHLStandings
-      .filter((standings) => standings.ConferenceID === team.ConferenceID)
-      .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+  // Team Standings
+  console.log(allCHLStandings);
+  const teamStandings = allCHLStandings
+    .filter((standings) => standings.ConferenceID === team.ConferenceID)
+    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
 
-    const teamAbbrMap = new Map(allCollegeTeams.map((team) => [team.ID, team.Abbreviation]));
+  const teamAbbrMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.Abbreviation])
+  );
 
-    // Team Schedule
-    const teamSchedule = allCollegeGames
-      .filter((game) => game.HomeTeamID === team.ID || 
-                        game.AwayTeamID === team.ID)
-      .map((game) => ({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      }));
-    
-     // Weekly Games
-     const groupedWeeklyGames = allCollegeGames.reduce((acc: any, game) => {
-      if (!acc[game.Week]) {
-        acc[game.Week] = [];
-      }
-      acc[game.Week].push({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      });
-      return acc;
-    }, {});
+  // Team Schedule
+  const teamSchedule = allCollegeGames
+    .filter(
+      (game) => game.HomeTeamID === team.ID || game.AwayTeamID === team.ID
+    )
+    .map((game) => ({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    }));
 
-    return {
-      teamStandings,
-      teamSchedule,
-      groupedWeeklyGames,
+  // Weekly Games
+  const groupedWeeklyGames = allCollegeGames.reduce((acc: any, game) => {
+    if (!acc[game.Week]) {
+      acc[game.Week] = [];
+    }
+    acc[game.Week].push({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    });
+    return acc;
+  }, {});
+
+  return {
+    teamStandings,
+    teamSchedule,
+    groupedWeeklyGames,
   };
 };
 
@@ -183,57 +191,68 @@ export const getSchedulePHLData = (
   league: League,
   allPHLStandings: PHLStandings[],
   allPHLGames: PHLGame[],
-  allPHLTeams: PHLTeam[],
+  allPHLTeams: PHLTeam[]
 ) => {
-    // Team Standings
-    const teamStandings = allPHLStandings
-      .filter((standings) => standings.ConferenceID === team.ConferenceID)
-      .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+  // Team Standings
+  const teamStandings = allPHLStandings
+    .filter((standings) => standings.ConferenceID === team.ConferenceID)
+    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
 
-    const teamAbbrMap = new Map(allPHLTeams.map((team) => [team.ID, team.Abbreviation]));
+  const teamAbbrMap = new Map(
+    allPHLTeams.map((team) => [team.ID, team.Abbreviation])
+  );
 
-    // Team Schedule
-    const teamSchedule = allPHLGames
-      .filter((game) => game.HomeTeamID === team.ID || 
-                        game.AwayTeamID === team.ID)
-      .map((game) => ({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      }));
+  // Team Schedule
+  const teamSchedule = allPHLGames
+    .filter(
+      (game) => game.HomeTeamID === team.ID || game.AwayTeamID === team.ID
+    )
+    .map((game) => ({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    }));
 
-    // Weekly Games
-     const groupedWeeklyGames = allPHLGames.reduce((acc: any, game) => {
-      if (!acc[game.Week]) {
-        acc[game.Week] = [];
-      }
-      acc[game.Week].push({
-        ...game,
-        HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
-        AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
-      });
-      return acc;
-    }, {});
+  // Weekly Games
+  const groupedWeeklyGames = allPHLGames.reduce((acc: any, game) => {
+    if (!acc[game.Week]) {
+      acc[game.Week] = [];
+    }
+    acc[game.Week].push({
+      ...game,
+      HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
+      AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+    });
+    return acc;
+  }, {});
 
-
-  return { 
-    teamStandings, 
+  return {
+    teamStandings,
     teamSchedule,
-    groupedWeeklyGames 
+    groupedWeeklyGames,
   };
 };
 
-export const processSchedule = (schedule: any[], team: any, ts: any, league: League) => {
+export const processSchedule = (
+  schedule: any[],
+  team: any,
+  ts: any,
+  league: League
+) => {
   let weekCounter: { [key: number]: number } = {};
   return schedule.map((game) => {
     const revealResult =
       league === SimCHL || league === SimPHL
         ? RevealHCKResults(game, ts)
-        : RevealFBResults(game, ts, league);
+        : RevealResults(game, ts, league);
 
     const isHomeGame = game.HomeTeamID === team.ID;
     const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
-    const opponentLogo = getLogo(league, isHomeGame ? game.AwayTeamID : game.HomeTeamID, false);
+    const opponentLogo = getLogo(
+      league,
+      isHomeGame ? game.AwayTeamID : game.HomeTeamID,
+      false
+    );
 
     let userWin = false;
     let userLoss = false;
@@ -241,8 +260,12 @@ export const processSchedule = (schedule: any[], team: any, ts: any, league: Lea
     let headerGameScore = "TBC";
 
     if (revealResult) {
-      const userTeamScore = isHomeGame ? game.HomeTeamScore : game.AwayTeamScore;
-      const opponentScore = isHomeGame ? game.AwayTeamScore : game.HomeTeamScore;
+      const userTeamScore = isHomeGame
+        ? game.HomeTeamScore
+        : game.AwayTeamScore;
+      const opponentScore = isHomeGame
+        ? game.AwayTeamScore
+        : game.HomeTeamScore;
       userWin = userTeamScore > opponentScore;
       userLoss = userTeamScore < opponentScore;
 
@@ -262,15 +285,16 @@ export const processSchedule = (schedule: any[], team: any, ts: any, league: Lea
       }
       weekCounter[game.Week] += 1;
 
-      const suffix = league === SimCHL
-        ? weekCounter[game.Week] === 1
+      const suffix =
+        league === SimCHL
+          ? weekCounter[game.Week] === 1
+            ? "A"
+            : "B"
+          : weekCounter[game.Week] === 1
           ? "A"
-          : "B"
-        : weekCounter[game.Week] === 1
-        ? "A"
-        : weekCounter[game.Week] === 2
-        ? "B"
-        : "C";
+          : weekCounter[game.Week] === 2
+          ? "B"
+          : "C";
 
       weekLabel += suffix;
     }
@@ -289,7 +313,11 @@ export const processSchedule = (schedule: any[], team: any, ts: any, league: Lea
   });
 };
 
-export const processWeeklyGames = (schedule: any[], ts: any, league: League) => {
+export const processWeeklyGames = (
+  schedule: any[],
+  ts: any,
+  league: League
+) => {
   const sortGames = (games: any[]) => {
     if (league === SimCHL || league === SimPHL) {
       return games.sort((a, b) => (a.GameDay > b.GameDay ? 1 : -1));
@@ -301,7 +329,7 @@ export const processWeeklyGames = (schedule: any[], ts: any, league: League) => 
     const revealResult =
       league === SimCHL || league === SimPHL
         ? RevealHCKResults(game, ts)
-        : RevealFBResults(game, ts, league);
+        : RevealResults(game, ts, league);
 
     const homeTeamLogo = getLogo(league, game.HomeTeamID, false);
     const awayTeamLogo = getLogo(league, game.AwayTeamID, false);
@@ -346,7 +374,9 @@ export const processLeagueStandings = (
 ) => {
   if (league === SimCHL) {
     standings = standings.map((team) => {
-      const conference = CHLConferenceNames.find((conf) => conf.value === team.ConferenceID.toString());
+      const conference = CHLConferenceNames.find(
+        (conf) => conf.value === team.ConferenceID.toString()
+      );
       return {
         ...team,
         ConferenceName: conference ? conference.name : "Unknown",
@@ -355,7 +385,9 @@ export const processLeagueStandings = (
   } else if (league === SimPHL) {
     if (category === Divisions) {
       standings = standings.map((team) => {
-        const division = PHLDivisionNames.find((div) => div.value === team.DivisionID.toString());
+        const division = PHLDivisionNames.find(
+          (div) => div.value === team.DivisionID.toString()
+        );
         return {
           ...team,
           DivisionName: division ? division.name : "Unknown",
@@ -363,7 +395,9 @@ export const processLeagueStandings = (
       });
     } else {
       standings = standings.map((team) => {
-        const conference = PHLConferenceNames.find((conf) => conf.value === team.ConferenceID.toString());
+        const conference = PHLConferenceNames.find(
+          (conf) => conf.value === team.ConferenceID.toString()
+        );
         return {
           ...team,
           ConferenceName: conference ? conference.name : "Unknown",

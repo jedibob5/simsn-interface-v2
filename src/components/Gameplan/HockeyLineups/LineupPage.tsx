@@ -40,7 +40,7 @@ import {
   ShootoutPlayer,
 } from "./LineupComponents";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
-import { useMobile } from "../../../_hooks/useMobile";
+import { useResponsive } from "../../../_hooks/useMobile";
 
 export const CHLLineupPage = () => {
   const hkStore = useSimHCKStore();
@@ -81,7 +81,7 @@ export const CHLLineupPage = () => {
     zoneCategories,
     errors,
   } = useCHLLineupUtils(chlTeam!, chlRosterMap, currentLineups);
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   const chlTeamRosterOptions = useMemo(() => {
     if (chlTeamRoster) {
@@ -485,7 +485,7 @@ export const PHLLineupPage = () => {
     zoneCategories,
     errors,
   } = usePHLLineupUtils(phlTeam!, proRosterMap, currentLineups);
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   const phlTeamRosterOptions = useMemo(() => {
     if (phlTeamRoster) {

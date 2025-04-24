@@ -4,7 +4,7 @@ import { Logo } from "../../_design/Logo";
 import { useEffect, useRef } from "react";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
-import { RevealFBResults } from "../../_helper/teamHelper";
+import { RevealResults } from "../../_helper/teamHelper";
 import { StandingsTable } from "../Common/Tables";
 import { SectionCards } from "../../_design/SectionCards";
 import { Button } from "../../_design/Buttons";
@@ -94,7 +94,7 @@ export const GamesBar = ({
       : `at ${opponentAbbr}`;
     let resultColor = "";
 
-    const revealResult = RevealFBResults(item, ts, league);
+    const revealResult = RevealResults(item, ts, league);
 
     if (revealResult) {
       if (isHomeGame) {
@@ -121,9 +121,11 @@ export const GamesBar = ({
       >
         <div className="flex-col px-2 overflow-auto">
           <div className="flex-col items-center justify-center">
-            <Logo variant="xs" 
-                  containerClass="pb-1 max-w-[4em] p-4" 
-                  url={opponentLogoUrl} />
+            <Logo
+              variant="xs"
+              containerClass="pb-1 max-w-[4em] p-4"
+              url={opponentLogoUrl}
+            />
             <Text variant="small">{gameScore}</Text>
             <Text variant="small" classes="">
               {gameDetails}
@@ -272,7 +274,7 @@ export const TeamMatchUp = ({
   isLoadingTwo,
 }: TeamMatchUpProps) => {
   const revealResult =
-    matchUp.length > 0 && RevealFBResults(matchUp[0], ts, league);
+    matchUp.length > 0 && RevealResults(matchUp[0], ts, league);
   let resultColor = "";
   let gameScore = "";
   let gameLocation = "";
@@ -355,7 +357,12 @@ export const TeamMatchUp = ({
                   containerClass="max-w-24 w-24 p-4"
                   url={homeLogo}
                 />
-                <ClickableTeamLabel label={homeLabel} teamID={homeID} textColorClass={textColorClass} league={league} />
+                <ClickableTeamLabel
+                  label={homeLabel}
+                  teamID={homeID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
                 <Text variant="xs" classes="opacity-70">
                   {`HC ${coaches[0]}`}
                 </Text>
@@ -373,7 +380,12 @@ export const TeamMatchUp = ({
                   containerClass="max-w-24 w-24 p-4"
                   url={awayLogo}
                 />
-                <ClickableTeamLabel label={awayLabel} teamID={awayID} textColorClass={textColorClass} league={league} />
+                <ClickableTeamLabel
+                  label={awayLabel}
+                  teamID={awayID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
                 <Text variant="xs" classes="opacity-70">
                   {`HC ${coaches[1]}`}
                 </Text>
@@ -761,10 +773,10 @@ export const TeamStats = ({
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxOne.topStat} ${titles[3]}`}
+                  {`${boxOne.topStat} ${titles[3]}`}
                 </Text>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxOne.bottomStat} ${titles[4]}`}
+                  {`${boxOne.bottomStat} ${titles[4]}`}
                 </Text>
               </div>
             </div>
@@ -822,10 +834,10 @@ export const TeamStats = ({
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxTwo.topStat} ${titles[5]}`}
+                  {`${boxTwo.topStat} ${titles[5]}`}
                 </Text>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxTwo.bottomStat} ${titles[6]}`}
+                  {`${boxTwo.bottomStat} ${titles[6]}`}
                 </Text>
               </div>
             </div>
@@ -883,10 +895,10 @@ export const TeamStats = ({
                   </Text>
                 </div>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxThree.topStat} ${titles[7]}`}
+                  {`${boxThree.topStat} ${titles[7]}`}
                 </Text>
                 <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxThree.bottomStat} ${titles[8]}`}
+                  {`${boxThree.bottomStat} ${titles[8]}`}
                 </Text>
               </div>
             </div>

@@ -12,7 +12,7 @@ import {
   NFLContract,
   Timestamp,
 } from "../../models/footballModels";
-import { useMobile } from "../../_hooks/useMobile";
+import { useResponsive } from "../../_hooks/useMobile";
 import {
   Attributes,
   Potentials,
@@ -65,28 +65,47 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   openModal,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const [isMobile] = useMobile();
+  const { isDesktop, isTablet } = useResponsive();
 
   let rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
-      { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Yr", accessor: "Year" },
+      {
+        header: !isDesktop && !isTablet ? "Pos" : "Position",
+        accessor: "Position",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Arch" : "Archetype",
+        accessor: "Archetype",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Yr" : "Year",
+        accessor: "Year",
+      },
       { header: "⭐", accessor: "Stars" },
-      { header: "Ovr", accessor: "Overall" },
+      {
+        header: !isDesktop && !isTablet ? "Ovr" : "Overall",
+        accessor: "Overall",
+      },
     ];
 
-    if (!isMobile && category === Overview) {
+    if (isDesktop && category === Overview) {
       columns = columns.concat([
         { header: "Health", accessor: "isInjured" },
         { header: "Injury", accessor: "InjuryType" },
+        { header: "Competitiveness", accessor: "Competitiveness" },
+        { header: "Academics", accessor: "AcademicsPref" },
+        { header: "Loyalty", accessor: "TeamLoyalty" },
+        { header: "Morale", accessor: "PlayerMorale" },
         { header: "Redshirt", accessor: "isRedshirting" },
         { header: "Mood", accessor: "TransferStatus" },
       ]);
     }
 
-    if ((!isMobile && category === Attributes) || category === Potentials) {
+    if (
+      (isDesktop || isTablet) &&
+      (category === Attributes || category === Potentials)
+    ) {
       columns = columns.concat([
         { header: "Agi", accessor: "Agility" },
         { header: "FO", accessor: "Faceoffs" },
@@ -108,7 +127,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
     }
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
-  }, [isMobile, category]);
+  }, [isDesktop, category]);
 
   const sortedRoster = useMemo(() => {
     return [...roster].sort((a, b) => b.Overall - a.Overall);
@@ -119,7 +138,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getCHLAttributes(item, isMobile, category!);
+    const attributes = getCHLAttributes(item, !isDesktop, isTablet, category!);
     return (
       <div
         key={item.ID}
@@ -182,13 +201,15 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
                 <Text variant="small">{attr.value}</Text>
               </span>
             ) : (
-              <Text variant="small">{attr.value}</Text>
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
             )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
-            placeholder={isMobile ? "Action" : "Select an action"}
+            placeholder={!isDesktop ? "Action" : "Select an action"}
             options={[
               {
                 value: "cut",
@@ -265,18 +286,30 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   openModal,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const [isMobile] = useMobile();
+  const { isDesktop, isTablet } = useResponsive();
 
   const rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
-      { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Exp", accessor: "Year" },
-      { header: "Ovr", accessor: "Overall" },
+      {
+        header: !isDesktop && !isTablet ? "Pos" : "Position",
+        accessor: "Position",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Arch" : "Archetype",
+        accessor: "Archetype",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Exp" : "Experience",
+        accessor: "Year",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Ovr" : "Overall",
+        accessor: "Overall",
+      },
     ];
 
-    if (!isMobile && category === Overview) {
+    if (isDesktop && category === Overview) {
       columns = columns.concat([
         { header: "Health", accessor: "isInjured" },
         { header: "Injury", accessor: "InjuryType" },
@@ -284,10 +317,15 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
         { header: "Yrs Left", accessor: "ContractLength" },
         { header: "NTC", accessor: "NoTradeClause" },
         { header: "NMC", accessor: "NoMovementClause" },
+        { header: "Competitiveness", accessor: "Competitiveness" },
+        { header: "Finance", accessor: "FinancialPref" },
+        { header: "Market", accessor: "MarketPref" },
+        { header: "Loyalty", accessor: "TeamLoyalty" },
+        { header: "Morale", accessor: "PlayerMorale" },
       ]);
     }
 
-    if ((!isMobile && category === Attributes) || category === Potentials) {
+    if ((isDesktop && category === Attributes) || category === Potentials) {
       columns = columns.concat([
         { header: "Agi", accessor: "Agility" },
         { header: "FO", accessor: "Faceoffs" },
@@ -308,7 +346,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Contracts) {
+    if (isDesktop && category === Contracts) {
       columns = columns.concat([
         { header: "Y1 S", accessor: "Y1BaseSalary" },
         { header: "Y2 S", accessor: "Y2BaseSalary" },
@@ -323,7 +361,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
 
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
-  }, [isMobile, category]);
+  }, [isDesktop, category]);
 
   const sortedRoster = useMemo(() => {
     return [...roster].sort((a, b) => b.Overall - a.Overall);
@@ -340,7 +378,8 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
     item.Contract = playerContract!!;
     const attributes = getPHLAttributes(
       item,
-      isMobile,
+      !isDesktop,
+      isTablet,
       category!,
       playerContract
     );
@@ -396,13 +435,15 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                 <Text variant="small">{attr.value}</Text>
               </span>
             ) : (
-              <Text variant="small">{attr.value}</Text>
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
             )}
           </div>
         ))}
         <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
-            placeholder={isMobile ? "Action" : "Select an action"}
+            placeholder={!isDesktop ? "Action" : "Select an action"}
             options={[
               {
                 value: "cut",
@@ -473,29 +514,35 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   openModal,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const [isMobile] = useMobile();
+  const { isDesktop } = useResponsive();
 
   let rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
-      { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Yr", accessor: "Year" },
+      { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Yr" : "Year", accessor: "Experience" },
       { header: "⭐", accessor: "Stars" },
-      { header: "Ovr", accessor: "Overall" },
+      { header: !isDesktop ? "Ovr" : "Overall", accessor: "Overall" },
     ];
 
-    if (!isMobile && category === Overview) {
+    if (isDesktop && category === Overview) {
       columns = columns.concat([
-        { header: "Pot", accessor: "PotentialGrade" },
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
         { header: "Health", accessor: "isInjured" },
         { header: "Injury", accessor: "InjuryType" },
+        { header: "Personality", accessor: "Personality" },
+        { header: "Work Ethic", accessor: "WorkEthic" },
+        { header: "Academics", accessor: "AcademicBias" },
         { header: "Redshirt", accessor: "isRedshirting" },
         { header: "Mood", accessor: "TransferStatus" },
       ]);
     }
 
-    if (!isMobile && category === Attributes) {
+    if (isDesktop && category === Attributes) {
       columns = columns.concat([
         { header: "Pot", accessor: "PotentialGrade" },
         { header: "FIQ", accessor: "FootballIQ" },
@@ -524,7 +571,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
     }
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
-  }, [isMobile, category]);
+  }, [isDesktop, category]);
 
   const sortedRoster = useMemo(() => {
     return [...roster].sort((a, b) => b.Overall - a.Overall);
@@ -535,7 +582,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getCFBAttributes(item, isMobile, category!);
+    const attributes = getCFBAttributes(item, !isDesktop, category!);
     return (
       <div
         key={item.ID}
@@ -598,13 +645,15 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
                 <Text variant="small">{attr.value}</Text>
               </span>
             ) : (
-              <Text variant="small">{attr.value}</Text>
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
             )}
           </div>
         ))}
-        <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+        <div className="table-cell align-middle w-[4em] min-[430px]:w-[5em] flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
-            placeholder={isMobile ? "Action" : "Select an action"}
+            placeholder={!isDesktop ? "Action" : "Select an action"}
             options={[
               {
                 value: "cut",
@@ -639,6 +688,44 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
+            }}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "16rem",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
             }}
           />
         </div>
@@ -681,30 +768,44 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   openModal,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
-  const [isMobile] = useMobile();
+  const { isDesktop, isTablet } = useResponsive();
 
   const rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
-      { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: "Exp", accessor: "Experience" },
-      { header: "Ovr", accessor: "Overall" },
+      { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Exp" : "Experience", accessor: "Experience" },
+      { header: !isDesktop ? "Ovr" : "Overall", accessor: "Overall" },
     ];
 
-    if (!isMobile && category === Overview) {
+    if (isDesktop && category === Overview) {
       columns = columns.concat([
-        { header: "Pot", accessor: "PotentialGrade" },
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
         { header: "Health", accessor: "isInjured" },
         { header: "Injury", accessor: "InjuryType" },
-        { header: `${ts.Season} S`, accessor: "Y1BaseSalary" },
-        { header: `${ts.Season} B`, accessor: "Y1Bonus" },
-        { header: "Yrs Left", accessor: "ContractLength" },
+        {
+          header: `${ts.Season} ${!isDesktop ? "S" : "Salary"}`,
+          accessor: "Y1BaseSalary",
+        },
+        {
+          header: `${ts.Season} ${!isDesktop ? "B" : "Bonus"}`,
+          accessor: "Y1Bonus",
+        },
+        {
+          header: !isDesktop ? "Yrs Left" : "Years Left",
+          accessor: "ContractLength",
+        },
         { header: "Tagged", accessor: "isTagged" },
+        { header: "Personality", accessor: "Personality" },
+        { header: "Work Ethic", accessor: "WorkEthic" },
       ]);
     }
 
-    if (!isMobile && category === Attributes) {
+    if (isDesktop && category === Attributes) {
       columns = columns.concat([
         { header: "Pot", accessor: "PotentialGrade" },
         { header: "FIQ", accessor: "FootballIQ" },
@@ -732,25 +833,25 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Contracts) {
+    if (isDesktop && category === Contracts) {
       columns = columns.concat([
-        { header: "Y1 B", accessor: "Y1Bonus" },
-        { header: "Y1 S", accessor: "Y1BaseSalary" },
-        { header: "Y2 B", accessor: "Y2Bonus" },
-        { header: "Y2 S", accessor: "Y2BaseSalary" },
-        { header: "Y3 B", accessor: "Y3Bonus" },
-        { header: "Y3 S", accessor: "Y3BaseSalary" },
-        { header: "Y4 B", accessor: "Y4Bonus" },
-        { header: "Y4 S", accessor: "Y4BaseSalary" },
-        { header: "Y5 B", accessor: "Y5Bonus" },
-        { header: "Y5 S", accessor: "Y5BaseSalary" },
-        { header: "Yrs", accessor: "ContractLength" },
+        { header: "Y1 Bonus", accessor: "Y1Bonus" },
+        { header: "Y1 Salary", accessor: "Y1BaseSalary" },
+        { header: "Y2 Bonus", accessor: "Y2Bonus" },
+        { header: "Y2 Salary", accessor: "Y2BaseSalary" },
+        { header: "Y3 Bonus", accessor: "Y3Bonus" },
+        { header: "Y3 Salary", accessor: "Y3BaseSalary" },
+        { header: "Y4 Bonus", accessor: "Y4Bonus" },
+        { header: "Y4 Salary", accessor: "Y4BaseSalary" },
+        { header: "Y5 Bonus", accessor: "Y5Bonus" },
+        { header: "Y5 Salary", accessor: "Y5BaseSalary" },
+        { header: "Years", accessor: "ContractLength" },
       ]);
     }
 
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
-  }, [isMobile, category]);
+  }, [isDesktop, category]);
 
   const sortedRoster = useMemo(() => {
     return [...roster].sort((a, b) => {
@@ -771,7 +872,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
     item.Contract = playerContract!!;
     const attributes = getNFLAttributes(
       item,
-      isMobile,
+      !isDesktop,
       category!,
       item.ShowLetterGrade,
       playerContract
@@ -828,13 +929,15 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
                 <Text variant="small">{attr.value}</Text>
               </span>
             ) : (
-              <Text variant="small">{attr.value}</Text>
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
             )}
           </div>
         ))}
-        <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+        <div className="table-cell align-middle w-[4em] min-[430px]:w-[5.5em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
           <SelectDropdown
-            placeholder={isMobile ? "Action" : "Select an action"}
+            placeholder={!isDesktop ? "Action" : "Select an action"}
             options={[
               {
                 value: "cut",
@@ -867,6 +970,44 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
+            }}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "95%",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
             }}
           />
         </div>

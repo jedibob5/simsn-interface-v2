@@ -21,12 +21,12 @@ import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimBBAStore } from "../../../context/SimBBAContext";
 import { isBrightColor } from "../../../_utility/isBrightColor";
 import { ActionModal } from "../../Common/ActionModal";
-import { useMobile } from "../../../_hooks/useMobile";
+import { useResponsive } from "../../../_hooks/useMobile";
 
 interface SchedulePageProps {
-    league: League;
-    ts: any;
-  }
+  league: League;
+  ts: any;
+}
 
 export const BasketballSchedulePage = ({ league, ts }: SchedulePageProps) => {
   const { currentUser } = useAuthStore();
@@ -53,7 +53,7 @@ export const BasketballSchedulePage = ({ league, ts }: SchedulePageProps) => {
   );
   let backgroundColor = teamColors.One;
   let borderColor = teamColors.Two;
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   if (isBrightColor(backgroundColor)) {
     [backgroundColor, borderColor] = [borderColor, backgroundColor];
@@ -66,7 +66,6 @@ export const BasketballSchedulePage = ({ league, ts }: SchedulePageProps) => {
     return null;
   }, [cbbRosterMap, selectedTeam]);
 
-
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = cbbTeamMap ? cbbTeamMap[value] : null;
@@ -76,7 +75,7 @@ export const BasketballSchedulePage = ({ league, ts }: SchedulePageProps) => {
 
   return (
     <>
-    <Text>BASKETBALL SCHEDULE PAGE</Text>
+      <Text>BASKETBALL SCHEDULE PAGE</Text>
     </>
   );
 };

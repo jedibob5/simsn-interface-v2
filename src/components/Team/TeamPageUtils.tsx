@@ -53,10 +53,19 @@ import {
   annotateCountry,
   annotateRegion,
 } from "../../_helper/StateAbbreviationHelper";
+import {
+  getAcademicsLabel,
+  getCompetitivenessLabel,
+  getFAFinancialPreference,
+  getFAMarketPreference,
+  getPlayerMoraleLabel,
+  getTeamLoyaltyLabel,
+} from "../../_helper/utilHelper";
 
 export const getCHLAttributes = (
   player: CHLPlayer,
   isMobile: boolean,
+  isTablet: boolean,
   category: string
 ) => {
   const heightObj = HeightToFeetAndInches(player.Height);
@@ -70,7 +79,7 @@ export const getCHLAttributes = (
   ];
 
   const overviewAttributes =
-    !isMobile && category === Overview
+    !isMobile && !isTablet && category === Overview
       ? [
           { label: "Health", value: player.IsInjured },
           {
@@ -81,18 +90,31 @@ export const getCHLAttributes = (
                 : `None`
               : "None",
           },
+          {
+            label: "Competitiveness",
+            value: getCompetitivenessLabel(player.Competitiveness),
+          },
+          {
+            label: "Academics",
+            value: getAcademicsLabel(player.AcademicsPref),
+          },
+          { label: "Loyalty", value: getTeamLoyaltyLabel(player.TeamLoyalty) },
+          {
+            label: "PlayerMorale",
+            value: getPlayerMoraleLabel(player.PlayerMorale),
+          },
           { label: "Redshirt", value: player.IsRedshirting },
           { label: "TransferStatus", value: player.TransferStatus },
         ]
       : [];
 
   const additionalAttributes =
-    !isMobile && category === Attributes
+    (!isMobile || isTablet) && category === Attributes
       ? getAdditionalHockeyAttributes(player)
       : [];
 
   const potentialAttributes =
-    !isMobile && category === Potentials
+    (!isMobile || isTablet) && category === Potentials
       ? getAdditionalPotentialAttributes(player)
       : [];
 
@@ -107,6 +129,7 @@ export const getCHLAttributes = (
 export const getPHLAttributes = (
   player: PHLPlayer,
   isMobile: boolean,
+  isTablet: boolean,
   category: string,
   contract?: any
 ) => {
@@ -138,6 +161,23 @@ export const getPHLAttributes = (
           { label: "Years Left", value: phlContract.ContractLength },
           { label: "NTC", value: contract.NoTradeClause },
           { label: "NMC", value: contract.NoMovementClause },
+          {
+            label: "Competitiveness",
+            value: getCompetitivenessLabel(player.Competitiveness),
+          },
+          {
+            label: "Financial",
+            value: getFAFinancialPreference(player.FinancialPreference),
+          },
+          {
+            label: "MarketPref",
+            value: getFAMarketPreference(player.MarketPreference),
+          },
+          { label: "Loyalty", value: getTeamLoyaltyLabel(player.TeamLoyalty) },
+          {
+            label: "PlayerMorale",
+            value: getPlayerMoraleLabel(player.PlayerMorale),
+          },
         ]
       : [];
 
@@ -563,10 +603,26 @@ export const getNFLAttributes = (
 ) => {
   const nflPlayer = player as NFLPlayer;
   const nflContract = contract as NFLContract;
+  const arch1 = getArchetypeValue(
+    nflPlayer.Archetype,
+    isMobile || player.ArchetypeTwo.length > 0
+  );
+  let arch2 = "";
+  if (nflPlayer.ArchetypeTwo.length > 0) {
+    arch2 = getArchetypeValue(
+      nflPlayer.ArchetypeTwo,
+      isMobile || player.ArchetypeTwo.length > 0
+    );
+  }
   const nflPlayerAttributes = [
     { label: "Name", value: `${nflPlayer.FirstName} ${nflPlayer.LastName}` },
-    { label: "Pos", value: nflPlayer.Position },
-    { label: "Arch", value: getArchetypeValue(nflPlayer.Archetype, isMobile) },
+    {
+      label: "Pos",
+      value: `${nflPlayer.Position}${
+        nflPlayer.PositionTwo.length > 0 ? `/${nflPlayer.PositionTwo}` : ""
+      }`,
+    },
+    { label: "Arch", value: `${arch1}${arch2.length > 0 ? `/${arch2}` : ""}` },
     { label: "Yr", value: GetNFLYear(nflPlayer.Experience) },
     {
       label: "Ovr",
@@ -599,6 +655,8 @@ export const getNFLAttributes = (
           },
           { label: "Years Left", value: nflContract.ContractLength },
           { label: "Is Tagged", value: nflContract.IsTagged },
+          { label: "Personality", value: player.Personality },
+          { label: "Work Ethic", value: player.WorkEthic },
         ]
       : [];
 
@@ -694,10 +752,26 @@ export const getCFBAttributes = (
   category: string
 ) => {
   const heightObj = HeightToFeetAndInches(player.Height);
+  const arch1 = getArchetypeValue(
+    player.Archetype,
+    isMobile || player.ArchetypeTwo.length > 0
+  );
+  let arch2 = "";
+  if (player.ArchetypeTwo.length > 0) {
+    arch2 = getArchetypeValue(
+      player.ArchetypeTwo,
+      isMobile || player.ArchetypeTwo.length > 0
+    );
+  }
   const attributes = [
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
-    { label: "Pos", value: player.Position },
-    { label: "Arch", value: player.Archetype },
+    {
+      label: "Pos",
+      value: `${player.Position}${
+        player.PositionTwo.length > 0 ? `/${player.PositionTwo}` : ""
+      }`,
+    },
+    { label: "Arch", value: `${arch1}${arch2.length > 0 ? `/${arch2}` : ""}` },
     { label: "Yr", value: getYear(player.Year, player.IsRedshirt) },
     { label: "Stars", value: player.Stars },
     { label: "Ovr", value: getCFBOverall(player.Overall, player.Year) },
@@ -712,10 +786,13 @@ export const getCFBAttributes = (
             label: "Injury",
             value: player.InjuryType
               ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
-                ? `${player.InjuryType}, ${player.WeeksOfRecovery} weeks`
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} wks`
                 : `None`
               : "None",
           },
+          { label: "Personality", value: player.Personality },
+          { label: "WorkEthic", value: player.WorkEthic },
+          { label: "AcademicBias", value: player.AcademicBias },
           { label: "Redshirt", value: player.IsRedshirting },
           { label: "TransferStatus", value: player.TransferStatus },
         ]
