@@ -67,6 +67,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.CFB_STATS,
         league: SimCFB,
+        click: () => navigate(routes.CFB_STATS),
         toggle: () => toggleMenu(),
       },
       {
@@ -117,8 +118,9 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: "",
+        route: routes.NFL_STATS,
         league: SimNFL,
+        click: () => navigate(routes.NFL_STATS),
         toggle: () => toggleMenu(),
       },
       {
@@ -170,8 +172,9 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: "",
+        route: routes.CBB_STATS,
         league: SimCBB,
+        click: () => navigate(routes.CBB_STATS),
         toggle: () => toggleMenu(),
       },
       {
@@ -222,8 +225,9 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: routes.NBA_SCHEDULE,
+        route: routes.NBA_STATS,
         league: SimNBA,
+        click: () => navigate(routes.NBA_STATS),
         toggle: () => toggleMenu(),
       },
       {
@@ -276,8 +280,9 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: "",
+        route: routes.CHL_STATS,
         league: SimCHL,
+        click: () => navigate(routes.CHL_STATS),
         toggle: () => toggleMenu(),
       },
       {
@@ -330,8 +335,9 @@ export const useSideMenu = () => {
       {
         label: "Statistics",
         isRoute: true,
-        route: "",
+        route: routes.PHL_STATS,
         league: SimPHL,
+        click: () => navigate(routes.PHL_STATS),
         toggle: () => toggleMenu(),
       },
       {
