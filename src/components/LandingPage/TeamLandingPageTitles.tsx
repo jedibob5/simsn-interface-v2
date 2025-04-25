@@ -5,10 +5,12 @@ export const fbReceivingStats = "Receiving Leader";
 export const fbTdAbbr = "TDs";
 export const fbYardsAbbr = "Yards";
 export const hkPointsStats = "Points Leader";
+export const hkSavesStats = "Saves Leader";
 export const hkGoalsStats = "Goals Leader";
 export const hkAssistsStats = "Assists Leader";
 export const hkGamesAbbr = "TOI";
 export const hkPointsAbbr = "Points";
+export const hkSavesAbbr = "Saves";
 export const hkGoalsAbbr = "Goals";
 export const hkAssistsAbbr = "Assists";
 export const bbPpgStats = "Points Leader";
@@ -19,17 +21,77 @@ export const bbPpgAbbr = "PPG";
 export const bbApgAbbr = "AST";
 export const bbRpgAbbr = "REB";
 
-
 export const headersMapping = {
-    SimCFB: [fbPassStats, fbRushStats, fbReceivingStats, fbTdAbbr, fbYardsAbbr, fbTdAbbr, fbYardsAbbr, fbTdAbbr, fbYardsAbbr],
-    SimNFL: [fbPassStats, fbRushStats, fbReceivingStats, fbTdAbbr, fbYardsAbbr, fbTdAbbr, fbYardsAbbr, fbTdAbbr, fbYardsAbbr],
-    SimCHL: [hkPointsStats, hkGoalsStats, hkAssistsStats, hkPointsAbbr, hkGamesAbbr, hkGoalsAbbr, hkGamesAbbr, hkAssistsAbbr, hkGamesAbbr],
-    SimPHL: [hkPointsStats, hkGoalsStats, hkAssistsStats, hkPointsAbbr, hkGamesAbbr, hkGoalsAbbr, hkGamesAbbr, hkAssistsAbbr, hkGamesAbbr],
-    SimCBB: [bbPpgStats, bbApgStats, bbRpgStats, bbPpgAbbr, bbGamesAbbr, bbApgAbbr, bbGamesAbbr, bbRpgAbbr, bbGamesAbbr],
-    SimNBA: [bbPpgStats, bbApgStats, bbRpgStats, bbPpgAbbr, bbGamesAbbr, bbApgAbbr, bbGamesAbbr, bbRpgAbbr, bbGamesAbbr],
-  } as const;
+  SimCFB: [
+    fbPassStats,
+    fbRushStats,
+    fbReceivingStats,
+    fbTdAbbr,
+    fbYardsAbbr,
+    fbTdAbbr,
+    fbYardsAbbr,
+    fbTdAbbr,
+    fbYardsAbbr,
+  ],
+  SimNFL: [
+    fbPassStats,
+    fbRushStats,
+    fbReceivingStats,
+    fbTdAbbr,
+    fbYardsAbbr,
+    fbTdAbbr,
+    fbYardsAbbr,
+    fbTdAbbr,
+    fbYardsAbbr,
+  ],
+  SimCHL: [
+    hkGoalsStats,
+    hkAssistsStats,
+    hkSavesStats,
+    hkGoalsAbbr,
+    hkGamesAbbr,
+    hkAssistsAbbr,
+    hkGamesAbbr,
+    hkSavesAbbr,
+    hkGamesAbbr,
+  ],
+  SimPHL: [
+    hkGoalsStats,
+    hkAssistsStats,
+    hkSavesStats,
+    hkGamesAbbr,
+    hkGoalsAbbr,
+    hkGamesAbbr,
+    hkAssistsAbbr,
+    hkGamesAbbr,
+    hkGamesAbbr,
+    hkSavesAbbr,
+  ],
+  SimCBB: [
+    bbPpgStats,
+    bbApgStats,
+    bbRpgStats,
+    bbPpgAbbr,
+    bbGamesAbbr,
+    bbApgAbbr,
+    bbGamesAbbr,
+    bbRpgAbbr,
+    bbGamesAbbr,
+  ],
+  SimNBA: [
+    bbPpgStats,
+    bbApgStats,
+    bbRpgStats,
+    bbPpgAbbr,
+    bbGamesAbbr,
+    bbApgAbbr,
+    bbGamesAbbr,
+    bbRpgAbbr,
+    bbGamesAbbr,
+  ],
+} as const;
 
-  export type LeagueType = keyof typeof headersMapping;
+export type LeagueType = keyof typeof headersMapping;
 
 // College Landing Page Headers (Section Cards)
 export const collegeRecruiting = " Recruiting Overview";

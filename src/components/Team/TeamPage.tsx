@@ -39,7 +39,7 @@ import { useTeamColors } from "../../_hooks/useTeamColors";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { ActionModal } from "../Common/ActionModal";
-import { useMobile } from "../../_hooks/useMobile";
+import { useResponsive } from "../../_hooks/useMobile";
 import { getPHLShortenedValue } from "../../_utility/getPHLShortenedValue";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import { useParams } from "react-router-dom";
@@ -98,7 +98,7 @@ export const TeamPage: FC<TeamPageProps> = ({ league }) => {
 };
 
 const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -116,10 +116,10 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(() => {
-    console.log({teamId})
+    console.log({ teamId });
     if (teamId) {
       const id = Number(teamId);
-      return chlTeamMap[id]
+      return chlTeamMap[id];
     }
     return chlTeam;
   });
@@ -135,7 +135,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   if (isBrightColor(headerColor)) {
     [headerColor, borderColor] = [borderColor, headerColor];
   }
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   const secondaryBorderColor = teamColors.Three;
   const selectedRoster = useMemo(() => {
@@ -253,7 +253,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] max-w-[2000px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,
@@ -275,7 +275,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
   const { currentUser } = useAuthStore();
   const hkStore = useSimHCKStore();
   const {
@@ -295,7 +295,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId) {
       const id = Number(teamId);
-      return phlTeamMap[id]
+      return phlTeamMap[id];
     }
     return phlTeam;
   });
@@ -313,7 +313,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam) {
@@ -465,7 +465,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         </Border>
       </div>
       <Border
-        classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+        classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
         styles={{
           backgroundColor: backgroundColor,
           borderColor: headerColor,
@@ -488,7 +488,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
 
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
@@ -508,7 +508,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && cfbTeamMap) {
       const id = Number(teamId);
-      return cfbTeamMap[id]
+      return cfbTeamMap[id];
     }
     return cfbTeam;
   });
@@ -524,7 +524,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
   if (isBrightColor(headerColor)) {
     [headerColor, borderColor] = [borderColor, headerColor];
   }
-  const [isMobile] = useMobile();
+  const { isDesktop } = useResponsive();
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && cfbRosterMap) {
@@ -606,7 +606,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
-            {!isMobile && (
+            {isDesktop && (
               <Button
                 size="sm"
                 isSelected={category === Overview}
@@ -615,7 +615,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Overview</Text>
               </Button>
             )}
-            {!isMobile && (
+            {isDesktop && (
               <Button
                 size="sm"
                 isSelected={category === Attributes}
@@ -632,7 +632,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:w-[95vw] min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] max-[769px]:h-[70vh] h-[50vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,
@@ -654,7 +654,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
 };
 
 const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
-  const {teamId} = useParams<{teamId?: string}>();
+  const { teamId } = useParams<{ teamId?: string }>();
 
   const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
@@ -674,7 +674,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && nflTeamMap) {
       const id = Number(teamId);
-      return nflTeamMap[id]
+      return nflTeamMap[id];
     }
     return nflTeam;
   });
@@ -690,7 +690,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
   if (isBrightColor(headerColor)) {
     [headerColor, borderColor] = [borderColor, headerColor];
   }
-  const [isMobile] = useMobile();
+  const { isDesktop } = useResponsive();
   let darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
   const selectedRoster = useMemo(() => {
@@ -766,7 +766,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           cutPlayer={cutNFLPlayer}
         />
       )}
-      <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
+      <div className="flex flex-row">
         <TeamInfo
           id={selectedTeam?.ID}
           isRetro={currentUser?.isRetro}
@@ -804,8 +804,8 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
               onChange={selectTeamOption}
             />
           </div>
-          <div className="flex flex-row gap-x-1 sm:gap-x-4">
-            {!isMobile && (
+          <div className="flex flex-row gap-x-1 sm:gap-x-4 md:gap-x-2">
+            {isDesktop && (
               <Button
                 size="sm"
                 isSelected={category === Overview}
@@ -814,7 +814,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Overview</Text>
               </Button>
             )}
-            {!isMobile && (
+            {isDesktop && (
               <Button
                 size="sm"
                 isSelected={category === Contracts}
@@ -823,7 +823,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Contracts</Text>
               </Button>
             )}
-            {!isMobile && (
+            {isDesktop && (
               <Button
                 size="sm"
                 isSelected={category === Attributes}
@@ -840,7 +840,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
       </div>
       {selectedRoster && (
         <Border
-          classes="px-2 lg:w-full min-[320px]:w-[95vw] min-[700px]:w-[775px] overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[60vh]"
+          classes="px-2 min-[320px]:min-w-full min-[700px]:min-w-full overflow-x-auto max-[400px]:h-[60vh] max-[500px]:h-[55vh] h-[50vh]"
           styles={{
             backgroundColor: backgroundColor,
             borderColor: headerColor,

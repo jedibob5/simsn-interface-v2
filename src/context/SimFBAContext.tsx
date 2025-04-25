@@ -37,6 +37,7 @@ import { useWebSockets } from "../_hooks/useWebsockets";
 import { fba_ws } from "../_constants/urls";
 import { SimFBA } from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
+import { useSnackbar } from "notistack";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -170,6 +171,7 @@ interface SimFBAProviderProps {
 }
 
 export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
   const { cfb_Timestamp } = useWebSockets(fba_ws, SimFBA);
   const isFetching = useRef(false);
@@ -350,7 +352,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         a.TeamName.localeCompare(b.TeamName)
       );
       const nflTeamOptions = sortedNFLTeams.map((team) => ({
-        label: team.TeamName,
+        label: `${team.TeamName}${
+          [4, 16, 18, 30].includes(team.ID) ? ` ${team.Mascot}` : ""
+        }`,
         value: team.ID.toString(),
       }));
       const nflConferenceOptions = Array.from(
@@ -463,8 +467,19 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const cutCFBPlayer = useCallback(
     async (playerID: number, teamID: number) => {
-      const res = await PlayerService.CutCFBPlayer(playerID);
       const rosterMap = { ...cfbRosterMap };
+      const playerCount = rosterMap[teamID].length;
+      if (
+        (cfbTeam!.IsFBS && playerCount < 81) ||
+        (!cfbTeam!.IsFBS && playerCount < 61)
+      ) {
+        enqueueSnackbar(
+          "You have reached the current minimum roster count and cannot cut any players.",
+          { variant: "warning", autoHideDuration: 3000 }
+        );
+        return;
+      }
+      const res = await PlayerService.CutCFBPlayer(playerID);
       rosterMap[teamID] = rosterMap[teamID].filter(
         (player) => player.ID !== playerID
       );
@@ -474,8 +489,18 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   );
   const redshirtPlayer = useCallback(
     async (playerID: number, teamID: number) => {
-      const res = await PlayerService.CutCFBPlayer(playerID);
       const rosterMap = { ...cfbRosterMap };
+      const redshirtCount = rosterMap[teamID].filter(
+        (x) => x.IsRedshirting
+      ).length;
+      if (redshirtCount > 19) {
+        enqueueSnackbar(
+          "You have reached the current maximum allowed for redshirts.",
+          { variant: "warning", autoHideDuration: 3000 }
+        );
+        return;
+      }
+      const res = await PlayerService.CutCFBPlayer(playerID);
       const playerIDX = rosterMap[teamID].findIndex(
         (player) => player.ID === playerID
       );

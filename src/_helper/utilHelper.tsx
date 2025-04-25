@@ -6,6 +6,53 @@ export const GenerateNumberFromRange = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+export const getPlayerMoraleLabel = (value: number) => {
+  if (value > 95) {
+    return "Excellent";
+  }
+  if (value > 85) {
+    return "Very Good";
+  }
+  if (value > 70) {
+    return "Good";
+  }
+  if (value > 55) {
+    return "Average";
+  }
+  if (value > 40) {
+    return "Not Good";
+  }
+  if (value > 25) {
+    return "Awful";
+  }
+  return "Bad";
+};
+
+export const getAcademicsLabel = (value: number) => {
+  switch (value) {
+    case 1:
+      return "Clearly not here for school";
+    case 2:
+      return "Failing";
+    case 3:
+      return "Class Clown";
+    case 4:
+      return "C's Get Degrees";
+    case 5:
+      return "Average";
+    case 6:
+      return "Studious";
+    case 7:
+      return "Often in the Library";
+    case 8:
+      return "Teacher's Pet";
+    case 9:
+      return "Likely to Pursue a Master's";
+    default:
+      return "Distracted";
+  }
+};
+
 export const getCompetitivenessLabel = (value: number) => {
   switch (value) {
     case 1:
@@ -85,7 +132,7 @@ export const getFAMarketPreference = (value: number): string => {
   const valueMap: Record<number, string> = {
     1: "Average",
     2: "Close to Home",
-    3: "CountryMen",
+    3: "Countrymen",
     4: "Large Market",
     5: "No Large Market",
     6: "Small Market",
@@ -116,4 +163,25 @@ export const getFAFinancialPreference = (value: number): string => {
     4: "Large AAV",
   };
   return valueMap[value];
+};
+
+export const GetNextGameDay = (
+  gamesARan: boolean,
+  gamesBRan: boolean,
+  gamesCRan: boolean
+) => {
+  let nextGameDay = "A";
+  if (gamesARan) {
+    nextGameDay = "B";
+  } else if (gamesBRan) {
+    nextGameDay = "C";
+  } else if (gamesCRan) {
+    nextGameDay = "D";
+  }
+
+  return nextGameDay;
+};
+
+export const ConvertTimeOnIce = (toi: number) => {
+  return Math.floor(toi / 60);
 };

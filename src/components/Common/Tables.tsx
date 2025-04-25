@@ -7,10 +7,11 @@ import {
   GetBKCurrentWeek,
   GetCurrentWeek,
   GetGameIndex,
-  RevealCBBResults,
+  RevealBBAResults,
 } from "../../_helper/teamHelper";
 import { League, SimCBB, SimNBA } from "../../_constants/constants";
 import { CurrentUser } from "../../_hooks/useCurrentUser";
+import { ClickableTeamLabel } from "./Labels";
 
 // ✅ Standings Table Component
 interface StandingsTableProps {
@@ -30,7 +31,7 @@ export const StandingsTable = ({
   currentUser,
   rowBgColor,
   darkerRowBgColor,
-  textColorClass
+  textColorClass,
 }: StandingsTableProps) => {
   if (!standings || standings.length === 0) {
     return <div>No standings available</div>;
@@ -51,25 +52,45 @@ export const StandingsTable = ({
         className="table-row border-b dark:border-gray-700 text-left"
         style={{ backgroundColor }}
       >
-        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>{item.Rank}</div>
-        <div className="table-cell align-middle w-[18%]">
-          {<Logo
-            variant="normal"
-            classes="max-h-[2em] max-w-[2em] sm:max-h-full sm:max-w-full sm:ml-[-0.5em] sm:my-[-0.5em]"
-            containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[60px] sm:max-h-[60px] p-4"
-            url={logoUrl}
-          />}
+        <div
+          className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}
+        >
+          {item.Rank}
         </div>
-        <div className={`table-cell px-3 align-middle w-[16%] ${textColorClass}`}>
+        <div className="table-cell align-middle w-[40%]">
+          <div className="flex flex-row items-center">
+            <Logo
+              variant="normal"
+              classes="max-h-[2em] max-w-[2em] sm:max-h-full sm:max-w-full sm:ml-[-0.5em] sm:my-[-0.5em]"
+              containerClass="py-4 max-w-[4em] max-h-[4em] sm:max-w-[60px] sm:max-h-[60px] p-4"
+              url={logoUrl}
+            />
+            <ClickableTeamLabel
+              label={item.TeamName}
+              teamID={item.TeamID}
+              league={league}
+              textVariant="xs"
+            />
+          </div>
+        </div>
+        <div
+          className={`table-cell px-3 align-middle w-[16%] ${textColorClass}`}
+        >
           {item.ConferenceWins}
         </div>
-        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>
+        <div
+          className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}
+        >
           {item.ConferenceLosses}
         </div>
-        <div className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}>
+        <div
+          className={`table-cell px-2 align-middle w-[16%] ${textColorClass}`}
+        >
           {item.TotalWins}
         </div>
-        <div className={`table-cell px-1 align-middle w-[16%] ${textColorClass}`}>
+        <div
+          className={`table-cell px-1 align-middle w-[16%] ${textColorClass}`}
+        >
           {item.TotalLosses}
         </div>
       </div>
@@ -125,7 +146,7 @@ export const GamesTable = ({
     const gameWeek = item.Week;
     const logoUrl = getLogo(league, opposingTeamID, currentUser.isRetro);
     const showResults = [SimCBB, SimNBA].includes(league)
-      ? RevealCBBResults(item, ts, currentWeek)
+      ? RevealBBAResults(item, ts, currentWeek)
       : false;
     return (
       <tr

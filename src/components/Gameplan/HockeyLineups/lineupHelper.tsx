@@ -193,3 +193,17 @@ export const getLineupDropdownOptions = (
     shootoutOptions,
   };
 };
+
+export function updateLineupFieldWithClass<T extends Record<string, any>>(
+  setState: React.Dispatch<React.SetStateAction<T>>,
+  ClassConstructor: new (data: T) => T,
+  key: keyof T,
+  value: T[keyof T]
+) {
+  setState((prevState) => {
+    const updated = new ClassConstructor({ ...prevState });
+    updated[key] = value;
+    console.log({ prevState, updated, key, value });
+    return updated;
+  });
+}

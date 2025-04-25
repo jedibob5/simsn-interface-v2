@@ -2,17 +2,13 @@ import { useMemo } from "react";
 import { getLogo } from "../../../_utility/getLogo";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
-import { darkenColor } from "../../../_utility/getDarkerColor";
-import { RevealFBResults } from "../../../_helper/teamHelper";
-import { StandingsTable } from "../../Common/Tables";
 import { Button } from "../../../_design/Buttons";
-import { League, SimCHL } from "../../../_constants/constants";
+import { League } from "../../../_constants/constants";
 import { SectionCards } from "../../../_design/SectionCards";
 import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
-import { Stadium } from "../../../models/footballModels";
 import { processLeagueStandings } from "./SchedulePageHelper";
-import { WeeklyGames } from "../../../_constants/constants";
+import { ClickableTeamLabel } from "../../Common/Labels";
 
 interface TeamScheduleProps {
   team: any;
@@ -20,7 +16,7 @@ interface TeamScheduleProps {
   category?: string;
   week: any;
   currentUser: any;
-  league: League
+  league: League;
   ts: any;
   processedSchedule: any[];
   backgroundColor: string;
@@ -98,7 +94,8 @@ export const TeamSchedule = ({
               key={index}
               className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
               style={{
-                backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+                backgroundColor:
+                  index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
               }}
             >
               <div className="text-left col-span-1">
@@ -116,9 +113,13 @@ export const TeamSchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={game.opponentLogo}
                 />
-                <Text variant="xs" className="font-semibold text-center">
-                  {game.opponentLabel}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.opponentLabel}
+                  teamID={game.opponentID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center col-span-1">
                 <Text
@@ -138,7 +139,9 @@ export const TeamSchedule = ({
                 <Button
                   size="sm"
                   classes={`flex bg-transparent rounded-full size-10 items-center ${
-                    game.gameScore === "TBC" ? "opacity-50 cursor-not-allowed" : ""
+                    game.gameScore === "TBC"
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                   disabled={game.gameScore === "TBC"}
                 >
@@ -169,7 +172,7 @@ export const WeeklySchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
-  console.log(processedSchedule)
+  console.log(processedSchedule);
   return (
     <SectionCards
       header={`Week ${week}`}
@@ -226,12 +229,14 @@ export const WeeklySchedule = ({
               key={index}
               className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
               style={{
-                backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+                backgroundColor:
+                  index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
               }}
             >
               <div className="text-left col-span-1">
                 <Text variant="xs" className="font-semibold">
-                  {week}{game.GameDay}
+                  {week}
+                  {game.GameDay}
                 </Text>
               </div>
               <div className="flex items-center col-span-1 text-left">
@@ -241,9 +246,13 @@ export const WeeklySchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, game.HomeTeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold text-left">
-                  {game.HomeTeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.HomeTeamAbbr}
+                  teamID={game.HomeTeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="flex items-center col-span-1 text-left">
                 <Logo
@@ -252,9 +261,13 @@ export const WeeklySchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, game.AwayTeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold text-center">
-                  {game.AwayTeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.AwayTeamAbbr}
+                  teamID={game.AwayTeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center col-span-1">
                 <Text
@@ -274,7 +287,9 @@ export const WeeklySchedule = ({
                 <Button
                   size="sm"
                   classes={`flex bg-transparent rounded-full size-10 items-center ${
-                    game.gameScore === "TBC" ? "opacity-50 cursor-not-allowed" : ""
+                    game.gameScore === "TBC"
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                   disabled={game.gameScore === "TBC"}
                 >
@@ -302,11 +317,19 @@ interface TeamStandingsProps {
   darkerBackgroundColor: string;
 }
 
-export const TeamStandings = ({ standings, team, 
-                                league, currentUser, isLoadingTwo, 
-                                backgroundColor, headerColor, borderColor, textColorClass, darkerBackgroundColor }: 
-                                TeamStandingsProps) => {
-  console.log(standings)
+export const TeamStandings = ({
+  standings,
+  team,
+  league,
+  currentUser,
+  isLoadingTwo,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+}: TeamStandingsProps) => {
+  console.log(standings);
   return (
     <SectionCards
       team={team}
@@ -367,7 +390,10 @@ export const TeamStandings = ({ standings, team,
             <div
               key={index}
               className="grid grid-cols-7 border-b border-b-[#34455d] items-center"
-              style={{ backgroundColor: index % 2 === 0 ? darkerBackgroundColor : backgroundColor, }}
+              style={{
+                backgroundColor:
+                  index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+              }}
             >
               <div className="text-left pl-1 col-span-1 flex items-center">
                 <Text variant="xs" className="font-semibold">
@@ -381,9 +407,13 @@ export const TeamStandings = ({ standings, team,
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, standing.TeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold">
-                  {standing.TeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={standing.TeamAbbr}
+                  teamID={standing.TeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
@@ -411,7 +441,7 @@ export const TeamStandings = ({ standings, team,
       )}
     </SectionCards>
   );
-}
+};
 
 interface LeagueStandingsProps {
   standings: any[];
@@ -444,11 +474,23 @@ export const LeagueStandings = ({
     const customOrder =
       category === "Divisions"
         ? ["Atlantic", "Metropolitan", "Central", "Pacific"]
-        : ["ACC", "Big Ten", "Big 12", "SEC", "Pac-12", "Independent", "American", "C-USA", "MAC", "Mountain West", "SunBelt"];
-  
+        : [
+            "ACC",
+            "Big Ten",
+            "Big 12",
+            "SEC",
+            "Pac-12",
+            "Independent",
+            "American",
+            "C-USA",
+            "MAC",
+            "Mountain West",
+            "SunBelt",
+          ];
+
     return processLeagueStandings(standings, customOrder, league, category);
   }, [standings, league, category]);
-  
+
   return (
     <div className="flex flex-wrap gap-4">
       {isLoadingTwo ? (
@@ -465,7 +507,7 @@ export const LeagueStandings = ({
               Rank: index + 1,
             })
           );
-  
+
           return (
             <div key={groupName} className="flex flex-row sm:items-stretch">
               <SectionCards
@@ -543,9 +585,13 @@ export const LeagueStandings = ({
                             currentUser?.isRetro
                           )}
                         />
-                        <Text variant="xs" className="font-semibold">
-                          {standing.TeamAbbr}
-                        </Text>
+                        <ClickableTeamLabel
+                          textVariant="xs"
+                          label={standing.TeamAbbr}
+                          teamID={standing.TeamID}
+                          textColorClass={textColorClass}
+                          league={league}
+                        />
                       </div>
                       <div className="text-center flex col-span-1 items-center justify-center">
                         <Text variant="xs" className="font-semibold">
@@ -577,7 +623,7 @@ export const LeagueStandings = ({
       )}
     </div>
   );
-}
+};
 
 interface LeagueStatsProps {
   league: League;
@@ -629,12 +675,21 @@ export const LeagueStats = ({
             <div
               key={index}
               className="flex flex-col justify-center items-center p-2 rounded-lg border w-[14em]"
-              style={{ borderColor: headerColor, backgroundColor: darkerBackgroundColor }}
+              style={{
+                borderColor: headerColor,
+                backgroundColor: darkerBackgroundColor,
+              }}
             >
-                <div className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] md:h-[6rem] w-[6rem] max-w-[5rem] rounded-lg border-2`} 
-                                    style={{ borderColor: borderColor, backgroundColor: "white" }}>
-                <PlayerPicture playerID={player.id} league={league} team={player.team} />
+              <div
+                className={`flex my-1 items-center justify-center 
+                                    px-3 h-[3rem] min-h-[3rem] md:h-[6rem] w-[6rem] max-w-[5rem] rounded-lg border-2`}
+                style={{ borderColor: borderColor, backgroundColor: "white" }}
+              >
+                <PlayerPicture
+                  playerID={player.id}
+                  league={league}
+                  team={player.team}
+                />
               </div>
               <div className="flex flex-col text-center items-center w-full">
                 <Text variant="xs" classes={`${textColorClass} font-semibold`}>

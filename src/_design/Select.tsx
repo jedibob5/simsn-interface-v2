@@ -4,7 +4,7 @@ import Select, {
   CSSObjectWithLabel,
 } from "react-select";
 import { SelectOption, selectStyles } from "../_hooks/useSelectStyles";
-import { useMobile } from "../_hooks/useMobile";
+import { useResponsive } from "../_hooks/useMobile";
 
 // 🔑 Properly type the props using the generic for multi-select
 type SelectDropdownProps<IsMulti extends boolean = false> = SelectProps<
@@ -66,7 +66,7 @@ const mobileFriendlySelectStyles = {
 export const SelectDropdown = <IsMulti extends boolean = false>(
   props: SelectDropdownProps<IsMulti>
 ) => {
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
   const mobileStyle = isMobile ? mobileFriendlySelectStyles : {};
   return (
     <Select<SelectOption, IsMulti>

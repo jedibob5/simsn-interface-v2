@@ -382,6 +382,7 @@ export const usePHLLineupUtils = (
       if (playerID === 0) return;
 
       const player = phlTeamRosterMap[playerID];
+      if (!player) return;
       const playerLabel = `${lineupLabel}: ${player.Position} ${player.FirstName} ${player.LastName}`;
 
       if (playerMap[playerID] === true) {

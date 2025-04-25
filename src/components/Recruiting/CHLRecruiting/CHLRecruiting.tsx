@@ -24,7 +24,7 @@ import {
 import { CategoryDropdown } from "../Common/RecruitingCategoryDropdown";
 import { RecruitTable } from "../Common/RecruitTable";
 import { ActionModal } from "../../Common/ActionModal";
-import { useMobile } from "../../../_hooks/useMobile";
+import { useResponsive } from "../../../_hooks/useMobile";
 import { TeamRankingsTable } from "../Common/TeamRankingsTable";
 import { RecruitProfileTable } from "../Common/RecruitProfileTable";
 import { useModal } from "../../../_hooks/useModal";
@@ -86,7 +86,7 @@ export const CHLRecruiting = () => {
     chlTeam?.ColorTwo,
     chlTeam?.ColorThree
   );
-  const [isMobile] = useMobile();
+  const { isMobile } = useResponsive();
   const helpModal = useModal();
   const aiSettingsModal = useModal();
   const lockMessage = useLoadMessage(CHLRecruitLockedMessages, 5000);
