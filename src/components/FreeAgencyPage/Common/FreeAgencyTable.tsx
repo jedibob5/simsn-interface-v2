@@ -28,6 +28,7 @@ import {
   getFAFinancialPreference,
   getFAMarketPreference,
 } from "../../../_helper/utilHelper";
+import { useResponsive } from "../../../_hooks/useMobile";
 
 interface FreeAgentTableProps {
   players: PHLPlayer[] | NFLPlayer[] | NBAPlayer[];
@@ -52,7 +53,6 @@ interface FreeAgentTableProps {
     player: PHLPlayer | NFLPlayer | NBAPlayer
   ) => void;
   league: League;
-  isMobile?: boolean;
 }
 
 export const FreeAgentTable: FC<FreeAgentTableProps> = ({
@@ -66,19 +66,19 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
   openModal,
   handleOfferModal,
   league,
-  isMobile = false,
 }) => {
+  const { isTablet, isDesktop } = useResponsive();
   const backgroundColor = colorOne;
   const rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
       { header: "Exp", accessor: "Year" },
       { header: "Ovr", accessor: "Overall" },
     ];
 
-    if (!isMobile && category === Attributes) {
+    if (isDesktop && category === Attributes) {
       columns = columns.concat([
         { header: "Agi", accessor: "Agility" },
         { header: "FO", accessor: "Faceoffs" },
@@ -99,7 +99,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Preferences) {
+    if (isDesktop && category === Preferences) {
       columns = columns.concat([
         { header: "Market", accessor: "MarketPreference" },
         { header: "Competitive", accessor: "CompetitivePreference" },
@@ -111,7 +111,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
     columns.push({ header: "Interest", accessor: "LeadingTeams" });
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
-  }, [isMobile, category]);
+  }, [isDesktop, category]);
 
   const NFLRowRenderer = (
     item: NFLPlayer,
@@ -124,7 +124,13 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    const attributes = getPHLAttributes(item, isMobile, category!, null) as {
+    const attributes = getPHLAttributes(
+      item,
+      !isDesktop,
+      isTablet,
+      category!,
+      null
+    ) as {
       label: string;
       value: number;
       letter: string;
@@ -199,7 +205,9 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
           {!offers || (offers.length === 0 && "None")}
           {logos.length > 0 &&
-            logos.map((url) => <Logo url={url} variant="tiny" containerClass="p-4" />)}
+            logos.map((url) => (
+              <Logo url={url} variant="tiny" containerClass="p-4" />
+            ))}
         </TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
           <Button
