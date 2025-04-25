@@ -302,7 +302,6 @@ export const PHLFreeAgency = () => {
                 teamMap={phlTeamMap}
                 openModal={handleFAModal}
                 handleOfferModal={handleOfferModal}
-                isMobile={isMobile}
               />
               <div className="flex flex-row justify-center py-2">
                 <ButtonGroup>
