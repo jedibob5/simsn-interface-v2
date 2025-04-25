@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Text } from "../../_design/Typography";
+import { Text, TextVariant } from "../../_design/Typography";
 import { League } from "../../_constants/constants";
 import { useDeepLink } from "../../context/DeepLinkContext";
 
@@ -36,17 +36,27 @@ export const TeamLabel: FC<TeamLabelProps> = ({
 
 interface ClickableTeamLabelProps {
   label: string;
-  textColorClass: string;
+  textColorClass?: string;
   teamID: number;
   league: League;
+  textVariant?: TextVariant;
 }
 
-export const ClickableTeamLabel: FC<ClickableTeamLabelProps> =({label, teamID, league, textColorClass}) => {
+export const ClickableTeamLabel: FC<ClickableTeamLabelProps> = ({
+  label,
+  teamID,
+  league,
+  textColorClass = "",
+  textVariant = "small",
+}) => {
   const { goToTeamPage } = useDeepLink();
-  return <Text
-  variant="small"
-  classes={`${textColorClass} font-semibold cursor-pointer`}
-  className="pr-1">
-  <span onClick={() => goToTeamPage(league, teamID, {})}>{label}</span>
-</Text>
-}
+  return (
+    <Text
+      variant={textVariant}
+      classes={`${textColorClass} font-semibold cursor-pointer hover:text-blue-500`}
+      className="pr-1"
+    >
+      <span onClick={() => goToTeamPage(league, teamID, {})}>{label}</span>
+    </Text>
+  );
+};

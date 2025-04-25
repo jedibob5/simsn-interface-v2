@@ -22,10 +22,19 @@ import {
   TeamMailbox,
   TeamStats,
   TeamNews,
+  TeamQuickLinks,
 } from "./TeamLandingPageComponents";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
+import {
+  SimCBB,
+  SimCFB,
+  SimCHL,
+  SimNBA,
+  SimNFL,
+  SimPHL,
+} from "../../_constants/constants";
 
 interface TeamLandingPageProps {
   team: any;
@@ -116,7 +125,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
     gameWeek: number = 0;
 
   switch (league) {
-    case "SimCFB":
+    case SimCFB:
       ({
         teamStandings,
         teamNotifications,
@@ -145,7 +154,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
       ));
       break;
 
-    case "SimNFL":
+    case SimNFL:
       ({
         teamStandings,
         teamNotifications,
@@ -174,7 +183,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
       ));
       break;
 
-    case "SimCBB":
+    case SimCBB:
       ({
         teamStandings,
         teamNotifications,
@@ -203,7 +212,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
       ));
       break;
 
-    case "SimNBA":
+    case SimNBA:
       ({
         teamStandings,
         teamNotifications,
@@ -232,7 +241,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
       ));
       break;
 
-    case "SimCHL":
+    case SimCHL:
       ({
         teamStandings,
         teamNotifications,
@@ -262,7 +271,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
       ));
       break;
 
-    case "SimPHL":
+    case SimPHL:
       ({
         teamStandings,
         teamNotifications,
@@ -400,6 +409,23 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
             </div>
           </div>
           <div className="flex md:flex-col items-center pt-1 md:pt-0 h-[28em] md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[26em] 3xl:max-w-[42em] justify-center gap-3">
+            <Border
+              classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
+              styles={{
+                backgroundColor: borderColor,
+                borderColor: backgroundColor,
+              }}
+            >
+              <TeamQuickLinks
+                team={team}
+                league={league}
+                backgroundColor={backgroundColor}
+                headerColor={headerColor}
+                borderColor={borderColor}
+                textColorClass={textColorClass}
+                darkerBackgroundColor={darkerBackgroundColor}
+              />
+            </Border>
             <Border
               classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
               styles={{

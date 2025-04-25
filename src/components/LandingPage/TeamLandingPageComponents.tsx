@@ -1,7 +1,7 @@
 import { getLogo } from "../../_utility/getLogo";
 import { Text } from "../../_design/Typography";
 import { Logo } from "../../_design/Logo";
-import { useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import {
@@ -12,7 +12,7 @@ import {
 } from "../../_helper/teamHelper";
 import { StandingsTable } from "../Common/Tables";
 import { SectionCards } from "../../_design/SectionCards";
-import { Button } from "../../_design/Buttons";
+import { Button, ButtonGroup } from "../../_design/Buttons";
 import {
   League,
   SimCBB,
@@ -222,7 +222,7 @@ export const TeamStandings = ({
     <SectionCards
       team={team}
       header={`${team.Conference} Standings`}
-      classes={`${textColorClass}, h-full`}
+      classes={`${textColorClass}, h-full w-[25rem]`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -439,21 +439,17 @@ export const TeamMatchUp = ({
                   : "Conference Game"
                 : "Non-Conference Game"}
             </Text>
-            {league === SimCFB ||
-              (league === SimNFL && (
-                <div className="flex justify-center gap-2 pt-1">
-                  <Button variant="primary" size="sm">
-                    Depth Chart
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={navigateToFBGameplan}
-                  >
-                    Gameplan
-                  </Button>
-                </div>
-              ))}
+            {(league === SimCFB || league === SimNFL) && (
+              <div className="flex justify-center gap-2 pt-1">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={navigateToFBGameplan}
+                >
+                  Gameplan
+                </Button>
+              </div>
+            )}
             {(league === SimCHL || league === SimPHL) && (
               <div className="flex justify-center gap-2 pt-1">
                 <Button
@@ -745,188 +741,49 @@ export const TeamStats = ({
       ) : Object.keys(teamStats).length > 0 ? (
         <div className="flex-col items-center justify-center py-3 space-y-2 md:space-y-4">
           {boxOne.id !== undefined && (
-            <div
-              className={`flex-col items-center p-2 rounded-lg border-2`}
-              style={{
-                borderColor: headerColor,
-                backgroundColor: darkerBackgroundColor,
-              }}
-            >
-              <div className="flex">
-                <div
-                  className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`}
-                  style={{ borderColor: borderColor, backgroundColor: "white" }}
-                >
-                  <PlayerPicture
-                    team={team}
-                    playerID={boxOne.id}
-                    league={league}
-                  />
-                </div>
-
-                <div className="flex-col w-3/4">
-                  <Text
-                    variant="body"
-                    classes={`${textColorClass} font-semibold`}
-                  >
-                    {titles[0]}
-                  </Text>
-                  <div
-                    className="flex w-3/4 py-0.5 border-b mx-auto"
-                    style={{ borderColor }}
-                  />
-                  <div className="flex space-x-1 justify-center">
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} opacity-85`}
-                    >
-                      {`${boxOne.position}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxOne.firstName}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxOne.lastName}`}
-                    </Text>
-                  </div>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxOne.topStat} ${titles[3]}`}
-                  </Text>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxOne.bottomStat} ${titles[4]}`}
-                  </Text>
-                </div>
-              </div>
-            </div>
+            <TopPlayer
+              box={boxOne}
+              team={team}
+              league={league}
+              title={titles[0]}
+              stat1={titles[3]}
+              stat2={titles[4]}
+              headerColor={headerColor}
+              darkerBackgroundColor={darkerBackgroundColor}
+              backgroundColor={backgroundColor}
+              textColorClass={textColorClass}
+              borderColor={borderColor}
+            />
           )}
           {boxTwo.id !== undefined && (
-            <div
-              className={`flex-col items-center p-2 rounded-lg border-2`}
-              style={{
-                borderColor: headerColor,
-                backgroundColor: darkerBackgroundColor,
-              }}
-            >
-              <div className="flex">
-                <div
-                  className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`}
-                  style={{ borderColor: borderColor, backgroundColor: "white" }}
-                >
-                  <PlayerPicture
-                    team={team}
-                    playerID={boxTwo.id}
-                    league={league}
-                  />
-                </div>
-                <div className="flex-col w-3/4">
-                  <Text
-                    variant="body"
-                    classes={`${textColorClass} font-semibold`}
-                  >
-                    {titles[1]}
-                  </Text>
-                  <div
-                    className="flex w-3/4 py-0.5 border-b mx-auto"
-                    style={{ borderColor }}
-                  />
-                  <div className="flex space-x-1 justify-center">
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} opacity-85`}
-                    >
-                      {`${boxTwo.position}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxTwo.firstName}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxTwo.lastName}`}
-                    </Text>
-                  </div>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxTwo.topStat} ${titles[5]}`}
-                  </Text>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxTwo.bottomStat} ${titles[6]}`}
-                  </Text>
-                </div>
-              </div>
-            </div>
+            <TopPlayer
+              box={boxTwo}
+              team={team}
+              league={league}
+              title={titles[1]}
+              stat1={titles[5]}
+              stat2={titles[6]}
+              headerColor={headerColor}
+              darkerBackgroundColor={darkerBackgroundColor}
+              backgroundColor={backgroundColor}
+              textColorClass={textColorClass}
+              borderColor={borderColor}
+            />
           )}
           {boxThree.id !== undefined && (
-            <div
-              className={`flex-col items-center p-2 rounded-lg border-2`}
-              style={{
-                borderColor: headerColor,
-                backgroundColor: darkerBackgroundColor,
-              }}
-            >
-              <div className="flex">
-                <div
-                  className={`flex my-1 items-center justify-center 
-                                    px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`}
-                  style={{ borderColor: borderColor, backgroundColor: "white" }}
-                >
-                  <PlayerPicture
-                    team={team}
-                    playerID={boxThree.id}
-                    league={league}
-                  />
-                </div>
-                <div className="flex-col w-3/4">
-                  <Text
-                    variant="body"
-                    classes={`${textColorClass} font-semibold`}
-                  >
-                    {titles[2]}
-                  </Text>
-                  <div
-                    className="flex w-3/4 py-0.5 border-b mx-auto"
-                    style={{ borderColor }}
-                  />
-                  <div className="flex space-x-1 justify-center">
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} opacity-85`}
-                    >
-                      {`${boxThree.position}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxThree.firstName}`}
-                    </Text>
-                    <Text
-                      variant="small"
-                      classes={`${textColorClass} font-semibold text-center`}
-                    >
-                      {`${boxThree.lastName}`}
-                    </Text>
-                  </div>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxThree.topStat} ${titles[7]}`}
-                  </Text>
-                  <Text variant="alternate" classes={`${textColorClass}`}>
-                    {`${boxThree.bottomStat} ${titles[8]}`}
-                  </Text>
-                </div>
-              </div>
-            </div>
+            <TopPlayer
+              box={boxThree}
+              team={team}
+              league={league}
+              title={titles[2]}
+              stat1={titles[7]}
+              stat2={titles[8]}
+              headerColor={headerColor}
+              darkerBackgroundColor={darkerBackgroundColor}
+              backgroundColor={backgroundColor}
+              textColorClass={textColorClass}
+              borderColor={borderColor}
+            />
           )}
         </div>
       ) : (
@@ -935,6 +792,85 @@ export const TeamStats = ({
         </Text>
       )}
     </SectionCards>
+  );
+};
+
+interface TopPlayerProps {
+  box: any;
+  team: any;
+  title: string;
+  stat1: string;
+  stat2: string;
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+  league: League;
+}
+
+const TopPlayer: FC<TopPlayerProps> = ({
+  box,
+  team,
+  title,
+  stat1,
+  stat2,
+  headerColor,
+  darkerBackgroundColor,
+  textColorClass,
+  borderColor,
+  league,
+}) => {
+  return (
+    <div
+      className={`flex-col items-center p-2 rounded-lg border-2`}
+      style={{
+        borderColor: headerColor,
+        backgroundColor: darkerBackgroundColor,
+      }}
+    >
+      <div className="flex">
+        <div
+          className={`flex my-1 items-center justify-center 
+      px-3 h-[3rem] min-h-[3rem] max-w-[3rem] md:h-[7rem] md:max-h-[8rem] md:max-w-[8rem] rounded-lg border-2`}
+          style={{ borderColor: borderColor, backgroundColor: "white" }}
+        >
+          <PlayerPicture team={team} playerID={box.id} league={league} />
+        </div>
+        <div className="flex-col w-3/4">
+          <Text variant="body" classes={`${textColorClass} font-semibold`}>
+            {title}
+          </Text>
+          <div
+            className="flex w-3/4 py-0.5 border-b mx-auto"
+            style={{ borderColor }}
+          />
+          <div className="flex space-x-1 justify-center">
+            <Text variant="small" classes={`${textColorClass} opacity-85`}>
+              {`${box.position}`}
+            </Text>
+            <Text
+              variant="small"
+              classes={`${textColorClass} font-semibold text-center`}
+            >
+              {`${box.firstName}`}
+            </Text>
+            <Text
+              variant="small"
+              classes={`${textColorClass} font-semibold text-center`}
+            >
+              {`${box.lastName}`}
+            </Text>
+          </div>
+          <Text variant="alternate" classes={`${textColorClass}`}>
+            {`${box.topStat} ${stat1}`}
+          </Text>
+          <Text variant="alternate" classes={`${textColorClass}`}>
+            {`${box.bottomStat} ${stat2}`}
+          </Text>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -996,5 +932,168 @@ export const TeamNews = ({
         </Text>
       )}
     </SectionCards>
+  );
+};
+
+interface TeamQuickLinksProps {
+  league: League;
+  team: any;
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+}
+
+export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
+  team,
+  league,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+}) => {
+  const navigate = useNavigate();
+  const { goToTeamPage } = useDeepLink();
+  return (
+    <>
+      <SectionCards
+        team={team}
+        header="Quick Links"
+        classes={`${textColorClass} h-full`}
+        backgroundColor={backgroundColor}
+        headerColor={headerColor}
+        borderColor={borderColor}
+        textColorClass={textColorClass}
+        darkerBackgroundColor={darkerBackgroundColor}
+      >
+        <ButtonGroup classes="p-4 mt-4">
+          {league === SimCFB && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CFB_RECRUITING)}>
+                Recruiting
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CFB_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CFB_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CFB_TRANSFER)}>
+                Portal
+              </Button>
+            </>
+          )}
+          {league === SimNFL && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate(routes.NFL_FREE_AGENCY)}
+              >
+                Free Agency
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NFL_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NFL_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NFL_DRAFT_ROOM)}>
+                Draft
+              </Button>
+            </>
+          )}
+          {league === SimCBB && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CBB_RECRUITING)}>
+                Recruiting
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CBB_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CBB_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CBB_TRANSFER)}>
+                Portal
+              </Button>
+            </>
+          )}
+          {league === SimNBA && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate(routes.NBA_FREE_AGENCY)}
+              >
+                Free Agency
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NBA_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NBA_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.NBA_DRAFT_ROOM)}>
+                Draft
+              </Button>
+            </>
+          )}
+          {league === SimCHL && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CHL_RECRUITING)}>
+                Recruiting
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CHL_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CHL_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.CHL_TRANSFER)}>
+                Portal
+              </Button>
+            </>
+          )}
+          {league === SimPHL && (
+            <>
+              <Button size="sm" onClick={() => goToTeamPage(league)}>
+                Roster
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => navigate(routes.PHL_FREE_AGENCY)}
+              >
+                Free Agency
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.PHL_SCHEDULE)}>
+                Schedule
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.PHL_STATS)}>
+                Stats
+              </Button>
+              <Button size="sm" onClick={() => navigate(routes.PHL_DRAFT_ROOM)}>
+                Draft
+              </Button>
+            </>
+          )}
+        </ButtonGroup>
+      </SectionCards>
+    </>
   );
 };

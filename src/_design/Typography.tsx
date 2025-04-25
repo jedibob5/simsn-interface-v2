@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 // 🔑 Define Prop Types
-type TextVariant =
+export type TextVariant =
   | "h1"
   | "h2"
   | "h3"

@@ -404,7 +404,14 @@ export type ButtonColor =
   | "secondary"
   | "success"
   | "danger"
-  | "warning";
+  | "warning"
+  | "primaryOutline"
+  | "secondaryOutline"
+  | "successOutline"
+  | "dangerOutline"
+  | "warningOutline"
+  | "basketballOutline"
+  | "hockeyOutline";
 
 export const ScholarshipOffered = "ScholarshipOffered";
 export const ScholarshipRevoked = "ScholarshipRevoked";

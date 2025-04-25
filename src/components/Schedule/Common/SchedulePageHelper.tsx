@@ -256,6 +256,8 @@ export const processSchedule = (
       false
     );
 
+    const opponentID = isHomeGame ? game.AwayTeamID : game.HomeTeamID;
+
     let userWin = false;
     let userLoss = false;
     let gameScore = "TBC";
@@ -311,6 +313,7 @@ export const processSchedule = (
       headerGameScore,
       gameLocation: isHomeGame ? "vs" : "@",
       weekLabel,
+      opponentID,
     };
   });
 };

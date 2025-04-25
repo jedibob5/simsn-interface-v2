@@ -26,7 +26,7 @@ export const useSideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const {goToTeamPage} = useDeepLink();
+  const { goToTeamPage } = useDeepLink();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
@@ -44,13 +44,6 @@ export const useSideMenu = () => {
         label: "Gameplan",
         isRoute: true,
         route: routes.CFB_GAMEPLAN,
-        league: SimCFB,
-        toggle: () => toggleMenu(),
-      },
-      {
-        label: "Depth Chart",
-        isRoute: true,
-        route: routes.DEPTHCHART,
         league: SimCFB,
         toggle: () => toggleMenu(),
       },
@@ -102,13 +95,6 @@ export const useSideMenu = () => {
       },
       {
         label: "Gameplan",
-        isRoute: true,
-        route: "",
-        league: SimNFL,
-        toggle: () => toggleMenu(),
-      },
-      {
-        label: "Depth Chart",
         isRoute: true,
         route: "",
         league: SimNFL,

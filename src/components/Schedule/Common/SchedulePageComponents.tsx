@@ -2,17 +2,13 @@ import { useMemo } from "react";
 import { getLogo } from "../../../_utility/getLogo";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
-import { darkenColor } from "../../../_utility/getDarkerColor";
-import { RevealResults } from "../../../_helper/teamHelper";
-import { StandingsTable } from "../../Common/Tables";
 import { Button } from "../../../_design/Buttons";
-import { League, SimCHL } from "../../../_constants/constants";
+import { League } from "../../../_constants/constants";
 import { SectionCards } from "../../../_design/SectionCards";
 import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
-import { Stadium } from "../../../models/footballModels";
 import { processLeagueStandings } from "./SchedulePageHelper";
-import { WeeklyGames } from "../../../_constants/constants";
+import { ClickableTeamLabel } from "../../Common/Labels";
 
 interface TeamScheduleProps {
   team: any;
@@ -117,9 +113,13 @@ export const TeamSchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={game.opponentLogo}
                 />
-                <Text variant="xs" className="font-semibold text-center">
-                  {game.opponentLabel}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.opponentLabel}
+                  teamID={game.opponentID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center col-span-1">
                 <Text
@@ -246,9 +246,13 @@ export const WeeklySchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, game.HomeTeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold text-left">
-                  {game.HomeTeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.HomeTeamAbbr}
+                  teamID={game.HomeTeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="flex items-center col-span-1 text-left">
                 <Logo
@@ -257,9 +261,13 @@ export const WeeklySchedule = ({
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, game.AwayTeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold text-center">
-                  {game.AwayTeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={game.AwayTeamAbbr}
+                  teamID={game.AwayTeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center col-span-1">
                 <Text
@@ -399,9 +407,13 @@ export const TeamStandings = ({
                   containerClass="flex-shrink-0 p-2"
                   url={getLogo(league, standing.TeamID, currentUser?.isRetro)}
                 />
-                <Text variant="xs" className="font-semibold">
-                  {standing.TeamAbbr}
-                </Text>
+                <ClickableTeamLabel
+                  textVariant="xs"
+                  label={standing.TeamAbbr}
+                  teamID={standing.TeamID}
+                  textColorClass={textColorClass}
+                  league={league}
+                />
               </div>
               <div className="text-center flex col-span-1 items-center justify-center">
                 <Text variant="xs" className="font-semibold">
@@ -573,9 +585,13 @@ export const LeagueStandings = ({
                             currentUser?.isRetro
                           )}
                         />
-                        <Text variant="xs" className="font-semibold">
-                          {standing.TeamAbbr}
-                        </Text>
+                        <ClickableTeamLabel
+                          textVariant="xs"
+                          label={standing.TeamAbbr}
+                          teamID={standing.TeamID}
+                          textColorClass={textColorClass}
+                          league={league}
+                        />
                       </div>
                       <div className="text-center flex col-span-1 items-center justify-center">
                         <Text variant="xs" className="font-semibold">

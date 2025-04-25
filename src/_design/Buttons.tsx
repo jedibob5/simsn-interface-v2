@@ -27,6 +27,20 @@ export const Button: React.FC<ButtonProps> = ({
     success: `${ButtonGreen} hover:bg-green-700 text-white`,
     warning: "bg-yellow-500 hover:bg-yellow-700 text-white",
     danger: "bg-red-500 hover:bg-red-700 text-white",
+    primaryOutline:
+      "bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white border border-blue-500 hover:border-transparent",
+    secondaryOutline:
+      "bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white border border-gray-500 hover:border-transparent",
+    successOutline:
+      "bg-transparent hover:bg-green-500 text-green-500 font-semibold hover:text-white border border-green-500 hover:border-transparent",
+    dangerOutline:
+      "bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white border border-red-500 hover:border-transparent",
+    warningOutline:
+      "bg-transparent hover:bg-yellow-500 text-yellow-500 font-semibold hover:text-white border border-yellow-500 hover:border-transparent",
+    basketballOutline:
+      "bg-transparent hover:bg-orange-500 text-orange-500 font-semibold hover:text-white border border-orange-500 hover:border-transparent",
+    hockeyOutline:
+      "bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white border border-gray-500 hover:border-transparent",
   };
 
   const sizes = {
