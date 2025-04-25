@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   CollegeStandings,
   NFLStandings,
@@ -34,10 +33,12 @@ import {
   CollegePlayer as CHLPlayer,
   ProfessionalPlayer as PHLPlayer,
   NewsLog as HockeyNewsLog,
+  Timestamp as HCKTimestamp,
 } from "../../models/hockeyModels";
 
 import { getLogo } from "../../_utility/getLogo";
 import { League } from "../../_constants/constants";
+import { ConvertTimeOnIce, GetNextGameDay } from "../../_helper/utilHelper";
 
 export const getLandingCFBData = (
   team: any,
@@ -530,13 +531,17 @@ export const getLandingNBAData = (
 export const getLandingCHLData = (
   team: any,
   currentWeek: any,
+  timestamp: HCKTimestamp,
   league: League,
   currentUser: any,
   allCHLStandings: CHLStandings[],
   chlNotifications: HockeyNotification[],
   allCHLGames: CHLGame[],
   chlTeams: CHLTeam[],
-  chlNews: HockeyNewsLog[]
+  chlNews: HockeyNewsLog[],
+  topCHLGoals: CHLPlayer[],
+  topCHLAssists: CHLPlayer[],
+  topCHLSaves: CHLPlayer[]
 ) => {
   // Team Standings
   const teamStandings = allCHLStandings
@@ -552,6 +557,11 @@ export const getLandingCHLData = (
   const teamAbbrMap = new Map(
     chlTeams.map((team) => [team.ID, team.Abbreviation])
   );
+  const nextGameDay = GetNextGameDay(
+    timestamp.GamesARan,
+    timestamp.GamesBRan,
+    timestamp.GamesCRan
+  );
   let foundMatch: CHLGame[] | null = null;
   let gameWeek = currentWeek;
 
@@ -560,7 +570,8 @@ export const getLandingCHLData = (
     const nextMatch = allCHLGames.filter(
       (game) =>
         (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
-        game.Week === testWeek
+        game.Week === testWeek &&
+        game.GameDay === nextGameDay
     );
 
     if (nextMatch.length > 0) {
@@ -612,19 +623,19 @@ export const getLandingCHLData = (
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
     }));
 
-  // // Team Stats
-  // const userPoints = topCHLPoints.filter((p) => p.TeamID === team.ID);
-  // const userGoals = topCHLGoals.filter((r) => r.TeamID === team.ID);
-  // const userAssists = topCHLAssists.filter((rcv) => rcv.TeamID === team.ID);
-  // const topPoints = userPassers.length > 0 ? userPassers[0] : null;
-  // const topGoals = userRushers.length > 0 ? userRushers[0] : null;
-  // const topAssists = userReceivers.length > 0 ? userReceivers[0] : null;
+  // Team Stats
+  const userSaves = topCHLSaves.filter((p) => p.TeamID === team.ID);
+  const userGoals = topCHLGoals.filter((r) => r.TeamID === team.ID);
+  const userAssists = topCHLAssists.filter((rcv) => rcv.TeamID === team.ID);
+  const topSaves = userSaves.length > 0 ? userSaves[0] : null;
+  const topGoals = userGoals.length > 0 ? userGoals[0] : null;
+  const topAssists = userAssists.length > 0 ? userAssists[0] : null;
 
-  // const teamStats = {
-  //   TopPoints: topPoints,
-  //   TopGoals: topGoals,
-  //   TopAssists: topAssists
-  // };
+  const teamStats = {
+    TopSaves: topSaves,
+    TopGoals: topGoals,
+    TopAssists: topAssists,
+  };
 
   // Team News
   const teamNews = chlNews
@@ -643,19 +654,24 @@ export const getLandingCHLData = (
     awayLabel,
     teamNews,
     gameWeek,
+    teamStats,
   };
 };
 
 export const getLandingPHLData = (
   team: any,
   currentWeek: any,
+  timestamp: HCKTimestamp,
   league: League,
   currentUser: any,
   allPHLStandings: PHLStandings[],
   phlNotifications: HockeyNotification[],
   allPHLGames: PHLGame[],
   phlTeams: PHLTeam[],
-  phlNews: HockeyNewsLog[]
+  phlNews: HockeyNewsLog[],
+  topPHLGoals: PHLPlayer[],
+  topPHLAssists: PHLPlayer[],
+  topPHLSaves: PHLPlayer[]
 ) => {
   // Team Standings
   const teamStandings = allPHLStandings
@@ -673,13 +689,18 @@ export const getLandingPHLData = (
   );
   let foundMatch: PHLGame[] | null = null;
   let gameWeek = currentWeek;
-
+  const nextGameDay = GetNextGameDay(
+    timestamp.GamesARan,
+    timestamp.GamesBRan,
+    timestamp.GamesCRan
+  );
   for (let weekOffset = 0; weekOffset <= 10; weekOffset++) {
     const testWeek = currentWeek + weekOffset;
     const nextMatch = allPHLGames.filter(
       (game) =>
         (game.HomeTeamID === team.ID || game.AwayTeamID === team.ID) &&
-        game.Week === testWeek
+        game.Week === testWeek &&
+        game.GameDay === nextGameDay
     );
 
     if (nextMatch.length > 0) {
@@ -732,18 +753,18 @@ export const getLandingPHLData = (
     }));
 
   // // Team Stats
-  // const userPoints = topPHLPoints.filter((p) => p.TeamID === team.ID);
-  // const userGoals = topPHLGoals.filter((r) => r.TeamID === team.ID);
-  // const userAssists = topPHLAssists.filter((rcv) => rcv.TeamID === team.ID);
-  // const topPoints = userPassers.length > 0 ? userPassers[0] : null;
-  // const topGoals = userRushers.length > 0 ? userRushers[0] : null;
-  // const topAssists = userReceivers.length > 0 ? userReceivers[0] : null;
+  const userSaves = topPHLSaves.filter((p) => p.TeamID === team.ID);
+  const userGoals = topPHLGoals.filter((r) => r.TeamID === team.ID);
+  const userAssists = topPHLAssists.filter((rcv) => rcv.TeamID === team.ID);
+  const topSaves = userSaves.length > 0 ? userSaves[0] : null;
+  const topGoals = userGoals.length > 0 ? userGoals[0] : null;
+  const topAssists = userAssists.length > 0 ? userAssists[0] : null;
 
-  // const teamStats = {
-  //   TopPoints: topPoints,
-  //   TopGoals: topGoals,
-  //   TopAssists: topAssists
-  // };
+  const teamStats = {
+    TopSaves: topSaves,
+    TopGoals: topGoals,
+    TopAssists: topAssists,
+  };
 
   // Team News
   const teamNews = phlNews
@@ -762,6 +783,7 @@ export const getLandingPHLData = (
     awayLabel,
     teamNews,
     gameWeek,
+    teamStats,
   };
 };
 
@@ -847,28 +869,34 @@ export const getLandingBoxStats = (
     case "SimCHL":
     case "SimPHL":
       boxOne = {
-        id: teamStats.TopPoints?.ID,
-        firstName: teamStats.TopPoints?.FirstName,
-        lastName: teamStats.TopPoints?.LastName,
-        position: teamStats.TopPoints?.Position,
-        topStat: teamStats.TopPoints?.SeasonStats?.Points,
-        bottomStat: teamStats.TopPoints?.SeasonStats?.TimeOnIce.toFixed(1),
-      };
-      boxTwo = {
         id: teamStats.TopGoals?.ID,
         firstName: teamStats.TopGoals?.FirstName,
         lastName: teamStats.TopGoals?.LastName,
         position: teamStats.TopGoals?.Position,
         topStat: teamStats.TopGoals?.SeasonStats?.Goals,
-        bottomStat: teamStats.TopGoals?.SeasonStats?.TimeOnIce.toFixed(1),
+        bottomStat: ConvertTimeOnIce(
+          teamStats.TopGoals?.SeasonStats?.TimeOnIce
+        ).toFixed(1),
       };
-      boxThree = {
+      boxTwo = {
         id: teamStats.TopAssists?.ID,
         firstName: teamStats.TopAssists?.FirstName,
         lastName: teamStats.TopAssists?.LastName,
         position: teamStats.TopAssists?.Position,
         topStat: teamStats.TopAssists?.SeasonStats?.Assists,
-        bottomStat: teamStats.TopAssists?.SeasonStats?.TimeOnIce.toFixed(1),
+        bottomStat: ConvertTimeOnIce(
+          teamStats.TopAssists?.SeasonStats?.TimeOnIce
+        ).toFixed(1),
+      };
+      boxThree = {
+        id: teamStats.TopSaves?.ID,
+        firstName: teamStats.TopSaves?.FirstName,
+        lastName: teamStats.TopSaves?.LastName,
+        position: teamStats.TopSaves?.Position,
+        topStat: teamStats.TopSaves?.SeasonStats?.Points,
+        bottomStat: ConvertTimeOnIce(
+          teamStats.TopSaves?.SeasonStats?.TimeOnIce
+        ).toFixed(1),
       };
       break;
 

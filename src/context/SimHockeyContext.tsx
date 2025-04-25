@@ -43,13 +43,10 @@ import { TeamService } from "../_services/teamService";
 import {
   Coach,
   GM,
-  League,
   Marketing,
   Owner,
   Scout,
-  SimCHL,
   SimHCK,
-  SimPHL,
 } from "../_constants/constants";
 import { hck_ws } from "../_constants/urls";
 import { PlayerService } from "../_services/playerService";
@@ -57,8 +54,6 @@ import { GameplanService } from "../_services/gameplanService";
 import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
-import { useNavigate } from "react-router-dom";
-import routes from "../_constants/routes";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -106,6 +101,12 @@ interface SimHCKContextProps {
   currentProSeasonGames: ProfessionalGame[];
   proTeamsGames: ProfessionalGame[];
   proNotifications: Notification[];
+  topCHLGoals: CollegePlayer[];
+  topCHLAssists: CollegePlayer[];
+  topCHLSaves: CollegePlayer[];
+  topPHLGoals: ProfessionalPlayer[];
+  topPHLAssists: ProfessionalPlayer[];
+  topPHLSaves: ProfessionalPlayer[];
   updatePointsOnRecruit: (id: number, name: string, points: number) => void;
   removeUserfromCHLTeamCall: (teamID: number) => Promise<void>;
   removeUserfromPHLTeamCall: (request: ProTeamRequest) => Promise<void>;
@@ -205,6 +206,12 @@ const defaultContext: SimHCKContextProps = {
   CancelFreeAgencyOffer: async () => {},
   SaveWaiverWireOffer: async () => {},
   CancelWaiverWireOffer: async () => {},
+  topCHLGoals: [],
+  topCHLAssists: [],
+  topCHLSaves: [],
+  topPHLGoals: [],
+  topPHLAssists: [],
+  topPHLSaves: [],
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -324,6 +331,13 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     ExtensionOffer
   > | null>({});
 
+  const [topCHLGoals, setTopCHLGoals] = useState<CollegePlayer[]>([]);
+  const [topCHLAssists, setTopCHLAssists] = useState<CollegePlayer[]>([]);
+  const [topCHLSaves, setTopCHLSaves] = useState<CollegePlayer[]>([]);
+  const [topPHLGoals, setTopPHLGoals] = useState<ProfessionalPlayer[]>([]);
+  const [topPHLAssists, setTopPHLAssists] = useState<ProfessionalPlayer[]>([]);
+  const [topPHLSaves, setTopPHLSaves] = useState<ProfessionalPlayer[]>([]);
+
   useEffect(() => {
     if (currentUser) {
       getBootstrapData();
@@ -371,6 +385,12 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setPlayerFaces(res.FaceData);
     setProContractMap(res.ContractMap);
     setProExtensionMap(res.ExtensionMap);
+    setTopCHLGoals(res.TopCHLGoals);
+    setTopCHLAssists(res.TopCHLAssists);
+    setTopCHLSaves(res.TopCHLSaves);
+    setTopPHLGoals(res.TopPHLGoals);
+    setTopPHLAssists(res.TopPHLAssists);
+    setTopPHLSaves(res.TopPHLSaves);
 
     if (res.AllCollegeGames.length > 0 && hck_Timestamp) {
       const currentSeasonGames = res.AllCollegeGames.filter(
@@ -878,6 +898,12 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         currentProSeasonGames,
         proTeamsGames,
         proNotifications,
+        topCHLGoals,
+        topCHLAssists,
+        topCHLSaves,
+        topPHLGoals,
+        topPHLAssists,
+        topPHLSaves,
         removeUserfromCHLTeamCall,
         removeUserfromPHLTeamCall,
         addUserToCHLTeam,

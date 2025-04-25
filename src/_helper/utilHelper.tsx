@@ -164,3 +164,24 @@ export const getFAFinancialPreference = (value: number): string => {
   };
   return valueMap[value];
 };
+
+export const GetNextGameDay = (
+  gamesARan: boolean,
+  gamesBRan: boolean,
+  gamesCRan: boolean
+) => {
+  let nextGameDay = "A";
+  if (gamesARan) {
+    nextGameDay = "B";
+  } else if (gamesBRan) {
+    nextGameDay = "C";
+  } else if (gamesCRan) {
+    nextGameDay = "D";
+  }
+
+  return nextGameDay;
+};
+
+export const ConvertTimeOnIce = (toi: number) => {
+  return Math.floor(toi / 60);
+};

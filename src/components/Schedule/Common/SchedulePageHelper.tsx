@@ -241,10 +241,12 @@ export const processSchedule = (
 ) => {
   let weekCounter: { [key: number]: number } = {};
   return schedule.map((game) => {
-    const revealResult =
-      league === SimCHL || league === SimPHL
-        ? RevealHCKResults(game, ts)
-        : RevealResults(game, ts, league);
+    let revealResult = false;
+    if (league === SimCHL || league === SimPHL) {
+      revealResult = RevealHCKResults(game, ts);
+    } else {
+      revealResult = RevealResults(game, ts, league);
+    }
 
     const isHomeGame = game.HomeTeamID === team.ID;
     const opponentLabel = isHomeGame ? game.AwayTeamAbbr : game.HomeTeamAbbr;
