@@ -75,7 +75,7 @@ export const MakeHCKSeasonsOptionList = (ts: HCKTimestamp) => {
   for (let i = 1; i <= ts.SeasonID; i++) {
     const iterativeSeason = 2024 + i;
     const seasonLabel = `${iterativeSeason}`;
-    const option = { label: seasonLabel, value: i };
+    const option = { label: seasonLabel, value: i.toString() };
     seasonsList.push(option);
   }
   return seasonsList;
@@ -87,7 +87,7 @@ export const MakeHCKWeeksOptionList = (seasonID: number) => {
   for (let i = 1; i <= BASE_HCK_WEEKS_IN_SEASON; i++) {
     const weekID = getHCKWeekID(i, seasonID);
     const weekLabel = `Week ${i}`;
-    const option = { label: weekLabel, value: weekID };
+    const option = { label: weekLabel, value: weekID.toString() };
     weeksList.push(option);
   }
 
@@ -96,7 +96,8 @@ export const MakeHCKWeeksOptionList = (seasonID: number) => {
 
 export const getHCKWeekID = (week: number, seasonID: number) => {
   const season = seasonID + BASE_HCK_SEASON;
-  return season * 100 + week;
+  const diffSeason = season - 2000;
+  return (diffSeason * 100) + week;
 };
 
 export const GetHCKCollegeStats = (
@@ -111,14 +112,14 @@ export const GetHCKCollegeStats = (
 ) => {
   if (statsView === WEEK_VIEW) {
     if (statsType === PLAYER_VIEW) {
-      return chlPlayerGameStatsMap[week];
+      return chlPlayerGameStatsMap[week] || [];
     }
-    return chlTeamGameStatsMap[week];
+    return chlTeamGameStatsMap[week] || [];
   }
   if (statsType === PLAYER_VIEW) {
-    return chlPlayerSeasonStatsMap[season];
+    return chlPlayerSeasonStatsMap[season] || [];
   }
-  return chlTeamSeasonStatsMap[season];
+  return chlTeamSeasonStatsMap[season] || [];
 };
 
 export const GetHCKProStats = (
@@ -133,12 +134,12 @@ export const GetHCKProStats = (
 ) => {
   if (statsView === WEEK_VIEW) {
     if (statsType === PLAYER_VIEW) {
-      return phlPlayerGameStatsMap[week];
+      return phlPlayerGameStatsMap[week] || [];
     }
-    return phlTeamGameStatsMap[week];
+    return phlTeamGameStatsMap[week] || [];
   }
   if (statsType === PLAYER_VIEW) {
-    return phlPlayerSeasonStatsMap[season];
+    return phlPlayerSeasonStatsMap[season] || [];
   }
-  return phlTeamSeasonStatsMap[season];
+  return phlTeamSeasonStatsMap[season] || [];
 };

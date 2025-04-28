@@ -910,52 +910,59 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const SearchHockeyStats = useCallback(async (dto: any) => {
     if (dto.League === SimCHL) {
       const res = await StatsService.HCKCollegeStatsSearch(dto);
-      if (dto.StatsView === SEASON_VIEW) {
+      if (dto.ViewType === SEASON_VIEW) {
         setChlPlayerSeasonStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.CHLPlayerSeasonStats;
-          return newMap;
+          return {...prev,
+            [dto.SeasonID]: res.CHLPlayerSeasonStats,
+          };
         });
         setChlTeamSeasonStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.CHLTeamSeasonStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.SeasonID]: res.CHLTeamSeasonStats,
+          };
         });
       } else {
         setChlPlayerGameStatsMap((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.CHLPlayerGameStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.WeekID]: res.CHLPlayerGameStats,
+          }
         });
         setChlTeamGameStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.CHLTeamGameStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.WeekID]: res.CHLTeamGameStats,
+          };
         });
       }
     } else {
       const res = await StatsService.HCKProStatsSearch(dto);
-      if (dto.StatsView === SEASON_VIEW) {
+      if (dto.ViewType === SEASON_VIEW) {
         setPhlPlayerSeasonStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.PHLPlayerSeasonStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.SeasonID]: res.PHLPlayerSeasonStats
+          };
         });
         setPhlTeamSeasonStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.PHLTeamSeasonStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.SeasonID]: res.PHLTeamSeasonStats
+          };
         });
       } else {
         setPhlPlayerGameStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.PHLPlayerGameStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.WeekID]: res.PHLPlayerGameStats
+          };
         });
         setPhlTeamGameStats((prev) => {
-          const newMap = { ...prev };
-          prev[dto.SeasonID] = res.PHLTeamGameStats;
-          return newMap;
+          return {
+            ...prev,
+            [dto.WeekID]:res.PHLTeamGameStats
+          };
         });
       }
     }

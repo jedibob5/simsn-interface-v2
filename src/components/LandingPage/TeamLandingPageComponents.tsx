@@ -222,7 +222,7 @@ export const TeamStandings = ({
     <SectionCards
       team={team}
       header={`${team.Conference} Standings`}
-      classes={`${textColorClass}, h-full w-[25rem]`}
+      classes={`${textColorClass}, h-full max-w-[30rem]`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -968,7 +968,7 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
         textColorClass={textColorClass}
         darkerBackgroundColor={darkerBackgroundColor}
       >
-        <ButtonGroup classes="p-4 mt-4">
+        <ButtonGroup classes="p-1 md:p-3 mt-4">
           {league === SimCFB && (
             <>
               <Button size="sm" onClick={() => goToTeamPage(league)}>
