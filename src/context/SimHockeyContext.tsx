@@ -38,6 +38,15 @@ import {
   WaiverOffer,
   FreeAgencyOfferDTO,
   WaiverOfferDTO,
+  CollegePlayerGameStats,
+  CollegePlayerSeasonStats,
+  CollegeTeamGameStats,
+  CollegeTeamSeasonStats,
+  ProfessionalPlayerGameStats,
+  ProfessionalPlayerSeasonStats,
+  ProfessionalTeamGameStats,
+  ProfessionalTeamSeasonStats,
+  SearchStatsResponse,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -46,6 +55,8 @@ import {
   Marketing,
   Owner,
   Scout,
+  SEASON_VIEW,
+  SimCHL,
   SimHCK,
 } from "../_constants/constants";
 import { hck_ws } from "../_constants/urls";
@@ -54,6 +65,7 @@ import { GameplanService } from "../_services/gameplanService";
 import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
+import { StatsService } from "../_services/statsService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -130,11 +142,21 @@ interface SimHCKContextProps {
   CancelWaiverWireOffer: (dto: any) => Promise<void>;
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
+  SearchHockeyStats: (dto: any) => Promise<void>;
+  ExportHockeyStats: (dto: any) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
   proContractMap: Record<number, ProContract> | null;
   proExtensionMap: Record<number, ExtensionOffer> | null;
+  chlPlayerGameStatsMap: Record<number, CollegePlayerGameStats[]>;
+  chlPlayerSeasonStatsMap: Record<number, CollegePlayerSeasonStats[]>;
+  chlTeamGameStatsMap: Record<number, CollegeTeamGameStats[]>;
+  chlTeamSeasonStatsMap: Record<number, CollegeTeamSeasonStats[]>;
+  phlPlayerGameStatsMap: Record<number, ProfessionalPlayerGameStats[]>;
+  phlPlayerSeasonStatsMap: Record<number, ProfessionalPlayerSeasonStats[]>;
+  phlTeamGameStatsMap: Record<number, ProfessionalTeamGameStats[]>;
+  phlTeamSeasonStatsMap: Record<number, ProfessionalTeamSeasonStats[]>;
 }
 
 // ✅ Default context value
@@ -206,6 +228,8 @@ const defaultContext: SimHCKContextProps = {
   CancelFreeAgencyOffer: async () => {},
   SaveWaiverWireOffer: async () => {},
   CancelWaiverWireOffer: async () => {},
+  SearchHockeyStats: async () => {},
+  ExportHockeyStats: async () => {},
   topCHLGoals: [],
   topCHLAssists: [],
   topCHLSaves: [],
@@ -215,6 +239,14 @@ const defaultContext: SimHCKContextProps = {
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
+  chlPlayerGameStatsMap: {},
+  chlPlayerSeasonStatsMap: {},
+  chlTeamGameStatsMap: {},
+  chlTeamSeasonStatsMap: {},
+  phlPlayerGameStatsMap: {},
+  phlPlayerSeasonStatsMap: {},
+  phlTeamGameStatsMap: {},
+  phlTeamSeasonStatsMap: {},
 };
 
 // ✅ Create the context
@@ -337,6 +369,30 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [topPHLGoals, setTopPHLGoals] = useState<ProfessionalPlayer[]>([]);
   const [topPHLAssists, setTopPHLAssists] = useState<ProfessionalPlayer[]>([]);
   const [topPHLSaves, setTopPHLSaves] = useState<ProfessionalPlayer[]>([]);
+  const [chlPlayerGameStatsMap, setChlPlayerGameStatsMap] = useState<
+    Record<number, CollegePlayerGameStats[]>
+  >({});
+  const [chlPlayerSeasonStatsMap, setChlPlayerSeasonStats] = useState<
+    Record<number, CollegePlayerSeasonStats[]>
+  >({});
+  const [chlTeamGameStatsMap, setChlTeamGameStats] = useState<
+    Record<number, CollegeTeamGameStats[]>
+  >([]);
+  const [chlTeamSeasonStatsMap, setChlTeamSeasonStats] = useState<
+    Record<number, CollegeTeamSeasonStats[]>
+  >([]);
+  const [phlPlayerGameStatsMap, setPhlPlayerGameStats] = useState<
+    Record<number, ProfessionalPlayerGameStats[]>
+  >([]);
+  const [phlPlayerSeasonStatsMap, setPhlPlayerSeasonStats] = useState<
+    Record<number, ProfessionalPlayerSeasonStats[]>
+  >([]);
+  const [phlTeamGameStatsMap, setPhlTeamGameStats] = useState<
+    Record<number, ProfessionalTeamGameStats[]>
+  >([]);
+  const [phlTeamSeasonStatsMap, setPhlTeamSeasonStats] = useState<
+    Record<number, ProfessionalTeamSeasonStats[]>
+  >([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -851,6 +907,68 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const SearchHockeyStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCHL) {
+      const res = await StatsService.HCKCollegeStatsSearch(dto);
+      if (dto.StatsView === SEASON_VIEW) {
+        setChlPlayerSeasonStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.CHLPlayerSeasonStats;
+          return newMap;
+        });
+        setChlTeamSeasonStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.CHLTeamSeasonStats;
+          return newMap;
+        });
+      } else {
+        setChlPlayerGameStatsMap((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.CHLPlayerGameStats;
+          return newMap;
+        });
+        setChlTeamGameStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.CHLTeamGameStats;
+          return newMap;
+        });
+      }
+    } else {
+      const res = await StatsService.HCKProStatsSearch(dto);
+      if (dto.StatsView === SEASON_VIEW) {
+        setPhlPlayerSeasonStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.PHLPlayerSeasonStats;
+          return newMap;
+        });
+        setPhlTeamSeasonStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.PHLTeamSeasonStats;
+          return newMap;
+        });
+      } else {
+        setPhlPlayerGameStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.PHLPlayerGameStats;
+          return newMap;
+        });
+        setPhlTeamGameStats((prev) => {
+          const newMap = { ...prev };
+          prev[dto.SeasonID] = res.PHLTeamGameStats;
+          return newMap;
+        });
+      }
+    }
+  }, []);
+
+  const ExportHockeyStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCHL) {
+      const res = await StatsService.HCKCollegeStatsExport(dto);
+    } else {
+      const res = await StatsService.HCKProStatsExport(dto);
+    }
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -930,6 +1048,16 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         CancelFreeAgencyOffer,
         SaveWaiverWireOffer,
         CancelWaiverWireOffer,
+        chlPlayerGameStatsMap,
+        chlPlayerSeasonStatsMap,
+        chlTeamGameStatsMap,
+        chlTeamSeasonStatsMap,
+        phlPlayerGameStatsMap,
+        phlPlayerSeasonStatsMap,
+        phlTeamGameStatsMap,
+        phlTeamSeasonStatsMap,
+        SearchHockeyStats,
+        ExportHockeyStats,
       }}
     >
       {children}

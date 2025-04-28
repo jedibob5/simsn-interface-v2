@@ -109,6 +109,19 @@ export type RecruitingCategory =
   | typeof RecruitingOverview
   | typeof RecruitingTeamBoard
   | typeof RecruitingRankings;
+export const WEEK_VIEW = "WEEK";
+export const SEASON_VIEW = "SEASON";
+export type StatsView = typeof WEEK_VIEW | typeof SEASON_VIEW;
+export const PLAYER_VIEW = "PLAYER";
+export const TEAM_VIEW = "TEAM";
+export type StatsType = typeof PLAYER_VIEW | typeof TEAM_VIEW;
+export const PRESEASON = "PRESEASON";
+export const REGULAR_SEASON = "REGULARSEASON";
+export const POST_SEASON = "POSTSEASON";
+export type GameType =
+  | typeof PRESEASON
+  | typeof REGULAR_SEASON
+  | typeof POST_SEASON;
 export const Attributes = "Attributes";
 export const Values = "Values";
 export const Preferences = "Preferences";
@@ -422,6 +435,8 @@ export const navyBlueColor = "#1f2937";
 
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;
+export const BASE_HCK_WEEKS_IN_SEASON = 30;
+export const BASE_HCK_SEASON = 2024;
 
 export const CHLConferenceNames = [
   { label: "ConferenceID", value: "1", name: "AHA" },
