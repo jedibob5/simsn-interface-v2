@@ -153,5 +153,11 @@ export const useHockeyStats = () => {
     return await ExportHockeyStats(dto);
   };
 
+  // Filter Options by team & conference
+
+  // Setup Pagination
+
+  // Return filtered pages, all functions, team & player maps
+
   return {};
 };
