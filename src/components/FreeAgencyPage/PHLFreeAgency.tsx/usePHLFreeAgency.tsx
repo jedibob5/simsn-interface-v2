@@ -33,6 +33,7 @@ import { NBAPlayer } from "../../../models/basketballModels";
 import { usePagination } from "../../../_hooks/usePagination";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
+import { useFilteredFreeAgents } from "../../../_helper/freeAgencyHelper";
 
 export const usePHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
@@ -198,41 +199,7 @@ export const usePHLFreeAgency = () => {
     return [];
   }, [country]);
 
-  const filteredFA = useMemo(() => {
-    // Single-pass filter
-    let players = [...freeAgents];
-    if (playerType === Waivers) {
-      players = [...waiverPlayers];
-    } else if (playerType === Affiliate) {
-      players = [...affiliatePlayers];
-    }
-    return players.filter((fa) => {
-      if (
-        country.length === 0 &&
-        positions.length === 0 &&
-        archetype.length === 0 &&
-        regions.length === 0
-      ) {
-        return true;
-      }
-      if (
-        country.length > 0 &&
-        (country.includes(fa.Country) || country === "All")
-      ) {
-        return true;
-      }
-      if (positions.length > 0 && positions.includes(fa.Position)) {
-        return true;
-      }
-      if (archetype.length > 0 && archetype.includes(fa.Archetype)) {
-        return true;
-      }
-      if (regions.length > 0 && regions.includes(fa.State)) {
-        return true;
-      }
-      return false;
-    });
-  }, [
+  const filteredFA = useFilteredFreeAgents({
     freeAgents,
     waiverPlayers,
     affiliatePlayers,
@@ -241,7 +208,7 @@ export const usePHLFreeAgency = () => {
     positions,
     archetype,
     regions,
-  ]);
+  });
 
   const {
     currentPage,
@@ -329,7 +296,7 @@ export const usePHLFreeAgency = () => {
     SelectRegionOptions,
     country,
     regionOptions,
-    pagedFreeAgents,
+    filteredFA,
     freeAgentMap,
     waiverPlayerMap,
     teamFreeAgentOffers,

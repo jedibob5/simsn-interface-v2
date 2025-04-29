@@ -4,24 +4,25 @@ import { useHockeyStats } from "./useHockeyStatsPage";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { ActionModal } from "../../Common/ActionModal";
 import { Border } from "../../../_design/Borders";
-import { navyBlueColor, PLAYER_VIEW, SEASON_VIEW, TEAM_VIEW, WEEK_VIEW } from "../../../_constants/constants";
-import { TeamLabel } from "../../Common/Labels";
-import { StatsSidebar } from "../StatsSidebar";
-import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { navyBlueColor } from "../../../_constants/constants";
+import { StatsSidebar } from "../Common/StatsSidebar";
 import { useModal } from "../../../_hooks/useModal";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { useResponsive } from "../../../_hooks/useMobile";
 import { ToggleSwitch } from "../../../_design/Inputs";
 import { Text } from "../../../_design/Typography";
+import { HockeyStatsTable } from "./HockeyStatsTable";
+import { Button, ButtonGroup } from "../../../_design/Buttons";
 
 export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
   const {
     team,
+    teamMap,
     modalAction,
     modalPlayer,
     isModalOpen,
     playerMap,
-    pagedStats,
+    filteredStats,
     weekOptions,
     seasonOptions,
     teamOptions,
@@ -31,6 +32,9 @@ export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
     statsView,
     gameType,
     viewGoalieStats,
+    gameDay,
+    currentPage,
+    ChangeGameDay,
     ChangeGoalieView,
     goToPreviousPage,
     goToNextPage,
@@ -46,9 +50,13 @@ export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
     Search,
     Export,
   } = useHockeyStats();
-  const {isMobile} = useResponsive();
+  const { isMobile, isDesktop } = useResponsive();
   const helpModal = useModal();
-  const teamColors = useTeamColors(team?.ColorOne, team?.ColorTwo, team?.ColorThree);
+  const teamColors = useTeamColors(
+    team?.ColorOne,
+    team?.ColorTwo,
+    team?.ColorThree
+  );
   return (
     <>
       {modalPlayer && (
@@ -64,10 +72,10 @@ export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
         />
       )}
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
-        <StatsSidebar 
+        <StatsSidebar
           team={team!!}
-          teamColors={teamColors} 
-          league={league} 
+          teamColors={teamColors}
+          league={league}
           statsView={statsView}
           statsType={statsType}
           ChangeStatsView={ChangeStatsView}
@@ -79,12 +87,14 @@ export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
           SelectSeasonOption={SelectSeasonOption}
           Search={Search}
           Export={Export}
+          gameDay={gameDay}
+          changeGameDay={ChangeGameDay}
         />
         <div className="flex flex-col w-full max-[1024px]:gap-y-2">
           <div className="flex flex-col sm:flex-row gap-x-2">
             <Border
               direction="row"
-              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-start gap-x-8"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-start gap-x-8 flex-col lg:flex-row"
               styles={{
                 borderColor: teamColors.One,
                 backgroundColor: navyBlueColor,
@@ -97,24 +107,87 @@ export const HockeyStatsPage: FC<StatsPageProps> = ({ league }) => {
                   onChange={ChangeGoalieView}
                 />
               </div>
-              <CategoryDropdown
-                label="Teams"
-                options={teamOptions}
-                change={SelectTeamOptions}
-                isMulti={true}
-                isMobile={isMobile}
-              />
-              <CategoryDropdown
-                  label="Conferences"
-                  options={conferenceOptions}
-                  change={SelectConferenceOptions}
-                  isMulti={true}
-                  isMobile={isMobile}
-              />
+              {!isDesktop && (
+                <div className="flex flex-row gap-x-2">
+                  <CategoryDropdown
+                    label="Teams"
+                    options={teamOptions}
+                    change={SelectTeamOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                  <CategoryDropdown
+                    label="Conferences"
+                    options={conferenceOptions}
+                    change={SelectConferenceOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                </div>
+              )}
+              {isDesktop && (
+                <>
+                  <CategoryDropdown
+                    label="Teams"
+                    options={teamOptions}
+                    change={SelectTeamOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                  <CategoryDropdown
+                    label="Conferences"
+                    options={conferenceOptions}
+                    change={SelectConferenceOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                </>
+              )}
             </Border>
           </div>
           <div className="flex flex-col">
-            
+            <Border
+              direction="col"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-start gap-x-8 overflow-y-auto max-h-[50vh] md:max-h-[70vh]"
+              styles={{
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
+              }}
+            >
+              <HockeyStatsTable
+                team={team}
+                teamMap={teamMap}
+                teamColors={teamColors}
+                playerMap={playerMap}
+                league={league}
+                isMobile={isMobile}
+                openModal={handlePlayerModal}
+                stats={filteredStats}
+                statsType={statsType}
+                statsView={statsView}
+                isGoalie={viewGoalieStats}
+                currentPage={currentPage}
+              />
+              <div className="flex flex-row justify-center py-2">
+                <ButtonGroup>
+                  <Button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 0}
+                  >
+                    Prev
+                  </Button>
+                  <Text variant="body-small" classes="flex items-center">
+                    {currentPage + 1}
+                  </Text>
+                  <Button
+                    onClick={goToNextPage}
+                    disabled={currentPage >= totalPages - 1}
+                  >
+                    Next
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </Border>
           </div>
         </div>
       </div>

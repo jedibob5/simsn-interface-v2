@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useLeagueStore } from "../../../context/LeagueContext";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import {
+  ADay,
+  GameDay,
   GameType,
   InfoType,
   ModalAction,
@@ -21,11 +23,19 @@ import {
   MakeHCKSeasonsOptionList,
   MakeHCKWeeksOptionList,
   MakePHLPlayerMapFromRosterMap,
+  useFilteredHockeyStats,
 } from "../../../_helper/statsPageHelper";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { useModal } from "../../../_hooks/useModal";
-import { CollegePlayer as CHLPlayer, CollegeTeamGameStats, CollegeTeamSeasonStats, ProfessionalPlayer as PHLPlayer, ProfessionalTeamGameStats, ProfessionalTeamSeasonStats } from "../../../models/hockeyModels";
+import {
+  CollegePlayer as CHLPlayer,
+  CollegeTeamGameStats,
+  CollegeTeamSeasonStats,
+  ProfessionalPlayer as PHLPlayer,
+  ProfessionalTeamGameStats,
+  ProfessionalTeamSeasonStats,
+} from "../../../models/hockeyModels";
 import { usePagination } from "../../../_hooks/usePagination";
 
 export const useHockeyStats = () => {
@@ -58,11 +68,12 @@ export const useHockeyStats = () => {
 
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(InfoType);
-  const [modalPlayer, setModalPlayer] = useState<
-    PHLPlayer | CHLPlayer
-  >({} as PHLPlayer);
+  const [modalPlayer, setModalPlayer] = useState<PHLPlayer | CHLPlayer>(
+    {} as PHLPlayer
+  );
   const [statsView, setStatsView] = useState<StatsView>(WEEK_VIEW);
   const [statsType, setStatsType] = useState<StatsType>(PLAYER_VIEW);
+  const [gameDay, setGameDay] = useState<GameDay>(ADay);
   const [gameType, setGameType] = useState<GameType>(REGULAR_SEASON);
   const [viewGoalieStats, setViewGoalieStats] = useState<boolean>(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(2501);
@@ -75,7 +86,7 @@ export const useHockeyStats = () => {
       return chlTeam;
     }
     return phlTeam;
-  }, [selectedLeague, chlTeam,phlTeam])
+  }, [selectedLeague, chlTeam, phlTeam]);
 
   const seasonOptions = useMemo(() => {
     if (!hck_Timestamp) {
@@ -143,7 +154,8 @@ export const useHockeyStats = () => {
         chlPlayerGameStatsMap,
         chlPlayerSeasonStatsMap,
         chlTeamGameStatsMap,
-        chlTeamSeasonStatsMap
+        chlTeamSeasonStatsMap,
+        gameDay
       );
     }
     if (selectedLeague === SimPHL) {
@@ -155,7 +167,8 @@ export const useHockeyStats = () => {
         phlPlayerGameStatsMap,
         phlPlayerSeasonStatsMap,
         phlTeamGameStatsMap,
-        phlTeamSeasonStatsMap
+        phlTeamSeasonStatsMap,
+        gameDay
       );
     }
     return [];
@@ -173,6 +186,7 @@ export const useHockeyStats = () => {
     phlPlayerSeasonStatsMap,
     phlTeamGameStatsMap,
     phlTeamSeasonStatsMap,
+    gameDay,
   ]);
   // Make a Hockey Award title Modal. Heisman, but for hockey
   // Fighter award title?
@@ -201,32 +215,15 @@ export const useHockeyStats = () => {
     return await ExportHockeyStats(dto);
   };
 
-  const filteredStats = useMemo(() => {
-    console.log({selectedStats})
-    const stats = [...selectedStats];
-    return stats.filter((stat) => {
-      if (selectedTeams.length === 0 && selectedConferences.length === 0) {
-        return true;
-      }
-      if (selectedTeams.length > 0 && selectedTeams.includes(stat.TeamID.toString())) {
-        return true;
-      }
-      const team = teamMap[stat.TeamID];
-      if (selectedConferences.length > 0 && selectedConferences.includes(team.ConferenceID.toString())) {
-        return true;
-      }
-      if (statsType === PLAYER_VIEW && !(stat instanceof CollegeTeamGameStats) && !(stat instanceof CollegeTeamSeasonStats) && !(stat instanceof ProfessionalTeamGameStats) && !(stat instanceof ProfessionalTeamSeasonStats)) {
-        const player = playerMap[stat.PlayerID];
-        if (viewGoalieStats && player.Position=== 'G') {
-          return true;
-        }
-        if (!viewGoalieStats && player.Position !== 'G') {
-          return true;
-        }
-      }
-      return false;
-    });
-  }, [selectedLeague,playerMap, teamMap, selectedTeams, viewGoalieStats,selectedConferences, selectedStats, statsView, gameType, statsType])
+  const filteredStats = useFilteredHockeyStats({
+    selectedStats,
+    selectedTeams,
+    selectedConferences,
+    teamMap,
+    playerMap,
+    statsType,
+    viewGoalieStats,
+  });
 
   const pageSize = 100;
   const {
@@ -237,21 +234,15 @@ export const useHockeyStats = () => {
     goToNextPage,
   } = usePagination(filteredStats.length, pageSize);
 
-  const pagedStats = useMemo(() => {
-    const start = currentPage * pageSize;
-    return filteredStats.slice(start, start+pageSize);
-  }, [filteredStats, currentPage, pageSize]);
-
-
   // Filter Options by team & conference
-  const teamOptions= useMemo(()=> {
+  const teamOptions = useMemo(() => {
     if (selectedLeague === SimCHL) {
       return chlTeamOptions;
     }
     return phlTeamOptions;
   }, [selectedLeague]);
 
-  const conferenceOptions = useMemo(()=> {
+  const conferenceOptions = useMemo(() => {
     if (selectedLeague === SimCHL) {
       return chlConferenceOptions;
     }
@@ -271,9 +262,14 @@ export const useHockeyStats = () => {
   };
 
   const ChangeGoalieView = () => {
-    setViewGoalieStats((prev) =>!prev);
+    setViewGoalieStats((prev) => !prev);
     setCurrentPage(0);
-  }
+  };
+
+  const ChangeGameDay = (day: GameDay) => {
+    setGameDay(day);
+    setCurrentPage(0);
+  };
 
   // Return filtered pages, all functions, team & player maps
 
@@ -288,11 +284,12 @@ export const useHockeyStats = () => {
 
   return {
     team,
+    teamMap,
     modalAction,
     modalPlayer,
     isModalOpen,
     playerMap,
-    pagedStats,
+    filteredStats,
     weekOptions,
     seasonOptions,
     teamOptions,
@@ -302,6 +299,9 @@ export const useHockeyStats = () => {
     statsView,
     gameType,
     viewGoalieStats,
+    gameDay,
+    currentPage,
+    ChangeGameDay,
     ChangeGoalieView,
     goToPreviousPage,
     goToNextPage,

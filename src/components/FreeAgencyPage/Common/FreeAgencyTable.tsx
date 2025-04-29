@@ -53,6 +53,7 @@ interface FreeAgentTableProps {
     player: PHLPlayer | NFLPlayer | NBAPlayer
   ) => void;
   league: League;
+  currentPage: number;
 }
 
 export const FreeAgentTable: FC<FreeAgentTableProps> = ({
@@ -66,6 +67,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
   openModal,
   handleOfferModal,
   league,
+  currentPage,
 }) => {
   const { isTablet, isDesktop } = useResponsive();
   const backgroundColor = colorOne;
@@ -239,6 +241,8 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       rowRenderer={rowRenderer(league)}
       backgroundColor={backgroundColor}
       team={team}
+      enablePagination
+      currentPage={currentPage}
     />
   );
 };

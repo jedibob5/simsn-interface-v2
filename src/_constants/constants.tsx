@@ -122,6 +122,17 @@ export type GameType =
   | typeof PRESEASON
   | typeof REGULAR_SEASON
   | typeof POST_SEASON;
+export const ADay = "A";
+export const BDay = "B";
+export const CDay = "C";
+export const DDay = "D";
+export const ActualDDay = "TO THE BEACHES OF NORMANDY WE GO";
+export type GameDay =
+  | typeof ADay
+  | typeof BDay
+  | typeof CDay
+  | typeof DDay
+  | typeof ActualDDay;
 export const Attributes = "Attributes";
 export const Values = "Values";
 export const Preferences = "Preferences";
