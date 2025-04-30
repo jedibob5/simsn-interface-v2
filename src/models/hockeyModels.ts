@@ -4911,6 +4911,158 @@ export class CollegePlayerSeasonStats {
     return a;
   }
 }
+export class GameResultsResponse {
+  CHLHomeStats: CollegePlayerGameStats[];
+  CHLAwayStats: CollegePlayerGameStats[];
+  CHLPlayByPlays: PlayByPlayResponse[];
+  PHLHomeStats: ProfessionalPlayerGameStats[];
+  PHLAwayStats: ProfessionalPlayerGameStats[];
+  PHLPlayByPlays: PlayByPlayResponse[];
+  Score: ScoreBoard;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.CHLHomeStats = this.convertValues(
+      source["CHLHomeStats"],
+      CollegePlayerGameStats
+    );
+    this.CHLAwayStats = this.convertValues(
+      source["CHLAwayStats"],
+      CollegePlayerGameStats
+    );
+    this.CHLPlayByPlays = this.convertValues(
+      source["CHLPlayByPlays"],
+      PlayByPlayResponse
+    );
+    this.PHLHomeStats = this.convertValues(
+      source["PHLHomeStats"],
+      ProfessionalPlayerGameStats
+    );
+    this.PHLAwayStats = this.convertValues(
+      source["PHLAwayStats"],
+      ProfessionalPlayerGameStats
+    );
+    this.PHLPlayByPlays = this.convertValues(
+      source["PHLPlayByPlays"],
+      PlayByPlayResponse
+    );
+    this.Score = this.convertValues(source["Score"], ScoreBoard);
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
+    }
+    if (Array.isArray(a)) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
+}
+export class PlayByPlayResponse {
+  GameID: number;
+  PlayNumber: number;
+  HomeTeamID: number;
+  HomeTeamScore: number;
+  AwayTeamID: number;
+  AwayTeamScore: number;
+  Period: number;
+  TimeOnClock: string;
+  SecondsConsumed: number;
+  Event: string;
+  Zone: string;
+  NextZone: string;
+  Outcome: string;
+  TeamID: number;
+  PuckCarrierID: number;
+  PassedPlayerID: number;
+  AssistingPlayerID: number;
+  DefenderID: number;
+  GoalieID: number;
+  InjuryID: number;
+  InjuryType: number;
+  InjuryDuration: number;
+  Penalty: string;
+  Severity: string;
+  IsFight: string;
+  IsBreakaway: boolean;
+  Result: string;
+  StreamResult: string[];
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.GameID = source["GameID"];
+    this.PlayNumber = source["PlayNumber"];
+    this.HomeTeamID = source["HomeTeamID"];
+    this.HomeTeamScore = source["HomeTeamScore"];
+    this.AwayTeamID = source["AwayTeamID"];
+    this.AwayTeamScore = source["AwayTeamScore"];
+    this.Period = source["Period"];
+    this.TimeOnClock = source["TimeOnClock"];
+    this.SecondsConsumed = source["SecondsConsumed"];
+    this.Event = source["Event"];
+    this.Zone = source["Zone"];
+    this.NextZone = source["NextZone"];
+    this.Outcome = source["Outcome"];
+    this.TeamID = source["TeamID"];
+    this.PuckCarrierID = source["PuckCarrierID"];
+    this.PassedPlayerID = source["PassedPlayerID"];
+    this.AssistingPlayerID = source["AssistingPlayerID"];
+    this.DefenderID = source["DefenderID"];
+    this.GoalieID = source["GoalieID"];
+    this.InjuryID = source["InjuryID"];
+    this.InjuryType = source["InjuryType"];
+    this.InjuryDuration = source["InjuryDuration"];
+    this.Penalty = source["Penalty"];
+    this.Severity = source["Severity"];
+    this.IsFight = source["IsFight"];
+    this.IsBreakaway = source["IsBreakaway"];
+    this.Result = source["Result"];
+    this.StreamResult = source["StreamResult"];
+  }
+}
+export class ScoreBoard {
+  P1Home: number;
+  P2Home: number;
+  P3Home: number;
+  OTHome: number;
+  P1Away: number;
+  P2Away: number;
+  P3Away: number;
+  OTAway: number;
+  HomeShootoutScore: number;
+  AwayShootoutScore: number;
+  HomeOffensiveScheme: string;
+  HomeDefensiveScheme: string;
+  AwayOffensiveScheme: string;
+  AwayDefensiveScheme: string;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.P1Home = source["P1Home"];
+    this.P2Home = source["P2Home"];
+    this.P3Home = source["P3Home"];
+    this.OTHome = source["OTHome"];
+    this.P1Away = source["P1Away"];
+    this.P2Away = source["P2Away"];
+    this.P3Away = source["P3Away"];
+    this.OTAway = source["OTAway"];
+    this.HomeShootoutScore = source["HomeShootoutScore"];
+    this.AwayShootoutScore = source["AwayShootoutScore"];
+    this.HomeOffensiveScheme = source["HomeOffensiveScheme"];
+    this.HomeDefensiveScheme = source["HomeDefensiveScheme"];
+    this.AwayOffensiveScheme = source["AwayOffensiveScheme"];
+    this.AwayDefensiveScheme = source["AwayDefensiveScheme"];
+  }
+}
 export class CollegePlayerGameStats {
   [key: string]: any;
   WeekID: number;

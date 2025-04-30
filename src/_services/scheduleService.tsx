@@ -1,5 +1,7 @@
-import { fbaUrl } from '../_constants/urls.js';
-import { GetCall, PostCall } from '../_helper/fetchHelper.js';
+import { fbaUrl } from "../_constants/urls.js";
+import { GetCall, PostCall } from "../_helper/fetchHelper.js";
+import { GameResult } from "../components/Schedule/Common/GameModalInterfaces.js";
+import { GameResultsResponse as HockeyGameResults } from "../models/hockeyModels.js";
 
 export default class FBAScheduleService {
   async GetCollegeGamesByTeamAndSeason(
@@ -28,59 +30,67 @@ export default class FBAScheduleService {
     await PostCall(`${fbaUrl}games/update/time/`, dto);
   }
 
-  async GetCFBGameResultData(id: number): Promise<any> {
+  async GetCFBGameResultData(id: number): Promise<GameResult> {
     return await GetCall(`${fbaUrl}games/result/cfb/${id}/`);
   }
 
-  async GetNFLGameResultData(id: number): Promise<any> {
+  async GetNFLGameResultData(id: number): Promise<GameResult> {
     return await GetCall(`${fbaUrl}games/result/nfl/${id}/`);
   }
 
-    // async ExportPlayByPlay(isNFL, id, ht, at) {
-    //     const prefix = isNFL ? 'nfl' : 'cfb';
-    //     let fullURL = `${url}statistics/${prefix}/export/play/by/play/${id}`;
-    //     let response = await fetch(fullURL, {
-    //         headers: {
-    //             authorization: 'Bearer ' + localStorage.getItem('token'),
-    //             'Content-Type': 'text/csv'
-    //         },
-    //         responseType: 'blob'
-    //     })
-    //         .then((res) => res.blob())
-    //         .then((blob) =>
-    //             saveAs(blob, `${id}_${ht}_vs_${at}_play_by_play.csv`)
-    //         );
+  async GetCHLGameResultData(id: number): Promise<HockeyGameResults> {
+    return await GetCall(`${fbaUrl}games/result/chl/${id}/`);
+  }
 
-    //     if (response.ok) {
-    //         // let blob = response.blob();
-    //         // saveAs(blob, 'export.csv');
-    //     } else {
-    //         alert('HTTP-Error:', response.status);
-    //     }
-    // }
+  async GetPHLGameResultData(id: number): Promise<HockeyGameResults> {
+    return await GetCall(`${fbaUrl}games/result/phl/${id}/`);
+  }
 
-    // async ExportResults(seasonID, weekID, nflWeekID, timeslot, selectedWeek) {
-    //     const fullURL = `${url}games/export/results/${seasonID}/${weekID}/${nflWeekID}/${timeslot}`;
-    //     const response = await fetch(fullURL, {
-    //         headers: {
-    //             authorization: 'Bearer ' + localStorage.getItem('token'),
-    //             'Content-Type': 'text/csv'
-    //         },
-    //         responseType: 'blob'
-    //     })
-    //         .then((res) => res.blob())
-    //         .then((blob) =>
-    //             saveAs(
-    //                 blob,
-    //                 `wahoos_secret_${selectedWeek}${timeslot}_results_list.csv`
-    //             )
-    //         );
+  // async ExportPlayByPlay(isNFL, id, ht, at) {
+  //     const prefix = isNFL ? 'nfl' : 'cfb';
+  //     let fullURL = `${url}statistics/${prefix}/export/play/by/play/${id}`;
+  //     let response = await fetch(fullURL, {
+  //         headers: {
+  //             authorization: 'Bearer ' + localStorage.getItem('token'),
+  //             'Content-Type': 'text/csv'
+  //         },
+  //         responseType: 'blob'
+  //     })
+  //         .then((res) => res.blob())
+  //         .then((blob) =>
+  //             saveAs(blob, `${id}_${ht}_vs_${at}_play_by_play.csv`)
+  //         );
 
-    //     if (response.ok) {
-    //         // let blob = response.blob();
-    //         // saveAs(blob, 'export.csv');
-    //     } else {
-    //         alert('HTTP-Error:', response.status);
-    //     }
-    // }
+  //     if (response.ok) {
+  //         // let blob = response.blob();
+  //         // saveAs(blob, 'export.csv');
+  //     } else {
+  //         alert('HTTP-Error:', response.status);
+  //     }
+  // }
+
+  // async ExportResults(seasonID, weekID, nflWeekID, timeslot, selectedWeek) {
+  //     const fullURL = `${url}games/export/results/${seasonID}/${weekID}/${nflWeekID}/${timeslot}`;
+  //     const response = await fetch(fullURL, {
+  //         headers: {
+  //             authorization: 'Bearer ' + localStorage.getItem('token'),
+  //             'Content-Type': 'text/csv'
+  //         },
+  //         responseType: 'blob'
+  //     })
+  //         .then((res) => res.blob())
+  //         .then((blob) =>
+  //             saveAs(
+  //                 blob,
+  //                 `wahoos_secret_${selectedWeek}${timeslot}_results_list.csv`
+  //             )
+  //         );
+
+  //     if (response.ok) {
+  //         // let blob = response.blob();
+  //         // saveAs(blob, 'export.csv');
+  //     } else {
+  //         alert('HTTP-Error:', response.status);
+  //     }
+  // }
 }
