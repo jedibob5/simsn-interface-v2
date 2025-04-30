@@ -19,7 +19,8 @@ import {
   XCircleIcon,
   BarsArrowDownIcon,
   InformationCircleIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -115,7 +116,6 @@ export const Plus: React.FC<LockIconProps> = ({
   return <PlusIcon className="size-5" />;
 };
 
-
 export const Scholarship: React.FC<LockIconProps> = ({
   textColorClass = "text-black",
 }) => {
@@ -124,7 +124,7 @@ export const Scholarship: React.FC<LockIconProps> = ({
 
   return <AcademicCapIcon className="size-5" />;
 };
-  
+
 export const ArrowsUpDown: React.FC<LockIconProps> = ({
   textColorClass = "text-black",
 }) => {
@@ -204,3 +204,6 @@ export const PaperAirplane: React.FC<LockIconProps> = ({
   return <PaperAirplaneIcon className={`size-5 ${textColorClass}`} />;
 };
 
+export const Refresh: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowPathIcon className={`size-5 ${textColorClass}`} />;
+};

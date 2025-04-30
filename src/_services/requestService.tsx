@@ -11,6 +11,7 @@ import {
   Request as CBBRequest,
   NBARequest,
   Team as CBBTeam,
+  Request,
 } from "../models/basketballModels";
 import {
   CollegeTeam as CFBTeam,
@@ -202,7 +203,7 @@ export const RequestService = {
     });
   },
 
-  ApproveCBBRequest: async (payload: ApprovePayload): Promise<Response> => {
+  ApproveCBBRequest: async (payload: Request): Promise<Response> => {
     return await fetch(`${bbaUrl}requests/approveTeamRequest`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
@@ -213,7 +214,7 @@ export const RequestService = {
     });
   },
 
-  RejectCBBTeamRequest: async (payload: RejectPayload): Promise<Response> => {
+  RejectCBBTeamRequest: async (payload: Request): Promise<Response> => {
     return await fetch(`${bbaUrl}requests/rejectTeamRequest`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
@@ -240,11 +241,11 @@ export const RequestService = {
     return await PostCall(`${bbaUrl}nba/requests/create/`, payload);
   },
 
-  ApproveNBARequest: async (payload: ApprovePayload): Promise<NBARequest> => {
+  ApproveNBARequest: async (payload: NBARequest): Promise<NBARequest> => {
     return await PostCall(`${bbaUrl}nba/requests/approve/`, payload);
   },
 
-  RejectNBARequest: async (payload: RejectPayload): Promise<NBARequest> => {
+  RejectNBARequest: async (payload: NBARequest): Promise<NBARequest> => {
     return await PostCall(`${bbaUrl}nba/requests/reject/`, payload);
   },
 

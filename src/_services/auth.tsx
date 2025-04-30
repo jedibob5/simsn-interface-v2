@@ -9,6 +9,7 @@ import {
 import {
   getFirestore,
   doc as firestoreDoc,
+  setDoc,
   onSnapshot,
   DocumentData,
   DocumentReference,
@@ -53,7 +54,7 @@ export const AuthService: {
 
     return new Promise<AuthResponse>((resolve) => {
       createUserWithEmailAndPassword(fauth, email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           const user = userCredential.user;
           const uid = user.uid;
           if (!fauth.currentUser) {
@@ -61,16 +62,20 @@ export const AuthService: {
             return;
           }
 
-          updateProfile(fauth.currentUser, {
+          await updateProfile(fauth.currentUser, {
             displayName: username,
-          })
-            .then(() => {
-              localStorage.setItem("userId", uid);
-              resolve({ status: true, message: "Registered successfully." });
-            })
-            .catch((error) => {
-              resolve({ status: false, message: error.message });
+          });
+          try {
+            await setDoc(firestoreDoc(fireStore, "users", user.uid), {
+              username,
+              email: user.email,
+              createdAt: new Date(),
             });
+          } catch (firestoreError: any) {
+            console.error("Failed to write user profile:", firestoreError);
+          }
+          localStorage.setItem("userId", uid);
+          resolve({ status: true, message: "Registered successfully." });
         })
         .catch((error) => {
           let message = "Something went wrong.";
