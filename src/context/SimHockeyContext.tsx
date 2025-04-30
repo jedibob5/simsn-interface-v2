@@ -722,7 +722,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         [...profiles].map((p) =>
           p.RecruitID === profile.RecruitID
             ? new RecruitPlayerProfile({
-                ...profile,
+                ...p,
                 Scholarship: profile.Scholarship,
                 ScholarshipRevoked: profile.ScholarshipRevoked,
               })
