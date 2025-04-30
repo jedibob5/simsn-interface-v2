@@ -102,6 +102,7 @@ export const FootballGameModal = ({
     const pbp: PlayByPlay[] = [...response.PlayByPlays];
     setPlayByPlays(pbp);
     setScore(response.Score);
+    console.log(response.Score)
 
     setIsLoading(false);
   };
