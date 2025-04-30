@@ -267,6 +267,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== chlTeam!.ID}
           />
         </Border>
       )}
@@ -481,6 +482,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           headerColor={headerColor}
           borderColor={borderColor}
           openModal={openModal}
+          disable={selectedTeam!.ID !== phlTeam!.ID}
         />
       </Border>
     </>
@@ -646,6 +648,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== cfbTeam!.ID}
           />
         </Border>
       )}
@@ -856,6 +859,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== nflTeam!.ID}
           />
         </Border>
       )}
