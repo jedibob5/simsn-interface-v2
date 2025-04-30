@@ -80,6 +80,66 @@ export const GetActionCall = async (url: string): Promise<Response | false> => {
   return response;
 };
 
+type ResponseType = "json" | "blob";
+
+/**
+ * A single helper for both JSON calls and file‐downloads.
+ *
+ * @param url            The endpoint to call
+ * @param responseType   "json" to parse JSON, "blob" to download a file
+ * @returns              If "json", returns the parsed JSON as T;
+ *                       if "blob", kicks off a download in the browser
+ *                       and returns the Blob (in case you want to do more).
+ */
+export async function GetExportCall<T>(
+  url: string,
+  responseType: ResponseType = "json"
+): Promise<T | Blob> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(url, {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+      // you can hint to the server what you want:
+      ...(responseType === "blob"
+        ? { Accept: "application/zip, text/csv" }
+        : { Accept: "application/json" }),
+    },
+  });
+
+  if (!response.ok) {
+    throw new ApiError(response.status, `HTTP Error: ${response.statusText}`);
+  }
+
+  if (responseType === "json") {
+    // Generic JSON GET
+    return (await response.json()) as T;
+  }
+
+  // Otherwise, we expect a file download
+  const blob = await response.blob();
+
+  // Try to get filename from Content-Disposition header
+  let filename = url.split("/").pop() || "download";
+  const cd = response.headers.get("Content-Disposition");
+  if (cd) {
+    const match = /filename="?([^"]+)"?/.exec(cd);
+    if (match?.[1]) {
+      filename = match[1];
+    }
+  }
+
+  // Create a temporary <a> to trigger the download
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+
+  return blob;
+}
+
 export const GetLeagueAbbr = (league: League): string => {
   switch (league) {
     case SimCFB:

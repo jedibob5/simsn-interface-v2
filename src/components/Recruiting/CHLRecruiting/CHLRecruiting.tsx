@@ -65,7 +65,7 @@ export const CHLRecruiting = () => {
     SelectStatusOptions,
     tableViewType,
     setTableViewType,
-    pagedRecruits,
+    filteredRecruits,
     goToPreviousPage,
     goToNextPage,
     currentPage,
@@ -335,7 +335,7 @@ export const CHLRecruiting = () => {
                 }}
               >
                 <RecruitTable
-                  croots={pagedRecruits}
+                  croots={filteredRecruits}
                   colorOne={teamColors.One}
                   colorTwo={teamColors.Two}
                   colorThree={teamColors.Three}
@@ -346,6 +346,7 @@ export const CHLRecruiting = () => {
                   openModal={openModal}
                   isMobile={isMobile}
                   recruitOnBoardMap={recruitOnBoardMap}
+                  currentPage={currentPage}
                 />
                 <div className="flex flex-row justify-center py-2">
                   <ButtonGroup>

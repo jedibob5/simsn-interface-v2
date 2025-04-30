@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -34,6 +35,8 @@ export interface TableProps<T> {
   rowBgColor?: string;
   darkerRowBgColor?: string;
   league?: League;
+  enablePagination?: boolean;
+  currentPage?: number;
 }
 
 export const Table = <T,>({
@@ -44,6 +47,8 @@ export const Table = <T,>({
   rowBgColor,
   darkerRowBgColor,
   league,
+  enablePagination = false,
+  currentPage = 0,
 }: TableProps<T>): JSX.Element => {
   let backgroundColor = "#1f2937";
   let borderColor = team?.ColorTwo || "#4B5563";
@@ -102,6 +107,14 @@ export const Table = <T,>({
     setSortedData(sorted);
   }, [data, sortState]);
 
+  const pageSize = 100;
+
+  const pagedData = useMemo(() => {
+    if (!enablePagination) return sortedData;
+    const start = currentPage!! * pageSize;
+    return sortedData.slice(start, start + pageSize);
+  }, [enablePagination, sortedData, currentPage, pageSize]);
+
   // Handler for sorting column
   const handleSort = (accessor: string) => {
     if (invalidSortKeys.includes(accessor)) return;
@@ -127,6 +140,7 @@ export const Table = <T,>({
             {columns.map((col) => (
               <div
                 key={col.accessor}
+                title={col.accessor}
                 className="table-cell border-b-2 px-2 py-2 font-semibold whitespace-nowrap cursor-pointer"
                 style={{
                   backgroundColor: backgroundColor,
@@ -134,19 +148,21 @@ export const Table = <T,>({
                 }}
                 onClick={() => handleSort(col.accessor)}
               >
-                <Text variant="body-small">{col.header}</Text>
-                {sortState.key === col.accessor
-                  ? sortState.order === "asc"
-                    ? " 🔼"
-                    : " 🔽"
-                  : null}
+                <div className="flex flex-row gap-x-2">
+                  <Text variant="body-small">{col.header}</Text>
+                  {sortState.key === col.accessor
+                    ? sortState.order === "asc"
+                      ? " 🔼"
+                      : " 🔽"
+                    : null}
+                </div>
               </div>
             ))}
           </div>
         </div>
         {/* Body */}
         <div className="table-row-group">
-          {sortedData.map((item, index) => {
+          {pagedData.map((item, index) => {
             const bg = index % 2 === 0 ? darkerTableBgColor : tableBgColor;
             return (
               <React.Fragment key={index}>

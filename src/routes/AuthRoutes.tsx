@@ -19,6 +19,7 @@ import { GameplanPage } from "../components/Gameplan/GameplanPage";
 import { RecruitingPage } from "../components/Recruiting/RecruitingPage";
 import { SchedulePage } from "../components/Schedule/SchedulePage";
 import { FreeAgencyPage } from "../components/FreeAgencyPage/FreeAgencyPage";
+import { StatsPage } from "../components/StatsPage/StatsPage";
 
 // Will Add More Pages here for authorized users (Logged in)
 export const AuthRoutes = [
@@ -149,69 +150,69 @@ export const AuthRoutes = [
     }
   />,
   <Route
-  key="CFB Recruiting"
-  path={routes.CFB_RECRUITING}
-  element={
-    <AuthGuard>
-      <RecruitingPage league={SimCFB} />
-    </AuthGuard>
-  }
-/>,
+    key="CFB Recruiting"
+    path={routes.CFB_RECRUITING}
+    element={
+      <AuthGuard>
+        <RecruitingPage league={SimCFB} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="CFB Schedule"
-  path={routes.CFB_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimCFB} />
-    </AuthGuard>
-  }
-/>,
+    key="CFB Schedule"
+    path={routes.CFB_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimCFB} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="NFL Schedule"
-  path={routes.NFL_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimNFL} />
-    </AuthGuard>
-  }
-/>,
+    key="NFL Schedule"
+    path={routes.NFL_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimNFL} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="CHL Schedule"
-  path={routes.CHL_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimCHL} />
-    </AuthGuard>
-  }
-/>,
+    key="CHL Schedule"
+    path={routes.CHL_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimCHL} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="PHL Schedule"
-  path={routes.PHL_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimPHL} />
-    </AuthGuard>
-  }
-/>,
+    key="PHL Schedule"
+    path={routes.PHL_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimPHL} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="CBB Schedule"
-  path={routes.CBB_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimCBB} />
-    </AuthGuard>
-  }
-/>,
+    key="CBB Schedule"
+    path={routes.CBB_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimCBB} />
+      </AuthGuard>
+    }
+  />,
   <Route
-  key="NBA Schedule"
-  path={routes.NBA_SCHEDULE}
-  element={
-    <AuthGuard>
-      <SchedulePage league={SimNBA} />
-    </AuthGuard>
-  }
-/>,
-<Route
+    key="NBA Schedule"
+    path={routes.NBA_SCHEDULE}
+    element={
+      <AuthGuard>
+        <SchedulePage league={SimNBA} />
+      </AuthGuard>
+    }
+  />,
+  <Route
     key="CFB Recruiting"
     path={routes.CFB_RECRUITING}
     element={
@@ -247,5 +248,58 @@ export const AuthRoutes = [
       </AuthGuard>
     }
   />,
+  <Route
+    key="CFB STATS"
+    path={routes.CFB_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimCFB} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="CBB STATS"
+    path={routes.CBB_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimCBB} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="CHL STATS"
+    path={routes.CHL_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimCHL} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="NFL STATS"
+    path={routes.NFL_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimNFL} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="NBA STATS"
+    path={routes.NBA_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimNBA} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="PHL STATS"
+    path={routes.PHL_STATS}
+    element={
+      <AuthGuard>
+        <StatsPage league={SimPHL} />
+      </AuthGuard>
+    }
+  />,
 ];
-

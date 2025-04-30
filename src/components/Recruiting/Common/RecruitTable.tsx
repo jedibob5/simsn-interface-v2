@@ -90,6 +90,7 @@ interface RecruitTableProps {
   league: League;
   isMobile?: boolean;
   recruitOnBoardMap: Record<number, boolean>;
+  currentPage: number;
 }
 
 export const RecruitTable: FC<RecruitTableProps> = ({
@@ -102,6 +103,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
   league,
   isMobile = false,
   recruitOnBoardMap,
+  currentPage,
 }) => {
   const backgroundColor = colorOne;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
@@ -133,15 +135,17 @@ export const RecruitTable: FC<RecruitTableProps> = ({
                 className={`cursor-pointer font-semibold`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "#fcd53f";
-                  }}
+                }}
                 onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "";
-                  }}
+                }}
                 onClick={() => openModal(RecruitInfoType, item)}
-                >
-                  <Text variant="small">{attr.value}</Text>
+              >
+                <Text variant="small">{attr.value}</Text>
               </span>
-            ) : <span className="text-sm">{attr.value}</span>}
+            ) : (
+              <span className="text-sm">{attr.value}</span>
+            )}
           </TableCell>
         ))}
         <TableCell>
@@ -179,6 +183,8 @@ export const RecruitTable: FC<RecruitTableProps> = ({
       data={croots}
       rowRenderer={rowRenderer(league)}
       team={team}
+      enablePagination
+      currentPage={currentPage}
     />
   );
 };
