@@ -25,6 +25,7 @@ import {
 } from "../../../models/hockeyModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
+import { useFilteredHockeyRecruits } from "../../../_helper/recruitingHelper";
 
 export const useCHLRecruiting = () => {
   const hkStore = useSimHCKStore();
@@ -101,44 +102,15 @@ export const useCHLRecruiting = () => {
     return rMap;
   }, [recruits]);
 
-  const filteredRecruits = useMemo(() => {
-    // Single-pass filter
-    return recruits.filter((r) => {
-      if (
-        country.length === 0 &&
-        positions.length === 0 &&
-        archetype.length === 0 &&
-        regions.length === 0 &&
-        statuses.length === 0 &&
-        stars.length === 0
-      ) {
-        return true;
-      }
-      if (
-        country.length > 0 &&
-        (country.includes(r.Country) || country === "All")
-      ) {
-        return true;
-      }
-      if (positions.length > 0 && positions.includes(r.Position)) {
-        return true;
-      }
-      if (archetype.length > 0 && archetype.includes(r.Archetype)) {
-        return true;
-      }
-      if (regions.length > 0 && regions.includes(r.State)) {
-        return true;
-      }
-      if (stars.length > 0 && stars.includes(r.Stars)) {
-        return true;
-      }
-      // Finally, recruiting status
-      if (statuses.length > 0 && statuses.includes(r.RecruitingStatus)) {
-        return true;
-      }
-      return false;
-    });
-  }, [recruits, country, positions, stars, archetype, regions, statuses]);
+  const filteredRecruits = useFilteredHockeyRecruits({
+    recruits,
+    country,
+    positions,
+    archetype,
+    regions,
+    statuses,
+    stars,
+  });
 
   const pageSize = 100;
 
@@ -177,11 +149,6 @@ export const useCHLRecruiting = () => {
     goToPreviousPage,
     goToNextPage,
   } = usePagination(filteredRecruits.length, pageSize);
-
-  const pagedRecruits = useMemo(() => {
-    const start = currentPage * pageSize;
-    return filteredRecruits.slice(start, start + pageSize);
-  }, [filteredRecruits, currentPage, pageSize]);
 
   const SelectPositionOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
@@ -264,7 +231,7 @@ export const useCHLRecruiting = () => {
     goToNextPage,
     currentPage,
     totalPages,
-    pagedRecruits,
+    filteredRecruits,
     recruitOnBoardMap,
     teamRankList,
     SelectConferences,

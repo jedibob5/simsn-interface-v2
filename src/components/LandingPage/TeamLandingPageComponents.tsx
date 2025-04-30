@@ -153,7 +153,7 @@ export const GamesBar = ({
 
   return (
     <div className="flex pb-1">
-      <div className="flex w-[90vw] sm:w-full max-w-[1400px] justify-center">
+      <div className="flex w-[90vw] sm:w-full max-w-[1600px] justify-center">
         <div className="relative flex items-center w-[92vw] md:w-[72.6em] 3xl:w-full pb-1">
           <button
             onClick={scrollLeft}
@@ -222,7 +222,7 @@ export const TeamStandings = ({
     <SectionCards
       team={team}
       header={`${team.Conference} Standings`}
-      classes={`${textColorClass}, h-full w-[25rem]`}
+      classes={`${textColorClass}, h-full max-w-[30rem]`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -968,7 +968,7 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
         textColorClass={textColorClass}
         darkerBackgroundColor={darkerBackgroundColor}
       >
-        <ButtonGroup classes="p-4 mt-4">
+        <ButtonGroup classes="p-1 md:p-3 mt-4">
           {league === SimCFB && (
             <>
               <Button size="sm" onClick={() => goToTeamPage(league)}>

@@ -64,7 +64,7 @@ export const PHLFreeAgency = () => {
     SelectRegionOptions,
     country,
     regionOptions,
-    pagedFreeAgents,
+    filteredFA,
     freeAgentMap,
     waiverPlayerMap,
     teamFreeAgentOffers,
@@ -290,7 +290,8 @@ export const PHLFreeAgency = () => {
               }}
             >
               <FreeAgentTable
-                players={pagedFreeAgents}
+                players={filteredFA}
+                currentPage={currentPage}
                 offersByPlayer={offerMapByPlayerType}
                 teamOfferMap={teamOfferMap}
                 colorOne={teamColors.One}
