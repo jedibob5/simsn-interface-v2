@@ -36,7 +36,6 @@ import {
 } from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
-import { PaperAirplane } from "../../../_design/Icons";
 import { ToggleSwitch } from "../../../_design/Inputs";
 
 interface SchedulePageProps {

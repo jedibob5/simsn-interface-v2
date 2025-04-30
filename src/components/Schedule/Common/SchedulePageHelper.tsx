@@ -31,6 +31,7 @@ import {
   PHLConferenceNames,
   PHLDivisionNames,
 } from "../../../_constants/constants";
+import { useCurrentUser } from "../../../_hooks/useCurrentUser";
 
 export const getScheduleCFBData = (
   team: any,
@@ -51,6 +52,14 @@ export const getScheduleCFBData = (
     allCollegeTeams.map((team) => [team.ID, team.TeamAbbr])
   );
 
+  const teamNameMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.TeamName])
+  );
+
+  const teamMascotMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.Mascot])
+  );
+
   // Team Schedule
   const teamSchedule = allCollegeGames
     .filter(
@@ -60,6 +69,12 @@ export const getScheduleCFBData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     }));
 
   // Weekly Games
@@ -71,6 +86,12 @@ export const getScheduleCFBData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     });
     return acc;
   }, {});
@@ -101,6 +122,14 @@ export const getScheduleNFLData = (
     allNFLTeams.map((team) => [team.ID, team.TeamAbbr])
   );
 
+  const teamNameMap = new Map(
+    allNFLTeams.map((team) => [team.ID, team.TeamName])
+  );
+
+  const teamMascotMap = new Map(
+    allNFLTeams.map((team) => [team.ID, team.Mascot])
+  );
+
   // Team Schedule
   const teamSchedule = allNFLGames
     .filter(
@@ -110,6 +139,12 @@ export const getScheduleNFLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     }));
 
   // Weekly Games
@@ -121,6 +156,12 @@ export const getScheduleNFLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     });
     return acc;
   }, {});
@@ -152,6 +193,14 @@ export const getScheduleCHLData = (
     allCollegeTeams.map((team) => [team.ID, team.Abbreviation])
   );
 
+  const teamNameMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.TeamName])
+  );
+
+  const teamMascotMap = new Map(
+    allCollegeTeams.map((team) => [team.ID, team.Mascot])
+  );
+
   // Team Schedule
   const teamSchedule = allCollegeGames
     .filter(
@@ -161,6 +210,12 @@ export const getScheduleCHLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     }));
 
   // Weekly Games
@@ -172,6 +227,12 @@ export const getScheduleCHLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     });
     return acc;
   }, {});
@@ -202,6 +263,14 @@ export const getSchedulePHLData = (
     allPHLTeams.map((team) => [team.ID, team.Abbreviation])
   );
 
+  const teamNameMap = new Map(
+    allPHLTeams.map((team) => [team.ID, team.TeamName])
+  );
+
+  const teamMascotMap = new Map(
+    allPHLTeams.map((team) => [team.ID, team.Mascot])
+  );
+
   // Team Schedule
   const teamSchedule = allPHLGames
     .filter(
@@ -211,6 +280,12 @@ export const getSchedulePHLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     }));
 
   // Weekly Games
@@ -222,6 +297,12 @@ export const getSchedulePHLData = (
       ...game,
       HomeTeamAbbr: teamAbbrMap.get(game.HomeTeamID),
       AwayTeamAbbr: teamAbbrMap.get(game.AwayTeamID),
+      HomeTeamName: teamNameMap.get(game.HomeTeamID),
+      HomeTeamMascot: teamMascotMap.get(game.HomeTeamID),
+      AwayTeamName: teamNameMap.get(game.AwayTeamID),
+      AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
+      HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
     });
     return acc;
   }, {});
@@ -253,6 +334,11 @@ export const processSchedule = (
     const opponentLogo = getLogo(
       league,
       isHomeGame ? game.AwayTeamID : game.HomeTeamID,
+      false
+    );
+    const userLogo = getLogo(
+      league,
+      isHomeGame ? game.HomeTeamID : game.AwayTeamID,
       false
     );
 
@@ -307,6 +393,7 @@ export const processSchedule = (
       ...game,
       opponentLabel,
       opponentLogo,
+      userLogo,
       userWin,
       userLoss,
       gameScore,

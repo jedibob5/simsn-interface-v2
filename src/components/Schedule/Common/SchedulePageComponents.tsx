@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getLogo } from "../../../_utility/getLogo";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
@@ -9,6 +9,8 @@ import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
 import { processLeagueStandings } from "./SchedulePageHelper";
 import { ClickableTeamLabel } from "../../Common/Labels";
+import { useModal } from "../../../_hooks/useModal";
+import { SchedulePageGameModal } from "./GameModal";
 
 interface TeamScheduleProps {
   team: any;
@@ -43,7 +45,12 @@ export const TeamSchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
+
+  const gameModal = useModal();
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+
   return (
+    <>
     <SectionCards
       header={`${Abbr} Schedule`}
       team={team}
@@ -144,15 +151,27 @@ export const TeamSchedule = ({
                       : ""
                   }`}
                   disabled={game.gameScore === "TBC"}
+                  onClick={() => {
+                    setSelectedGame(game);
+                    gameModal.handleOpenModal();
+                  }}
                 >
                   <InformationCircle />
                 </Button>
+                <SchedulePageGameModal
+                  isOpen={gameModal.isModalOpen}
+                  onClose={gameModal.handleCloseModal}
+                  league={league}
+                  game={selectedGame}
+                  title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+                />
               </div>
             </div>
           ))}
         </div>
       )}
     </SectionCards>
+    </>
   );
 };
 
@@ -172,7 +191,9 @@ export const WeeklySchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
-  console.log(processedSchedule);
+  const gameModal = useModal();
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+
   return (
     <SectionCards
       header={`Week ${week}`}
@@ -292,9 +313,20 @@ export const WeeklySchedule = ({
                       : ""
                   }`}
                   disabled={game.gameScore === "TBC"}
+                  onClick={() => {
+                    setSelectedGame(game);
+                    gameModal.handleOpenModal();
+                  }}
                 >
                   <InformationCircle />
                 </Button>
+                <SchedulePageGameModal
+                  isOpen={gameModal.isModalOpen}
+                  onClose={gameModal.handleCloseModal}
+                  league={league}
+                  game={selectedGame}
+                  title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+                />
               </div>
             </div>
           ))}
