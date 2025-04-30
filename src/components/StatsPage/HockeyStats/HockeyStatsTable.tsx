@@ -183,9 +183,65 @@ export const HockeyStatsTable: FC<HockeyStatsTableProps> = ({
     backgroundColor: string
   ) => {
     const player = playerMap[item.PlayerID] as ProfessionalPlayer;
+    if (!player) return <></>;
     const team = teamMap[item.TeamID] as ProfessionalTeam;
     const logo = getLogo(league, team.ID, false);
-    return <></>;
+    const values = GetHockeyPlayerStatsValues(item, statsView, isGoalie);
+
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        <TableCell>
+          <div className="flex flex-row items-center">
+            <Logo variant="small" url={logo} containerClass="mr-2" />
+            <Text variant="xs">{team.TeamName}</Text>
+          </div>
+        </TableCell>
+        <TableCell
+          classes={`min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+            text-wrap sm:max-w-full`}
+        >
+          <span
+            className={`cursor-pointer font-semibold`}
+            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "#fcd53f";
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "";
+            }}
+            onClick={() => openModal(InfoType, player)}
+          >
+            <Text variant="small">
+              {player.FirstName} {player.LastName}
+            </Text>
+          </span>
+        </TableCell>
+        <TableCell>
+          <Text variant="small">{player.Position}</Text>
+        </TableCell>
+        <TableCell>
+          <Text variant="small">{player.Archetype}</Text>
+        </TableCell>
+        <TableCell>
+          <Text variant="small">{getYear(player.Year, player.IsRedshirt)}</Text>
+        </TableCell>
+        <TableCell>
+          <Text variant="small">
+            {getHockeyLetterGrade(player.Overall, player.Year)}
+          </Text>
+        </TableCell>
+        {values.map((stat: any, idx) => {
+          return (
+            <TableCell key={stat.label + idx}>
+              <Text variant="small">{stat.value}</Text>
+            </TableCell>
+          );
+        })}
+      </div>
+    );
   };
 
   const PHLTeamRowRenderer = (
@@ -193,7 +249,31 @@ export const HockeyStatsTable: FC<HockeyStatsTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    return <></>;
+    const team = teamMap[item.TeamID] as ProfessionalTeam;
+    if (!team) return <></>;
+    const logo = getLogo(league, team.ID, false);
+    const values = GetHockeyTeamStatsValues(item, statsView);
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        <TableCell>
+          <div className="flex flex-row items-center">
+            <Logo variant="small" url={logo} containerClass="mr-2" />
+            <Text variant="xs">{team.TeamName}</Text>
+          </div>
+        </TableCell>
+        {values.map((stat: any, idx) => {
+          return (
+            <TableCell key={stat.label + idx}>
+              <Text variant="small">{stat.value}</Text>
+            </TableCell>
+          );
+        })}
+      </div>
+    );
   };
 
   const rowRenderer = (
