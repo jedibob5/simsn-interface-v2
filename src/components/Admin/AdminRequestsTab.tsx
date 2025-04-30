@@ -1,4 +1,4 @@
-import { League, SimCHL, SimPHL } from "../../_constants/constants";
+import { League, SimCBB, SimCHL, SimPHL } from "../../_constants/constants";
 import { useTeamColors } from "../../_hooks/useTeamColors";
 import { getLogo } from "../../_utility/getLogo";
 import { useAdminPage } from "../../context/AdminPageContext";
@@ -7,6 +7,7 @@ import { useLeagueStore } from "../../context/LeagueContext";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { updateUserByUsername } from "../../firebase/firestoreHelper";
+import { Request, Team } from "../../models/basketballModels";
 import {
   CollegeTeamRequest as CHLRequest,
   CollegeTeam as CHLTeam,
@@ -148,6 +149,57 @@ export const PHLRequestCard: React.FC<PHLRequestCardProps> = ({
       teamLabel={`${phlTeam.TeamName} ${phlTeam.Mascot}`}
       requestLogo={requestLogo}
       role={request.Role}
+      oneItem={oneItem}
+      accept={accept}
+      reject={reject}
+      backgroundColor={backgroundColor}
+      borderColor={borderColor}
+      username={request.Username}
+    />
+  );
+};
+
+interface CBBRequestCardProps {
+  request: Request;
+  cbbTeam: Team;
+  oneItem: boolean;
+}
+
+export const CBBRequestCard: React.FC<CBBRequestCardProps> = ({
+  request,
+  cbbTeam,
+  oneItem,
+}) => {
+  const authStore = useAuthStore();
+  const { currentUser } = authStore;
+  const requestLogo = getLogo(
+    SimCBB as League,
+    request.TeamID,
+    currentUser?.isRetro
+  );
+  const teamColors = useTeamColors(
+    cbbTeam.ColorOne,
+    cbbTeam.ColorTwo,
+    cbbTeam.ColorThree
+  );
+  const backgroundColor = teamColors.One;
+  const borderColor = teamColors.Two;
+  const { acceptCBBRequest, rejectCBBRequest } = useAdminPage();
+  const accept = async () => {
+    await acceptCBBRequest(request);
+    const payload = {
+      CHLTeamID: request.TeamID,
+    };
+    await updateUserByUsername(request.Username, payload);
+  };
+  const reject = async () => {
+    await rejectCBBRequest(request);
+  };
+
+  return (
+    <AdminRequestCard
+      teamLabel={`${cbbTeam.Team} ${cbbTeam.Nickname}`}
+      requestLogo={requestLogo}
       oneItem={oneItem}
       accept={accept}
       reject={reject}

@@ -41,10 +41,21 @@ interface AdminPageContextType {
   rejectCHLRequest: (request: CollegeTeamRequest) => Promise<void>;
   acceptPHLRequest: (request: ProTeamRequest) => Promise<void>;
   rejectPHLRequest: (request: ProTeamRequest) => Promise<void>;
+  acceptCBBRequest: (request: CBBRequest) => Promise<void>;
+  rejectCBBRequest: (request: CBBRequest) => Promise<void>;
+  acceptNBARequest: (request: NBARequest) => Promise<void>;
+  rejectNBARequest: (request: NBARequest) => Promise<void>;
+  // acceptCFBRequest: (request: CFBRequest) => Promise<void>;
+  // rejectCFBRequest: (request: CFBRequest) => Promise<void>;
+  // acceptNFLRequest: (request: NFLRequest) => Promise<void>;
+  // rejectNFLRequest: (request: NFLRequest) => Promise<void>;
   fbaCFBRequests: CFBRequest[];
   fbaNFLRequests: NFLRequest[];
+  bbaCBBRequests: CBBRequest[];
+  bbaNBARequests: NBARequest[];
   selectedTab: string;
   setSelectedTab: Dispatch<SetStateAction<string>>;
+  RefreshRequests: () => Promise<void>;
 }
 
 const AdminPageContext = createContext<AdminPageContextType | undefined>(
@@ -109,7 +120,12 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
     setFBACFBRequests(model.CollegeRequests);
     setFBANFLRequests(model.ProRequests);
   };
-  const getBasketballRequests = async () => {};
+  const getBasketballRequests = async () => {
+    const res = await RequestService.GetCBBTeamRequests();
+    setBBACBBRequests(res);
+    const nbaRes = await RequestService.GetNBATeamRequests();
+    setBBANBARequests(nbaRes);
+  };
 
   const acceptCHLRequest = useCallback(
     async (request: CollegeTeamRequest) => {
@@ -165,19 +181,94 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
     [hckPHLRequests]
   );
 
+  const acceptCBBRequest = useCallback(
+    async (request: CBBRequest) => {
+      const res = await RequestService.ApproveCBBRequest(request);
+
+      setBBACBBRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+      const payload = {
+        username: request.Username,
+        cbb_id: request.TeamID,
+      };
+      addUserToCHLTeam(request.TeamID, request.Username);
+      await updateUserByUsername(request.Username, payload);
+    },
+    [hckCHLRequests]
+  );
+
+  const rejectCBBRequest = useCallback(
+    async (request: CBBRequest) => {
+      const res = await RequestService.RejectCBBTeamRequest(request);
+      setBBACBBRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+    },
+    [hckCHLRequests]
+  );
+
+  const acceptNBARequest = useCallback(
+    async (request: NBARequest) => {
+      const res = await RequestService.ApproveNBARequest(request);
+      setHCKPHLRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+      let role = "Owner";
+      if (request.IsManager) {
+        role = "GM";
+      } else if (request.IsCoach) {
+        role = "Coach";
+      } else if (request.IsAssistant) {
+        role = "Assistant";
+      }
+      const payload = {
+        username: request.Username,
+        NBATeamID: request.NBATeamID,
+        NBARole: role,
+      };
+      // add(request.TeamID, request.Username, request.Role);
+      await updateUserByUsername(request.Username, payload);
+    },
+    [hckPHLRequests]
+  );
+
+  const rejectNBARequest = useCallback(
+    async (request: NBARequest) => {
+      const res = await RequestService.RejectNBARequest(request);
+      setHCKPHLRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+    },
+    [hckPHLRequests]
+  );
+
+  const RefreshRequests = useCallback(async () => {
+    await getFootballRequests();
+    await getBasketballRequests();
+    await getHockeyRequests();
+  }, []);
+
   return (
     <AdminPageContext.Provider
       value={{
         hckCHLRequests,
         hckPHLRequests,
+        bbaCBBRequests,
+        bbaNBARequests,
         acceptCHLRequest,
         rejectCHLRequest,
         acceptPHLRequest,
         rejectPHLRequest,
+        acceptCBBRequest,
+        rejectCBBRequest,
+        acceptNBARequest,
+        rejectNBARequest,
         fbaCFBRequests,
         fbaNFLRequests,
         selectedTab,
         setSelectedTab,
+        RefreshRequests,
       }}
     >
       {children}

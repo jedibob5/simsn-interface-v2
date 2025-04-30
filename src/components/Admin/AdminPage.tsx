@@ -1,5 +1,5 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { ButtonGroup, PillButton } from "../../_design/Buttons";
+import { Button, ButtonGroup, PillButton } from "../../_design/Buttons";
 import { PageContainer } from "../../_design/Container";
 import { Text } from "../../_design/Typography";
 import { useAuthStore } from "../../context/AuthContext";
@@ -21,6 +21,7 @@ import { useLeagueStore } from "../../context/LeagueContext";
 import { useAdminPage } from "../../context/AdminPageContext";
 import { AdminTeamsTab } from "./AdminTeamsTab";
 import { AdminRequestsTab } from "./AdminRequestsTab";
+import { Refresh } from "../../_design/Icons";
 
 interface UnAuthPageProps {
   navigate: NavigateFunction;
@@ -45,6 +46,7 @@ const UnAuthAdminPage: React.FC<UnAuthPageProps> = ({ navigate }) => {
 export const AdminPage = () => {
   const authStore = useAuthStore();
   const { currentUser } = authStore;
+  const { RefreshRequests } = useAdminPage();
   const navigate = useNavigate();
   if (currentUser && currentUser.roleID && currentUser.roleID !== "Admin") {
     return <UnAuthAdminPage navigate={navigate} />;
@@ -132,6 +134,14 @@ export const AdminPage = () => {
                   Draft
                 </Text>
                 <ToggleSwitch checked={ts!.IsDraftTime} onChange={() => {}} />
+              </div>
+              <div className="flex flex-col mx-1">
+                <Text variant="body-small" className="text-start">
+                  Refresh
+                </Text>
+                <Button>
+                  <Refresh />
+                </Button>
               </div>
             </div>
           </Border>
