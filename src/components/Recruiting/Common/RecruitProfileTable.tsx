@@ -33,6 +33,10 @@ import { Input } from "../../../_design/Inputs";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 import { SadFace, Scholarship, TrashCan } from "../../../_design/Icons";
+import {
+  annotateCountry,
+  annotateRegion,
+} from "../../../_helper/StateAbbreviationHelper";
 
 const getRecruitProfileColumns = (
   league: League,
@@ -214,14 +218,16 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           <span className={`text-sm`}>{croot.ID}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm cursor-pointer font-semibold`}
-                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-                  (e.target as HTMLElement).style.color = "#fcd53f";
-                  }}
-                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-                  (e.target as HTMLElement).style.color = "";
-                  }}
-                onClick={() => openModal(RecruitInfoType, croot)}>
+          <span
+            className={`text-sm cursor-pointer font-semibold`}
+            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "#fcd53f";
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+              (e.target as HTMLElement).style.color = "";
+            }}
+            onClick={() => openModal(RecruitInfoType, croot)}
+          >
             {croot.FirstName} {croot.LastName}
           </span>
         </TableCell>
@@ -235,10 +241,10 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           <span className={`text-sm`}>{croot.Stars}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.Country}</span>
+          <span className={`text-sm`}>{annotateCountry(croot.Country)}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.State}</span>
+          <span className={`text-sm`}>{annotateRegion(croot.State)}</span>
         </TableCell>
         <TableCell>
           <span className={`text-sm`}>{croot.OverallGrade}</span>

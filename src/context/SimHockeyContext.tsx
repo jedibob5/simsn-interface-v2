@@ -66,6 +66,7 @@ import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
 import { StatsService } from "../_services/statsService";
+import { GenerateNumberFromRange } from "../_helper/utilHelper";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -697,7 +698,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     };
     const profile = await RecruitService.HCKCreateRecruitProfile(apiDTO);
     if (profile) {
-      setRecruitProfiles((profiles) => [...profiles, profile]);
+      const newProfile = new RecruitPlayerProfile({
+        ...profile,
+        ID: GenerateNumberFromRange(500000, 1000000),
+      });
+      setRecruitProfiles((profiles) => [...profiles, newProfile]);
     }
   };
 
@@ -776,7 +781,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setRecruitProfiles((prevProfiles) => {
       // Update the profiles and get the new profiles array.
       const updatedProfiles = prevProfiles.map((profile) =>
-        profile.ID === id
+        profile.ID === id && profile.ID > 0
           ? new RecruitPlayerProfile({ ...profile, [name]: points })
           : profile
       );
@@ -912,9 +917,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       const res = await StatsService.HCKCollegeStatsSearch(dto);
       if (dto.ViewType === SEASON_VIEW) {
         setChlPlayerSeasonStats((prev) => {
-          return {...prev,
-            [dto.SeasonID]: res.CHLPlayerSeasonStats,
-          };
+          return { ...prev, [dto.SeasonID]: res.CHLPlayerSeasonStats };
         });
         setChlTeamSeasonStats((prev) => {
           return {
@@ -927,7 +930,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
           return {
             ...prev,
             [dto.WeekID]: res.CHLPlayerGameStats,
-          }
+          };
         });
         setChlTeamGameStats((prev) => {
           return {
@@ -942,26 +945,26 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         setPhlPlayerSeasonStats((prev) => {
           return {
             ...prev,
-            [dto.SeasonID]: res.PHLPlayerSeasonStats
+            [dto.SeasonID]: res.PHLPlayerSeasonStats,
           };
         });
         setPhlTeamSeasonStats((prev) => {
           return {
             ...prev,
-            [dto.SeasonID]: res.PHLTeamSeasonStats
+            [dto.SeasonID]: res.PHLTeamSeasonStats,
           };
         });
       } else {
         setPhlPlayerGameStats((prev) => {
           return {
             ...prev,
-            [dto.WeekID]: res.PHLPlayerGameStats
+            [dto.WeekID]: res.PHLPlayerGameStats,
           };
         });
         setPhlTeamGameStats((prev) => {
           return {
             ...prev,
-            [dto.WeekID]:res.PHLTeamGameStats
+            [dto.WeekID]: res.PHLTeamGameStats,
           };
         });
       }
