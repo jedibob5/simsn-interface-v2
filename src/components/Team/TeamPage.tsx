@@ -289,6 +289,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proContractMap: phlContractMap,
     proExtensionMap: phlExtensionMap,
     cutPHLPlayer,
+    affiliatePlayer,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -381,6 +382,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           modalAction={modalAction}
           player={modalPlayer}
           cutPlayer={cutPHLPlayer}
+          affiliatePlayer={affiliatePlayer}
         />
       )}
       <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">

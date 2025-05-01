@@ -127,6 +127,7 @@ interface SimHCKContextProps {
   addUserToPHLTeam: (teamID: number, user: string, role: string) => void;
   cutCHLPlayer: (playerID: number, teamID: number) => Promise<void>;
   cutPHLPlayer: (playerID: number, teamID: number) => Promise<void>;
+  affiliatePlayer: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
@@ -212,6 +213,7 @@ const defaultContext: SimHCKContextProps = {
   addUserToPHLTeam: () => {},
   cutCHLPlayer: async () => {},
   cutPHLPlayer: async () => {},
+  affiliatePlayer: async () => {},
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCHLRosterMap: () => {},
@@ -660,6 +662,31 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     [proRosterMap]
   );
 
+  const affiliatePlayer = useCallback(
+    async (playerID: number, teamID: number) => {
+      const contract = proContractMap!![playerID];
+      if (contract.NoMovementClause) {
+        enqueueSnackbar(
+          "Cannot move player with No Movement Clause to affiliate team!",
+          {
+            variant: "warning",
+            autoHideDuration: 3000,
+          }
+        );
+        return;
+      }
+      const res = await PlayerService.SendPHLPlayerToAffiliate(playerID);
+      const rosterMap = { ...proRosterMap };
+      const playerIdx = rosterMap[teamID].findIndex((p) => p.ID === playerID);
+      if (playerIdx > -1) {
+        rosterMap[teamID][playerIdx].IsAffiliatePlayer =
+          !rosterMap[teamID][playerIdx].IsAffiliatePlayer;
+      }
+      setProRosterMap(rosterMap);
+    },
+    [proRosterMap]
+  );
+
   const updateCHLRosterMap = (newMap: Record<number, CollegePlayer[]>) => {
     setCHLRosterMap(newMap);
   };
@@ -1040,6 +1067,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         redshirtPlayer,
         promisePlayer,
         cutPHLPlayer,
+        affiliatePlayer,
         updateCHLRosterMap,
         updateProRosterMap,
         saveCHLGameplan,

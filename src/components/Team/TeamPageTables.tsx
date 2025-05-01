@@ -20,6 +20,7 @@ import {
   Overview,
   ButtonGreen,
   TextGreen,
+  Affiliate,
 } from "../../_constants/constants";
 import {
   getCHLAttributes,
@@ -467,8 +468,8 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                 label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}`,
               },
               {
-                value: "practiceSquad",
-                label: `Demote to Practice Squad - ${item.FirstName} ${item.LastName}`,
+                value: "affiliate",
+                label: `Send to Affiliate Team - ${item.FirstName} ${item.LastName}`,
               },
               {
                 value: "tradeBlock",
@@ -478,6 +479,8 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
                 openModal(Cut, item);
+              } else if (selectedOption?.value === "affiliate") {
+                openModal(Affiliate, item);
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
