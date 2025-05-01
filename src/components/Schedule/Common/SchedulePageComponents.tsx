@@ -16,6 +16,7 @@ interface TeamScheduleProps {
   team: any;
   Abbr?: string;
   category?: string;
+  playerMap?: any;
   week: any;
   currentUser: any;
   league: League;
@@ -34,6 +35,7 @@ export const TeamSchedule = ({
   Abbr,
   category,
   currentUser,
+  playerMap,
   week,
   league,
   ts,
@@ -101,6 +103,7 @@ export const TeamSchedule = ({
               league={league}
               game={selectedGame}
               title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+              playerMap={playerMap}
             />
             {processedSchedule.map((game, index) => (
               <div
@@ -179,6 +182,7 @@ export const WeeklySchedule = ({
   Abbr,
   category,
   currentUser,
+  playerMap,
   week,
   league,
   ts,
@@ -192,7 +196,6 @@ export const WeeklySchedule = ({
 }: TeamScheduleProps) => {
   const gameModal = useModal();
   const [selectedGame, setSelectedGame] = useState<any>(null);
-
   return (
     <SectionCards
       header={`Week ${week}`}
@@ -244,6 +247,14 @@ export const WeeklySchedule = ({
               </Text>
             </div>
           </div>
+          <SchedulePageGameModal
+              isOpen={gameModal.isModalOpen}
+              onClose={gameModal.handleCloseModal}
+              league={league}
+              game={selectedGame}
+              title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+              playerMap={playerMap}
+            />
           {processedSchedule.map((game, index) => (
             <div
               key={index}
@@ -319,13 +330,6 @@ export const WeeklySchedule = ({
                 >
                   <InformationCircle />
                 </Button>
-                <SchedulePageGameModal
-                  isOpen={gameModal.isModalOpen}
-                  onClose={gameModal.handleCloseModal}
-                  league={league}
-                  game={selectedGame}
-                  title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
-                />
               </div>
             </div>
           ))}

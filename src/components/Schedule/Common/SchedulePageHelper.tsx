@@ -359,12 +359,15 @@ export const processSchedule = (
       userWin = userTeamScore > opponentScore;
       userLoss = userTeamScore < opponentScore;
 
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0 && game.HomeTeamShootoutScore === 0 && game.AwayTeamShootoutScore === 0) {
         gameScore = "TBC";
         headerGameScore = "TBC";
+      } else if (game.HomeTeamShootoutScore > 0 || game.AwayTeamShootoutScore > 0) {
+        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
+        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
       } else {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
-        headerGameScore = `${userTeamScore} - ${opponentScore}`;
+        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
       }
     }
 
@@ -428,11 +431,13 @@ export const processWeeklyGames = (
 
     let gameScore = "TBC";
     let headerGameScore = "TBC";
-
     if (revealResult) {
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0) {
+      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0 && game.HomeTeamShootoutScore === 0 && game.AwayTeamShootoutScore === 0) {
         gameScore = "TBC";
         headerGameScore = "TBC";
+      } else if (game.HomeTeamShootoutScore > 0 || game.AwayTeamShootoutScore > 0) {
+        gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
+        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
       } else {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
         headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
