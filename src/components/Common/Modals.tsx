@@ -1425,7 +1425,9 @@ export const NBAPlayerInfoModalBody: FC<NBAPlayerInfoModalBodyProps> = ({
   const { nbaTeamMap, proContractMap, cbbTeamMap } = useSimBBAStore();
   const team = nbaTeamMap ? nbaTeamMap[player.TeamID] : null;
   const teamLogo = getLogo(SimNBA, player.TeamID, currentUser?.isRetro);
-  const cbbTeam = cbbTeamMap?.[player.CollegeID];
+  const cbbTeam = player.IsIntGenerated
+    ? nbaTeamMap!![player.CollegeID]
+    : cbbTeamMap?.[player.CollegeID];
 
   const contract = proContractMap!![player.ID];
   player.Contract = contract;
