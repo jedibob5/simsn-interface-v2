@@ -706,7 +706,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   };
 
   const savePHLGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveCHLGameplan(dto);
+    const res = await GameplanService.SavePHLGameplan(dto);
     setPHLLineups(dto.PHLLineups);
     setPHLShootoutLineup(dto.CHLShootoutLineup);
     enqueueSnackbar("Lineups saved!", {

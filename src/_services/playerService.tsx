@@ -1,4 +1,4 @@
-import { hckUrl } from "../_constants/urls";
+import { bbaUrl, hckUrl } from "../_constants/urls";
 import { fbaUrl } from "../_constants/urls";
 import { GetActionCall, PostCall } from "../_helper/fetchHelper";
 
@@ -42,5 +42,36 @@ export const PlayerService = {
 
   CutNFLPlayer: async (playerID: number): Promise<void> => {
     await GetActionCall(`${fbaUrl}nflplayers/cut/player/${playerID}/`);
-  }
+  },
+
+  CutCBBPlayer: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}cbb/players/cut/${playerID}`);
+  },
+
+  RedshirtCBBPlayer: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}cbb/players/redshirt/${playerID}`);
+  },
+
+  PromiseCBBPlayer: async (dto: any): Promise<void> => {
+    await PostCall(`${bbaUrl}portal/promise/create/`, dto);
+  },
+
+  CutNBAPlayer: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}nba/players/cut/${playerID}`);
+  },
+
+  SendNBAPlayerToGLeague: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}nba/players/place/gleague/${playerID}`);
+  },
+
+  AssignNBAPlayerAsTwoWay: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}nba/players/place/twoway/${playerID}`);
+  },
+
+  SendNBAPlayerToTradeBlock: async (playerID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}trades/nba/place/block/${playerID}`);
+  },
+  ActivateNBAOption: async (contractID: number): Promise<void> => {
+    await GetActionCall(`${bbaUrl}nba/players/activate/option/${contractID}`);
+  },
 };

@@ -27,6 +27,8 @@ import {
   getPHLAttributes,
   getCFBAttributes,
   getNFLAttributes,
+  getCBBAttributes,
+  getNBAAttributes,
 } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { useModal } from "../../_hooks/useModal";
@@ -45,6 +47,11 @@ import {
   User,
 } from "../../_design/Icons";
 import { SimNFL } from "../../_constants/constants";
+import {
+  CollegePlayer as CBBPlayer,
+  NBAContract,
+  NBAPlayer,
+} from "../../models/basketballModels";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -1038,6 +1045,504 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
       backgroundColor={backgroundColor}
       team={team}
       league={SimNFL}
+    />
+  );
+};
+
+interface CBBRosterTableProps {
+  roster: CBBPlayer[];
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
+  team?: any;
+  category?: string;
+  openModal: (action: ModalAction, player: CBBPlayer) => void;
+}
+
+export const CBBRosterTable: FC<CBBRosterTableProps> = ({
+  roster,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  team,
+  category,
+  openModal,
+}) => {
+  const textColorClass = getTextColorBasedOnBg(backgroundColor);
+  const { isDesktop } = useResponsive();
+
+  let rosterColumns = useMemo(() => {
+    let columns = [
+      { header: "Name", accessor: "LastName" },
+      { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Yr" : "Year", accessor: "Experience" },
+      { header: "⭐", accessor: "Stars" },
+      { header: !isDesktop ? "Ovr" : "Overall", accessor: "Overall" },
+    ];
+
+    if (isDesktop && category === Overview) {
+      columns = columns.concat([
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: "Personality", accessor: "Personality" },
+        { header: "Work Ethic", accessor: "WorkEthic" },
+        { header: "Academics", accessor: "AcademicBias" },
+        { header: "Redshirt", accessor: "isRedshirting" },
+        { header: "Mood", accessor: "TransferStatus" },
+      ]);
+    }
+
+    if (isDesktop && category === Attributes) {
+      columns = columns.concat([
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
+        { header: "Fin", accessor: "Finishing" },
+        { header: "SH2", accessor: "Shooting2" },
+        { header: "SH3", accessor: "Shooting3" },
+        { header: "FT", accessor: "Freethrow" },
+        { header: "BW", accessor: "Ballwork" },
+        { header: "RB", accessor: "Rebounding" },
+        { header: "ID", accessor: "InteriorDefense" },
+        { header: "PD", accessor: "PerimeterDefense" },
+        { header: "IR", accessor: "InjuryRating" },
+        { header: "PTE", accessor: "PlaytimeExpectations" },
+        { header: "Min", accessor: "Minutes" },
+      ]);
+    }
+    columns.push({ header: "Actions", accessor: "actions" });
+    return columns;
+  }, [isDesktop, category]);
+
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
+
+  const rowRenderer = (
+    item: CBBPlayer,
+    index: number,
+    backgroundColor: string
+  ) => {
+    const attributes = getCBBAttributes(item, !isDesktop, category!);
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-start`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          category === Overview && idx === 8
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+          >
+            {attr.label === "Redshirt" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "TransferStatus" ? (
+              <>
+                {attr.value === 0 ? (
+                  <ShieldCheck
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <ShieldCheck textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
+            )}
+          </div>
+        ))}
+        <div className="table-cell align-middle w-[4em] min-[430px]:w-[5em] flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+          <SelectDropdown
+            placeholder={!isDesktop ? "Action" : "Select an action"}
+            options={[
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
+              ...(item.IsRedshirting || item.IsRedshirt
+                ? []
+                : [
+                    {
+                      value: "redshirt",
+                      label: `Redshirt - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
+              ...(item.TransferStatus === 0
+                ? []
+                : [
+                    {
+                      value: "promise",
+                      label: `Send Promise - ${item.FirstName} ${item.LastName}`,
+                    },
+                  ]),
+            ]}
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "cut") {
+                openModal(Cut, item);
+              }
+              if (selectedOption?.value === "redshirt") {
+                openModal(Redshirt, item);
+              }
+              if (selectedOption?.value === "promise") {
+                openModal(Promise, item);
+              } else {
+                console.log(`Action selected: ${selectedOption?.value}`);
+              }
+            }}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "16rem",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Table
+      columns={rosterColumns}
+      data={sortedRoster}
+      rowRenderer={rowRenderer}
+      backgroundColor={backgroundColor}
+      team={team}
+    />
+  );
+};
+
+interface NBARosterTableProps {
+  roster: NBAPlayer[];
+  contracts: Record<number, NBAContract>;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
+  team?: any;
+  ts: any;
+  category?: string;
+  openModal: (action: ModalAction, player: NBAPlayer) => void;
+}
+
+export const NBARosterTable: FC<NBARosterTableProps> = ({
+  roster,
+  backgroundColor,
+  contracts,
+  headerColor,
+  borderColor,
+  team,
+  ts,
+  category,
+  openModal,
+}) => {
+  const textColorClass = getTextColorBasedOnBg(backgroundColor);
+  const { isDesktop } = useResponsive();
+
+  let rosterColumns = useMemo(() => {
+    let columns = [
+      { header: "Name", accessor: "LastName" },
+      { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Age" : "Age", accessor: "Age" },
+      { header: !isDesktop ? "Yr" : "Year", accessor: "Year" },
+      { header: !isDesktop ? "Ovr" : "Overall", accessor: "Overall" },
+    ];
+
+    if (isDesktop && category === Overview) {
+      columns = columns.concat([
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
+        {
+          header: `${ts.Season} ${!isDesktop ? "B" : "Bonus"}`,
+          accessor: "Year1Total",
+        },
+        {
+          header: !isDesktop ? "Yrs Left" : "Years Left",
+          accessor: "ContractLength",
+        },
+        { header: "Health", accessor: "isInjured" },
+        { header: "Injury", accessor: "InjuryType" },
+        { header: "Personality", accessor: "Personality" },
+        { header: "Work Ethic", accessor: "WorkEthic" },
+        { header: "Mood", accessor: "TransferStatus" },
+      ]);
+    }
+
+    if (isDesktop && category === Attributes) {
+      columns = columns.concat([
+        {
+          header: !isDesktop ? "Pot" : "Potential",
+          accessor: "PotentialGrade",
+        },
+        { header: "Fin", accessor: "Finishing" },
+        { header: "SH2", accessor: "Shooting2" },
+        { header: "SH3", accessor: "Shooting3" },
+        { header: "FT", accessor: "Freethrow" },
+        { header: "BW", accessor: "Ballwork" },
+        { header: "RB", accessor: "Rebounding" },
+        { header: "ID", accessor: "InteriorDefense" },
+        { header: "PD", accessor: "PerimeterDefense" },
+        { header: "IR", accessor: "InjuryRating" },
+        { header: "PTE", accessor: "PlaytimeExpectations" },
+        { header: "Min", accessor: "Minutes" },
+      ]);
+    }
+    columns.push({ header: "Actions", accessor: "actions" });
+    return columns;
+  }, [isDesktop, category]);
+
+  const sortedRoster = useMemo(() => {
+    return [...roster].sort((a, b) => b.Overall - a.Overall);
+  }, [roster]);
+
+  const rowRenderer = (
+    item: NBAPlayer,
+    index: number,
+    backgroundColor: string
+  ) => {
+    console.log({ contracts });
+    const contract = contracts[item.ID];
+    if (!contract) return <></>;
+    item.Contract = contract!!;
+    const attributes = getNBAAttributes(item, !isDesktop, category!);
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-start`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          category === Overview && idx === 8
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+          >
+            {attr.label === "Redshirt" ? (
+              <>
+                {attr.value === true ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Health" ? (
+              <>
+                {attr.value === true ? (
+                  <User textColorClass="w-full text-center text-red-500" />
+                ) : (
+                  <User textColorClass={`w-full text-center ${TextGreen}`} />
+                )}
+              </>
+            ) : attr.label === "TransferStatus" ? (
+              <>
+                {attr.value === 0 ? (
+                  <ShieldCheck
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <ShieldCheck textColorClass="w-full text-center text-red-500" />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
+            )}
+          </div>
+        ))}
+        <div className="table-cell align-middle w-[4em] min-[430px]:w-[5em] flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+          <SelectDropdown
+            placeholder={!isDesktop ? "Action" : "Select an action"}
+            options={[
+              {
+                value: "cut",
+                label: `Cut - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "extension",
+                label: `Extensions - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "gLeague",
+                label: `GLeague - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "twoWay",
+                label: `Two-Way - ${item.FirstName} ${item.LastName}`,
+              },
+              {
+                value: "tradeBlock",
+                label: `Send to Trade Block - ${item.FirstName} ${item.LastName}`,
+              },
+            ]}
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "cut") {
+                openModal(Cut, item);
+              }
+              if (selectedOption?.value === "redshirt") {
+                openModal(Redshirt, item);
+              }
+              if (selectedOption?.value === "promise") {
+                openModal(Promise, item);
+              } else {
+                console.log(`Action selected: ${selectedOption?.value}`);
+              }
+            }}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "16rem",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Table
+      columns={rosterColumns}
+      data={sortedRoster}
+      rowRenderer={rowRenderer}
+      backgroundColor={backgroundColor}
+      team={team}
     />
   );
 };

@@ -5,6 +5,9 @@ import {
   SimPHL,
   SimCFB,
   SimNFL,
+  SimCBB,
+  USA,
+  SimNBA,
 } from "../../_constants/constants";
 import {
   CollegePlayer as CHLPlayer,
@@ -21,17 +24,29 @@ import { useAuthStore } from "../../context/AuthContext";
 import { Logo } from "../../_design/Logo";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { useSimFBAStore } from "../../context/SimFBAContext";
-import { getCFBOverall, getHockeyLetterGrade } from "../../_utility/getLetterGrade";
+import {
+  getCBBOverall,
+  getCFBOverall,
+  getHockeyLetterGrade,
+} from "../../_utility/getLetterGrade";
 import {
   setPriorityCFBAttributes,
   setPriorityNFLAttributes,
   GetNFLYear,
+  getAdditionalCBBAttributes,
+  getPriorityCBBAttributes,
+  getPriorityNBAAttributes,
 } from "../Team/TeamPageUtils";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import { getYear } from "../../_utility/getYear";
 import { CheckCircle, CrossCircle } from "../../_design/Icons";
 import PlayerPicture from "../../_utility/usePlayerFaces";
 import { GetNFLOverall } from "../Team/TeamPageUtils";
+import {
+  CollegePlayer as CBBPlayer,
+  NBAPlayer,
+} from "../../models/basketballModels";
+import { useSimBBAStore } from "../../context/SimBBAContext";
 
 interface PlayerInfoModalBodyProps {
   league: League;
@@ -57,6 +72,12 @@ export const PlayerInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   }
   if (league === SimCFB) {
     return <CFBPlayerInfoModalBody player={player as CFBPlayer} />;
+  }
+  if (league === SimCBB) {
+    return <CBBPlayerInfoModalBody player={player as CBBPlayer} />;
+  }
+  if (league === SimNBA) {
+    return <NBAPlayerInfoModalBody player={player as NBAPlayer} />;
   }
   if (league === SimNFL) {
     return (
@@ -382,13 +403,13 @@ export const PHLPlayerInfoModalBody: FC<PHLPlayerInfoModalBodyProps> = ({
           <PlayerPicture playerID={player.ID} league={SimPHL} team={team} />
         </div>
         {team && (
-        <Logo
-          url={teamLogo}
-          label={team.Abbreviation}
-          classes="h-[5rem] max-h-[5rem]"
-          containerClass="p-4"
-          textClass="text-small"
-        />
+          <Logo
+            url={teamLogo}
+            label={team.Abbreviation}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
         )}
       </div>
       <div className="flex flex-col">
@@ -843,13 +864,13 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           <PlayerPicture playerID={player.ID} league={SimNFL} team={team} />
         </div>
         {team && (
-        <Logo
-          url={teamLogo}
-          label={team.TeamAbbr}
-          classes="h-[5rem] max-h-[5rem]"
-          containerClass="p-4"
-          textClass="text-small"
-        />
+          <Logo
+            url={teamLogo}
+            label={team.TeamAbbr}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
         )}
       </div>
       <div className="flex flex-col">
@@ -1263,6 +1284,296 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
               </div>
             </>
           )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface CBBPlayerInfoModalBodyProps {
+  player: CBBPlayer;
+}
+
+export const CBBPlayerInfoModalBody: FC<CBBPlayerInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { cbbTeamMap } = useSimBBAStore();
+  const team = cbbTeamMap ? cbbTeamMap[player.TeamID] : null;
+  const teamLogo = getLogo(SimCBB, player.TeamID, currentUser?.isRetro);
+  const priorityAttributes = getPriorityCBBAttributes(player);
+
+  return (
+    <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
+      <div className="row-span-3 flex flex-col items-center">
+        <div className="flex items-center justify-center h-[6rem] w-[6rem] sm:h-[8rem] sm:w-[8rem] px-5 rounded-lg border-2 bg-white">
+          <PlayerPicture playerID={player.ID} league={SimCBB} team={team} />
+        </div>
+        {team && (
+          <Logo
+            url={teamLogo}
+            label={team.Team}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
+        )}
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Hometown
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Country.length > 0 && player.Country !== USA
+            ? `${player.Country}`
+            : player.State}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Year
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {getYear(player.Year, player.IsRedshirt)}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Age
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Age}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Height
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Height}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Weight
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          ???
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Personality
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Personality}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Overall
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {getCBBOverall(player.Overall, player.Year)}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Potential
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.PotentialGrade}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Stars
+        </Text>
+        <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+          {player.Stars > 0
+            ? Array(player.Stars).fill("⭐").join("")
+            : player.Stars}
+        </Text>
+      </div>
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+        <div className="grid w-full grid-cols-4 gap-3">
+          {priorityAttributes.map((attr, idx) => (
+            <div key={idx} className="flex flex-col px-1 gap-1">
+              <Text
+                variant="small"
+                classes="mb-1 whitespace-nowrap font-semibold"
+              >
+                {attr.label}
+              </Text>
+              <Text variant="small">{attr.value}</Text>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface NBAPlayerInfoModalBodyProps {
+  player: NBAPlayer;
+}
+
+export const NBAPlayerInfoModalBody: FC<NBAPlayerInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { nbaTeamMap, proContractMap, cbbTeamMap } = useSimBBAStore();
+  const team = nbaTeamMap ? nbaTeamMap[player.TeamID] : null;
+  const teamLogo = getLogo(SimNBA, player.TeamID, currentUser?.isRetro);
+  const cbbTeam = player.IsIntGenerated
+    ? nbaTeamMap!![player.CollegeID]
+    : cbbTeamMap?.[player.CollegeID];
+
+  const contract = proContractMap!![player.ID];
+  player.Contract = contract;
+  const priorityAttributes = getPriorityNBAAttributes(player);
+  const rawValue = Array.from(
+    { length: contract.YearsRemaining },
+    (_, index) => contract[`Year${index + 1}Total`] || 0
+  ).reduce((sum, salary) => sum + salary, 0);
+  const currentYearValue = (contract.Year1Total || 0).toFixed(2);
+  const totalValue = `${rawValue.toFixed(2)}`;
+  return (
+    <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
+      <div className="row-span-3 flex flex-col items-center">
+        <div className="flex items-center justify-center h-[6rem] w-[6rem] sm:h-[8rem] sm:w-[8rem] px-5 rounded-lg border-2 bg-white">
+          <PlayerPicture playerID={player.ID} league={SimNBA} team={team} />
+        </div>
+        {team && (
+          <Logo
+            url={teamLogo}
+            label={team.Abbr}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
+        )}
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Hometown
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Country !== USA ? player.Country : player.State}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Experience
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Year}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Age
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Age}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Height
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Height}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Weight
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          ???
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Personality
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Personality}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Overall
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Overall}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          College
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {cbbTeam?.Abbr}
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Drafted
+        </Text>
+        {player.DraftedRound === 0 && player.DraftPickID === 0 ? (
+          <Text variant="small" classes="whitespace-nowrap">
+            UDFA
+          </Text>
+        ) : (
+          <>
+            <Text variant="small" classes="whitespace-nowrap">
+              Round {player.DraftedRound} - Pick {player.DraftPick}
+            </Text>
+            <Text variant="xs" classes="whitespace-nowrap text-small">
+              by {player.DraftedTeamAbbr}
+            </Text>
+          </>
+        )}
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Contract
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {contract.ContractLength} years
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1  font-semibold">
+          Total Value
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {`${totalValue}M`}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 font-semibold">
+          Current Year
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {`${currentYearValue}M`}
+        </Text>
+      </div>
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+        <div className="grid w-full grid-cols-4 gap-3">
+          {priorityAttributes.map((attr, idx) => (
+            <div key={idx} className="flex flex-col px-1 gap-1">
+              <Text
+                variant="small"
+                classes="mb-1 whitespace-nowrap font-semibold"
+              >
+                {attr.label}
+              </Text>
+              <Text variant="small">{attr.value}</Text>
+            </div>
+          ))}
         </div>
       </div>
     </div>

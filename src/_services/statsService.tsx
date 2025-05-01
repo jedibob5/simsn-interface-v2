@@ -28,4 +28,30 @@ export const StatsService = {
       "blob"
     );
   },
+
+  BBACollegeStatsSearch: async (dto: any): Promise<SearchStatsResponse> => {
+    return await GetCall(
+      `${hckUrl}statistics/interface/cbb/${dto.SeasonID}/${dto.WeekID}/${dto.ViewType}/${dto.GameType}`
+    );
+  },
+
+  BBAProStatsSearch: async (dto: any): Promise<SearchStatsResponse> => {
+    return await GetCall(
+      `${hckUrl}statistics/interface/nba/${dto.SeasonID}/${dto.WeekID}/${dto.ViewType}/${dto.GameType}`
+    );
+  },
+
+  BBACollegeStatsExport: async (dto: any): Promise<void> => {
+    await GetExportCall(
+      `${hckUrl}export/stats/cbb/${dto.SeasonID}/${dto.WeekID}/${dto.ViewType}/${dto.GameType}`,
+      "blob"
+    );
+  },
+
+  BBAProStatsExport: async (dto: any): Promise<void> => {
+    await GetExportCall(
+      `${hckUrl}export/stats/nba/${dto.SeasonID}/${dto.WeekID}/${dto.ViewType}/${dto.GameType}`,
+      "blob"
+    );
+  },
 };

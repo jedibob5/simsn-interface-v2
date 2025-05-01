@@ -11,6 +11,8 @@ import {
   getHockeyLetterGrade,
   getCFBLetterGrade,
   getCFBOverall,
+  getCBBLetterGrade,
+  getCBBOverall,
 } from "../../_utility/getLetterGrade";
 import { getYear } from "../../_utility/getYear";
 import {
@@ -61,6 +63,10 @@ import {
   getPlayerMoraleLabel,
   getTeamLoyaltyLabel,
 } from "../../_helper/utilHelper";
+import {
+  CollegePlayer as CBBPlayer,
+  NBAPlayer,
+} from "../../models/basketballModels";
 
 export const getCHLAttributes = (
   player: CHLPlayer,
@@ -2014,4 +2020,294 @@ export const getShotgunRating = (player: CFBPlayer | NFLPlayer) => {
     return "Under Center";
   }
   return "Balanced";
+};
+
+export const getCBBAttributes = (
+  player: CBBPlayer,
+  isMobile: boolean,
+  category: string
+) => {
+  const attributes = [
+    { label: "Name", value: `${player.FirstName} ${player.LastName}` },
+    {
+      label: "Pos",
+      value: `${player.Position}`,
+    },
+    { label: "Arch", value: `${player.Archetype}` },
+    { label: "Yr", value: getYear(player.Year, player.IsRedshirt) },
+    { label: "Stars", value: player.Stars },
+    { label: "Ovr", value: getCBBOverall(player.Overall, player.Year) },
+  ];
+
+  const overviewAttributes =
+    !isMobile && category === Overview
+      ? [
+          { label: "Pot", value: player.PotentialGrade },
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} wks`
+                : `None`
+              : "None",
+          },
+          { label: "Personality", value: player.Personality },
+          { label: "WorkEthic", value: player.WorkEthic },
+          { label: "AcademicBias", value: player.AcademicBias },
+          { label: "Redshirt", value: player.IsRedshirting },
+          { label: "TransferStatus", value: player.TransferStatus },
+        ]
+      : [];
+
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalCBBAttributes(player)
+      : [];
+
+  return [...attributes, ...overviewAttributes, ...additionalAttributes];
+};
+
+export const getAdditionalCBBAttributes = (player: CBBPlayer) => {
+  return [
+    { label: "POT", value: player.PotentialGrade },
+    {
+      label: "Fin",
+      value: getCBBLetterGrade(player.Finishing),
+    },
+    {
+      label: "SH2",
+      value: getCBBLetterGrade(player.Shooting2),
+    },
+    {
+      label: "SH3",
+      value: getCBBLetterGrade(player.Shooting3),
+    },
+    {
+      label: "FT",
+      value: getCBBLetterGrade(player.FreeThrow),
+    },
+    {
+      label: "BW",
+      value: getCBBLetterGrade(player.Ballwork),
+    },
+    {
+      label: "RB",
+      value: getCBBLetterGrade(player.Rebounding),
+    },
+    {
+      label: "ID",
+      value: getCBBLetterGrade(player.InteriorDefense),
+    },
+    {
+      label: "PD",
+      value: getCBBLetterGrade(player.PerimeterDefense),
+    },
+    {
+      label: "IR",
+      value: getCBBLetterGrade(player.InjuryRating),
+    },
+    {
+      label: "PTE",
+      value: player.PlaytimeExpectations,
+    },
+    {
+      label: "Min",
+      value: player.Minutes,
+    },
+  ];
+};
+
+export const getPriorityCBBAttributes = (player: CBBPlayer) => {
+  return [
+    {
+      label: "Finishing",
+      value: getCBBLetterGrade(player.Finishing),
+    },
+    {
+      label: "Mid Range Shooting",
+      value: getCBBLetterGrade(player.Shooting2),
+    },
+    {
+      label: "3pt Shooting",
+      value: getCBBLetterGrade(player.Shooting3),
+    },
+    {
+      label: "Free Throw",
+      value: getCBBLetterGrade(player.FreeThrow),
+    },
+    {
+      label: "Ballwork",
+      value: getCBBLetterGrade(player.Ballwork),
+    },
+    {
+      label: "Rebounding",
+      value: getCBBLetterGrade(player.Rebounding),
+    },
+    {
+      label: "Int. Defense",
+      value: getCBBLetterGrade(player.InteriorDefense),
+    },
+    {
+      label: "Per. Defense",
+      value: getCBBLetterGrade(player.PerimeterDefense),
+    },
+    {
+      label: "Injury Rating",
+      value: getCBBLetterGrade(player.InjuryRating),
+    },
+    {
+      label: "Playtime Expectations",
+      value: player.PlaytimeExpectations,
+    },
+    {
+      label: "Minutes",
+      value: player.Minutes,
+    },
+  ];
+};
+
+export const getNBAAttributes = (
+  player: NBAPlayer,
+  isMobile: boolean,
+  category: string
+) => {
+  const attributes = [
+    { label: "Name", value: `${player.FirstName} ${player.LastName}` },
+    {
+      label: "Pos",
+      value: `${player.Position}`,
+    },
+    { label: "Arch", value: `${player.Archetype}` },
+    { label: "Age", value: player.Age },
+    { label: "Yr", value: player.Year },
+    { label: "Ovr", value: player.Overall },
+  ];
+
+  const overviewAttributes =
+    !isMobile && category === Overview
+      ? [
+          { label: "Pot", value: player.PotentialGrade },
+          { label: "Y1T", value: player.Contract.Year1Total },
+          { label: "ContractLength", value: player.Contract.YearsRemaining },
+          { label: "Health", value: player.IsInjured },
+          {
+            label: "Injury",
+            value: player.InjuryType
+              ? player.WeeksOfRecovery && player.WeeksOfRecovery > 0
+                ? `${player.InjuryType}, ${player.WeeksOfRecovery} wks`
+                : `None`
+              : "None",
+          },
+          { label: "Personality", value: player.Personality },
+          { label: "WorkEthic", value: player.WorkEthic },
+          { label: "AcademicBias", value: player.AcademicBias },
+        ]
+      : [];
+
+  const additionalAttributes =
+    !isMobile && category === Attributes
+      ? getAdditionalNBAAttributes(player)
+      : [];
+
+  return [...attributes, ...overviewAttributes, ...additionalAttributes];
+};
+
+export const getAdditionalNBAAttributes = (player: NBAPlayer) => {
+  return [
+    { label: "POT", value: player.PotentialGrade },
+    {
+      label: "Fin",
+      value: player.Finishing,
+    },
+    {
+      label: "SH2",
+      value: player.Shooting2,
+    },
+    {
+      label: "SH3",
+      value: player.Shooting3,
+    },
+    {
+      label: "FT",
+      value: player.FreeThrow,
+    },
+    {
+      label: "BW",
+      value: player.Ballwork,
+    },
+    {
+      label: "RB",
+      value: player.Rebounding,
+    },
+    {
+      label: "ID",
+      value: player.InteriorDefense,
+    },
+    {
+      label: "PD",
+      value: player.PerimeterDefense,
+    },
+    {
+      label: "IR",
+      value: getCBBLetterGrade(player.InjuryRating),
+    },
+    {
+      label: "PTE",
+      value: player.PlaytimeExpectations,
+    },
+    {
+      label: "Min",
+      value: player.Minutes,
+    },
+  ];
+};
+
+export const getPriorityNBAAttributes = (player: NBAPlayer) => {
+  return [
+    {
+      label: "Finishing",
+      value: player.Finishing,
+    },
+    {
+      label: "Mid Range Shooting",
+      value: player.Shooting2,
+    },
+    {
+      label: "3pt Shooting",
+      value: player.Shooting3,
+    },
+    {
+      label: "Free Throw",
+      value: player.FreeThrow,
+    },
+    {
+      label: "Ballwork",
+      value: player.Ballwork,
+    },
+    {
+      label: "Rebounding",
+      value: player.Rebounding,
+    },
+    {
+      label: "Int. Defense",
+      value: player.InteriorDefense,
+    },
+    {
+      label: "Per. Defense",
+      value: player.PerimeterDefense,
+    },
+    {
+      label: "Injury Rating",
+      value: getCBBLetterGrade(player.InjuryRating),
+    },
+    {
+      label: "Playtime Expectations",
+      value: player.PlaytimeExpectations,
+    },
+    {
+      label: "Minutes",
+      value: player.Minutes,
+    },
+  ];
 };
