@@ -1322,7 +1322,8 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
       { header: "Name", accessor: "LastName" },
       { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
-      { header: !isDesktop ? "Yr" : "Year", accessor: "Experience" },
+      { header: !isDesktop ? "Age" : "Age", accessor: "Age" },
+      { header: !isDesktop ? "Yr" : "Year", accessor: "Year" },
       { header: !isDesktop ? "Ovr" : "Overall", accessor: "Overall" },
     ];
 
