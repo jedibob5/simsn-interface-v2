@@ -923,6 +923,7 @@ export class DraftPick {
   }
 }
 export class NBAContract {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -3385,6 +3386,7 @@ export class BootstrapData {
   GLeaguePlayers: NBAPlayer[];
   InternationalPlayers: NBAPlayer[];
   Recruits: Croot[];
+  RecruitProfiles: PlayerRecruitProfile[];
   ProNews: NewsLog[];
   AllCollegeGames: Match[];
   AllProGames: NBAMatch[];
@@ -3469,6 +3471,10 @@ export class BootstrapData {
       NBAPlayer
     );
     this.Recruits = this.convertValues(source["Recruits"], Croot);
+    this.RecruitProfiles = this.convertValues(
+      source["RecruitProfiles"],
+      PlayerRecruitProfile
+    );
     this.FreeAgentOffers = this.convertValues(
       source["FreeAgentOffers"],
       NBAContractOffer

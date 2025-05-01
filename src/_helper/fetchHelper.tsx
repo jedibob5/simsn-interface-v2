@@ -43,6 +43,32 @@ export const PostCall = async <TRequest, TResponse>(
   }
 };
 
+export const PUTCall = async <TRequest, TResponse>(
+  url: string,
+  dto: TRequest
+): Promise<TResponse> => {
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dto),
+    });
+
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP Error: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as TResponse;
+    return data;
+  } catch (error) {
+    console.error(`POST request failed for URL: ${url}`, error);
+    throw error; // Rethrow to handle where the call is made
+  }
+};
+
 // ✅ GET Request with JSON Response
 export const GetCall = async <T,>(url: string): Promise<T> => {
   try {

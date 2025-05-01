@@ -678,7 +678,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   };
 
   const savePHLGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveCHLGameplan(dto);
+    const res = await GameplanService.SavePHLGameplan(dto);
     setPHLLineups(dto.PHLLineups);
     setPHLShootoutLineup(dto.CHLShootoutLineup);
     enqueueSnackbar("Lineups saved!", {
@@ -912,9 +912,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       const res = await StatsService.HCKCollegeStatsSearch(dto);
       if (dto.ViewType === SEASON_VIEW) {
         setChlPlayerSeasonStats((prev) => {
-          return {...prev,
-            [dto.SeasonID]: res.CHLPlayerSeasonStats,
-          };
+          return { ...prev, [dto.SeasonID]: res.CHLPlayerSeasonStats };
         });
         setChlTeamSeasonStats((prev) => {
           return {
@@ -927,7 +925,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
           return {
             ...prev,
             [dto.WeekID]: res.CHLPlayerGameStats,
-          }
+          };
         });
         setChlTeamGameStats((prev) => {
           return {
@@ -942,26 +940,26 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         setPhlPlayerSeasonStats((prev) => {
           return {
             ...prev,
-            [dto.SeasonID]: res.PHLPlayerSeasonStats
+            [dto.SeasonID]: res.PHLPlayerSeasonStats,
           };
         });
         setPhlTeamSeasonStats((prev) => {
           return {
             ...prev,
-            [dto.SeasonID]: res.PHLTeamSeasonStats
+            [dto.SeasonID]: res.PHLTeamSeasonStats,
           };
         });
       } else {
         setPhlPlayerGameStats((prev) => {
           return {
             ...prev,
-            [dto.WeekID]: res.PHLPlayerGameStats
+            [dto.WeekID]: res.PHLPlayerGameStats,
           };
         });
         setPhlTeamGameStats((prev) => {
           return {
             ...prev,
-            [dto.WeekID]:res.PHLTeamGameStats
+            [dto.WeekID]: res.PHLTeamGameStats,
           };
         });
       }

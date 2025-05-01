@@ -1,4 +1,4 @@
-import { hckUrl } from "../_constants/urls";
+import { bbaUrl, hckUrl } from "../_constants/urls";
 import { PostCall } from "../_helper/fetchHelper";
 
 export const GameplanService = {
@@ -8,5 +8,13 @@ export const GameplanService = {
 
   SavePHLGameplan: async (dto: any): Promise<void> => {
     await PostCall(`${hckUrl}phl/strategy/update`, dto);
+  },
+
+  SaveCBBGameplan: async (dto: any): Promise<void> => {
+    await PostCall(`${bbaUrl}cbb/gameplans/update`, dto);
+  },
+
+  SaveNBAGameplan: async (dto: any): Promise<void> => {
+    await PostCall(`${bbaUrl}nba/gameplans/update`, dto);
   },
 };

@@ -6,7 +6,13 @@ import {
   SimPHL,
 } from "../_constants/constants";
 import { bbaUrl, fbaUrl, hckUrl } from "../_constants/urls";
-import { GetCall, GetLeagueAbbr, PostCall } from "../_helper/fetchHelper";
+import {
+  GetCall,
+  GetLeagueAbbr,
+  PostCall,
+  PUTCall,
+} from "../_helper/fetchHelper";
+import { NBARequest } from "../models/basketballModels";
 import {
   CollegeStandings,
   CollegeTeam,
@@ -141,5 +147,16 @@ export const TeamService = {
 
   RemoveUserFromPHLTeam: async (request: ProTeamRequest) => {
     return await PostCall(`${hckUrl}phl/teams/remove/user`, request);
+  },
+
+  RemoveUserFromCBBTeam: async (teamID: number) => {
+    return await PUTCall(`${bbaUrl}team/removeUserFromTeam/${teamID}`, {});
+  },
+
+  RemoveUserFromNBATeam: async (teamID: number, request: NBARequest) => {
+    return await PUTCall(
+      `${bbaUrl}team/nba/removeUserFromTeam/${teamID}`,
+      request
+    );
   },
 };
