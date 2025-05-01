@@ -20,6 +20,7 @@ import {
   Overview,
   ButtonGreen,
   TextGreen,
+  Affiliate,
 } from "../../_constants/constants";
 import {
   getCHLAttributes,
@@ -60,6 +61,7 @@ interface CHLRosterTableProps {
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CHLPlayer) => void;
+  disable: boolean;
 }
 
 export const CHLRosterTable: FC<CHLRosterTableProps> = ({
@@ -70,6 +72,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
   team,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop, isTablet } = useResponsive();
@@ -252,6 +255,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
+            isDisabled={disable}
           />
         </div>
       </div>
@@ -279,6 +283,7 @@ interface PHLRosterTableProps {
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: PHLPlayer) => void;
+  disable: boolean;
 }
 
 export const PHLRosterTable: FC<PHLRosterTableProps> = ({
@@ -291,6 +296,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
   team,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop, isTablet } = useResponsive();
@@ -469,8 +475,8 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                 label: `Send to Injured Reserve - ${item.FirstName} ${item.LastName}`,
               },
               {
-                value: "practiceSquad",
-                label: `Demote to Practice Squad - ${item.FirstName} ${item.LastName}`,
+                value: "affiliate",
+                label: `Send to Affiliate Team - ${item.FirstName} ${item.LastName}`,
               },
               {
                 value: "tradeBlock",
@@ -480,10 +486,13 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
                 openModal(Cut, item);
+              } else if (selectedOption?.value === "affiliate") {
+                openModal(Affiliate, item);
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
+            isDisabled={disable}
           />
         </div>
       </div>
@@ -509,6 +518,7 @@ interface CFBRosterTableProps {
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CFBPlayer) => void;
+  disable: boolean;
 }
 
 export const CFBRosterTable: FC<CFBRosterTableProps> = ({
@@ -519,6 +529,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
   team,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop } = useResponsive();
@@ -696,6 +707,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
+            isDisabled={disable}
             styles={{
               control: (provided, state) => ({
                 ...provided,
@@ -761,6 +773,7 @@ interface NFLRosterTableProps {
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: NFLPlayer) => void;
+  disable: boolean;
 }
 
 export const NFLRosterTable: FC<NFLRosterTableProps> = ({
@@ -773,6 +786,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
   team,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop, isTablet } = useResponsive();
@@ -1016,6 +1030,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
                 color: "#ffffff",
               }),
             }}
+            isDisabled={disable}
           />
         </div>
       </div>

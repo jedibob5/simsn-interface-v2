@@ -66,6 +66,7 @@ import { useSnackbar } from "notistack";
 import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
 import { StatsService } from "../_services/statsService";
+import { GenerateNumberFromRange } from "../_helper/utilHelper";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -126,6 +127,7 @@ interface SimHCKContextProps {
   addUserToPHLTeam: (teamID: number, user: string, role: string) => void;
   cutCHLPlayer: (playerID: number, teamID: number) => Promise<void>;
   cutPHLPlayer: (playerID: number, teamID: number) => Promise<void>;
+  affiliatePlayer: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
@@ -211,6 +213,7 @@ const defaultContext: SimHCKContextProps = {
   addUserToPHLTeam: () => {},
   cutCHLPlayer: async () => {},
   cutPHLPlayer: async () => {},
+  affiliatePlayer: async () => {},
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCHLRosterMap: () => {},
@@ -659,6 +662,31 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     [proRosterMap]
   );
 
+  const affiliatePlayer = useCallback(
+    async (playerID: number, teamID: number) => {
+      const contract = proContractMap!![playerID];
+      if (contract.NoMovementClause) {
+        enqueueSnackbar(
+          "Cannot move player with No Movement Clause to affiliate team!",
+          {
+            variant: "warning",
+            autoHideDuration: 3000,
+          }
+        );
+        return;
+      }
+      const res = await PlayerService.SendPHLPlayerToAffiliate(playerID);
+      const rosterMap = { ...proRosterMap };
+      const playerIdx = rosterMap[teamID].findIndex((p) => p.ID === playerID);
+      if (playerIdx > -1) {
+        rosterMap[teamID][playerIdx].IsAffiliatePlayer =
+          !rosterMap[teamID][playerIdx].IsAffiliatePlayer;
+      }
+      setProRosterMap(rosterMap);
+    },
+    [proRosterMap]
+  );
+
   const updateCHLRosterMap = (newMap: Record<number, CollegePlayer[]>) => {
     setCHLRosterMap(newMap);
   };
@@ -697,7 +725,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     };
     const profile = await RecruitService.HCKCreateRecruitProfile(apiDTO);
     if (profile) {
-      setRecruitProfiles((profiles) => [...profiles, profile]);
+      const newProfile = new RecruitPlayerProfile({
+        ...profile,
+        ID: GenerateNumberFromRange(500000, 1000000),
+      });
+      setRecruitProfiles((profiles) => [...profiles, newProfile]);
     }
   };
 
@@ -717,7 +749,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         [...profiles].map((p) =>
           p.RecruitID === profile.RecruitID
             ? new RecruitPlayerProfile({
-                ...profile,
+                ...p,
                 Scholarship: profile.Scholarship,
                 ScholarshipRevoked: profile.ScholarshipRevoked,
               })
@@ -776,7 +808,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setRecruitProfiles((prevProfiles) => {
       // Update the profiles and get the new profiles array.
       const updatedProfiles = prevProfiles.map((profile) =>
-        profile.ID === id
+        profile.ID === id && profile.ID > 0
           ? new RecruitPlayerProfile({ ...profile, [name]: points })
           : profile
       );
@@ -1035,6 +1067,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         redshirtPlayer,
         promisePlayer,
         cutPHLPlayer,
+        affiliatePlayer,
         updateCHLRosterMap,
         updateProRosterMap,
         saveCHLGameplan,
