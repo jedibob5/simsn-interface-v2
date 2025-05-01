@@ -267,6 +267,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== chlTeam!.ID}
           />
         </Border>
       )}
@@ -288,6 +289,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proContractMap: phlContractMap,
     proExtensionMap: phlExtensionMap,
     cutPHLPlayer,
+    affiliatePlayer,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -380,6 +382,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           modalAction={modalAction}
           player={modalPlayer}
           cutPlayer={cutPHLPlayer}
+          affiliatePlayer={affiliatePlayer}
         />
       )}
       <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
@@ -481,6 +484,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           headerColor={headerColor}
           borderColor={borderColor}
           openModal={openModal}
+          disable={selectedTeam!.ID !== phlTeam!.ID}
         />
       </Border>
     </>
@@ -646,6 +650,7 @@ const CFBTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== cfbTeam!.ID}
           />
         </Border>
       )}
@@ -856,6 +861,7 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={selectedTeam!.ID !== nflTeam!.ID}
           />
         </Border>
       )}

@@ -798,6 +798,8 @@ export class ProContract {
   TagType: number;
   IsTagged: boolean;
   IsCut: boolean;
+  NoMovementClause: boolean;
+  NoTradeClause: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -833,6 +835,8 @@ export class ProContract {
     this.TagType = source["TagType"];
     this.IsTagged = source["IsTagged"];
     this.IsCut = source["IsCut"];
+    this.NoTradeClause = source["NoTradeClause"];
+    this.NoMovementClause = source["NoMovementClause"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
