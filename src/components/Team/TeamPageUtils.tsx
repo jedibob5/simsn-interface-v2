@@ -2179,6 +2179,7 @@ export const getNBAAttributes = (
       value: `${player.Position}`,
     },
     { label: "Arch", value: `${player.Archetype}` },
+    { label: "Age", value: player.Age },
     { label: "Yr", value: player.Year },
     { label: "Ovr", value: player.Overall },
   ];
