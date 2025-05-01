@@ -1049,6 +1049,7 @@ const CBBTeamPage = ({ league, ts }: TeamPageProps) => {
             headerColor={headerColor}
             borderColor={borderColor}
             openModal={openModal}
+            disable={cbbTeam!.ID !== selectedTeam!.ID}
           />
         </Border>
       )}
@@ -1213,6 +1214,7 @@ const NBATeamPage = ({ league, ts }: TeamPageProps) => {
             openModal={openModal}
             contracts={proContractMap!!}
             ts={ts}
+            disable={nbaTeam!.ID !== selectedTeam!.ID}
           />
         </Border>
       )}

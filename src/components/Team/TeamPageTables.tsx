@@ -1057,6 +1057,7 @@ interface CBBRosterTableProps {
   team?: any;
   category?: string;
   openModal: (action: ModalAction, player: CBBPlayer) => void;
+  disable: boolean;
 }
 
 export const CBBRosterTable: FC<CBBRosterTableProps> = ({
@@ -1067,6 +1068,7 @@ export const CBBRosterTable: FC<CBBRosterTableProps> = ({
   team,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop } = useResponsive();
@@ -1274,6 +1276,7 @@ export const CBBRosterTable: FC<CBBRosterTableProps> = ({
                 color: "#ffffff",
               }),
             }}
+            isDisabled={disable}
           />
         </div>
       </div>
@@ -1301,6 +1304,7 @@ interface NBARosterTableProps {
   ts: any;
   category?: string;
   openModal: (action: ModalAction, player: NBAPlayer) => void;
+  disable: boolean;
 }
 
 export const NBARosterTable: FC<NBARosterTableProps> = ({
@@ -1313,6 +1317,7 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
   ts,
   category,
   openModal,
+  disable,
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop } = useResponsive();
@@ -1530,6 +1535,7 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
                 color: "#ffffff",
               }),
             }}
+            isDisabled={disable}
           />
         </div>
       </div>
