@@ -558,7 +558,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
         <div className="flex flex-col sm:gap-2">  
           <div className="flex w-full justify-around px-2">
             <div className="flex flex-col items-center w-1/3">
-              <div className="flex items-center h-full sm:gap-4">
+              <div className="flex items-center h-full gap-1 sm:gap-4">
                 <Logo url={game.HomeTeamLogo} classes="w-full h-full" />
                 <div className="flex flex-col text-left sm:pr-8">
                   <Text variant="small" classes="opacity-50">
@@ -690,7 +690,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
               </div>
             </div>
             <div className="flex flex-col items-center w-1/3">
-              <div className="flex items-center h-full sm:gap-4">
+              <div className="flex items-center h-full gap-1 sm:gap-4">
                 <div className="flex flex-col pl-2 sm:pl-0">
                 {isShootout && (
                   <Text variant="xs" style={{ color: awayScoreColor }}>{`(${game.AwayTeamShootoutScore})`}</Text>
@@ -712,9 +712,9 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                style={{ backgroundColor: borderColor }}>
           {view === BoxScore && (
             <div className="flex flex-col">
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-4">
                 <div className="flex flex-col items-center justify-start w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Forwards</Text>
@@ -776,7 +776,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 items-center w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Fowards</Text>
@@ -838,9 +838,9 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 items-center w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Defensemen</Text>
@@ -902,7 +902,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 items-center w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Defensemen</Text>
@@ -964,9 +964,9 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 items-center w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Goalies</Text>
@@ -1017,7 +1017,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center w-full">
-                  <div className="flex flex-col p-4 w-full">
+                  <div className="flex flex-col p-2 sm:p-4 w-full">
                     <div className="flex gap-2 items-center w-full pb-2">
                       <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                       <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Goalies</Text>
@@ -1074,7 +1074,7 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
             <div className="flex flex-col">
               <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
                 <Text variant="xs" classes="text-center">#</Text>
-                <Text variant="xs" classes="text-center">Per</Text>
+                <Text variant="xs" classes="text-center">Period</Text>
                 <Text variant="xs" classes="text-center">Time</Text>
                 <Text variant="xs" classes="text-center">Event</Text>
                 <Text variant="xs" classes="col-span-2 text-center">Zone</Text>
