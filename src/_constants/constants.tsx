@@ -133,6 +133,8 @@ export type GameDay =
   | typeof CDay
   | typeof DDay
   | typeof ActualDDay;
+export const PBP = "Play By Play";
+export const BoxScore = "Box Score";
 export const Attributes = "Attributes";
 export const Values = "Values";
 export const Preferences = "Preferences";

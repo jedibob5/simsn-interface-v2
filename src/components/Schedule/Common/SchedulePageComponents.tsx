@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getLogo } from "../../../_utility/getLogo";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
@@ -9,11 +9,14 @@ import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
 import { processLeagueStandings } from "./SchedulePageHelper";
 import { ClickableTeamLabel } from "../../Common/Labels";
+import { useModal } from "../../../_hooks/useModal";
+import { SchedulePageGameModal } from "./GameModal";
 
 interface TeamScheduleProps {
   team: any;
   Abbr?: string;
   category?: string;
+  playerMap?: any;
   week: any;
   currentUser: any;
   league: League;
@@ -32,6 +35,7 @@ export const TeamSchedule = ({
   Abbr,
   category,
   currentUser,
+  playerMap,
   week,
   league,
   ts,
@@ -43,116 +47,133 @@ export const TeamSchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
+  const gameModal = useModal();
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+
   return (
-    <SectionCards
-      header={`${Abbr} Schedule`}
-      team={team}
-      classes={`w-full ${textColorClass}`}
-      backgroundColor={backgroundColor}
-      headerColor={headerColor}
-      borderColor={borderColor}
-      textColorClass={textColorClass}
-      darkerBackgroundColor={darkerBackgroundColor}
-    >
-      {isLoadingTwo ? (
-        <div className="flex justify-center items-center pb-2">
-          <Text variant="small" classes={`${textColorClass}`}>
-            Loading...
-          </Text>
-        </div>
-      ) : (
-        <div className="grid">
-          <div
-            className="grid grid-cols-5 font-semibold border-b-2 pb-2"
-            style={{
-              borderColor,
-            }}
-          >
-            <div className="text-left col-span-1">
-              <Text variant="xs" className={`${textColorClass}`}>
-                Week
-              </Text>
-            </div>
-            <div className="text-left col-span-2">
-              <Text variant="xs" className={`${textColorClass}`}>
-                Opponent
-              </Text>
-            </div>
-            <div className="text-center col-span-1">
-              <Text variant="xs" className={`${textColorClass}`}>
-                Result
-              </Text>
-            </div>
-            <div className="text-center col-span-1">
-              <Text variant="xs" className={`${textColorClass}`}>
-                Actions
-              </Text>
-            </div>
+    <>
+      <SectionCards
+        header={`${Abbr} Schedule`}
+        team={team}
+        classes={`w-full ${textColorClass}`}
+        backgroundColor={backgroundColor}
+        headerColor={headerColor}
+        borderColor={borderColor}
+        textColorClass={textColorClass}
+        darkerBackgroundColor={darkerBackgroundColor}
+      >
+        {isLoadingTwo ? (
+          <div className="flex justify-center items-center pb-2">
+            <Text variant="small" classes={`${textColorClass}`}>
+              Loading...
+            </Text>
           </div>
-          {processedSchedule.map((game, index) => (
+        ) : (
+          <div className="grid">
             <div
-              key={index}
-              className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
+              className="grid grid-cols-5 font-semibold border-b-2 pb-2"
               style={{
-                backgroundColor:
-                  index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+                borderColor,
               }}
             >
               <div className="text-left col-span-1">
-                <Text variant="xs" className="font-semibold">
-                  {game.weekLabel}
+                <Text variant="xs" className={`${textColorClass}`}>
+                  Week
                 </Text>
               </div>
-              <div className="flex items-center col-span-2 justify-start text-center">
-                <Text variant="xs" className="font-semibold text-center">
-                  {game.gameLocation}
+              <div className="text-left col-span-2">
+                <Text variant="xs" className={`${textColorClass}`}>
+                  Opponent
                 </Text>
-                <Logo
-                  variant="xs"
-                  classes="w-4 h-4"
-                  containerClass="flex-shrink-0 p-2"
-                  url={game.opponentLogo}
-                />
-                <ClickableTeamLabel
-                  textVariant="xs"
-                  label={game.opponentLabel}
-                  teamID={game.opponentID}
-                  textColorClass={textColorClass}
-                  league={league}
-                />
               </div>
               <div className="text-center col-span-1">
-                <Text
-                  variant="xs"
-                  className={`font-semibold ${
-                    game.userWin
-                      ? "text-green-500"
-                      : game.userLoss
-                      ? "text-red-500"
-                      : textColorClass
-                  } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
-                >
-                  {game.headerGameScore}
+                <Text variant="xs" className={`${textColorClass}`}>
+                  Result
                 </Text>
               </div>
-              <div className="flex text-center justify-center col-span-1">
-                <Button
-                  size="sm"
-                  classes={`flex bg-transparent rounded-full size-10 items-center ${
-                    game.gameScore === "TBC"
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                  disabled={game.gameScore === "TBC"}
-                >
-                  <InformationCircle />
-                </Button>
+              <div className="text-center col-span-1">
+                <Text variant="xs" className={`${textColorClass}`}>
+                  Actions
+                </Text>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-    </SectionCards>
+            <SchedulePageGameModal
+              isOpen={gameModal.isModalOpen}
+              onClose={gameModal.handleCloseModal}
+              league={league}
+              game={selectedGame}
+              title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+              playerMap={playerMap}
+            />
+            {processedSchedule.map((game, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+                }}
+              >
+                <div className="text-left col-span-1">
+                  <Text variant="xs" className="font-semibold">
+                    {game.weekLabel}
+                  </Text>
+                </div>
+                <div className="flex items-center col-span-2 justify-start text-center">
+                  <Text variant="xs" className="font-semibold text-center">
+                    {game.gameLocation}
+                  </Text>
+                  <Logo
+                    variant="xs"
+                    classes="w-4 h-4"
+                    containerClass="flex-shrink-0 p-2"
+                    url={game.opponentLogo}
+                  />
+                  <ClickableTeamLabel
+                    textVariant="xs"
+                    label={game.opponentLabel}
+                    teamID={game.opponentID}
+                    textColorClass={textColorClass}
+                    league={league}
+                  />
+                </div>
+                <div className="text-center col-span-1">
+                  <Text
+                    variant="xs"
+                    className={`font-semibold ${
+                      game.userWin
+                        ? "text-green-500"
+                        : game.userLoss
+                        ? "text-red-500"
+                        : textColorClass
+                    } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
+                  >
+                    {game.headerGameScore}
+                  </Text>
+                </div>
+                <div className="flex text-center justify-center col-span-1">
+                  <Button
+                    size="sm"
+                    classes={`flex bg-transparent rounded-full size-10 items-center ${
+                      game.gameScore === "TBC"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={game.gameScore === "TBC"}
+                    onClick={() => {
+                      setSelectedGame(game);
+                      gameModal.handleOpenModal();
+                    }}
+                  >
+                    <InformationCircle />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </SectionCards>
+    </>
   );
 };
 
@@ -161,6 +182,7 @@ export const WeeklySchedule = ({
   Abbr,
   category,
   currentUser,
+  playerMap,
   week,
   league,
   ts,
@@ -172,7 +194,8 @@ export const WeeklySchedule = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamScheduleProps) => {
-  console.log(processedSchedule);
+  const gameModal = useModal();
+  const [selectedGame, setSelectedGame] = useState<any>(null);
   return (
     <SectionCards
       header={`Week ${week}`}
@@ -224,6 +247,14 @@ export const WeeklySchedule = ({
               </Text>
             </div>
           </div>
+          <SchedulePageGameModal
+              isOpen={gameModal.isModalOpen}
+              onClose={gameModal.handleCloseModal}
+              league={league}
+              game={selectedGame}
+              title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
+              playerMap={playerMap}
+            />
           {processedSchedule.map((game, index) => (
             <div
               key={index}
@@ -292,6 +323,10 @@ export const WeeklySchedule = ({
                       : ""
                   }`}
                   disabled={game.gameScore === "TBC"}
+                  onClick={() => {
+                    setSelectedGame(game);
+                    gameModal.handleOpenModal();
+                  }}
                 >
                   <InformationCircle />
                 </Button>

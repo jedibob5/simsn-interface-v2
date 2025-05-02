@@ -89,6 +89,25 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
+  const playerMap = useMemo(() => {
+    if (!chlRosterMap) return {};
+  
+    const map: Record<number, Record<number, { FirstName: string; LastName: string; Position: string }>> = {};
+  
+    Object.entries(chlRosterMap).forEach(([teamId, roster]) => {
+      map[Number(teamId)] = roster.reduce((acc, player) => {
+        acc[player.ID] = {
+          FirstName: player.FirstName,
+          LastName: player.LastName,
+          Position: player.Position,
+        };
+        return acc;
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+    });
+  
+    return map;
+  }, [chlRosterMap]);
+
   const selectedRoster = useMemo(() => {
     if (selectedTeam && chlRosterMap) {
       return chlRosterMap[selectedTeam.ID];
@@ -258,6 +277,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   Abbr={selectedTeam?.Abbreviation}
                   category={view}
                   currentUser={currentUser}
+                  playerMap={playerMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
@@ -276,6 +296,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   Abbr={selectedTeam?.Abbreviation}
                   category={view}
                   currentUser={currentUser}
+                  playerMap={playerMap}
                   week={selectedWeek}
                   league={league}
                   ts={ts}
@@ -352,6 +373,25 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
+
+  const playerMap = useMemo(() => {
+    if (!phlRosterMap) return {};
+  
+    const map: Record<number, Record<number, { FirstName: string; LastName: string; Position: string }>> = {};
+  
+    Object.entries(phlRosterMap).forEach(([teamId, roster]) => {
+      map[Number(teamId)] = roster.reduce((acc, player) => {
+        acc[player.ID] = {
+          FirstName: player.FirstName,
+          LastName: player.LastName,
+          Position: player.Position,
+        };
+        return acc;
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+    });
+  
+    return map;
+  }, [phlRosterMap]);
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam && phlRosterMap) {
@@ -526,6 +566,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   Abbr={selectedTeam?.Abbreviation}
                   category={scheduleView}
                   currentUser={currentUser}
+                  playerMap={playerMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
