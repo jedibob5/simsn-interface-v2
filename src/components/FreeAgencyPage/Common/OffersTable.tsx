@@ -107,7 +107,7 @@ export const OfferTable: FC<OfferTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Preferences) {
+    if (category === Preferences) {
       columns = columns.concat([
         { header: "Market", accessor: "MarketPreference" },
         { header: "Competitive", accessor: "CompetitivePreference" },
@@ -115,7 +115,7 @@ export const OfferTable: FC<OfferTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Values && league === SimPHL) {
+    if (category === Values && league === SimPHL) {
       columns = columns.concat([
         { header: "Y1", accessor: "Y1BaseSalary" },
         { header: "Y2", accessor: "Y2BaseSalary" },
@@ -248,7 +248,7 @@ export const OfferTable: FC<OfferTableProps> = ({
               ))}
           </div>
         </TableCell>
-        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[7rem]">
+        <TableCell classes="w-[5.5em] min-[430px]:w-[6em] sm:w-[7rem]">
           <ButtonGroup direction="row" classes="">
             <Button
               variant="success"
