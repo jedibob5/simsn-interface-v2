@@ -205,11 +205,13 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
         )}
         <TableCell>{item.MinimumValue}</TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
-          {!offers || (offers.length === 0 && "None")}
-          {logos.length > 0 &&
-            logos.map((url) => (
-              <Logo url={url} variant="tiny" containerClass="p-4" />
-            ))}
+          <div className="flex flex-row">
+            {!offers || (offers.length === 0 && "None")}
+            {logos.length > 0 &&
+              logos.map((url) => (
+                <Logo url={url} variant="tiny" containerClass="px-1 py-2" />
+              ))}
+          </div>
         </TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
           <Button

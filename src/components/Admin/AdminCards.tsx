@@ -105,16 +105,19 @@ export const AdminRequestCard: React.FC<AdminRequestCardProps> = ({
   oneItem,
 }) => {
   return (
-    <Border
-      classes={`${!oneItem ? "w-full md:w-1/2 lg:w-1/3" : "w-auto"} px-3`}
-    >
+    <Border classes={`${!oneItem ? "w-full" : "w-auto"} px-3`}>
       <div className="flex flex-row flex-grow items-center h-[12rem] w-full">
         <Border
           classes="items-center justify-center mt-1"
           styles={{ backgroundColor, borderColor }}
         >
           <div className="flex flex-col w-full items-center justify-center p-4">
-            <Logo url={requestLogo} variant="normal" classes="" containerClass="p-4" />
+            <Logo
+              url={requestLogo}
+              variant="normal"
+              classes=""
+              containerClass="p-4"
+            />
           </div>
         </Border>
         <div className="flex flex-col justify-center p-2 flex-1">

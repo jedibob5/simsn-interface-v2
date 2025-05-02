@@ -169,6 +169,7 @@ export const HockeyArchetypeOptions = [
   { label: "Hybrid", value: "Hybrid" },
   { label: "Offensive", value: "Offensive" },
   { label: "Playmaker", value: "Playmaker" },
+  { label: "Two-Way", value: "Two-Way" },
   { label: "Power", value: "Power" },
   { label: "Sniper", value: "Sniper" },
 ];

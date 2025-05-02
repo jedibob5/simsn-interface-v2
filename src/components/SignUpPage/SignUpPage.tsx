@@ -5,6 +5,8 @@ import { validatePassword } from "firebase/auth";
 import { fieldImage } from "../../_utility/getField";
 import { AuthService } from "../../_services/auth";
 import { simLogos } from "../../_constants/logos";
+import { useAuthStore } from "../../context/AuthContext";
+import { CurrentUser } from "../../_hooks/useCurrentUser";
 
 // ✅ Form State Interface
 interface SignUpForm {
@@ -20,6 +22,7 @@ interface AuthResponse {
 }
 
 export const SignUpPage = () => {
+  const { setCurrentUser } = useAuthStore();
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [processing, setProcessing] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -43,11 +46,14 @@ export const SignUpPage = () => {
   // ✅ Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log({ name, value });
     setForm((prevForm) => ({
       ...prevForm,
       [name]: { value },
     }));
   };
+
+  console.log({ form });
 
   // ✅ Handle form submission
   const submitForm = async (e: FormEvent) => {
@@ -68,6 +74,10 @@ export const SignUpPage = () => {
             variant: "success",
             autoHideDuration: 3000,
           });
+          // const user = {
+          //   username: form.username.value,
+          // };
+          // // setCurrentUser({ ...user } as CurrentUser);
           navigate(`/`);
         } else {
           enqueueSnackbar(data.message, {
@@ -102,24 +112,20 @@ export const SignUpPage = () => {
           />
 
           <div className="hidden md:flex flex-col items-center my-auto md:relative lg:p-12 bg-black bg-opacity-75 align-middle rounded-md min-w-full">
-            <img
-                  src={`${simLogos.SimSN}`}
-                  className="h-40"
-                  alt="SimSNLogo"
-                />
+            <img src={`${simLogos.SimSN}`} className="h-40" alt="SimSNLogo" />
             <div className="flex flex-wrap gap-4 mt-4">
-            {Object.entries(simLogos)
-              .slice(2, 8) // Get entries from index 2 to 7
-              .map(([key, value]) => (
-                <img
-                  key={key}
-                  src={value}
-                  className="h-16 opacity-70"
-                  alt={`${key}Logo`}
-                />
-              ))}
+              {Object.entries(simLogos)
+                .slice(2, 8) // Get entries from index 2 to 7
+                .map(([key, value]) => (
+                  <img
+                    key={key}
+                    src={value}
+                    className="h-16 opacity-70"
+                    alt={`${key}Logo`}
+                  />
+                ))}
             </div>
-            
+
             <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">
               Welcome to Sim Sports Network
             </h2>
@@ -138,8 +144,9 @@ export const SignUpPage = () => {
                 <input
                   type="text"
                   id="Username"
-                  name="user_name"
+                  name="username"
                   className="mt-1 w-[25em] rounded-md border-gray-200  text-sm  shadow-sm"
+                  onChange={handleChange}
                 />
               </div>
 
@@ -186,76 +193,81 @@ export const SignUpPage = () => {
             </form>
           </div>
 
-        <main className="md:hidden flex items-center justify-center px-4 sm:px-8 sm:py-8 my-auto">
-          <div className="max-w-xl lg:max-w-3xl">
-            <div className="relative flex flex-col items-center py-6 px-10 rounded-lg bg-black bg-opacity-75 align-middle min-w-full">
-              <img
+          <main className="md:hidden flex items-center justify-center px-4 sm:px-8 sm:py-8 my-auto">
+            <div className="max-w-xl lg:max-w-3xl">
+              <div className="relative flex flex-col items-center py-6 px-10 rounded-lg bg-black bg-opacity-75 align-middle min-w-full">
+                <img
                   src={`${simLogos.SimSN}`}
                   className="h-20"
                   alt="SimSNLogo"
                 />
-              
-              <h1 className="mt-2 text-2xl font-bold  sm:text-3xl md:text-4xl">
-                Welcome to SimSN 🦑
-              </h1>
 
-              <p className="mt-4 leading-relaxed ">
-                Where Dynasties are made and the simulations are plentiful.
-              </p>
-              <form
-                action="#"
-                className="mt-8 grid grid-cols-6 gap-6"
-                onSubmit={submitForm}
-              >
-                <div className="col-span-6 sm:col-span-3">
-                  <label className="block text-sm font-medium ">Username</label>
+                <h1 className="mt-2 text-2xl font-bold  sm:text-3xl md:text-4xl">
+                  Welcome to SimSN 🦑
+                </h1>
 
-                  <input
-                    type="text"
-                    id="FirstName"
-                    name="first_name"
-                    className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
-                  />
-                </div>
+                <p className="mt-4 leading-relaxed ">
+                  Where Dynasties are made and the simulations are plentiful.
+                </p>
+                <form
+                  action="#"
+                  className="mt-8 grid grid-cols-6 gap-6"
+                  onSubmit={submitForm}
+                >
+                  <div className="col-span-6 sm:col-span-3">
+                    <label className="block text-sm font-medium ">
+                      Username
+                    </label>
 
-                <div className="col-span-6 sm:col-span-3">
-                  <label className="block text-sm font-medium ">Email</label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      onChange={handleChange}
+                    />
+                  </div>
 
-                  <input
-                    type="email"
-                    id="Email"
-                    name="email"
-                    className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
-                    onChange={handleChange}
-                  />
-                </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label className="block text-sm font-medium ">Email</label>
 
-                <div className="col-span-6 sm:col-span-3">
-                  <label className="block text-sm font-medium ">Password</label>
+                    <input
+                      type="email"
+                      id="Email"
+                      name="email"
+                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      onChange={handleChange}
+                    />
+                  </div>
 
-                  <input
-                    type={passwordVisibility ? "text" : "password"}
-                    id="Password"
-                    name="password"
-                    className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
-                    onChange={handleChange}
-                  />
-                </div>
+                  <div className="col-span-6 sm:col-span-3">
+                    <label className="block text-sm font-medium ">
+                      Password
+                    </label>
 
-                <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                  <button
-                    type="submit"
-                    className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
-                  >
-                    {processing ? "Processing..." : "Create an account"}
-                  </button>
+                    <input
+                      type={passwordVisibility ? "text" : "password"}
+                      id="Password"
+                      name="password"
+                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      onChange={handleChange}
+                    />
+                  </div>
 
-                  <p className="mt-4 text-sm text-gray-500 sm:mt-0">
-                    Already have an account?
-                    <NavLink to={"/login"} className=" underline">
-                      Log in
-                    </NavLink>
-                    .
+                  <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
+                    <button
+                      type="submit"
+                      className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                    >
+                      {processing ? "Processing..." : "Create an account"}
+                    </button>
+
+                    <p className="mt-4 text-sm text-gray-500 sm:mt-0">
+                      Already have an account?
+                      <NavLink to={"/login"} className=" underline">
+                        Log in
+                      </NavLink>
+                      .
                     </p>
                   </div>
                 </form>

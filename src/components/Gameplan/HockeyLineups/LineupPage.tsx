@@ -157,8 +157,7 @@ export const CHLLineupPage = () => {
       const playerIdx = updatedRosterMap[chlTeam!.ID]?.findIndex(
         (x) => x.ID === playerID
       );
-
-      if (playerIdx && playerIdx > -1) {
+      if (playerIdx > -1) {
         updatedRosterMap[chlTeam!.ID][playerIdx] = new CollegePlayer({
           ...updatedRosterMap[chlTeam!.ID][playerIdx],
           [key]: value,

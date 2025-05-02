@@ -1,6 +1,7 @@
 import { FC } from "react";
 import {
   AddRecruitType,
+  Affiliate,
   CancelOffer,
   Cut,
   InfoType,
@@ -36,6 +37,7 @@ interface ActionModalProps {
   contract?: any;
   offer?: any;
   cutPlayer?: (playerID: number, teamID: number) => Promise<void>;
+  affiliatePlayer?: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer?: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer?: (playerID: number, teamID: number) => Promise<void>;
   addPlayerToBoard?: (dto: any) => Promise<void>;
@@ -65,6 +67,7 @@ export const ActionModal: FC<ActionModalProps> = ({
   toggleScholarship,
   scoutAttribute,
   cancelFAOffer,
+  affiliatePlayer,
   attribute = "",
 }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -73,6 +76,11 @@ export const ActionModal: FC<ActionModalProps> = ({
       case Cut:
         if (cutPlayer) {
           await cutPlayer(playerID!, teamID!);
+        }
+        break;
+      case Affiliate:
+        if (affiliatePlayer) {
+          await affiliatePlayer(playerID!, teamID!);
         }
         break;
       case Redshirt:
@@ -176,6 +184,9 @@ export const ActionModal: FC<ActionModalProps> = ({
   };
   let title = "";
   switch (modalAction) {
+    case Affiliate:
+      title = `Send ${playerLabel} to Affiliate Team?`;
+      break;
     case Cut:
       title = `Cut ${playerLabel}?`;
       break;
@@ -253,6 +264,25 @@ export const ActionModal: FC<ActionModalProps> = ({
             </Text>
             <Text className="mb-4 text-start">
               Are you sure you want to redshirt to this player?
+            </Text>
+          </>
+        )}
+        {modalAction === Affiliate && (
+          <>
+            <Text className="mb4 text-start">
+              WARNING! Once you've confirmed,{" "}
+              <strong>
+                {playerID} {playerLabel}
+              </strong>{" "}
+              will be sent to your PHL Team's Affiliate Team. Other teams may
+              attempt to pick up this player. If an offer is placed, you will
+              have approximately 3 FA Syncs to make a decision to pick the
+              player back up onto your roster. Once the player is claimed by
+              another team or claimed by you, they cannot be placed back onto
+              the Affiliate Team.
+            </Text>
+            <Text className="mb4 text-start">
+              Are you sure you want to confirm this action?
             </Text>
           </>
         )}
