@@ -477,7 +477,6 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
       : [...response.CHLPlayByPlays];
   
     setPlayByPlays(pbp);
-    console.log(pbp)
     setScore(response.Score);
     setIsLoading(false);
   };

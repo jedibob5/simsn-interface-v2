@@ -348,6 +348,10 @@ export const processSchedule = (
     let userLoss = false;
     let gameScore = "TBC";
     let headerGameScore = "TBC";
+    const shootoutScore = game.HomeTeamShootoutScore + game.AwayTeamShootoutScore;
+    let isShootout = shootoutScore > 0 ? true : false;
+    let userShootoutScore;
+    let opponentShootoutScore;
 
     if (revealResult) {
       const userTeamScore = isHomeGame
@@ -356,18 +360,31 @@ export const processSchedule = (
       const opponentScore = isHomeGame
         ? game.AwayTeamScore
         : game.HomeTeamScore;
-      userWin = userTeamScore > opponentScore;
-      userLoss = userTeamScore < opponentScore;
+    
+      if (isShootout) {
+        userShootoutScore = isHomeGame
+          ? game.HomeTeamShootoutScore
+          : game.AwayTeamShootoutScore;
+        opponentShootoutScore = isHomeGame
+          ? game.AwayTeamShootoutScore
+          : game.HomeTeamShootoutScore;
+    
+        userWin = userShootoutScore > opponentShootoutScore;
+        userLoss = userShootoutScore < opponentShootoutScore;
+      } else {
+        userWin = userTeamScore > opponentScore;
+        userLoss = userTeamScore < opponentScore;
+      }
 
       if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0 && game.HomeTeamShootoutScore === 0 && game.AwayTeamShootoutScore === 0) {
         gameScore = "TBC";
         headerGameScore = "TBC";
       } else if (game.HomeTeamShootoutScore > 0 || game.AwayTeamShootoutScore > 0) {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
-        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
+        headerGameScore = `${userTeamScore} - ${opponentScore} (${userShootoutScore} - ${opponentShootoutScore})`;
       } else {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
-        headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore}`;
+        headerGameScore = `${userTeamScore} - ${opponentScore}`;
       }
     }
 
