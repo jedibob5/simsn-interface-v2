@@ -12,6 +12,8 @@ export type TextVariant =
   | "body-small"
   | "small"
   | "xs"
+  | "h1-alt"
+  | "h3-alt"
   | "alternate"
   | "primary"
   | "secondary"
@@ -39,6 +41,8 @@ const tags: Record<TextVariant, keyof JSX.IntrinsicElements> = {
   "body-small": "p",
   small: "p",
   xs: "p",
+  "h1-alt": "h1",
+  "h3-alt": "p",
   alternate: "p",
   primary: "p",
   secondary: "p",
@@ -57,6 +61,8 @@ const sizes: Record<TextVariant, string> = {
   "body-small": "text-sm sm:text-base 3xl:text-lg",
   small: "text-xs sm:text-sm 3xl:text-md",
   xs: "text-[0.5em] sm:text-[0.7em] 3xl:text-base",
+  "h1-alt": "text-3xl sm:text-8xl",
+  "h3-alt": "text-xs sm:text-2xl",
   alternate: "text-xs sm:text-lg 3xl:text-xl",
   primary: "text-base",
   secondary: "text-base",
@@ -80,6 +86,8 @@ const styles: Record<TextVariant, string> = {
   small: "",
   xs: "",
   alternate: "",
+  "h3-alt": "",
+  "h1-alt": "",
 };
 
 export const Text: React.FC<TextProps> = ({
