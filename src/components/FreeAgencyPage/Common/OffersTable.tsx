@@ -33,6 +33,7 @@ import {
   getFAFinancialPreference,
   getFAMarketPreference,
 } from "../../../_helper/utilHelper";
+import { useResponsive } from "../../../_hooks/useMobile";
 
 interface OfferTableProps {
   offers: PHLFreeAgencyOffer[] | NFLFreeAgencyOffer[] | NBAContractOffer[];
@@ -74,12 +75,13 @@ export const OfferTable: FC<OfferTableProps> = ({
   league,
   isMobile = false,
 }) => {
+  const { isTablet, isDesktop } = useResponsive();
   const backgroundColor = colorOne;
   const rosterColumns = useMemo(() => {
     let columns = [
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
-      { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
+      { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
       { header: "Exp", accessor: "Year" },
       { header: "Ovr", accessor: "Overall" },
     ];
@@ -105,7 +107,7 @@ export const OfferTable: FC<OfferTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Preferences) {
+    if (category === Preferences) {
       columns = columns.concat([
         { header: "Market", accessor: "MarketPreference" },
         { header: "Competitive", accessor: "CompetitivePreference" },
@@ -113,7 +115,7 @@ export const OfferTable: FC<OfferTableProps> = ({
       ]);
     }
 
-    if (!isMobile && category === Values && league === SimPHL) {
+    if (category === Values && league === SimPHL) {
       columns = columns.concat([
         { header: "Y1", accessor: "Y1BaseSalary" },
         { header: "Y2", accessor: "Y2BaseSalary" },
@@ -151,7 +153,13 @@ export const OfferTable: FC<OfferTableProps> = ({
     backgroundColor: string
   ) => {
     const player = playerMap[item.PlayerID] as PHLPlayer;
-    const attributes = getPHLAttributes(player, isMobile, category!, null) as {
+    const attributes = getPHLAttributes(
+      player,
+      isMobile,
+      isTablet,
+      category!,
+      null
+    ) as {
       label: string;
       value: number;
       letter: string;
@@ -232,11 +240,15 @@ export const OfferTable: FC<OfferTableProps> = ({
         )}
         <TableCell>{player.MinimumValue}</TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
-          {!offers || (offers.length === 0 && "None")}
-          {logos.length > 0 &&
-            logos.map((url) => <Logo url={url} variant="tiny" containerClass="p-4" />)}
+          <div className="flex flex-row">
+            {!offers || (offers.length === 0 && "None")}
+            {logos.length > 0 &&
+              logos.map((url) => (
+                <Logo url={url} variant="tiny" containerClass="p-2" />
+              ))}
+          </div>
         </TableCell>
-        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[7rem]">
+        <TableCell classes="w-[5.5em] min-[430px]:w-[6em] sm:w-[7rem]">
           <ButtonGroup direction="row" classes="">
             <Button
               variant="success"
