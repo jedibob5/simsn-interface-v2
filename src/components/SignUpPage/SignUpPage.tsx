@@ -157,7 +157,7 @@ export const SignUpPage = () => {
                   type="email"
                   id="Email"
                   name="email"
-                  className="mt-1 w-[25em] rounded-md border-gray-200  text-sm  shadow-sm"
+                  className="mt-1 w-[25em] rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                   onChange={handleChange}
                 />
               </div>
@@ -169,7 +169,7 @@ export const SignUpPage = () => {
                   type={passwordVisibility ? "text" : "password"}
                   id="Password"
                   name="password"
-                  className="mt-1 w-[25em] rounded-md border-gray-200  text-sm  shadow-sm"
+                  className="mt-1 w-[25em] rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                   onChange={handleChange}
                 />
               </div>
@@ -223,7 +223,7 @@ export const SignUpPage = () => {
                       type="text"
                       id="username"
                       name="username"
-                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      className="mt-1 w-full rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                       onChange={handleChange}
                     />
                   </div>
@@ -235,7 +235,7 @@ export const SignUpPage = () => {
                       type="email"
                       id="Email"
                       name="email"
-                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      className="mt-1 w-full rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                       onChange={handleChange}
                     />
                   </div>
@@ -249,7 +249,7 @@ export const SignUpPage = () => {
                       type={passwordVisibility ? "text" : "password"}
                       id="Password"
                       name="password"
-                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      className="mt-1 w-full rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                       onChange={handleChange}
                     />
                   </div>

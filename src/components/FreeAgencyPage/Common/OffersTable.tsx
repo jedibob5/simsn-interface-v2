@@ -20,6 +20,7 @@ import {
   FreeAgencyOffer as PHLFreeAgencyOffer,
   ProfessionalPlayer as PHLPlayer,
   WaiverOffer as PHLWaiverOffer,
+  Timestamp,
 } from "../../../models/hockeyModels";
 import { getPHLAttributes, getPHLContracts } from "../../Team/TeamPageUtils";
 import { getLogo } from "../../../_utility/getLogo";
@@ -60,6 +61,7 @@ interface OfferTableProps {
   ) => void;
   league: League;
   isMobile?: boolean;
+  ts: Timestamp;
 }
 
 export const OfferTable: FC<OfferTableProps> = ({
@@ -74,6 +76,7 @@ export const OfferTable: FC<OfferTableProps> = ({
   handleOfferModal,
   league,
   isMobile = false,
+  ts,
 }) => {
   const { isTablet, isDesktop } = useResponsive();
   const backgroundColor = colorOne;
@@ -253,6 +256,7 @@ export const OfferTable: FC<OfferTableProps> = ({
             <Button
               variant="success"
               size="xs"
+              disabled={ts.IsFreeAgencyLocked}
               onClick={() =>
                 handleOfferModal(FreeAgentOffer, player as PHLPlayer)
               }
