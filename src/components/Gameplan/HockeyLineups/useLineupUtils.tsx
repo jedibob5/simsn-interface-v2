@@ -112,6 +112,17 @@ export const useCHLLineupUtils = (
       if (playerID === 0) return;
 
       const player = chlTeamRosterMap[playerID];
+      if (player.IsInjured) {
+        errList.push(
+          `${player.Position} ${player.FirstName} ${player.LastName} is currently injured and will be out for approximately ${player.DaysOfRecovery} days.`
+        );
+      }
+
+      if (player.IsRedshirting) {
+        errList.push(
+          `${player.Position} ${player.FirstName} ${player.LastName} is currently redshirting and cannot play.`
+        );
+      }
       const playerLabel = `${lineupLabel}: ${player.Position} ${player.FirstName} ${player.LastName}`;
 
       if (playerMap[playerID] === true) {
@@ -384,6 +395,18 @@ export const usePHLLineupUtils = (
       const player = phlTeamRosterMap[playerID];
       if (!player) return;
       const playerLabel = `${lineupLabel}: ${player.Position} ${player.FirstName} ${player.LastName}`;
+
+      if (player.IsInjured) {
+        errList.push(
+          `${player.Position} ${player.FirstName} ${player.LastName} is currently injured and will be out for approximately ${player.DaysOfRecovery} days.`
+        );
+      }
+
+      if (player.IsAffiliatePlayer) {
+        errList.push(
+          `${player.Position} ${player.FirstName} ${player.LastName} is currently on the affiliate team and cannot play.`
+        );
+      }
 
       if (playerMap[playerID] === true) {
         errList.push(

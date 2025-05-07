@@ -349,6 +349,7 @@ export const PHLFreeAgency = () => {
                   openModal={handleFAModal}
                   handleOfferModal={handleOfferModal}
                   isMobile={isMobile}
+                  ts={hck_Timestamp!!}
                 />
               </Border>
             </>

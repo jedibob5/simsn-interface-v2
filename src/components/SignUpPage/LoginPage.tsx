@@ -85,24 +85,20 @@ export const LoginPage = () => {
           />
 
           <div className="hidden md:flex flex-col items-center my-auto md:relative lg:p-12 bg-black bg-opacity-75 align-middle rounded-md min-w-full">
-            <img
-                  src={`${simLogos.SimSN}`}
-                  className="h-40"
-                  alt="SimSNLogo"
-                />
+            <img src={`${simLogos.SimSN}`} className="h-40" alt="SimSNLogo" />
             <div className="flex flex-wrap gap-4 mt-4">
-            {Object.entries(simLogos)
-              .slice(2, 8) // Get entries from index 2 to 7
-              .map(([key, value]) => (
-                <img
-                  key={key}
-                  src={value}
-                  className="h-16 opacity-70"
-                  alt={`${key}Logo`}
-                />
-              ))}
+              {Object.entries(simLogos)
+                .slice(2, 8) // Get entries from index 2 to 7
+                .map(([key, value]) => (
+                  <img
+                    key={key}
+                    src={value}
+                    className="h-16 opacity-70"
+                    alt={`${key}Logo`}
+                  />
+                ))}
             </div>
-            
+
             <h2 className="mt-6 text-2xl font-bold sm:text-3xl md:text-4xl">
               Welcome to Sim Sports Network
             </h2>
@@ -125,7 +121,7 @@ export const LoginPage = () => {
                   type="email"
                   id="Email"
                   name="email"
-                  className="mt-1 w-[20em] rounded-md border-gray-200  text-sm  shadow-sm"
+                  className="mt-1 w-[20em] rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                   onChange={handleChange}
                 />
               </div>
@@ -142,7 +138,10 @@ export const LoginPage = () => {
                   type={passwordVisibility ? "text" : "password"}
                   id="Password"
                   name="password"
-                  className="mt-1 w-[20em] rounded-md border-gray-200  text-sm  shadow-sm"
+                  className="mt-1 w-[20em] rounded-md border-gray-200  text-sm  shadow-sm
+                dark:bg-gray-800 dark:text-gray-100
+                dark:border-gray-600
+                  "
                   onChange={handleChange}
                 />
               </div>
@@ -199,7 +198,7 @@ export const LoginPage = () => {
                       type="email"
                       id="Email"
                       name="email"
-                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      className="mt-1 w-full rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                       onChange={handleChange}
                     />
                   </div>
@@ -216,7 +215,7 @@ export const LoginPage = () => {
                       type={passwordVisibility ? "text" : "password"}
                       id="Password"
                       name="password"
-                      className="mt-1 w-full rounded-md border-gray-200  text-sm  shadow-sm"
+                      className="mt-1 w-full rounded-md border-gray-200 text-sm shadow-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                       onChange={handleChange}
                     />
                   </div>
