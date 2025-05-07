@@ -932,8 +932,8 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                     <Text variant="xs" classes="col-span-1 text-center">Qtr</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`}>Poss</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`}>Time</Text>
-                    <Text variant="xs" classes="col-span-3 text-center">LOS</Text>
-                    <Text variant="xs" classes="col-span-3 text-center">Down</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>LOS</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Down</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Play Type</Text>
                   {isDesktop && (
                     <>
@@ -967,8 +967,8 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                     <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.Quarter}</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`} style={textColor}>{play.Possession}</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`} style={textColor}>{play.TimeRemaining}</Text>
-                    <Text variant="xs" classes="col-span-3 text-center" style={textColor}>{play.LineOfScrimmage}</Text>
-                    <Text variant="xs" classes="col-span-3 text-center" style={textColor}>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>{play.LineOfScrimmage}</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>
                       {play.Down === 0
                         ? ""
                         : `${play.Down === 1 ? "1st" : 
