@@ -1,7 +1,6 @@
 import { FC, useMemo, useState, useEffect } from "react";
 import {
   League,
-  ModalAction,
   SimCHL,
   SimPHL,
   SimCFB,
@@ -10,25 +9,22 @@ import {
   BoxScore,
 } from "../../../_constants/constants";
 import { Modal } from "../../../_design/Modal";
-import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
 import FBAScheduleService from "../../../_services/scheduleService";
 import {
   PlayerStats,
-  GameResult,
   PlayByPlay,
   FilteredStats,
   HockeyFilteredStats,
-  HockeyGameResult
 } from "./GameModalInterfaces";
-import { CollegePlayerGameStats as CHLPlayerGameStats, ProfessionalPlayerGameStats as PHLPlayerGameStats, GameResultsResponse } from "../../../models/hockeyModels";
-import { CollegePlayerStats as PlayerGameStats, GameResultsResponse as FootballGameResultsResponse } from "../../../models/footballModels";
+import { CollegePlayerGameStats as CHLPlayerGameStats, GameResultsResponse } from "../../../models/hockeyModels";
+import { GameResultsResponse as FootballGameResultsResponse } from "../../../models/footballModels";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { getPasserRating } from "../../../_utility/getPasserRating";
-import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { ToggleSwitch } from "../../../_design/Inputs";
 import { useResponsive } from "../../../_hooks/useMobile";
+import { getTeamAbbrFromName } from "../../../_utility/getTeamAbbrFromName";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -106,9 +102,6 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
   const homeScoreColor = game.HomeTeamScore > game.AwayTeamScore ? "#189E5B" : "#ef4444";
   const awayScoreColor = game.AwayTeamScore > game.HomeTeamScore ? "#189E5B" : "#ef4444";
   const {isDesktop, isMobile} = useResponsive();
-  let isOvertime = false;
-  let overtimeHomeScore;
-  let overtimeAwayScore;
 
   useEffect(() => {
     if (!game || game.ID <= 0) return;
@@ -133,7 +126,19 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
     setHomePlayers(response.HomePlayers);
     setAwayPlayers(response.AwayPlayers);
 
-    const pbp: PlayByPlay[] = [...response.PlayByPlays];
+    const pbp: PlayByPlay[] = isPro
+    ? response.PlayByPlays.map((play) => ({
+        ...play,
+        Possession: getTeamAbbrFromName(play.Possession),
+        LineOfScrimmage: play.LineOfScrimmage
+          ? play.LineOfScrimmage.replace(
+              /(\d+)\s(.+)/,
+              (_, yardLine, teamName) => `${yardLine} ${getTeamAbbrFromName(teamName)}`
+            )
+          : play.LineOfScrimmage,
+      }))
+    : [...response.PlayByPlays];
+  
     setPlayByPlays(pbp);
     setScore(response.Score);
     setIsLoading(false);
@@ -184,6 +189,41 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
     return obj;
   };
 
+  const { isOvertime, OvertimeHomeScore, OvertimeAwayScore } = useMemo(() => {
+    if (!score) {
+      return { isOvertime: false, OvertimeHomeScore: 0, OvertimeAwayScore: 0 };
+    }
+  
+    const overtimeScores = [
+      score.OT1Home,
+      score.OT1Away,
+      score.OT2Home,
+      score.OT2Away,
+      score.OT3Home,
+      score.OT3Away,
+      score.OT4Home,
+      score.OT4Away,
+    ];
+  
+    const isOvertime = overtimeScores.some((otScore) => otScore > 0);
+  
+    const OvertimeHomeScore = isOvertime
+      ? (score.OT1Home ?? 0) +
+        (score.OT2Home ?? 0) +
+        (score.OT3Home ?? 0) +
+        (score.OT4Home ?? 0)
+      : 0;
+  
+    const OvertimeAwayScore = isOvertime
+      ? (score.OT1Away ?? 0) +
+        (score.OT2Away ?? 0) +
+        (score.OT3Away ?? 0) +
+        (score.OT4Away ?? 0)
+      : 0;
+  
+    return { isOvertime, OvertimeHomeScore, OvertimeAwayScore };
+  }, [score]);
+  
   return (
     <>
       {isLoading ? (
@@ -198,9 +238,11 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                 <div className="flex items-center h-full gap-1 sm:gap-4">
                   <Logo url={game.HomeTeamLogo} classes="w-full h-full" />
                   <div className="flex flex-col text-left sm:pr-8">
+                  {league === SimCFB && (
                     <Text variant="small" classes="opacity-50">
                       {game.HomeTeamRank > 0 ? `#${game.HomeTeamRank}` : "NR"}
                     </Text>
+                  )}
                     <Text variant="alternate">{game.HomeTeamName}</Text>
                     <Text variant="h3-alt" classes="font-semibold">{game.HomeTeamMascot}</Text>
                   </div>
@@ -214,29 +256,87 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                   <Text variant="body" classes="font-semibold">Final</Text>
                 </div>
                 <div className="grid">
-                  <div className="grid grid-cols-7 gap-4 border-b">
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3 border-b`}
+                  >
                     <div className="text-center col-span-2"></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">1</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">2</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">3</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">4</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">T</Text></div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">1</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">2</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">3</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">4</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">OT</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">T</Text>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-7 gap-3">
-                    <div className="text-left col-span-2"><Text variant="body-small">{game.HomeTeamAbbr}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q1Home}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q2Home}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q3Home}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q4Home}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{game.HomeTeamScore}</Text></div>
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3`}
+                  >
+                    <div className="text-left col-span-2">
+                      <Text variant="body-small">{game.HomeTeamAbbr}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q1Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q2Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q3Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q4Home}</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{OvertimeHomeScore}</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{game.HomeTeamScore}</Text>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-7 gap-3">
-                    <div className="text-left col-span-2"><Text variant="body-small">{game.AwayTeamAbbr}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q1Away}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q2Away}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q3Away}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{score.Q4Away}</Text></div>
-                    <div className="text-center col-span-1"><Text variant="body-small">{game.AwayTeamScore}</Text></div>
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3`}
+                  >
+                    <div className="text-left col-span-2">
+                      <Text variant="body-small">{game.AwayTeamAbbr}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q1Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q2Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q3Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q4Away}</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{OvertimeAwayScore}</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{game.AwayTeamScore}</Text>
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-2 py-2">
@@ -256,9 +356,11 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                     <Text variant="h1-alt" style={{ color: awayScoreColor }}>{game.AwayTeamScore}</Text>
                   </div>
                   <div className="flex flex-col text-right sm:pl-8">
+                  {league === SimCFB && (
                     <Text variant="small" classes="opacity-50">
-                      {game.AwayTeamRank > 0 ? `#${game.AwayTeamRank}` : "NR"}
+                    {game.AwayTeamRank > 0 ? `#${game.AwayTeamRank}` : "NR"}
                     </Text>
+                  )}
                     <Text variant="alternate">{game.AwayTeamName}</Text>
                     <Text variant="h3-alt" classes="font-semibold">{game.AwayTeamMascot}</Text>
                   </div>
@@ -925,13 +1027,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                 <div className="flex flex-col">
                   <div
                     className={`grid ${
-                      isMobile ? "grid-cols-25" : "grid-cols-40"
+                      isMobile ? "grid-cols-25" : "grid-cols-42"
                     } gap-2 text-sm border-b py-1`}
                   >
                     <Text variant="xs" classes="col-span-1 text-center">#</Text>
                     <Text variant="xs" classes="col-span-1 text-center">Qtr</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`}>Poss</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`}>Time</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`}>Poss</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`}>Time</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>LOS</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Down</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Play Type</Text>
@@ -959,14 +1061,14 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                   <div
                     key={play.PlayNumber}
                     className={`grid ${
-                      isMobile ? "grid-cols-25" : "grid-cols-40"
+                      isMobile ? "grid-cols-25" : "grid-cols-42"
                     } gap-2 text-sm border-b py-1`}
                     style={{ backgroundColor: bgColor }}
                   >
                     <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.PlayNumber}</Text>
                     <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.Quarter}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`} style={textColor}>{play.Possession}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center`} style={textColor}>{play.TimeRemaining}</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`} style={textColor}>{play.Possession}</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`} style={textColor}>{play.TimeRemaining}</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>{play.LineOfScrimmage}</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>
                       {play.Down === 0

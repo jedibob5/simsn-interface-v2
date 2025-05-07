@@ -170,6 +170,7 @@ export const getScheduleNFLData = (
     teamStandings,
     teamSchedule,
     groupedWeeklyGames,
+    teamAbbrMap,
   };
 };
 

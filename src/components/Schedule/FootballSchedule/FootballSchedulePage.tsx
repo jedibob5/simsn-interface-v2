@@ -30,7 +30,6 @@ import {
 import {
   TeamSchedule,
   TeamStandings,
-  LeagueStats,
   LeagueStandings,
   WeeklySchedule,
 } from "../Common/SchedulePageComponents";
@@ -52,13 +51,9 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     cfbTeam,
     cfbTeams,
     cfbTeamMap,
-    cfbRosterMap,
     cfbTeamOptions,
     allCFBStandings,
     allCollegeGames: allCFBGames,
-    topCFBPassers,
-    topCFBReceivers,
-    topCFBRushers,
     isLoading,
   } = fbStore;
 
@@ -85,13 +80,6 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
-
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && cfbRosterMap) {
-      return cfbRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [cfbRosterMap, selectedTeam]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
@@ -315,13 +303,9 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     nflTeam,
     nflTeams,
     proTeamMap: nflTeamMap,
-    proRosterMap: nflRosterMap,
     nflTeamOptions,
     allProStandings: allNFLStandings,
     allProGames: allNFLGames,
-    topNFLPassers,
-    topNFLReceivers,
-    topNFLRushers,
     isLoading,
   } = fbStore;
 
@@ -350,13 +334,6 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && nflRosterMap) {
-      return nflRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [nflRosterMap, selectedTeam]);
-
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
@@ -364,7 +341,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     setCategory(Overview);
   };
 
-  const { teamStandings, teamSchedule, groupedWeeklyGames } = useMemo(() => {
+  const { teamStandings, teamSchedule, groupedWeeklyGames, teamAbbrMap } = useMemo(() => {
     return getScheduleNFLData(
       selectedTeam,
       currentWeek,

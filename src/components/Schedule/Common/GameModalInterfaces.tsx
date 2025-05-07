@@ -89,13 +89,6 @@ export interface FilteredStats {
   ReturnStats: PlayerStats[];
 }
 
-export interface GameResult {
-  HomePlayers: PlayerStats[];
-  AwayPlayers: PlayerStats[];
-  PlayByPlays: PlayByPlay[];
-  Score: string;
-}
-
 export interface HockeyPlayerStats {
   Position: string;
   FirstName: string;
@@ -116,11 +109,4 @@ export interface HockeyFilteredStats {
   ForwardsStats: CollegePlayerGameStats[];
   DefensemenStats: CollegePlayerGameStats[];
   GoalieStats: CollegePlayerGameStats[];
-}
-
-export interface HockeyGameResult {
-  HomePlayers: PlayerStats[];
-  AwayPlayers: PlayerStats[];
-  PlayByPlays: PlayByPlay[];
-  Score: string;
 }
