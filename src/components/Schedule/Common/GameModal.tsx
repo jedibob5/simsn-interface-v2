@@ -1049,7 +1049,7 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                       <Text variant="xs" classes="col-span-2 text-center">S Cov.</Text>
                     </>
                   )}
-                    <Text variant="xs" classes={`${isMobile ? "col-span-6" : "col-span-9"} text-center border-l pl-1`}>Description</Text>
+                    <Text variant="xs" classes={`${isMobile ? "col-span-6" : "col-span-9"} text-left border-l pl-1`}>Description</Text>
                     <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center border-r pr-1`}>Yds.</Text>
                     <Text variant="xs" classes="col-span-2 text-center">Score</Text>
                   </div>
