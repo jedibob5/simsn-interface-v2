@@ -1,6 +1,6 @@
 import { fbaUrl, hckUrl } from "../_constants/urls.js";
 import { GetCall, PostCall } from "../_helper/fetchHelper.js";
-import { GameResult } from "../components/Schedule/Common/GameModalInterfaces.js";
+import { GameResultsResponse as FootballGameResults } from "../models/footballModels.js";
 import { GameResultsResponse as HockeyGameResults } from "../models/hockeyModels.js";
 
 export default class FBAScheduleService {
@@ -30,11 +30,11 @@ export default class FBAScheduleService {
     await PostCall(`${fbaUrl}games/update/time/`, dto);
   }
 
-  async GetCFBGameResultData(id: number): Promise<GameResult> {
+  async GetCFBGameResultData(id: number): Promise<FootballGameResults> {
     return await GetCall(`${fbaUrl}games/result/cfb/${id}/`);
   }
 
-  async GetNFLGameResultData(id: number): Promise<GameResult> {
+  async GetNFLGameResultData(id: number): Promise<FootballGameResults> {
     return await GetCall(`${fbaUrl}games/result/nfl/${id}/`);
   }
 

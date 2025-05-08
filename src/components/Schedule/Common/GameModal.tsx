@@ -1,7 +1,6 @@
 import { FC, useMemo, useState, useEffect } from "react";
 import {
   League,
-  ModalAction,
   SimCHL,
   SimPHL,
   SimCFB,
@@ -10,23 +9,34 @@ import {
   BoxScore,
 } from "../../../_constants/constants";
 import { Modal } from "../../../_design/Modal";
-import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
 import { Logo } from "../../../_design/Logo";
 import FBAScheduleService from "../../../_services/scheduleService";
 import {
   PlayerStats,
-  GameResult,
   PlayByPlay,
   FilteredStats,
   HockeyFilteredStats,
-  HockeyGameResult
 } from "./GameModalInterfaces";
-import { CollegePlayerGameStats as CHLPlayerGameStats, ProfessionalPlayerGameStats as PHLPlayerGameStats, GameResultsResponse } from "../../../models/hockeyModels";
+import { CollegePlayerGameStats as CHLPlayerGameStats, GameResultsResponse } from "../../../models/hockeyModels";
+import { GameResultsResponse as FootballGameResultsResponse } from "../../../models/footballModels";
 import { darkenColor } from "../../../_utility/getDarkerColor";
-import { getPasserRating } from "../../../_utility/getPasserRating";
-import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { ToggleSwitch } from "../../../_design/Inputs";
+import { useResponsive } from "../../../_hooks/useMobile";
+import { getTeamAbbrFromName } from "../../../_utility/getTeamAbbrFromName";
+import { 
+  FBGameModalPassing,
+  FBGameModalRushing,
+  FBGameModalReceiving,
+  FBGameModalDefensive,
+  FBGameModalKicking,
+  FBGameModalReturning,
+  FBGameModalPBP,
+  HKGameModalForwards,
+  HKGameModalDefensemen,
+  HKGameModalGoalies,
+  HKGameModalPBP
+} from "./GameModalComponents";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -57,7 +67,9 @@ export const SchedulePageGameModal: FC<SchedulePageGameModalProps> = ({
         isOpen={isOpen}
         onClose={onClose}
         title={`${title} Box Score`}
-        classes="h-[80vh] sm:min-w-[1400px] overflow-auto"
+        classes={`h-[80vh] ${
+          league === SimNFL || league === SimCFB ? "sm:min-w-[1650px]" : "sm:min-w-[1400px]"
+        } overflow-auto`}
       >
         {league === SimCHL && (
           <HockeyGameModal game={game} league={league} isPro={isPro} playerMap={playerMap} />
@@ -88,16 +100,35 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [homePlayers, setHomePlayers] = useState<PlayerStats[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<PlayerStats[]>([]);
-  const [viewableHomePlayers, setViewableHomePlayers] =
-    useState<FilteredStats | null>(null);
-  const [viewableAwayPlayers, setViewableAwayPlayers] =
-    useState<FilteredStats | null>(null);
+  const [viewableHomePlayers, setViewableHomePlayers] = useState<FilteredStats>({
+    PassingStats: [],
+    RushingStats: [],
+    ReceivingStats: [],
+    DefenseStats: [],
+    SpecialTeamStats: [],
+    OLineStats: [],
+    ReturnStats: [],
+  });
+  
+  const [viewableAwayPlayers, setViewableAwayPlayers] = useState<FilteredStats>({
+    PassingStats: [],
+    RushingStats: [],
+    ReceivingStats: [],
+    DefenseStats: [],
+    SpecialTeamStats: [],
+    OLineStats: [],
+    ReturnStats: [],
+  });
   const [playByPlays, setPlayByPlays] = useState<PlayByPlay[]>([]);
-  const [view, setView] = useState<string>("Box Score");
+  const [view, setView] = useState<string>(BoxScore);
   const [header, setHeader] = useState<string>("Box Score");
   const [score, setScore] = useState<any | null>(null);
+  const [isChecked, setIsChecked] = useState(false);
   const backgroundColor = "#1f2937";
   const borderColor = darkenColor(backgroundColor, -5);
+  const homeScoreColor = game.HomeTeamScore > game.AwayTeamScore ? "#189E5B" : "#ef4444";
+  const awayScoreColor = game.AwayTeamScore > game.HomeTeamScore ? "#189E5B" : "#ef4444";
+  const {isDesktop, isMobile} = useResponsive();
 
   useEffect(() => {
     if (!game || game.ID <= 0) return;
@@ -107,12 +138,11 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
   const GetMatchResults = async (): Promise<void> => {
     setIsLoading(true);
 
-    let response: GameResult;
+    let response: FootballGameResultsResponse;
     if (isPro) {
       response = await scheduleService.GetNFLGameResultData(game.ID);
     } else {
       response = await scheduleService.GetCFBGameResultData(game.ID);
-      console.log(response)
     }
 
     const filteredHomePlayerList = FilterStatsData(response.HomePlayers);
@@ -123,13 +153,24 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
     setHomePlayers(response.HomePlayers);
     setAwayPlayers(response.AwayPlayers);
 
-    const pbp: PlayByPlay[] = [...response.PlayByPlays];
+    const pbp: PlayByPlay[] = isPro
+    ? response.PlayByPlays.map((play) => ({
+        ...play,
+        Possession: getTeamAbbrFromName(play.Possession),
+        LineOfScrimmage: play.LineOfScrimmage
+          ? play.LineOfScrimmage.replace(
+              /(\d+)\s(.+)/,
+              (_, yardLine, teamName) => `${yardLine} ${getTeamAbbrFromName(teamName)}`
+            )
+          : play.LineOfScrimmage,
+      }))
+    : [...response.PlayByPlays];
+  
     setPlayByPlays(pbp);
     setScore(response.Score);
     setIsLoading(false);
   };
-
-  const FilterStatsData = (dataSet: PlayerStats[]): FilteredStats => {
+  const FilterStatsData = (dataSet: any[]): FilteredStats => {
     const obj: FilteredStats = {
       PassingStats: [],
       RushingStats: [],
@@ -137,6 +178,7 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
       DefenseStats: [],
       SpecialTeamStats: [],
       OLineStats: [],
+      ReturnStats: [],
     };
 
     if (dataSet.length > 0) {
@@ -144,274 +186,424 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
       .filter((x) => x.PassAttempts && x.PassAttempts > 0)
       .sort((a, b) => (b.PassAttempts ?? 0) - (a.PassAttempts ?? 0));
       
-      obj.RushingStats = dataSet.filter(
-        (x) => x.RushAttempts && x.RushAttempts > 0
-      );
-      obj.ReceivingStats = dataSet.filter((x) => x.Targets && x.Targets > 0);
-      obj.DefenseStats = dataSet.filter((x) =>
-        ["ILB", "OLB", "DT", "DE", "CB", "FS", "SS", "QB"].includes(x.Position)
-      );
-      obj.SpecialTeamStats = dataSet.filter((x) =>
-        ["P", "K", "QB"].includes(x.Position)
-      );
-      obj.OLineStats = dataSet.filter(
-        (x) =>
-          (x.Pancakes && x.Pancakes > 0) ||
-          (x.SacksAllowed && x.SacksAllowed > 0)
-      );
-    }
+      obj.RushingStats = dataSet
+      .filter((x) => x.RushAttempts && x.RushAttempts > 0)
+      .sort((a, b) => b.RushingYards - a.RushingYards);
+    
+    obj.ReceivingStats = dataSet
+      .filter((x) => x.Targets && x.Targets > 0)
+      .sort((a, b) => b.ReceivingYards - a.ReceivingYards);
+    
+    obj.DefenseStats = dataSet
+    .filter((x) =>
+      ["ILB", "OLB", "DT", "DE", "CB", "FS", "SS", "ATH"].includes(x.Position)
+    )
+    .map((player) => ({
+      ...player,
+      TotalTackles: (player.SoloTackles ?? 0) + (player.AssistedTackles ?? 0),
+    }))
+    .sort((a, b) => b.TotalTackles - a.TotalTackles);
+    
+    obj.SpecialTeamStats = dataSet
+      .filter((x) => ["P", "K"].includes(x.Position))
+      .sort((a, b) => b.FGAttempts - a.FGAttempts);
+
+    obj.ReturnStats = dataSet
+    .filter((x) => x.KickReturnYards || x.PuntReturnYards > 0)
+    .sort((a, b) => b.KickReturnYards - a.KickReturnYards);
+  }
 
     return obj;
   };
 
+  const { isOvertime, OvertimeHomeScore, OvertimeAwayScore } = useMemo(() => {
+    if (!score) {
+      return { isOvertime: false, OvertimeHomeScore: 0, OvertimeAwayScore: 0 };
+    }
+  
+    const overtimeScores = [
+      score.OT1Home,
+      score.OT1Away,
+      score.OT2Home,
+      score.OT2Away,
+      score.OT3Home,
+      score.OT3Away,
+      score.OT4Home,
+      score.OT4Away,
+    ];
+  
+    const isOvertime = overtimeScores.some((otScore) => otScore > 0);
+  
+    const OvertimeHomeScore = isOvertime
+      ? (score.OT1Home ?? 0) +
+        (score.OT2Home ?? 0) +
+        (score.OT3Home ?? 0) +
+        (score.OT4Home ?? 0)
+      : 0;
+  
+    const OvertimeAwayScore = isOvertime
+      ? (score.OT1Away ?? 0) +
+        (score.OT2Away ?? 0) +
+        (score.OT3Away ?? 0) +
+        (score.OT4Away ?? 0)
+      : 0;
+  
+    return { isOvertime, OvertimeHomeScore, OvertimeAwayScore };
+  }, [score]);
+  
   return (
     <>
-    {isLoading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center">
-          <Text variant="small">
-            Loading...
-          </Text>
+          <Text variant="small">Loading...</Text>
         </div>
       ) : (
-      <div className="flex flex-col gap-2">
-        <div className="flex w-full justify-around px-2">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-4">
-              <Logo url={game.HomeTeamLogo} classes="w-full h-full" />
-              <div className="flex flex-col text-left">
-            {!isPro && (
-              <Text variant="small" classes="opacity-50">
-                {game.HomeTeamRank > 0 ? `#${game.HomeTeamRank}` : "NR"}
-              </Text>
-            )}
-                <Text variant="alternate">{game.HomeTeamName}</Text>
-                <Text variant="h3">{game.HomeTeamMascot}</Text>
-              </div>
-              <Text variant="h1">{game.HomeTeamScore}</Text>
-            </div>
-            <div className="flex flex-col pt-2">
-              <Text variant="xs">{score.HomeOffensiveScheme} | {score.HomeDefensiveScheme}</Text>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex justify-center">
-              <Text variant="body" classes="font-semibold">
-                Final
-              </Text>
-            </div>
-            <div className="grid">
-              <div className="grid grid-cols-7 gap-4 border-b">
-                <div className="text-center col-span-2"></div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">1</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">2</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">3</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">4</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">T</Text>
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col sm:gap-2">
+            <div className="flex w-full justify-around px-2">
+              <div className="flex flex-col items-center w-1/3">
+                <div className="flex items-center h-full gap-1 sm:gap-4">
+                  <Logo url={game.HomeTeamLogo} classes="w-full h-full" />
+                  <div className="flex flex-col text-left sm:pr-8">
+                  {league === SimCFB && (
+                    <Text variant="small" classes="opacity-50">
+                      {game.HomeTeamRank > 0 ? `#${game.HomeTeamRank}` : "NR"}
+                    </Text>
+                  )}
+                    <Text variant="alternate">{game.HomeTeamName}</Text>
+                    <Text variant="h3-alt" classes="font-semibold">{game.HomeTeamMascot}</Text>
+                  </div>
+                  <div className="flex flex-col pr-2 sm:pr-0">
+                    <Text variant="h1-alt" style={{ color: homeScoreColor }}>{game.HomeTeamScore}</Text>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-7 gap-3">
-                <div className="text-left col-span-2">
-                  <Text variant="body-small">{game.HomeTeamAbbr}</Text>
+              <div className="flex flex-col">
+                <div className="flex justify-center">
+                  <Text variant="body" classes="font-semibold">Final</Text>
                 </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q1Home}</Text>
+                <div className="grid">
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3 border-b`}
+                  >
+                    <div className="text-center col-span-2"></div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">1</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">2</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">3</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">4</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">OT</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">T</Text>
+                    </div>
+                  </div>
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3`}
+                  >
+                    <div className="text-left col-span-2">
+                      <Text variant="body-small">{game.HomeTeamAbbr}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q1Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q2Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q3Home}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q4Home}</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{OvertimeHomeScore}</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{game.HomeTeamScore}</Text>
+                    </div>
+                  </div>
+                  <div className={`grid ${
+                      isOvertime ? "grid-cols-8" : "grid-cols-7"
+                    } gap-2 sm:gap-3`}
+                  >
+                    <div className="text-left col-span-2">
+                      <Text variant="body-small">{game.AwayTeamAbbr}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q1Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q2Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q3Away}</Text>
+                    </div>
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{score.Q4Away}</Text>
+                    </div>
+                  {isOvertime && (
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{OvertimeAwayScore}</Text>
+                    </div>
+                  )}
+                    <div className="text-center col-span-1">
+                      <Text variant="body-small">{game.AwayTeamScore}</Text>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q2Home}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q3Home}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q4Home}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{game.HomeTeamScore}</Text>
+                <div className="flex justify-center items-center gap-2 py-2">
+                  <ToggleSwitch
+                    onChange={(checked) => {
+                      setView(checked ? PBP : BoxScore);
+                      setIsChecked(checked);
+                    }}
+                    checked={isChecked}
+                  />
+                  <Text variant="small">Play By Play</Text>
                 </div>
               </div>
-              <div className="grid grid-cols-7 gap-3">
-                <div className="text-left col-span-2">
-                  <Text variant="body-small">{game.AwayTeamAbbr}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q1Away}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q2Away}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q3Away}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{score.Q4Away}</Text>
-                </div>
-                <div className="text-center col-span-1">
-                  <Text variant="body-small">{game.AwayTeamScore}</Text>
+              <div className="flex flex-col items-center w-1/3">
+                <div className="flex items-center h-full gap-1 sm:gap-4">
+                  <div className="flex flex-col pl-2 sm:pl-0">
+                    <Text variant="h1-alt" style={{ color: awayScoreColor }}>{game.AwayTeamScore}</Text>
+                  </div>
+                  <div className="flex flex-col text-right sm:pl-8">
+                  {league === SimCFB && (
+                    <Text variant="small" classes="opacity-50">
+                    {game.AwayTeamRank > 0 ? `#${game.AwayTeamRank}` : "NR"}
+                    </Text>
+                  )}
+                    <Text variant="alternate">{game.AwayTeamName}</Text>
+                    <Text variant="h3-alt" classes="font-semibold">{game.AwayTeamMascot}</Text>
+                  </div>
+                  <Logo url={game.AwayTeamLogo} classes="w-full h-full" />
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-4">
-              <Text variant="h1">{game.AwayTeamScore}</Text>
-              <div className="flex flex-col text-right">
-              {!isPro && (
-                <Text variant="small" classes="opacity-50">
-                  {game.AwayTeamRank > 0 ? `#${game.AwayTeamRank}` : "NR"}
-                </Text>
+            <div className="flex flex-col rounded-lg p-2 justify-start w-full" style={{ backgroundColor: borderColor }}>
+              {view === BoxScore && (
+                <div className="flex flex-col">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Passing</Text>
+                        </div>
+                        <FBGameModalPassing 
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Passing</Text>
+                        </div>
+                        <FBGameModalPassing 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Rushing</Text>
+                        </div>
+                        <FBGameModalRushing
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Rushing</Text>
+                        </div>
+                        <FBGameModalRushing  
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Receiving</Text>
+                        </div>
+                        <FBGameModalReceiving
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Receiving</Text>
+                        </div>
+                        <FBGameModalReceiving
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Defensive</Text>
+                        </div>
+                        <FBGameModalDefensive 
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Defensive</Text>
+                        </div>
+                        <FBGameModalDefensive 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Kicking and Punting</Text>
+                        </div>
+                        <FBGameModalKicking
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Kicking and Punting</Text>
+                        </div>
+                        <FBGameModalKicking 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Returning</Text>
+                        </div>
+                        <FBGameModalReturning
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
+                          <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Returning</Text>
+                        </div>
+                        <FBGameModalReturning 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
-                <Text variant="alternate">{game.AwayTeamName}</Text>
-                <Text variant="h3">{game.AwayTeamMascot}</Text>
-              </div>
-              <Logo url={game.AwayTeamLogo} classes="w-full h-full" />
-            </div>
-            <div className="flex flex-col pt-2">
-              <Text variant="xs">{score.AwayOffensiveScheme} | {score.AwayDefensiveScheme}</Text>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-between items-start rounded-lg p-2" style={{ backgroundColor: borderColor }}>
-          <div className="flex flex-col items-center justify-center w-full">
-            <div className="flex flex-col items-start p-4 w-full">
-              <div className="flex gap-2 items-center w-full pb-2">
-                <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
-                <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Passing</Text>
-              </div>
-              <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                  <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                  <Text variant="xs">CMP</Text>
-                  <Text variant="xs">ATT</Text>
-                  <Text variant="xs">YDS</Text>
-                  <Text variant="xs">YDS/ATT</Text>
-                  <Text variant="xs">TD</Text>
-                  <Text variant="xs">INT</Text>
-                  <Text variant="xs">RTG</Text>
-                  <Text variant="xs">SCK</Text>
-                </div>
-                {viewableHomePlayers?.PassingStats.map((player, index) => {
-                  const passingYards = player.PassingYards ?? 0;
-                  const passAttempts = player.PassAttempts ?? 0;
-                  const passCompletions = player.PassCompletions ?? 0;
-                  const passingTDs = player.PassingTDs ?? 0;
-                  const interceptions = player.Interceptions ?? 0;
-                  const sacks = player.Sacks ?? 0;
-
-                  const yardsPerAttempt = passAttempts
-                    ? (passingYards / passAttempts).toFixed(2)
-                    : "0.00";
-
-                  const qbr = getPasserRating(
-                    isPro,
-                    passCompletions,
-                    passAttempts,
-                    passingYards,
-                    passingTDs,
-                    interceptions
-                  );
-
-                  return (
-                    <div
-                      key={index}
-                      className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                      style={{
-                        backgroundColor:
-                          index % 2 === 0 ? borderColor : "transparent",
-                      }}
-                    >
-                      <Text variant="xs" classes="col-span-3 text-left">
-                      {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                      </Text>
-                      <Text variant="xs">{passCompletions}</Text>
-                      <Text variant="xs">{passAttempts}</Text>
-                      <Text variant="xs">{passingYards}</Text>
-                      <Text variant="xs">{yardsPerAttempt}</Text>
-                      <Text variant="xs">{passingTDs}</Text>
-                      <Text variant="xs">{interceptions}</Text>
-                      <Text variant="xs">{qbr}</Text>
-                      <Text variant="xs">{sacks}</Text>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center w-full">
-            <div className="flex flex-col items-start p-4 w-full">
-              <div className="flex gap-2 items-center w-full pb-2">
-                <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
-                <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Passing</Text>
-              </div>
-              <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                  <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                  <Text variant="xs">CMP</Text>
-                  <Text variant="xs">ATT</Text>
-                  <Text variant="xs">YDS</Text>
-                  <Text variant="xs">YDS/ATT</Text>
-                  <Text variant="xs">TD</Text>
-                  <Text variant="xs">INT</Text>
-                  <Text variant="xs">RTG</Text>
-                  <Text variant="xs">SCK</Text>
-                </div>
-                {viewableAwayPlayers?.PassingStats.map((player, index) => {
-                  const passingYards = player.PassingYards ?? 0;
-                  const passAttempts = player.PassAttempts ?? 0;
-                  const passCompletions = player.PassCompletions ?? 0;
-                  const passingTDs = player.PassingTDs ?? 0;
-                  const interceptions = player.Interceptions ?? 0;
-                  const sacks = player.Sacks ?? 0;
-
-                  const yardsPerAttempt = passAttempts
-                    ? (passingYards / passAttempts).toFixed(2)
-                    : "0.00";
-
-                  const qbr = getPasserRating(
-                    isPro,
-                    passCompletions,
-                    passAttempts,
-                    passingYards,
-                    passingTDs,
-                    interceptions
-                  );
-
-                  return (
-                    <div
-                      key={index}
-                      className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                      style={{
-                        backgroundColor:
-                          index % 2 === 0 ? borderColor : "transparent",
-                      }}
-                    >
-                      <Text variant="xs" classes="col-span-3 text-left">
-                      {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                      </Text>
-                      <Text variant="xs">{passCompletions}</Text>
-                      <Text variant="xs">{passAttempts}</Text>
-                      <Text variant="xs">{passingYards}</Text>
-                      <Text variant="xs">{yardsPerAttempt}</Text>
-                      <Text variant="xs">{passingTDs}</Text>
-                      <Text variant="xs">{interceptions}</Text>
-                      <Text variant="xs">{qbr}</Text>
-                      <Text variant="xs">{sacks}</Text>
-                    </div>
-                  );
-                })}
-              </div>
+              {view === PBP && (
+                <FBGameModalPBP 
+                  data={playByPlays}
+                  league={league}
+                  isPro={isPro}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                />
+              )}
             </div>
           </div>
         </div>
-      </div>
       )}
     </>
   );
@@ -1080,31 +1272,31 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                 <Text variant="xs" classes="col-span-4 text-center">Description</Text>
                 <Text variant="xs" classes="col-span-2 text-center">Score</Text>
               </div>
-          {playByPlays.map((play, index) => {
-            const nextPlay = playByPlays[index + 1];
-            const isScoreChange =
-              nextPlay &&
-              (play.HomeTeamScore !== nextPlay.HomeTeamScore ||
-                play.AwayTeamScore !== nextPlay.AwayTeamScore);
-            const score = `${play.HomeTeamScore}-${play.AwayTeamScore}`;
-            const bgColor = isScoreChange ? "#189E5B" : index % 2 === 0 ? backgroundColor : "transparent";
-            const textColor = isScoreChange ? { color: backgroundColor, fontWeight: "700" } : { color: "inherit" };
-            return (
-              <div
-                key={play.PlayNumber}
-                className="grid grid-cols-12 gap-2 text-sm border-b py-1"
-                style={{ backgroundColor: bgColor }}
-              >
-                <Text variant="xs" classes="text-center" style={textColor}>{play.PlayNumber}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.Period}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.TimeOnClock}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.Event}</Text>
-                <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.Zone}</Text>
-                <Text variant="xs" classes="col-span-4 text-left" style={textColor}>{play.Result}</Text>
-                <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{score}</Text>
-              </div>
-            );
-          })}
+            {playByPlays.map((play, index) => {
+              const nextPlay = playByPlays[index + 1];
+              const isScoreChange =
+                nextPlay &&
+                (play.HomeTeamScore !== nextPlay.HomeTeamScore ||
+                  play.AwayTeamScore !== nextPlay.AwayTeamScore);
+              const score = `${play.HomeTeamScore}-${play.AwayTeamScore}`;
+              const bgColor = isScoreChange ? "#189E5B" : index % 2 === 0 ? backgroundColor : "transparent";
+              const textColor = isScoreChange ? { color: backgroundColor, fontWeight: "700" } : { color: "inherit" };
+              return (
+                <div
+                  key={play.PlayNumber}
+                  className="grid grid-cols-12 gap-2 text-sm border-b py-1"
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.PlayNumber}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.Period}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.TimeOnClock}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.Event}</Text>
+                  <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.Zone}</Text>
+                  <Text variant="xs" classes="col-span-4 text-left" style={textColor}>{play.Result}</Text>
+                  <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{score}</Text>
+                </div>
+              );
+            })}
             </div>
           )}
           </div>

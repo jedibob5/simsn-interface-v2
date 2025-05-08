@@ -30,7 +30,6 @@ import {
 import {
   TeamSchedule,
   TeamStandings,
-  LeagueStats,
   LeagueStandings,
   WeeklySchedule,
 } from "../Common/SchedulePageComponents";
@@ -52,13 +51,9 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     cfbTeam,
     cfbTeams,
     cfbTeamMap,
-    cfbRosterMap,
     cfbTeamOptions,
     allCFBStandings,
     allCollegeGames: allCFBGames,
-    topCFBPassers,
-    topCFBReceivers,
-    topCFBRushers,
     isLoading,
   } = fbStore;
 
@@ -86,59 +81,12 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && cfbRosterMap) {
-      return cfbRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [cfbRosterMap, selectedTeam]);
-
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = cfbTeamMap ? cfbTeamMap[value] : null;
     setSelectedTeam(nextTeam);
     setCategory(Overview);
   };
-
-  const leagueStatsData = useMemo(() => {
-    const processStats = (players: any[]) =>
-      players.slice(0, 1).map((player) => {
-        const team = cfbTeams.find((team) => team.ID === player.TeamID);
-
-        return {
-          id: player.ID,
-          name: `${player.FirstName} ${player.LastName}`,
-          teamAbbr: player.TeamAbbr,
-          team,
-          stat1: player.SeasonStats.PassingYards
-            ? "Passing Yards"
-            : player.SeasonStats.RushingYards
-            ? "Rushing Yards"
-            : "Receiving Yards",
-          stat1Value: player.SeasonStats.PassingYards
-            ? player.SeasonStats.PassingYards
-            : player.SeasonStats.RushingYards
-            ? player.SeasonStats.RushingYards
-            : player.SeasonStats.ReceivingYards,
-          stat2: player.SeasonStats.PassingTDs
-            ? "Passing TDs"
-            : player.SeasonStats.RushingTDs
-            ? "Rushing TDs"
-            : "Receiving TDs",
-          stat2Value: player.SeasonStats.PassingTDs
-            ? player.SeasonStats.PassingTDs
-            : player.SeasonStats.RushingTDs
-            ? player.SeasonStats.RushingTDs
-            : player.SeasonStats.ReceivingTDs,
-        };
-      });
-
-    return {
-      topPassers: processStats(topCFBPassers),
-      topRushers: processStats(topCFBRushers),
-      topReceivers: processStats(topCFBReceivers),
-    };
-  }, [topCFBPassers, topCFBRushers, topCFBReceivers, cfbTeams]);
 
   const { teamStandings, teamSchedule, groupedWeeklyGames } = useMemo(() => {
     return getScheduleCFBData(
@@ -340,27 +288,6 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               />
             </div>
           )}
-          {category === Overview && !isMobile && (
-            <div className="flex flex-col h-full col-span-1">
-              <LeagueStats
-                league={league}
-                topPassers={leagueStatsData.topPassers}
-                topRushers={leagueStatsData.topRushers}
-                topReceivers={leagueStatsData.topReceivers}
-                titles={[
-                  "Passing Leader",
-                  "Rushing Leader",
-                  "Receiving Leader",
-                ]}
-                backgroundColor={backgroundColor}
-                headerColor={headerColor}
-                borderColor={borderColor}
-                textColorClass={textColorClass}
-                darkerBackgroundColor={darkerBackgroundColor}
-                isLoadingTwo={isLoading}
-              />
-            </div>
-          )}
         </div>
       </div>
     </>
@@ -376,13 +303,9 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     nflTeam,
     nflTeams,
     proTeamMap: nflTeamMap,
-    proRosterMap: nflRosterMap,
     nflTeamOptions,
     allProStandings: allNFLStandings,
     allProGames: allNFLGames,
-    topNFLPassers,
-    topNFLReceivers,
-    topNFLRushers,
     isLoading,
   } = fbStore;
 
@@ -411,13 +334,6 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const darkerBackgroundColor = darkenColor(backgroundColor, -5);
 
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && nflRosterMap) {
-      return nflRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [nflRosterMap, selectedTeam]);
-
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
     const nextTeam = nflTeamMap ? nflTeamMap[value] : null;
@@ -425,47 +341,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     setCategory(Overview);
   };
 
-  const leagueStatsData = useMemo(() => {
-    const processStats = (players: any[]) =>
-      players.slice(0, 1).map((player) => {
-        const team = nflTeams.find((team) => team.ID === player.TeamID);
-
-        return {
-          id: player.ID,
-          name: `${player.FirstName} ${player.LastName}`,
-          teamAbbr: player.TeamAbbr,
-          team,
-          stat1: player.SeasonStats.PassingYards
-            ? "Passing Yards"
-            : player.SeasonStats.RushingYards
-            ? "Rushing Yards"
-            : "Receiving Yards",
-          stat1Value: player.SeasonStats.PassingYards
-            ? player.SeasonStats.PassingYards
-            : player.SeasonStats.RushingYards
-            ? player.SeasonStats.RushingYards
-            : player.SeasonStats.ReceivingYards,
-          stat2: player.SeasonStats.PassingTDs
-            ? "Passing TDs"
-            : player.SeasonStats.RushingTDs
-            ? "Rushing TDs"
-            : "Receiving TDs",
-          stat2Value: player.SeasonStats.PassingTDs
-            ? player.SeasonStats.PassingTDs
-            : player.SeasonStats.RushingTDs
-            ? player.SeasonStats.RushingTDs
-            : player.SeasonStats.ReceivingTDs,
-        };
-      });
-
-    return {
-      topPassers: processStats(topNFLPassers),
-      topRushers: processStats(topNFLRushers),
-      topReceivers: processStats(topNFLReceivers),
-    };
-  }, [topNFLPassers, topNFLRushers, topNFLReceivers, nflTeams]);
-
-  const { teamStandings, teamSchedule, groupedWeeklyGames } = useMemo(() => {
+  const { teamStandings, teamSchedule, groupedWeeklyGames, teamAbbrMap } = useMemo(() => {
     return getScheduleNFLData(
       selectedTeam,
       currentWeek,
@@ -660,27 +536,6 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 currentUser={currentUser}
                 league={league}
                 standings={teamStandings}
-                backgroundColor={backgroundColor}
-                headerColor={headerColor}
-                borderColor={borderColor}
-                textColorClass={textColorClass}
-                darkerBackgroundColor={darkerBackgroundColor}
-                isLoadingTwo={isLoading}
-              />
-            </div>
-          )}
-          {category === Overview && !isMobile && (
-            <div className="flex flex-col h-full col-span-1">
-              <LeagueStats
-                league={league}
-                topPassers={leagueStatsData.topPassers}
-                topRushers={leagueStatsData.topRushers}
-                topReceivers={leagueStatsData.topReceivers}
-                titles={[
-                  "Passing Leader",
-                  "Rushing Leader",
-                  "Receiving Leader",
-                ]}
                 backgroundColor={backgroundColor}
                 headerColor={headerColor}
                 borderColor={borderColor}

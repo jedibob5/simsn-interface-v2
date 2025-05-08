@@ -11,8 +11,14 @@ export default {
          '360px': '360px',
          '380px': '380px',
          '430px': '430px',
-      }
-   }
+      },
+      gridTemplateColumns: {
+        42: 'repeat(42, minmax(0, 1fr))',
+        25: 'repeat(25, minmax(0, 1fr))',
+        20: 'repeat(20, minmax(0, 1fr))',
+        16: 'repeat(16, minmax(0, 1fr))',
+      },
+    }
   },
   plugins: [],
   safelist: [

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import {
   League,
   Overview,
@@ -6,8 +6,6 @@ import {
   WeeklyGames,
   TeamGames,
   HockeySeasons,
-  CHLWeeks,
-  PHLWeeks,
   Divisions,
   Conferences,
 } from "../../../_constants/constants";
@@ -21,7 +19,7 @@ import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { isBrightColor } from "../../../_utility/isBrightColor";
 import { useResponsive } from "../../../_hooks/useMobile";
-import { GetCurrentWeek, RevealResults } from "../../../_helper/teamHelper";
+import { GetCurrentWeek } from "../../../_helper/teamHelper";
 import {
   getScheduleCHLData,
   getSchedulePHLData,
@@ -31,19 +29,13 @@ import {
 import {
   TeamSchedule,
   TeamStandings,
-  LeagueStats,
   LeagueStandings,
   WeeklySchedule,
 } from "../Common/SchedulePageComponents";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
-import { PaperAirplane } from "../../../_design/Icons";
 import { ToggleSwitch } from "../../../_design/Inputs";
-import { getLogo } from "../../../_utility/getLogo";
-import {
-  CollegeGame as CHLGame,
-  ProfessionalGame as PHLGame,
-} from "../../../models/hockeyModels";
+
 interface SchedulePageProps {
   league: League;
   ts: any;
@@ -107,13 +99,6 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   
     return map;
   }, [chlRosterMap]);
-
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && chlRosterMap) {
-      return chlRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [chlRosterMap, selectedTeam]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);
@@ -392,13 +377,6 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   
     return map;
   }, [phlRosterMap]);
-
-  const selectedRoster = useMemo(() => {
-    if (selectedTeam && phlRosterMap) {
-      return phlRosterMap[selectedTeam.ID];
-    }
-    return null;
-  }, [phlRosterMap, selectedTeam]);
 
   const selectTeamOption = (opts: SingleValue<SelectOption>) => {
     const value = Number(opts?.value);

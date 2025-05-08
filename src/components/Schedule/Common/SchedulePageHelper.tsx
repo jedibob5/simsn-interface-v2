@@ -170,6 +170,7 @@ export const getScheduleNFLData = (
     teamStandings,
     teamSchedule,
     groupedWeeklyGames,
+    teamAbbrMap,
   };
 };
 
@@ -184,7 +185,6 @@ export const getScheduleCHLData = (
   allCollegeTeams: CHLTeam[]
 ) => {
   // Team Standings
-  console.log(allCHLStandings);
   const teamStandings = allCHLStandings
     .filter((standings) => standings.ConferenceID === team.ConferenceID)
     .map((standings, index) => ({ ...standings, Rank: index + 1 }));
