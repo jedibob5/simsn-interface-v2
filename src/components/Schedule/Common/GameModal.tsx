@@ -21,10 +21,22 @@ import {
 import { CollegePlayerGameStats as CHLPlayerGameStats, GameResultsResponse } from "../../../models/hockeyModels";
 import { GameResultsResponse as FootballGameResultsResponse } from "../../../models/footballModels";
 import { darkenColor } from "../../../_utility/getDarkerColor";
-import { getPasserRating } from "../../../_utility/getPasserRating";
 import { ToggleSwitch } from "../../../_design/Inputs";
 import { useResponsive } from "../../../_hooks/useMobile";
 import { getTeamAbbrFromName } from "../../../_utility/getTeamAbbrFromName";
+import { 
+  FBGameModalPassing,
+  FBGameModalRushing,
+  FBGameModalReceiving,
+  FBGameModalDefensive,
+  FBGameModalKicking,
+  FBGameModalReturning,
+  FBGameModalPBP,
+  HKGameModalForwards,
+  HKGameModalDefensemen,
+  HKGameModalGoalies,
+  HKGameModalPBP
+} from "./GameModalComponents";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -88,10 +100,25 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [homePlayers, setHomePlayers] = useState<PlayerStats[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<PlayerStats[]>([]);
-  const [viewableHomePlayers, setViewableHomePlayers] =
-    useState<FilteredStats | null>(null);
-  const [viewableAwayPlayers, setViewableAwayPlayers] =
-    useState<FilteredStats | null>(null);
+  const [viewableHomePlayers, setViewableHomePlayers] = useState<FilteredStats>({
+    PassingStats: [],
+    RushingStats: [],
+    ReceivingStats: [],
+    DefenseStats: [],
+    SpecialTeamStats: [],
+    OLineStats: [],
+    ReturnStats: [],
+  });
+  
+  const [viewableAwayPlayers, setViewableAwayPlayers] = useState<FilteredStats>({
+    PassingStats: [],
+    RushingStats: [],
+    ReceivingStats: [],
+    DefenseStats: [],
+    SpecialTeamStats: [],
+    OLineStats: [],
+    ReturnStats: [],
+  });
   const [playByPlays, setPlayByPlays] = useState<PlayByPlay[]>([]);
   const [view, setView] = useState<string>(BoxScore);
   const [header, setHeader] = useState<string>("Box Score");
@@ -340,15 +367,15 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-2 py-2">
-                <ToggleSwitch
-                  onChange={(checked) => {
-                    setView(checked ? PBP : BoxScore);
-                    setIsChecked(checked);
-                  }}
-                  checked={isChecked}
-                />
-                <Text variant="small">Play By Play</Text>
-              </div>
+                  <ToggleSwitch
+                    onChange={(checked) => {
+                      setView(checked ? PBP : BoxScore);
+                      setIsChecked(checked);
+                    }}
+                    checked={isChecked}
+                  />
+                  <Text variant="small">Play By Play</Text>
+                </div>
               </div>
               <div className="flex flex-col items-center w-1/3">
                 <div className="flex items-center h-full gap-1 sm:gap-4">
@@ -378,63 +405,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Passing</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">CMP</Text>
-                            <Text variant="xs">ATT</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/ATT</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">INT</Text>
-                            <Text variant="xs">RTG</Text>
-                            <Text variant="xs">SCK</Text>
-                          </div>
-                          {viewableHomePlayers?.PassingStats.map((player, index) => {
-                            const passingYards = player.PassingYards ?? 0;
-                            const passAttempts = player.PassAttempts ?? 0;
-                            const passCompletions = player.PassCompletions ?? 0;
-                            const passingTDs = player.PassingTDs ?? 0;
-                            const interceptions = player.Interceptions ?? 0;
-                            const sacks = player.Sacks ?? 0;
-  
-                            const yardsPerAttempt = passAttempts
-                              ? (passingYards / passAttempts).toFixed(2)
-                              : "0.00";
-  
-                            const qbr = getPasserRating(
-                              isPro,
-                              passCompletions,
-                              passAttempts,
-                              passingYards,
-                              passingTDs,
-                              interceptions
-                            );
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{passCompletions}</Text>
-                                <Text variant="xs">{passAttempts}</Text>
-                                <Text variant="xs">{passingYards}</Text>
-                                <Text variant="xs">{yardsPerAttempt}</Text>
-                                <Text variant="xs">{passingTDs}</Text>
-                                <Text variant="xs">{interceptions}</Text>
-                                <Text variant="xs">{qbr}</Text>
-                                <Text variant="xs">{sacks}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalPassing 
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -443,63 +420,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Passing</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">CMP</Text>
-                            <Text variant="xs">ATT</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/ATT</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">INT</Text>
-                            <Text variant="xs">RTG</Text>
-                            <Text variant="xs">SCK</Text>
-                          </div>
-                          {viewableAwayPlayers?.PassingStats.map((player, index) => {
-                            const passingYards = player.PassingYards ?? 0;
-                            const passAttempts = player.PassAttempts ?? 0;
-                            const passCompletions = player.PassCompletions ?? 0;
-                            const passingTDs = player.PassingTDs ?? 0;
-                            const interceptions = player.Interceptions ?? 0;
-                            const sacks = player.Sacks ?? 0;
-  
-                            const yardsPerAttempt = passAttempts
-                              ? (passingYards / passAttempts).toFixed(2)
-                              : "0.00";
-  
-                            const qbr = getPasserRating(
-                              isPro,
-                              passCompletions,
-                              passAttempts,
-                              passingYards,
-                              passingTDs,
-                              interceptions
-                            );
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{passCompletions}</Text>
-                                <Text variant="xs">{passAttempts}</Text>
-                                <Text variant="xs">{passingYards}</Text>
-                                <Text variant="xs">{yardsPerAttempt}</Text>
-                                <Text variant="xs">{passingTDs}</Text>
-                                <Text variant="xs">{interceptions}</Text>
-                                <Text variant="xs">{qbr}</Text>
-                                <Text variant="xs">{sacks}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalPassing 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
@@ -510,49 +437,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Rushing</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-9 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">CAR</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/CAR</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">FUM</Text>
-                            <Text variant="xs">LONG</Text>
-                          </div>
-                          {viewableHomePlayers?.RushingStats.map((player, index) => {
-                            const carries = player.RushAttempts ?? 0;
-                            const rushYards = player.RushingYards ?? 0;
-                            const rushTD = player.RushingTDs ?? 0;
-                            const fumbles = player.Fumbles ?? 0;
-                            const longRush = player.LongestRush ?? 0;
-  
-                            const yardsPerCarry = carries
-                              ? (rushYards / carries).toFixed(2)
-                              : "0.00";
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-9 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{carries}</Text>
-                                <Text variant="xs">{rushYards}</Text>
-                                <Text variant="xs">{yardsPerCarry}</Text>
-                                <Text variant="xs">{rushTD}</Text>
-                                <Text variant="xs">{fumbles}</Text>
-                                <Text variant="xs">{longRush}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalRushing
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -561,49 +452,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Rushing</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-9 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">CAR</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/CAR</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">FUM</Text>
-                            <Text variant="xs">LONG</Text>
-                          </div>
-                          {viewableAwayPlayers?.RushingStats.map((player, index) => {
-                            const carries = player.RushAttempts ?? 0;
-                            const rushYards = player.RushingYards ?? 0;
-                            const rushTD = player.RushingTDs ?? 0;
-                            const fumbles = player.Fumbles ?? 0;
-                            const longRush = player.LongestRush ?? 0;
-  
-                            const yardsPerCarry = carries
-                              ? (rushYards / carries).toFixed(2)
-                              : "0.00";
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-9 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{carries}</Text>
-                                <Text variant="xs">{rushYards}</Text>
-                                <Text variant="xs">{yardsPerCarry}</Text>
-                                <Text variant="xs">{rushTD}</Text>
-                                <Text variant="xs">{fumbles}</Text>
-                                <Text variant="xs">{longRush}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalRushing  
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
@@ -614,52 +469,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Receiving</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-10 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">TGT</Text>
-                            <Text variant="xs">REC</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/REC</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">FUM</Text>
-                            <Text variant="xs">LONG</Text>
-                          </div>
-                          {viewableHomePlayers?.ReceivingStats.map((player, index) => {
-                            const targets = player.Targets ?? 0;
-                            const receptions = player.Catches ?? 0;
-                            const recYards = player.ReceivingYards ?? 0;
-                            const recTD = player.ReceivingTDs ?? 0;
-                            const recFumble = player.Fumbles ?? 0;
-                            const longRec = player.LongestReception ?? 0;
-  
-                            const yardsPerRec = receptions
-                              ? (recYards / receptions).toFixed(2)
-                              : "0.00";
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-10 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{targets}</Text>
-                                <Text variant="xs">{receptions}</Text>
-                                <Text variant="xs">{recYards}</Text>
-                                <Text variant="xs">{yardsPerRec}</Text>
-                                <Text variant="xs">{recTD}</Text>
-                                <Text variant="xs">{recFumble}</Text>
-                                <Text variant="xs">{longRec}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalReceiving
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -668,52 +484,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Receiving</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-10 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">TGT</Text>
-                            <Text variant="xs">REC</Text>
-                            <Text variant="xs">YDS</Text>
-                            <Text variant="xs">YDS/REC</Text>
-                            <Text variant="xs">TD</Text>
-                            <Text variant="xs">FUM</Text>
-                            <Text variant="xs">LONG</Text>
-                          </div>
-                          {viewableAwayPlayers?.ReceivingStats.map((player, index) => {
-                            const targets = player.Targets ?? 0;
-                            const receptions = player.Catches ?? 0;
-                            const recYards = player.ReceivingYards ?? 0;
-                            const recTD = player.ReceivingTDs ?? 0;
-                            const recFumble = player.Fumbles ?? 0;
-                            const longRec = player.LongestReception ?? 0;
-  
-                            const yardsPerRec = receptions
-                              ? (recYards / receptions).toFixed(2)
-                              : "0.00";
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-10 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{targets}</Text>
-                                <Text variant="xs">{receptions}</Text>
-                                <Text variant="xs">{recYards}</Text>
-                                <Text variant="xs">{yardsPerRec}</Text>
-                                <Text variant="xs">{recTD}</Text>
-                                <Text variant="xs">{recFumble}</Text>
-                                <Text variant="xs">{longRec}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalReceiving
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
@@ -724,56 +501,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Defensive</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">TOT</Text>
-                            <Text variant="xs">SOLO</Text>
-                            <Text variant="xs">SACKS</Text>
-                            <Text variant="xs">TFL</Text>
-                            <Text variant="xs">FF/FR</Text>
-                            <Text variant="xs">PD</Text>
-                            <Text variant="xs">INT</Text>
-                            <Text variant="xs">TD</Text>
-                          </div>
-                          {viewableHomePlayers?.DefenseStats.map((player, index) => {
-                            const soloTackles = player.SoloTackles ?? 0;
-                            const assistedTackles = player.AssistedTackles ?? 0;
-                            const sack = player.SacksMade ?? 0;
-                            const tfl = player.TacklesForLoss ?? 0;
-                            const forceFumbles = player.ForcedFumbles ?? 0;
-                            const recoveredFumbles = player.RecoveredFumbles ?? 0;
-                            const PassDeflections = player.PassDeflections ?? 0;
-                            const ints = player.InterceptionsCaught ?? 0;
-                            const defTDs = player.DefensiveTDs ?? 0;
-                            const tackles = soloTackles
-                            ? soloTackles + assistedTackles
-                            : "0";
-                            
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{tackles}</Text>
-                                <Text variant="xs">{soloTackles}</Text>
-                                <Text variant="xs">{sack}</Text>
-                                <Text variant="xs">{tfl}</Text>
-                                <Text variant="xs">{forceFumbles}/{recoveredFumbles}</Text>
-                                <Text variant="xs">{PassDeflections}</Text>
-                                <Text variant="xs">{ints}</Text>
-                                <Text variant="xs">{defTDs}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalDefensive 
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -782,56 +516,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Defensive</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-11 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">TOT</Text>
-                            <Text variant="xs">SOLO</Text>
-                            <Text variant="xs">SACKS</Text>
-                            <Text variant="xs">TFL</Text>
-                            <Text variant="xs">FF/FR</Text>
-                            <Text variant="xs">PD</Text>
-                            <Text variant="xs">INT</Text>
-                            <Text variant="xs">TD</Text>
-                          </div>
-                          {viewableAwayPlayers?.DefenseStats.map((player, index) => {
-                            const soloTackles = player.SoloTackles ?? 0;
-                            const assistedTackles = player.AssistedTackles ?? 0;
-                            const sack = player.SacksMade ?? 0;
-                            const tfl = player.TacklesForLoss ?? 0;
-                            const forceFumbles = player.ForcedFumbles ?? 0;
-                            const recoveredFumbles = player.RecoveredFumbles ?? 0;
-                            const PassDeflections = player.PassDeflections ?? 0;
-                            const ints = player.InterceptionsCaught ?? 0;
-                            const defTDs = player.DefensiveTDs ?? 0;
-                            const tackles = soloTackles
-                            ? soloTackles + assistedTackles
-                            : "0";
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-11 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{tackles}</Text>
-                                <Text variant="xs">{soloTackles}</Text>
-                                <Text variant="xs">{sack}</Text>
-                                <Text variant="xs">{tfl}</Text>
-                                <Text variant="xs">{forceFumbles}/{recoveredFumbles}</Text>
-                                <Text variant="xs">{PassDeflections}</Text>
-                                <Text variant="xs">{ints}</Text>
-                                <Text variant="xs">{defTDs}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalDefensive 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
@@ -842,45 +533,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Kicking and Punting</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-8 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">FG</Text>
-                            <Text variant="xs">XP</Text>
-                            <Text variant="xs">LONG</Text>
-                            <Text variant="xs">PUNTS</Text>
-                            <Text variant="xs">IN 20</Text>
-                          </div>
-                          {viewableHomePlayers?.SpecialTeamStats.map((player, index) => {
-                            const fieldGoalsMade = player.FGMade ?? 0;
-                            const fieldGoalsAttempted = player.FGAttempts ?? 0;
-                            const extraPointsMade = player.ExtraPointsMade ?? 0;
-                            const extraPointsAttempted = player.ExtraPointsAttempted ?? 0;
-                            const longFg = player.LongestFG ?? 0;
-                            const punts = player.Punts ?? 0;
-                            const inside20 = player.PuntsInside20 ?? 0;
-                            
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-8 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{fieldGoalsMade}/{fieldGoalsAttempted}</Text>
-                                <Text variant="xs">{extraPointsMade}/{extraPointsAttempted}</Text>
-                                <Text variant="xs">{longFg}</Text>
-                                <Text variant="xs">{punts}</Text>
-                                <Text variant="xs">{inside20}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalKicking
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -889,45 +548,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Kicking and Punting</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-8 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">FG</Text>
-                            <Text variant="xs">XP</Text>
-                            <Text variant="xs">LONG</Text>
-                            <Text variant="xs">PUNTS</Text>
-                            <Text variant="xs">IN 20</Text>
-                          </div>
-                          {viewableAwayPlayers?.SpecialTeamStats.map((player, index) => {
-                            const fieldGoalsMade = player.FGMade ?? 0;
-                            const fieldGoalsAttempted = player.FGAttempts ?? 0;
-                            const extraPointsMade = player.ExtraPointsMade ?? 0;
-                            const extraPointsAttempted = player.ExtraPointsAttempted ?? 0;
-                            const longFg = player.LongestFG ?? 0;
-                            const punts = player.Punts ?? 0;
-                            const inside20 = player.PuntsInside20 ?? 0;
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-8 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{fieldGoalsMade}/{fieldGoalsAttempted}</Text>
-                                <Text variant="xs">{extraPointsMade}/{extraPointsAttempted}</Text>
-                                <Text variant="xs">{longFg}</Text>
-                                <Text variant="xs">{punts}</Text>
-                                <Text variant="xs">{inside20}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalKicking 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
@@ -938,42 +565,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.HomeTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.HomeTeamName} Returning</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-7 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">KR YDS</Text>
-                            <Text variant="xs">KR TD</Text>
-                            <Text variant="xs">PR YDS</Text>
-                            <Text variant="xs">PR TD</Text>
-                          </div>
-                          {viewableHomePlayers?.ReturnStats.map((player, index) => {
-                            const kickReturns = player.KickReturns ?? 0;
-                            const kickReturnYards = player.KickReturnYards ?? 0;
-                            const puntReturns = player.PuntReturns ?? 0;
-                            const puntReturnYards = player.PuntReturnYards ?? 0;
-                            const kickReturnTD = player.KickReturnTDs ?? 0;
-                            const puntReturnTD = player.PuntReturnTDs ?? 0;
-                            
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-7 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{kickReturnYards}</Text>
-                                <Text variant="xs">{kickReturnTD}</Text>
-                                <Text variant="xs">{puntReturnYards}</Text>
-                                <Text variant="xs">{puntReturnTD}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalReturning
+                          data={viewableHomePlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-full">
@@ -982,125 +580,26 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
                           <Logo variant="tiny" classes="opacity-80" url={game.AwayTeamLogo} />
                           <Text variant="body-small" classes="font-semibold">{game.AwayTeamName} Returning</Text>
                         </div>
-                        <div className="grid rounded-lg border-t px-1" style={{ backgroundColor }}>
-                          <div className="grid grid-cols-7 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">Player</Text>
-                            <Text variant="xs">KR YDS</Text>
-                            <Text variant="xs">KR TD</Text>
-                            <Text variant="xs">PR YDS</Text>
-                            <Text variant="xs">PR TD</Text>
-                          </div>
-                          {viewableAwayPlayers?.ReturnStats.map((player, index) => {
-                            const kickReturns = player.KickReturns ?? 0;
-                            const kickReturnYards = player.KickReturnYards ?? 0;
-                            const puntReturns = player.PuntReturns ?? 0;
-                            const puntReturnYards = player.PuntReturnYards ?? 0;
-                            const kickReturnTD = player.KickReturnTDs ?? 0;
-                            const puntReturnTD = player.PuntReturnTDs ?? 0;
-  
-                            return (
-                              <div
-                                key={index}
-                                className="grid grid-cols-7 gap-2 text-sm border-b py-1"
-                                style={{
-                                  backgroundColor:
-                                    index % 2 === 0 ? borderColor : "transparent",
-                                }}
-                              >
-                                <Text variant="xs" classes="col-span-3 text-left">
-                                  {player.Position ?? "N/A"} {player.FirstName ?? ""} {player.LastName ?? ""}
-                                </Text>
-                                <Text variant="xs">{kickReturnYards}</Text>
-                                <Text variant="xs">{kickReturnTD}</Text>
-                                <Text variant="xs">{puntReturnYards}</Text>
-                                <Text variant="xs">{puntReturnTD}</Text>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FBGameModalReturning 
+                          data={viewableAwayPlayers} 
+                          league={league} 
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor} 
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               )}
               {view === PBP && (
-                <div className="flex flex-col">
-                  <div
-                    className={`grid ${
-                      isMobile ? "grid-cols-25" : "grid-cols-42"
-                    } gap-2 text-sm border-b py-1`}
-                  >
-                    <Text variant="xs" classes="col-span-1 text-center">#</Text>
-                    <Text variant="xs" classes="col-span-1 text-center">Qtr</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`}>Poss</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`}>Time</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>LOS</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Down</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`}>Play Type</Text>
-                  {isDesktop && (
-                    <>
-                      <Text variant="xs" classes="col-span-2 text-center">Play</Text>
-                      <Text variant="xs" classes="col-span-3 text-center">Off Form.</Text>
-                      <Text variant="xs" classes="col-span-3 text-center">Def Form.</Text>
-                      <Text variant="xs" classes="col-span-2 text-center">Def Ten.</Text>
-                      <Text variant="xs" classes="col-span-1 text-center">Blitz#</Text>
-                      <Text variant="xs" classes="col-span-2 text-center">LB Cov.</Text>
-                      <Text variant="xs" classes="col-span-2 text-center">CB Cov.</Text>
-                      <Text variant="xs" classes="col-span-2 text-center">S Cov.</Text>
-                    </>
-                  )}
-                    <Text variant="xs" classes={`${isMobile ? "col-span-6" : "col-span-9"} text-left border-l pl-1`}>Description</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center border-r pr-1`}>Yds.</Text>
-                    <Text variant="xs" classes="col-span-2 text-center">Score</Text>
-                  </div>
-              {playByPlays.map((play, index) => {
-                const isTouchdown = play.Result?.toLowerCase().includes("touchdown");
-                const bgColor = isTouchdown ? "#189E5B" : index % 2 === 0 ? backgroundColor : "transparent";
-                const textColor = isTouchdown ? { color: backgroundColor, fontWeight: "700" } : { color: "inherit" };
-                return (
-                  <div
-                    key={play.PlayNumber}
-                    className={`grid ${
-                      isMobile ? "grid-cols-25" : "grid-cols-42"
-                    } gap-2 text-sm border-b py-1`}
-                    style={{ backgroundColor: bgColor }}
-                  >
-                    <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.PlayNumber}</Text>
-                    <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.Quarter}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`} style={textColor}>{play.Possession}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-2"} text-center`} style={textColor}>{play.TimeRemaining}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>{play.LineOfScrimmage}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>
-                      {play.Down === 0
-                        ? ""
-                        : `${play.Down === 1 ? "1st" : 
-                             play.Down === 2 ? "2nd" : 
-                             play.Down === 3 ? "3rd" : 
-                             "4th"} 
-                             and ${play.Distance}`}
-                    </Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-3" : "col-span-2"} text-center`} style={textColor}>{play.PlayType}</Text>
-                    {isDesktop && (
-                    <>
-                      <Text variant="xs" classes="text-center col-span-2" style={textColor}>{play.PlayName}</Text>
-                      <Text variant="xs" classes="col-span-3 text-center" style={textColor}>{play.OffensiveFormation}</Text>
-                      <Text variant="xs" classes="col-span-3 text-center" style={textColor}>{play.DefensiveFormation}</Text>
-                      <Text variant="xs" classes="col-span-2 text-center" style={textColor}>
-                        {play.DefensiveTendency ? play.DefensiveTendency.split(" ")[0] : "N/A"}
-                      </Text>
-                      <Text variant="xs" classes="col-span-1 text-center" style={textColor}>{play.BlitzNumber}</Text>
-                      <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.LBCoverage}</Text>
-                      <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.CBCoverage}</Text>
-                      <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.SCoverage}</Text>
-                    </>
-                  )}
-                    <Text variant="xs" classes={`${isMobile ? "col-span-6" : "col-span-9"} text-left border-l pl-1`} style={textColor}>{play.Result}</Text>
-                    <Text variant="xs" classes={`${isMobile ? "col-span-2" : "col-span-1"} text-center border-r pr-1`} style={textColor}>{play.ResultYards}</Text>
-                    <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.HomeTeamScore} - {play.AwayTeamScore}</Text>
-                  </div>
-                );
-                })}
-                </div>
+                <FBGameModalPBP 
+                  data={playByPlays}
+                  league={league}
+                  isPro={isPro}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                />
               )}
             </div>
           </div>
@@ -1773,30 +1272,30 @@ export const HockeyGameModal = ({ league, game, isPro, playerMap }: GameModalPro
                 <Text variant="xs" classes="col-span-4 text-center">Description</Text>
                 <Text variant="xs" classes="col-span-2 text-center">Score</Text>
               </div>
-          {playByPlays.map((play, index) => {
-            const nextPlay = playByPlays[index + 1];
-            const isScoreChange =
-              nextPlay &&
-              (play.HomeTeamScore !== nextPlay.HomeTeamScore ||
-                play.AwayTeamScore !== nextPlay.AwayTeamScore);
-            const score = `${play.HomeTeamScore}-${play.AwayTeamScore}`;
-            const bgColor = isScoreChange ? "#189E5B" : index % 2 === 0 ? backgroundColor : "transparent";
-            const textColor = isScoreChange ? { color: backgroundColor, fontWeight: "700" } : { color: "inherit" };
-            return (
-              <div
-                key={play.PlayNumber}
-                className="grid grid-cols-12 gap-2 text-sm border-b py-1"
-                style={{ backgroundColor: bgColor }}
-              >
-                <Text variant="xs" classes="text-center" style={textColor}>{play.PlayNumber}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.Period}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.TimeOnClock}</Text>
-                <Text variant="xs" classes="text-center" style={textColor}>{play.Event}</Text>
-                <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.Zone}</Text>
-                <Text variant="xs" classes="col-span-4 text-left" style={textColor}>{play.Result}</Text>
-                <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{score}</Text>
-              </div>
-            );
+            {playByPlays.map((play, index) => {
+              const nextPlay = playByPlays[index + 1];
+              const isScoreChange =
+                nextPlay &&
+                (play.HomeTeamScore !== nextPlay.HomeTeamScore ||
+                  play.AwayTeamScore !== nextPlay.AwayTeamScore);
+              const score = `${play.HomeTeamScore}-${play.AwayTeamScore}`;
+              const bgColor = isScoreChange ? "#189E5B" : index % 2 === 0 ? backgroundColor : "transparent";
+              const textColor = isScoreChange ? { color: backgroundColor, fontWeight: "700" } : { color: "inherit" };
+              return (
+                <div
+                  key={play.PlayNumber}
+                  className="grid grid-cols-12 gap-2 text-sm border-b py-1"
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.PlayNumber}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.Period}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.TimeOnClock}</Text>
+                  <Text variant="xs" classes="text-center" style={textColor}>{play.Event}</Text>
+                  <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{play.Zone}</Text>
+                  <Text variant="xs" classes="col-span-4 text-left" style={textColor}>{play.Result}</Text>
+                  <Text variant="xs" classes="col-span-2 text-center" style={textColor}>{score}</Text>
+                </div>
+              );
             })}
             </div>
           )}
