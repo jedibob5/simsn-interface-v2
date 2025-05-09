@@ -16,6 +16,7 @@ import {
   ScoutAttributeType,
   SimPHL,
   ToggleScholarshipType,
+  TradeBlock,
 } from "../../_constants/constants";
 import { Modal } from "../../_design/Modal";
 import { Button, ButtonGroup } from "../../_design/Buttons";
@@ -40,6 +41,7 @@ interface ActionModalProps {
   affiliatePlayer?: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer?: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer?: (playerID: number, teamID: number) => Promise<void>;
+  tradeBlockPlayer?: (playerID: number, teamID: number) => Promise<void>;
   addPlayerToBoard?: (dto: any) => Promise<void>;
   removePlayerFromBoard?: (dto: any) => Promise<void>;
   toggleScholarship?: (dto: any) => Promise<void>;
@@ -68,6 +70,7 @@ export const ActionModal: FC<ActionModalProps> = ({
   scoutAttribute,
   cancelFAOffer,
   affiliatePlayer,
+  tradeBlockPlayer,
   attribute = "",
 }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -98,6 +101,11 @@ export const ActionModal: FC<ActionModalProps> = ({
       case Promise:
         if (promisePlayer) {
           await promisePlayer(playerID!, teamID!);
+        }
+        break;
+      case TradeBlock:
+        if (tradeBlockPlayer) {
+          await tradeBlockPlayer(playerID!, teamID!);
         }
         break;
       case AddRecruitType:
@@ -195,6 +203,9 @@ export const ActionModal: FC<ActionModalProps> = ({
       break;
     case Promise:
       title = `Promise ${playerLabel}?`;
+      break;
+    case TradeBlock:
+      title = `Change Trade Status for ${playerLabel}?`;
       break;
     case InfoType:
     case RecruitInfoType:
@@ -297,6 +308,22 @@ export const ActionModal: FC<ActionModalProps> = ({
             </Text>
             <Text className="mb4 text-start">
               Are you sure you want to cut this player?
+            </Text>
+          </>
+        )}
+        {modalAction === TradeBlock && (
+          <>
+            <Text className="mb4 text-start">
+              WARNING! Once you've confirmed,{" "}
+              <strong>
+                {playerID} {playerLabel}
+              </strong>{" "}
+              will be {player.IsOnTradeBlock ? "placed on" : "taken off"} your
+              team's roster.
+            </Text>
+            <Text className="mb4 text-start">
+              Are you sure you want to change the trade block status of this
+              player?
             </Text>
           </>
         )}

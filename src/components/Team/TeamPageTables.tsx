@@ -5,6 +5,7 @@ import {
   CollegePlayer as CHLPlayer,
   ProfessionalPlayer as PHLPlayer,
   ProContract as PHLContract,
+  DraftPick,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
@@ -21,6 +22,7 @@ import {
   ButtonGreen,
   TextGreen,
   Affiliate,
+  TradeBlock,
 } from "../../_constants/constants";
 import {
   getCHLAttributes,
@@ -29,6 +31,7 @@ import {
   getNFLAttributes,
   getCBBAttributes,
   getNBAAttributes,
+  getPHLTradeBlockAttributes,
 } from "./TeamPageUtils";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { useModal } from "../../_hooks/useModal";
@@ -52,6 +55,7 @@ import {
   NBAContract,
   NBAPlayer,
 } from "../../models/basketballModels";
+import { TradeBlockRow } from "./TeamPageTypes";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -330,6 +334,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
         { header: "Yrs Left", accessor: "ContractLength" },
         { header: "NTC", accessor: "NoTradeClause" },
         { header: "NMC", accessor: "NoMovementClause" },
+        { header: "Trade Block", accessor: "IsOnTradeBlock" },
         { header: "Competitiveness", accessor: "Competitiveness" },
         { header: "Finance", accessor: "FinancialPref" },
         { header: "Market", accessor: "MarketPref" },
@@ -454,7 +459,9 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
             )}
           </div>
         ))}
-        <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+        <div
+          className={`table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap`}
+        >
           <SelectDropdown
             placeholder={!isDesktop ? "Action" : "Select an action"}
             options={[
@@ -488,11 +495,52 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                 openModal(Cut, item);
               } else if (selectedOption?.value === "affiliate") {
                 openModal(Affiliate, item);
+              } else if (selectedOption?.value === "tradeBlock") {
+                openModal(TradeBlock, item);
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }
             }}
             isDisabled={disable}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "15rem",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
           />
         </div>
       </div>
@@ -1386,7 +1434,6 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
     index: number,
     backgroundColor: string
   ) => {
-    console.log({ contracts });
     const contract = contracts[item.ID];
     if (!contract) return <></>;
     item.Contract = contract!!;
@@ -1546,6 +1593,158 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
     <Table
       columns={rosterColumns}
       data={sortedRoster}
+      rowRenderer={rowRenderer}
+      backgroundColor={backgroundColor}
+      team={team}
+    />
+  );
+};
+
+interface PHLTradeBlockTableProps {
+  roster: TradeBlockRow[];
+  ts: any;
+  backgroundColor?: string;
+  headerColor?: string;
+  borderColor?: string;
+  team?: any;
+  category?: string;
+  openModal: (action: ModalAction, player: PHLPlayer) => void;
+  disable: boolean;
+}
+
+export const PHLTradeBlockTable: FC<PHLTradeBlockTableProps> = ({
+  roster = [],
+  ts,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  team,
+  category,
+  openModal,
+  disable,
+}) => {
+  const textColorClass = getTextColorBasedOnBg(backgroundColor);
+  const { isDesktop, isTablet } = useResponsive();
+
+  const rosterColumns = useMemo(() => {
+    let columns = [
+      { header: "Type", accessor: "isPlayer" },
+      { header: "Name", accessor: "LastName" },
+      {
+        header: !isDesktop && !isTablet ? "Pos" : "Position",
+        accessor: "Position",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Arch" : "Archetype",
+        accessor: "Archetype",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Exp" : "Experience",
+        accessor: "Year",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Ovr" : "Overall",
+        accessor: "Overall",
+      },
+      {
+        header: !isDesktop && !isTablet ? "DR" : "DraftRound",
+        accessor: "DraftRound",
+      },
+      {
+        header: !isDesktop && !isTablet ? "PN" : "PickNumber",
+        accessor: "PickNumber",
+      },
+      {
+        header: !isDesktop && !isTablet ? "Val" : "Value",
+        accessor: "Value",
+      },
+    ];
+
+    columns.push({ header: "Actions", accessor: "actions" });
+    return columns;
+  }, [isDesktop, category]);
+
+  const rowRenderer = (
+    item: TradeBlockRow,
+    index: number,
+    backgroundColor: string
+  ) => {
+    const attributes = getPHLTradeBlockAttributes(
+      item,
+      item.isPlayer,
+      !isDesktop,
+      isTablet,
+      category!
+    );
+    return (
+      <div
+        key={item.id}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <div
+            key={idx}
+            className={`table-cell 
+        align-middle 
+        min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full px-1 sm:px-1.5 py-1 sm:whitespace-nowrap ${
+          category === Overview && idx === 6
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+          >
+            {attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item.player!!)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : (
+              <Text variant="small" classes="text-start">
+                {attr.value}
+              </Text>
+            )}
+          </div>
+        ))}
+        <div className="table-cell align-middle w-[5em] min-[430px]:w-[6em] sm:w-full flex-wrap sm:flex-nowrap sm:px-2 pb-1 sm:py-1 whitespace-nowrap">
+          <SelectDropdown
+            placeholder={!isDesktop ? "Action" : "Select an action"}
+            options={
+              item.isPlayer
+                ? [
+                    {
+                      value: "tradeBlock",
+                      label: `Trade Block - ${item.name}`,
+                    },
+                  ]
+                : []
+            }
+            onChange={(selectedOption) => {
+              if (selectedOption?.value === "tradeBlock") {
+                item.isPlayer ? openModal(TradeBlock, item.player!!) : () => {};
+              }
+            }}
+            isDisabled={disable}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Table
+      columns={rosterColumns}
+      data={roster}
       rowRenderer={rowRenderer}
       backgroundColor={backgroundColor}
       team={team}
