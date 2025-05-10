@@ -325,6 +325,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     cutPHLPlayer,
     affiliatePlayer,
     PlacePHLPlayerOnTradeBlock,
+    proposeTrade,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -533,8 +534,10 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         onClose={manageTradesModal.handleCloseModal}
         team={phlTeam!!}
         league={SimPHL}
+        userCapSheet={phlCapsheetMap[phlTeam!.ID]}
         sentTradeProposals={tradeProposalsMap[phlTeam!.ID]}
         receivedTradeProposals={receivedProposals}
+        ts={ts}
       />
       <ProposeTradeModal
         isOpen={proposeTradeModal.isModalOpen}
@@ -549,6 +552,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         backgroundColor={backgroundColor}
         borderColor={borderColor}
         ts={ts}
+        proposeTrade={proposeTrade}
       />
       {modalPlayer && (
         <ActionModal

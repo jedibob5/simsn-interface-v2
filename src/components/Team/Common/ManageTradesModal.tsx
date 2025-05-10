@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Modal } from "../../../_design/Modal";
 import {
   ProCapsheet,
@@ -16,12 +16,19 @@ import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { CapsheetInfo } from "../TeamPageComponents";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { useResponsive } from "../../../_hooks/useMobile";
-import { getTradeOptionsList } from "../Helpers/tradeModalHelper";
+import {
+  getTradeOptionsList,
+  mapSelectedOptionsToTradeOptions,
+  mapTradeProposals,
+} from "../Helpers/tradeModalHelper";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { SelectDropdown } from "../../../_design/Select";
 import { Border } from "../../../_design/Borders";
 import { Close } from "../../../_design/Icons";
+import { useSimHCKStore } from "../../../context/SimHockeyContext";
+import { Logo } from "../../../_design/Logo";
+import { getLogo } from "../../../_utility/getLogo";
 
 interface ManageTradeModalProps {
   isOpen: boolean;
@@ -33,6 +40,8 @@ interface ManageTradeModalProps {
   backgroundColor?: string;
   borderColor?: string;
   textColorClass?: string;
+  userCapSheet: ProCapsheet;
+  ts: HCKTimestamp;
 }
 
 export const ManageTradeModal: FC<ManageTradeModalProps> = ({
@@ -45,22 +54,107 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
   backgroundColor,
   borderColor,
   textColorClass,
+  userCapSheet,
+  ts,
 }) => {
+  const { phlTeamMap, proRosterMap } = useSimHCKStore();
+  const sectionBg = darkenColor("#1f2937", -5);
   let title = "";
+  let teamName = "";
   if (league === SimPHL) {
     let phlTeam = team as ProfessionalTeam;
-    title = `Manage ${phlTeam.TeamName} Trades`;
+    teamName = phlTeam.TeamName;
+    title = `Manage ${teamName} Trades`;
   }
+  const cleanSentTrades = useMemo(() => {
+    return mapTradeProposals(sentTradeProposals, team.ID);
+  }, [sentTradeProposals]);
+
+  const cleanReceivedTrades = useMemo(() => {
+    return mapTradeProposals(receivedTradeProposals, team.ID);
+  }, [receivedTradeProposals]);
+
+  console.log({ cleanSentTrades, cleanReceivedTrades });
 
   return (
     <>
-      <Modal title={title} isOpen={isOpen} onClose={onClose} actions={<></>}>
-        <div className="grid grid-cols-2">
-          <div className="flex">
-            <Text as="h4">SENT</Text>
+      <Modal
+        title={title}
+        isOpen={isOpen}
+        maxWidth="max-w-[70vw]"
+        onClose={onClose}
+        actions={<></>}
+      >
+        <div className="grid grid-cols-[1fr_2fr_2fr] gap-x-4">
+          <div className="flex flex-col">
+            <Text as="h4" classes="mb-1">
+              {teamName} Cap
+            </Text>
+            <CapsheetInfo
+              ts={ts}
+              capsheet={userCapSheet}
+              league={league}
+              borderColor={borderColor}
+              backgroundColor={sectionBg}
+              lineColor={borderColor}
+            />
           </div>
-          <div className="flex">
-            <Text as="h4">RECEIVED</Text>
+          <div className="flex flex-col">
+            <Text as="h4">Sent</Text>
+            {cleanSentTrades.map((trade) => {
+              const otherTeam = phlTeamMap[trade.RecepientTeamID];
+              const otherLogo = getLogo(league, otherTeam.ID, false);
+              return (
+                <Border direction="row" classes="p-4">
+                  <div className="flex flex-col items-start mr-2">
+                    <Logo
+                      url={otherLogo}
+                      label={otherTeam.Abbreviation}
+                      textClass="text-center"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex flex-row">Sending</div>
+                    <div className="flex flex-row">Receiving</div>
+                  </div>
+                </Border>
+              );
+            })}
+          </div>
+          <div className="flex  flex-col">
+            <Text as="h4">Received</Text>
+            {cleanReceivedTrades.map((trade) => {
+              const otherTeam = phlTeamMap[trade.TeamID];
+              const otherLogo = getLogo(league, otherTeam.ID, false);
+              return (
+                <Border direction="row" classes="p-4">
+                  <div className="flex flex-row w-full">
+                    <div className="flex flex-col items-start mr-2">
+                      <Logo
+                        url={otherLogo}
+                        label={otherTeam.Abbreviation}
+                        textClass="text-center"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <Text>Sending</Text>
+                      {trade.TeamTradeOptions.map((item) => {
+                        return (
+                          <div className="flex flex-col">
+                            {item.OptionType === "Player" ? <></> : <></>}
+                          </div>
+                        );
+                      })}
+                      <div className="flex flex-row">Receiving</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-y-2">
+                    <Button>Accept</Button>
+                    <Button>Reject</Button>
+                  </div>
+                </Border>
+              );
+            })}
           </div>
         </div>
       </Modal>
@@ -126,6 +220,7 @@ interface ProposeTradeModalProps {
   ts: HCKTimestamp;
   backgroundColor?: string;
   borderColor?: string;
+  proposeTrade: (dto: any) => Promise<void>;
 }
 
 export const ProposeTradeModal: FC<ProposeTradeModalProps> = ({
@@ -141,6 +236,7 @@ export const ProposeTradeModal: FC<ProposeTradeModalProps> = ({
   ts,
   backgroundColor,
   borderColor,
+  proposeTrade,
 }) => {
   const [selectedUserItems, setSelectedUserItems] = useState<TradeBlockRow[]>(
     []
@@ -201,6 +297,25 @@ export const ProposeTradeModal: FC<ProposeTradeModalProps> = ({
     );
   };
 
+  const sendProposal = async () => {
+    const userOptions = mapSelectedOptionsToTradeOptions(
+      selectedUserItems,
+      userTeam.ID
+    );
+    const recepientOptions = mapSelectedOptionsToTradeOptions(
+      selectedRecipientItems,
+      recipientTeam.ID
+    );
+    const dto = {
+      TeamID: userTeam.ID,
+      RecepientTeamID: recipientTeam.ID,
+      TeamTradeOptions: userOptions,
+      RecepientTeamTradeOptions: recepientOptions,
+    };
+    onClose();
+    return await proposeTrade(dto);
+  };
+
   let title = "";
   let userTeamName = "";
   let recipientTeamName = "";
@@ -228,7 +343,7 @@ export const ProposeTradeModal: FC<ProposeTradeModalProps> = ({
             <Button size="sm" variant="danger" onClick={onClose}>
               <Text variant="small">Cancel</Text>
             </Button>
-            <Button size="sm">
+            <Button size="sm" onClick={sendProposal}>
               <Text variant="small">Confirm</Text>
             </Button>
           </>
