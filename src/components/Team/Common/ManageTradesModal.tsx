@@ -5,6 +5,9 @@ import {
   ProfessionalTeam,
   Timestamp as HCKTimestamp,
   TradeProposal,
+  DraftPick,
+  ProfessionalPlayer,
+  TradeOption as HCKTradeOption,
 } from "../../../models/hockeyModels";
 import { NFLTeam } from "../../../models/footballModels";
 import { NBATeam } from "../../../models/basketballModels";
@@ -42,6 +45,8 @@ interface ManageTradeModalProps {
   textColorClass?: string;
   userCapSheet: ProCapsheet;
   ts: HCKTimestamp;
+  individualDraftPickMap: Record<number, DraftPick>;
+  proPlayerMap: Record<number, ProfessionalPlayer>;
 }
 
 export const ManageTradeModal: FC<ManageTradeModalProps> = ({
@@ -55,9 +60,11 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
   borderColor,
   textColorClass,
   userCapSheet,
+  individualDraftPickMap,
+  proPlayerMap,
   ts,
 }) => {
-  const { phlTeamMap, proRosterMap } = useSimHCKStore();
+  const { phlTeamMap } = useSimHCKStore();
   const sectionBg = darkenColor("#1f2937", -5);
   let title = "";
   let teamName = "";
@@ -81,7 +88,7 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
       <Modal
         title={title}
         isOpen={isOpen}
-        maxWidth="max-w-[70vw]"
+        maxWidth="max-w-[75vw]"
         onClose={onClose}
         actions={<></>}
       >
@@ -113,9 +120,30 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
                       textClass="text-center"
                     />
                   </div>
-                  <div className="flex flex-col">
-                    <div className="flex flex-row">Sending</div>
-                    <div className="flex flex-row">Receiving</div>
+                  <div className="flex flex-row gap-x-4">
+                    <div className="flex flex-col">
+                      <Text>Sending</Text>
+                      {trade.TeamTradeOptions.map((item) => (
+                        <ManageOption
+                          item={item}
+                          player={proPlayerMap[item.PlayerID]}
+                          pick={individualDraftPickMap[item.DraftPickID]}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex flex-col">
+                      <Text>Receiving</Text>
+                      {trade.RecepientTeamTradeOptions.map((item) => (
+                        <ManageOption
+                          item={item}
+                          player={proPlayerMap[item.PlayerID]}
+                          pick={individualDraftPickMap[item.DraftPickID]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-y-2 ml-2">
+                    <Button>Cancel</Button>
                   </div>
                 </Border>
               );
@@ -128,24 +156,33 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
               const otherLogo = getLogo(league, otherTeam.ID, false);
               return (
                 <Border direction="row" classes="p-4">
-                  <div className="flex flex-row w-full">
-                    <div className="flex flex-col items-start mr-2">
-                      <Logo
-                        url={otherLogo}
-                        label={otherTeam.Abbreviation}
-                        textClass="text-center"
-                      />
-                    </div>
+                  <div className="flex flex-col items-start mr-2">
+                    <Logo
+                      url={otherLogo}
+                      label={otherTeam.Abbreviation}
+                      textClass="text-center"
+                    />
+                  </div>
+                  <div className="flex flex-row w-full gap-x-4">
                     <div className="flex flex-col">
                       <Text>Sending</Text>
-                      {trade.TeamTradeOptions.map((item) => {
-                        return (
-                          <div className="flex flex-col">
-                            {item.OptionType === "Player" ? <></> : <></>}
-                          </div>
-                        );
-                      })}
-                      <div className="flex flex-row">Receiving</div>
+                      {trade.TeamTradeOptions.map((item) => (
+                        <ManageOption
+                          item={item}
+                          player={proPlayerMap[item.PlayerID]}
+                          pick={individualDraftPickMap[item.DraftPickID]}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex flex-col">
+                      <Text>Receiving</Text>
+                      {trade.RecepientTeamTradeOptions.map((item) => (
+                        <ManageOption
+                          item={item}
+                          player={proPlayerMap[item.PlayerID]}
+                          pick={individualDraftPickMap[item.DraftPickID]}
+                        />
+                      ))}
                     </div>
                   </div>
                   <div className="flex flex-col gap-y-2">
@@ -159,6 +196,27 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
         </div>
       </Modal>
     </>
+  );
+};
+
+interface ManageOptionProps {
+  item: HCKTradeOption;
+  player: ProfessionalPlayer;
+  pick: DraftPick;
+}
+
+const ManageOption: FC<ManageOptionProps> = ({ item, player, pick }) => {
+  const isPlayer = item.OptionType === "Player";
+  let label = "";
+  if (isPlayer) {
+    label = `${player.Age} year, ${player.Archetype} ${player.Position} ${player.FirstName} ${player.LastName}`;
+  } else {
+    label = `${pick.Season}, Round ${pick.DraftRound}, Pick ${pick.DraftNumber}`;
+  }
+  return (
+    <div className="flex flex-col">
+      <Text classes="text-start">{label}</Text>
+    </div>
   );
 };
 

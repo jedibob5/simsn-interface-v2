@@ -322,6 +322,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     tradeProposalsMap,
     tradePreferencesMap,
     phlDraftPickMap,
+    proPlayerMap,
+    individualDraftPickMap,
     cutPHLPlayer,
     affiliatePlayer,
     PlacePHLPlayerOnTradeBlock,
@@ -538,6 +540,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         sentTradeProposals={tradeProposalsMap[phlTeam!.ID]}
         receivedTradeProposals={receivedProposals}
         ts={ts}
+        individualDraftPickMap={individualDraftPickMap}
+        proPlayerMap={proPlayerMap}
       />
       <ProposeTradeModal
         isOpen={proposeTradeModal.isModalOpen}

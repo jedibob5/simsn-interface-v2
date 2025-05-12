@@ -175,6 +175,8 @@ interface SimHCKContextProps {
   phlTeamSeasonStatsMap: Record<number, ProfessionalTeamSeasonStats[]>;
   phlDraftPicks: DraftPick[];
   phlDraftPickMap: Record<number, DraftPick[]>;
+  individualDraftPickMap: Record<number, DraftPick>;
+  proPlayerMap: Record<number, ProfessionalPlayer>;
 }
 
 // ✅ Default context value
@@ -274,6 +276,8 @@ const defaultContext: SimHCKContextProps = {
   phlPlayerSeasonStatsMap: {},
   phlTeamGameStatsMap: {},
   phlTeamSeasonStatsMap: {},
+  individualDraftPickMap: {},
+  proPlayerMap: {},
 };
 
 // ✅ Create the context
@@ -441,6 +445,32 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     }
     return pickMap;
   }, [phlDraftPicks]);
+
+  const individualDraftPickMap = useMemo(() => {
+    const pickMap: Record<number, DraftPick> = {};
+
+    for (let i = 0; i < phlDraftPicks.length; i++) {
+      const pick = phlDraftPicks[i];
+      pickMap[pick.ID] = pick;
+    }
+
+    return pickMap;
+  }, [phlDraftPicks]);
+
+  const proPlayerMap = useMemo(() => {
+    const playerMap: Record<number, ProfessionalPlayer> = {};
+
+    for (let i = 0; i < phlTeams.length; i++) {
+      const team = phlTeams[i];
+      const roster = proRosterMap[team.ID];
+      for (let j = 0; j < roster.length; j++) {
+        const p = roster[j];
+        playerMap[p.ID] = p;
+      }
+    }
+
+    return playerMap;
+  }, [proRosterMap, phlTeams]);
 
   useEffect(() => {
     if (currentUser) {
@@ -1220,6 +1250,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         proposeTrade,
         acceptTrade,
         rejectTrade,
+        individualDraftPickMap,
+        proPlayerMap,
       }}
     >
       {children}
