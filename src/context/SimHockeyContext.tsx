@@ -156,6 +156,7 @@ interface SimHCKContextProps {
   proposeTrade: (dto: TradeProposal) => Promise<void>;
   acceptTrade: (dto: TradeProposal) => Promise<void>;
   rejectTrade: (dto: TradeProposal) => Promise<void>;
+  cancelTrade: (dto: TradeProposal) => Promise<void>;
   PlacePHLPlayerOnTradeBlock: (
     playerID: number,
     teamID: number
@@ -259,6 +260,7 @@ const defaultContext: SimHCKContextProps = {
   proposeTrade: async () => {},
   acceptTrade: async () => {},
   rejectTrade: async () => {},
+  cancelTrade: async () => {},
   topCHLGoals: [],
   topCHLAssists: [],
   topCHLSaves: [],
@@ -1152,6 +1154,19 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     });
   }, []);
 
+  const cancelTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKCancelTradeProposal(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1250,6 +1265,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         proposeTrade,
         acceptTrade,
         rejectTrade,
+        cancelTrade,
         individualDraftPickMap,
         proPlayerMap,
       }}
