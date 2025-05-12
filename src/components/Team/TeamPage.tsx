@@ -328,6 +328,9 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     affiliatePlayer,
     PlacePHLPlayerOnTradeBlock,
     proposeTrade,
+    cancelTrade,
+    acceptTrade,
+    rejectTrade
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -470,6 +473,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
       if (proposalsList) {
         for (let j = 0; j < proposalsList.length; j++) {
           const proposal = proposalsList[j];
+          if (proposal.IsTradeAccepted || proposal.IsTradeRejected) continue;
           if (proposal.RecepientTeamID === phlTeam!.ID) {
             proposals.push(proposal);
           }
@@ -542,6 +546,9 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
         ts={ts}
         individualDraftPickMap={individualDraftPickMap}
         proPlayerMap={proPlayerMap}
+        cancelTrade={cancelTrade}
+        acceptTrade={acceptTrade}
+        rejectTrade={rejectTrade}
       />
       <ProposeTradeModal
         isOpen={proposeTradeModal.isModalOpen}

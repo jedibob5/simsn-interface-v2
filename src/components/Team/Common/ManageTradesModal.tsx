@@ -47,6 +47,9 @@ interface ManageTradeModalProps {
   ts: HCKTimestamp;
   individualDraftPickMap: Record<number, DraftPick>;
   proPlayerMap: Record<number, ProfessionalPlayer>;
+  cancelTrade: (dto: TradeProposal) => Promise<void>;
+  acceptTrade: (dto: TradeProposal) => Promise<void>;
+  rejectTrade: (dto: TradeProposal) => Promise<void>;
 }
 
 export const ManageTradeModal: FC<ManageTradeModalProps> = ({
@@ -63,6 +66,9 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
   individualDraftPickMap,
   proPlayerMap,
   ts,
+  cancelTrade,
+  acceptTrade,
+  rejectTrade
 }) => {
   const { phlTeamMap } = useSimHCKStore();
   const sectionBg = darkenColor("#1f2937", -5);
@@ -81,7 +87,17 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
     return mapTradeProposals(receivedTradeProposals, team.ID);
   }, [receivedTradeProposals]);
 
-  console.log({ cleanSentTrades, cleanReceivedTrades });
+  const cancel = async (dto: TradeProposal) => {
+    return await cancelTrade(dto);
+  }
+
+  const accept = async (dto: TradeProposal) => {
+    return await acceptTrade(dto);
+  }
+
+  const reject = async (dto: TradeProposal) => {
+    return await rejectTrade(dto);
+  }
 
   return (
     <>
@@ -110,104 +126,120 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
             <Text as="h4" classes="mb-2">
               Sent
             </Text>
-            {cleanSentTrades.map((trade) => {
-              const otherTeam = phlTeamMap[trade.RecepientTeamID];
-              const otherLogo = getLogo(league, otherTeam.ID, false);
-              return (
-                <Border direction="row" classes="p-4">
-                  <div className="grid grid-cols-4 w-full">
-                    <div className="flex flex-col items-start">
-                      <Logo
-                        url={otherLogo}
-                        label={otherTeam.Abbreviation}
-                        textClass="text-center"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <Text>Sending</Text>
-                      {trade.TeamTradeOptions.map((item) => (
-                        <ManageOption
-                          item={item}
-                          player={proPlayerMap[item.PlayerID]}
-                          pick={individualDraftPickMap[item.DraftPickID]}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex flex-col">
-                      <Text>Receiving</Text>
-                      {trade.RecepientTeamTradeOptions.map((item) => (
-                        <ManageOption
-                          item={item}
-                          player={proPlayerMap[item.PlayerID]}
-                          pick={individualDraftPickMap[item.DraftPickID]}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex flex-col items-end gap-y-2">
-                      <Button size="sm" classes="w-[5rem]">
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </Border>
-              );
-            })}
+            {cleanSentTrades.length === 0 && <>
+              <Border classes="mt-2 p-4">
+                <Text as="h4">No pending trades</Text>
+              </Border>
+            </>}
+            {cleanSentTrades.map((trade) =>               
+            <TradeSection 
+                otherTeam={phlTeamMap[trade.RecepientTeamID]}
+                trade={trade}
+                league={league}
+                individualDraftPickMap={individualDraftPickMap}
+                proPlayerMap={proPlayerMap}
+                cancel={cancel}
+                accept={accept}
+                reject={reject}
+                isSentTrade
+              />)}
           </div>
           <div className="flex  flex-col">
             <Text as="h4" classes="mb-2">
               Received
             </Text>
-            {cleanReceivedTrades.map((trade) => {
-              const otherTeam = phlTeamMap[trade.TeamID];
-              const otherLogo = getLogo(league, otherTeam.ID, false);
-              return (
-                <Border direction="row" classes="p-4">
-                  <div className="grid grid-cols-4 w-full">
-                    <div className="flex flex-col items-start">
-                      <Logo
-                        url={otherLogo}
-                        label={otherTeam.Abbreviation}
-                        textClass="text-center"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <Text>Sending</Text>
-                      {trade.TeamTradeOptions.map((item) => (
-                        <ManageOption
-                          item={item}
-                          player={proPlayerMap[item.PlayerID]}
-                          pick={individualDraftPickMap[item.DraftPickID]}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex flex-col">
-                      <Text>Receiving</Text>
-                      {trade.RecepientTeamTradeOptions.map((item) => (
-                        <ManageOption
-                          item={item}
-                          player={proPlayerMap[item.PlayerID]}
-                          pick={individualDraftPickMap[item.DraftPickID]}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex flex-col items-end gap-y-2">
-                      <Button size="sm" classes="w-[5rem]">
-                        Accept
-                      </Button>
-                      <Button size="sm" classes="w-[5rem]">
-                        Reject
-                      </Button>
-                    </div>
-                  </div>
-                </Border>
-              );
-            })}
+            {cleanReceivedTrades.length === 0 && <>
+              <Border classes="mt-2 p-4">
+                <Text as="h4">No received trades</Text>
+              </Border>
+            </>}
+            {cleanReceivedTrades.map((trade) => 
+              <TradeSection 
+                otherTeam={phlTeamMap[trade.TeamID]}
+                trade={trade}
+                league={league}
+                individualDraftPickMap={individualDraftPickMap}
+                proPlayerMap={proPlayerMap}
+                cancel={cancel}
+                accept={accept}
+                reject={reject}
+              />
+            )}
           </div>
         </div>
       </Modal>
     </>
   );
 };
+
+interface TradeSectionProps {
+  trade: TradeProposal;
+  otherTeam: ProfessionalTeam;
+  league: League;
+  individualDraftPickMap: Record<number, DraftPick>;
+  proPlayerMap: Record<number, ProfessionalPlayer>;
+  cancel: (dto: TradeProposal) => Promise<void>;
+  accept: (dto: TradeProposal) => Promise<void>;
+  reject: (dto: TradeProposal) => Promise<void>;
+  isSentTrade?: boolean;
+}
+
+const TradeSection: FC<TradeSectionProps> = ({ trade, 
+  otherTeam, 
+  league, 
+  individualDraftPickMap,
+  proPlayerMap,
+  cancel, 
+  accept, reject, isSentTrade }) => {
+
+  const otherLogo = getLogo(league, otherTeam.ID, false);
+  return (
+    <Border direction="row" classes="p-4">
+      <div className="grid grid-cols-4 w-full">
+        <div className="flex flex-col items-start">
+          <Logo
+            url={otherLogo}
+            label={otherTeam.Abbreviation}
+            textClass="text-center"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Text>Sending</Text>
+          {trade.TeamTradeOptions.map((item) => (
+            <ManageOption
+              item={item}
+              player={proPlayerMap[item.PlayerID]}
+              pick={individualDraftPickMap[item.DraftPickID]}
+            />
+          ))}
+        </div>
+        <div className="flex flex-col">
+          <Text>Receiving</Text>
+          {trade.RecepientTeamTradeOptions.map((item) => (
+            <ManageOption
+              item={item}
+              player={proPlayerMap[item.PlayerID]}
+              pick={individualDraftPickMap[item.DraftPickID]}
+            />
+          ))}
+        </div>
+        {isSentTrade ? 
+        (<div className="flex flex-col items-end gap-y-2">
+          <Button size="sm" classes="w-[5rem]" onClick={() => cancel(trade)}>
+            Cancel
+          </Button>
+        </div>) : (
+          <div className="flex flex-col items-end gap-y-2">
+          <Button size="sm" classes="w-[5rem]" onClick={() => accept(trade)}>
+            Accept
+          </Button>
+          <Button size="sm" classes="w-[5rem]" onClick={() => reject(trade)}>
+            Reject
+          </Button>
+        </div>)}
+      </div>
+    </Border>)
+}
 
 interface ManageOptionProps {
   item: HCKTradeOption;
@@ -221,7 +253,7 @@ const ManageOption: FC<ManageOptionProps> = ({ item, player, pick }) => {
   if (isPlayer) {
     label = `${player.Age} year, ${player.Archetype} ${player.Position} ${player.FirstName} ${player.LastName}`;
   } else {
-    label = `${pick.Season}, Round ${pick.DraftRound}, Pick ${pick.DraftNumber}`;
+    label = `${pick.Season}, R${pick.DraftRound}, P${pick.DraftNumber}`;
   }
   return (
     <div className="flex flex-col">

@@ -46,7 +46,7 @@ export const mapTradeProposals = (
   teamID: number
 ): TradeProposal[] => {
   const list: TradeProposal[] = [];
-
+  if (!proposals || proposals.length === 0) return list;
   for (let i = 0; i < proposals.length; i++) {
     const item = proposals[i];
     const obj = new TradeProposal({
