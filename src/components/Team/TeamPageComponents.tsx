@@ -83,7 +83,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   return (
     <Border
       direction="row"
-      classes="w-full py-6 px-4 justify-around gap-x-4"
+      classes="w-full p-4 justify-around gap-x-4"
       styles={{
         backgroundColor,
         borderColor: headerColor,

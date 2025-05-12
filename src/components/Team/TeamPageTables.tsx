@@ -439,7 +439,11 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                   <User textColorClass={`w-full text-center ${TextGreen}`} />
                 )}
               </>
-            ) : attr.label === "Name" ? (
+            ) : attr.label === "TradeBlock" ? <>
+            {attr.value === "Yes" ? <CheckCircle textColorClass={`w-full text-center ${TextGreen}`}
+          /> : <CrossCircle textColorClass={`w-full text-center text-red-500`}
+          />}
+    </> : attr.label === "Name" ? (
               <span
                 className={`cursor-pointer font-semibold`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
@@ -1709,7 +1713,7 @@ export const PHLTradeBlockTable: FC<PHLTradeBlockTableProps> = ({
               >
                 <Text variant="small">{attr.value}</Text>
               </span>
-            ) : (
+            )  : (
               <Text variant="small" classes="text-start">
                 {attr.value}
               </Text>

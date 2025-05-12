@@ -102,13 +102,6 @@ export const useSideMenu = () => {
         toggle: () => toggleMenu(),
       },
       {
-        label: "Trade Block",
-        isRoute: true,
-        route: "",
-        league: SimNFL,
-        toggle: () => toggleMenu(),
-      },
-      {
         label: "Free Agency",
         isRoute: true,
         route: "",
@@ -209,13 +202,6 @@ export const useSideMenu = () => {
         toggle: () => toggleMenu(),
       },
       {
-        label: "Trade Block",
-        isRoute: true,
-        route: "",
-        league: SimNBA,
-        toggle: () => toggleMenu(),
-      },
-      {
         label: "Free Agency",
         isRoute: true,
         route: "",
@@ -308,13 +294,6 @@ export const useSideMenu = () => {
         route: routes.PHL_GAMEPLAN,
         league: SimPHL,
         click: () => navigate(routes.PHL_GAMEPLAN),
-        toggle: () => toggleMenu(),
-      },
-      {
-        label: "Trade Block",
-        isRoute: true,
-        route: "",
-        league: SimPHL,
         toggle: () => toggleMenu(),
       },
       {
