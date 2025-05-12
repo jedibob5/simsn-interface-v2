@@ -107,20 +107,22 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
             />
           </div>
           <div className="flex flex-col">
-            <Text as="h4">Sent</Text>
+            <Text as="h4" classes="mb-2">
+              Sent
+            </Text>
             {cleanSentTrades.map((trade) => {
               const otherTeam = phlTeamMap[trade.RecepientTeamID];
               const otherLogo = getLogo(league, otherTeam.ID, false);
               return (
                 <Border direction="row" classes="p-4">
-                  <div className="flex flex-col items-start mr-2">
-                    <Logo
-                      url={otherLogo}
-                      label={otherTeam.Abbreviation}
-                      textClass="text-center"
-                    />
-                  </div>
-                  <div className="flex flex-row gap-x-4">
+                  <div className="grid grid-cols-4 w-full">
+                    <div className="flex flex-col items-start">
+                      <Logo
+                        url={otherLogo}
+                        label={otherTeam.Abbreviation}
+                        textClass="text-center"
+                      />
+                    </div>
                     <div className="flex flex-col">
                       <Text>Sending</Text>
                       {trade.TeamTradeOptions.map((item) => (
@@ -141,29 +143,33 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
                         />
                       ))}
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-y-2 ml-2">
-                    <Button>Cancel</Button>
+                    <div className="flex flex-col items-end gap-y-2">
+                      <Button size="sm" classes="w-[5rem]">
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 </Border>
               );
             })}
           </div>
           <div className="flex  flex-col">
-            <Text as="h4">Received</Text>
+            <Text as="h4" classes="mb-2">
+              Received
+            </Text>
             {cleanReceivedTrades.map((trade) => {
               const otherTeam = phlTeamMap[trade.TeamID];
               const otherLogo = getLogo(league, otherTeam.ID, false);
               return (
                 <Border direction="row" classes="p-4">
-                  <div className="flex flex-col items-start mr-2">
-                    <Logo
-                      url={otherLogo}
-                      label={otherTeam.Abbreviation}
-                      textClass="text-center"
-                    />
-                  </div>
-                  <div className="flex flex-row w-full gap-x-4">
+                  <div className="grid grid-cols-4 w-full">
+                    <div className="flex flex-col items-start">
+                      <Logo
+                        url={otherLogo}
+                        label={otherTeam.Abbreviation}
+                        textClass="text-center"
+                      />
+                    </div>
                     <div className="flex flex-col">
                       <Text>Sending</Text>
                       {trade.TeamTradeOptions.map((item) => (
@@ -184,10 +190,14 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
                         />
                       ))}
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-y-2">
-                    <Button>Accept</Button>
-                    <Button>Reject</Button>
+                    <div className="flex flex-col items-end gap-y-2">
+                      <Button size="sm" classes="w-[5rem]">
+                        Accept
+                      </Button>
+                      <Button size="sm" classes="w-[5rem]">
+                        Reject
+                      </Button>
+                    </div>
                   </div>
                 </Border>
               );
@@ -215,7 +225,9 @@ const ManageOption: FC<ManageOptionProps> = ({ item, player, pick }) => {
   }
   return (
     <div className="flex flex-col">
-      <Text classes="text-start">{label}</Text>
+      <Text variant="xs" classes="text-start">
+        {label}
+      </Text>
     </div>
   );
 };
