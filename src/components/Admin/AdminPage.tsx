@@ -22,6 +22,7 @@ import { useAdminPage } from "../../context/AdminPageContext";
 import { AdminTeamsTab } from "./AdminTeamsTab";
 import { AdminRequestsTab } from "./AdminRequestsTab";
 import { Refresh } from "../../_design/Icons";
+import { CommissionerHub } from "./AdminComponents";
 
 interface UnAuthPageProps {
   navigate: NavigateFunction;
@@ -54,6 +55,7 @@ export const AdminPage = () => {
   const leagueStore = useLeagueStore();
   const { ts, selectedLeague, setSelectedLeague } = leagueStore;
   const { selectedTab, setSelectedTab } = useAdminPage();
+  console.log(ts)
 
   return (
     <>
@@ -166,6 +168,12 @@ export const AdminPage = () => {
             {selectedTab === Requests && <AdminRequestsTab />}
             {selectedTab === Teams && <AdminTeamsTab />}
           </div>
+        </Border>
+        <Border classes="w-full">
+          <div className="flex justify-center p-4">
+            <Text variant="h6">{selectedLeague} Commissioner Hub</Text>
+          </div>
+          <CommissionerHub league={selectedLeague} />
         </Border>
       </PageContainer>
     </>

@@ -133,6 +133,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             <AdditionalTeamInfo
               league={League}
               arena={Arena}
+              roster={Roster}
               capacity={Capacity}
               textColorClass={textColorClass}
               borderColor={headerColor}
@@ -566,13 +567,24 @@ export const AdditionalTeamInfo = ({
         return player?.IsRedshirting || false;
       }
     }).length || 0;
-  const activeRoster = totalPlayers - specialPlayersCount;
+    const injuryReserveCount =
+    roster?.filter((player: any) => {
+      if (isPro) {
+        if (league === SimNFL) {
+          return player?.InjuryReserve || false;
+        }
+      } else {
+        return false;
+      }
+    }).length || 0;
+
+  const activeRoster = totalPlayers - specialPlayersCount - injuryReserveCount;
   return (
-    <div className="flex flex-row gap-4">
+    <div className="flex flex-row space-around w-full gap-5 text-center">
       <div className="flex flex-col">
         <Text
           variant="small"
-          classes={`${textColorClass} font-semibold text-left`}
+          classes={`${textColorClass} font-semibold`}
         >
           {`${home}`}
         </Text>
