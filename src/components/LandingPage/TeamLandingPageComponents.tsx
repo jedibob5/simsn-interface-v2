@@ -50,6 +50,7 @@ export const GamesBar = ({
   headerColor,
 }: GamesBarProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isHockey = league === SimCHL || league === SimPHL ? true : false;
 
   useEffect(() => {
     if (scrollContainerRef.current && games.length > 0) {
@@ -128,24 +129,29 @@ export const GamesBar = ({
     return (
       <div
         key={index}
-        className={`flex flex-col rounded-lg items-center border pb-1 px-2 md:w-28 3xl:w-48 ${resultColor}`}
+        className={`flex flex-col rounded-lg items-center border pb-1 px-2 w-28 3xl:w-48 ${resultColor}`}
         style={{ borderColor: headerColor }}
       >
         <div className="flex-col px-2 overflow-auto">
-          <div className="flex-col items-center justify-center">
+          <div className="flex-col w-full items-center justify-center">
             <Logo
               variant="xs"
-              containerClass="pb-1 max-w-[4em] p-4"
+              containerClass="pb-1 max-w-[4em] p-2 justify-self-center"
               url={opponentLogoUrl}
             />
-            <Text variant="small">{gameScore}</Text>
-            <Text variant="small" classes="">
+            <Text variant="xs">{gameScore}</Text>
+            <Text variant="xs" classes="">
               {gameDetails}
             </Text>
           </div>
-          <Text variant="xs" classes="pt-1">
-            Week {item.Week}
+          <Text variant="xs" classes="pt-1 border-t">
+            Week {item.Week}{item.GameDay}
           </Text>
+        {item.TimeSlot && (
+          <Text variant="xs" classes="">
+            {item.TimeSlot.split(" ").slice(0, 2).join(" ")}
+          </Text>
+          )}
         </div>
       </div>
     );

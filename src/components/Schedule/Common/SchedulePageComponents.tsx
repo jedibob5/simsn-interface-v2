@@ -11,6 +11,7 @@ import { processLeagueStandings } from "./SchedulePageHelper";
 import { ClickableTeamLabel } from "../../Common/Labels";
 import { useModal } from "../../../_hooks/useModal";
 import { SchedulePageGameModal } from "./GameModal";
+import { SimCFB, SimNFL } from "../../../_constants/constants";
 
 interface TeamScheduleProps {
   team: any;
@@ -49,6 +50,7 @@ export const TeamSchedule = ({
 }: TeamScheduleProps) => {
   const gameModal = useModal();
   const [selectedGame, setSelectedGame] = useState<any>(null);
+  const isFootball = league === SimCFB || league === SimNFL ? true : false;
 
   return (
     <>
@@ -71,7 +73,7 @@ export const TeamSchedule = ({
         ) : (
           <div className="grid">
             <div
-              className="grid grid-cols-5 font-semibold border-b-2 pb-2"
+              className={`grid ${isFootball ? "grid-cols-7" : "grid-cols-5"} font-semibold border-b-2 pb-2`}
               style={{
                 borderColor,
               }}
@@ -81,6 +83,13 @@ export const TeamSchedule = ({
                   Week
                 </Text>
               </div>
+            {isFootball && (
+              <div className="text-left col-span-2">
+                <Text variant="xs" className={`${textColorClass}`}>
+                  Timeslot
+                </Text>
+              </div>
+              )}
               <div className="text-left col-span-2">
                 <Text variant="xs" className={`${textColorClass}`}>
                   Opponent
@@ -108,7 +117,7 @@ export const TeamSchedule = ({
             {processedSchedule.map((game, index) => (
               <div
                 key={index}
-                className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
+                className={`grid ${isFootball ? "grid-cols-7" : "grid-cols-5"} border-b border-b-[#34455d] items-center`}
                 style={{
                   backgroundColor:
                     index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
@@ -119,6 +128,13 @@ export const TeamSchedule = ({
                     {game.weekLabel}
                   </Text>
                 </div>
+              {isFootball && (
+                <div className="text-left col-span-2">
+                  <Text variant="xs" className="font-semibold opacity-70">
+                    {game.TimeSlot.split(" ").slice(0, 2).join(" ")}
+                  </Text>
+                </div>
+              )}
                 <div className="flex items-center col-span-2 justify-start text-center">
                   <Text variant="xs" className="font-semibold text-center">
                     {game.gameLocation}
@@ -196,6 +212,8 @@ export const WeeklySchedule = ({
 }: TeamScheduleProps) => {
   const gameModal = useModal();
   const [selectedGame, setSelectedGame] = useState<any>(null);
+  const isFootball = league === SimCFB || league === SimNFL ? true : false;
+
   return (
     <SectionCards
       header={`Week ${week}`}
@@ -216,7 +234,7 @@ export const WeeklySchedule = ({
       ) : (
         <div className="grid">
           <div
-            className="grid grid-cols-5 font-semibold border-b-2 pb-2"
+            className={`grid ${isFootball ? "grid-cols-7" : "grid-cols-5"} font-semibold border-b-2 pb-2`}
             style={{
               borderColor,
             }}
@@ -226,6 +244,13 @@ export const WeeklySchedule = ({
                 Week
               </Text>
             </div>
+          {isFootball && (
+            <div className="text-left col-span-2">
+              <Text variant="xs" className={`${textColorClass}`}>
+                Timeslot
+              </Text>
+            </div>
+            )}
             <div className="text-left col-span-1 pl-4">
               <Text variant="xs" className={`${textColorClass}`}>
                 Home
@@ -258,7 +283,7 @@ export const WeeklySchedule = ({
           {processedSchedule.map((game, index) => (
             <div
               key={index}
-              className="grid grid-cols-5 border-b border-b-[#34455d] items-center"
+              className={`grid ${isFootball ? "grid-cols-7" : "grid-cols-5"} border-b border-b-[#34455d] items-center`}
               style={{
                 backgroundColor:
                   index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
@@ -270,6 +295,13 @@ export const WeeklySchedule = ({
                   {game.GameDay}
                 </Text>
               </div>
+            {isFootball && (
+              <div className="text-left col-span-2">
+                <Text variant="xs" className="font-semibold opacity-70">
+                  {game.TimeSlot.split(" ").slice(0, 2).join(" ")}
+                </Text>
+              </div>
+            )}
               <div className="flex items-center col-span-1 text-left">
                 <Logo
                   variant="xs"
