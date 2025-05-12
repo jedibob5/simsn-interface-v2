@@ -63,23 +63,25 @@ const mobileFriendlySelectStyles = {
   }),
 };
 
-export const SelectDropdown = <IsMulti extends boolean = false>(
-  props: SelectDropdownProps<IsMulti>
-) => {
+export const SelectDropdown = <IsMulti extends boolean = false>({
+  styles: userStyles,
+  ...rest
+}: SelectDropdownProps<IsMulti>) => {
   const { isMobile } = useResponsive();
   const mobileStyle = isMobile ? mobileFriendlySelectStyles : {};
   return (
     <Select<SelectOption, IsMulti>
-      placeholder={props.placeholder || "Select an option..."}
+      {...rest}
       styles={{
         ...selectStyles<IsMulti>(),
         ...mobileStyle,
-        ...props.styles,
+        ...(userStyles as any),
         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
       }} // Pass the generic type
-      menuPortalTarget={document.body}
+      menuPortalTarget={
+        typeof document !== "undefined" ? document.body : undefined
+      }
       menuPosition="fixed"
-      {...props}
     />
   );
 };

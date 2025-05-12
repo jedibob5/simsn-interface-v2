@@ -720,7 +720,6 @@ export const TeamStats = ({
   isLoadingTwo,
 }: TeamStatsProps) => {
   const { boxOne, boxTwo, boxThree } = getLandingBoxStats(league, teamStats);
-  console.log({ boxOne, boxTwo, boxThree });
   return (
     <SectionCards
       team={team}

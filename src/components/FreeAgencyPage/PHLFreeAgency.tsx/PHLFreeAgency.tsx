@@ -91,7 +91,7 @@ export const PHLFreeAgency = () => {
       {modalPlayer && (
         <OfferModal
           isOpen={offerModal.isModalOpen}
-          capsheet={adjustedTeamCapsheet}
+          capsheet={teamCapsheet}
           onClose={offerModal.handleCloseModal}
           league={SimPHL}
           player={modalPlayer}

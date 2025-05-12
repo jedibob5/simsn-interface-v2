@@ -44,6 +44,7 @@ export const Help1 = "Help1";
 export const Help2 = "Help2";
 export const Help3 = "Help3";
 export const Help4 = "Help4";
+export const TradeBlock = "TradeBlock";
 export type ModalAction =
   | typeof Cut
   | typeof Promise
@@ -61,7 +62,8 @@ export type ModalAction =
   | typeof Help1
   | typeof Help2
   | typeof Help3
-  | typeof Help4;
+  | typeof Help4
+  | typeof TradeBlock;
 export const FreeAgentOffer = "FreeAgentOffer";
 export const WaiverOffer = "WaiverOffer";
 export const Extension = "Extension";

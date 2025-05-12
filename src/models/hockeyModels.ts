@@ -713,6 +713,8 @@ export class FreeAgencyOffer {
   ContractValue: number;
   BonusPercentage: number;
   IsActive: boolean;
+  Syncs: number;
+  ToAffiliate: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -738,6 +740,8 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.IsActive = source["IsActive"];
+    this.Syncs = source["Syncs"];
+    this.ToAffiliate = source["ToAffiliate"];
   }
 
   updateField(name: string, value: number): FreeAgencyOffer {
@@ -991,6 +995,7 @@ export class ProfessionalPlayerGameStats {
   CreatedAt: Time;
   UpdatedAt: Time;
   DeletedAt: DeletedAt;
+  StartedGame: boolean;
   PlayerID: number;
   TeamID: number;
   SeasonID: number;
@@ -1044,6 +1049,7 @@ export class ProfessionalPlayerGameStats {
     this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
     this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
     this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.StartedGame = source["StartedGame"];
     this.PlayerID = source["PlayerID"];
     this.TeamID = source["TeamID"];
     this.SeasonID = source["SeasonID"];
@@ -1228,6 +1234,7 @@ export class ProfessionalPlayer {
   IsWaived: boolean;
   IsFreeAgent: boolean;
   IsEligibleForPlay: boolean;
+  IsOnTradeBlock: boolean;
   AffiliateTeamID: number;
   Marketability: number;
   JerseyPrice: number;
@@ -1361,6 +1368,7 @@ export class ProfessionalPlayer {
     this.IsAffiliatePlayer = source["IsAffiliatePlayer"];
     this.IsWaived = source["IsWaived"];
     this.IsFreeAgent = source["IsFreeAgent"];
+    this.IsOnTradeBlock = source["IsOnTradeBlock"];
     this.AffiliateTeamID = source["AffiliateTeamID"];
     this.Marketability = source["Marketability"];
     this.JerseyPrice = source["JerseyPrice"];
@@ -1934,6 +1942,7 @@ export class ProfessionalGame {
   AwayTeamShootoutScore: number;
   SeriesID: number;
   IsInternational: boolean;
+  IsPreseason: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -1982,6 +1991,7 @@ export class ProfessionalGame {
     this.AwayTeamShootoutScore = source["AwayTeamShootoutScore"];
     this.SeriesID = source["SeriesID"];
     this.IsInternational = source["IsInternational"];
+    this.IsPreseason = source["IsPreseason"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2331,6 +2341,7 @@ export class CollegeGame {
   IsNationalChampionship: boolean;
   HomeTeamShootoutScore: number;
   AwayTeamShootoutScore: number;
+  IsPreseason: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -2376,6 +2387,7 @@ export class CollegeGame {
     this.IsNationalChampionship = source["IsNationalChampionship"];
     this.HomeTeamShootoutScore = source["HomeTeamShootoutScore"];
     this.AwayTeamShootoutScore = source["AwayTeamShootoutScore"];
+    this.IsPreseason = source["IsPreseason"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3241,11 +3253,17 @@ export class BootstrapData {
   AllCollegeGames: CollegeGame[];
   CollegeTeamLineups: CollegeLineup[];
   CollegeTeamShootoutLineup: CollegeShootoutLineup;
+  TopCHLGoals: CollegePlayer[];
+  TopCHLAssists: CollegePlayer[];
+  TopCHLSaves: CollegePlayer[];
   ProTeam: ProfessionalTeam;
   AllProTeams: ProfessionalTeam[];
   ProStandings: ProfessionalStandings[];
   ProRosterMap: { [key: number]: ProfessionalPlayer[] };
   AffiliatePlayers: ProfessionalPlayer[];
+  TopPHLGoals: ProfessionalPlayer[];
+  TopPHLAssists: ProfessionalPlayer[];
+  TopPHLSaves: ProfessionalPlayer[];
   FreeAgentOffers: FreeAgencyOffer[];
   WaiverWireOffers: WaiverOffer[];
   CapsheetMap: { [key: number]: ProCapsheet };
@@ -3258,12 +3276,10 @@ export class BootstrapData {
   FaceData: { [key: number]: FaceDataResponse };
   ContractMap: { [key: number]: ProContract };
   ExtensionMap: { [key: number]: ExtensionOffer };
-  TopCHLGoals: CollegePlayer[];
-  TopCHLAssists: CollegePlayer[];
-  TopCHLSaves: CollegePlayer[];
-  TopPHLGoals: ProfessionalPlayer[];
-  TopPHLAssists: ProfessionalPlayer[];
-  TopPHLSaves: ProfessionalPlayer[];
+  ProTradeProposalMap: { [key: number]: TradeProposal[] };
+  ProTradePreferenceMap: { [key: number]: TradePreferences };
+  DraftPicks: DraftPick[];
+
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
     this.CollegeTeam = this.convertValues(source["CollegeTeam"], CollegeTeam);
@@ -3281,12 +3297,7 @@ export class BootstrapData {
       source["RecruitProfiles"],
       RecruitPlayerProfile
     );
-
-    this.TeamProfileMap = this.convertValues(
-      source["TeamProfileMap"],
-      RecruitingTeamProfile,
-      true
-    );
+    this.TeamProfileMap = source["TeamProfileMap"];
     this.PortalPlayers = this.convertValues(
       source["PortalPlayers"],
       CollegePlayer
@@ -3312,6 +3323,12 @@ export class BootstrapData {
       source["CollegeTeamShootoutLineup"],
       CollegeShootoutLineup
     );
+    this.TopCHLGoals = this.convertValues(source["TopCHLGoals"], CollegePlayer);
+    this.TopCHLAssists = this.convertValues(
+      source["TopCHLAssists"],
+      CollegePlayer
+    );
+    this.TopCHLSaves = this.convertValues(source["TopCHLSaves"], CollegePlayer);
     this.ProTeam = this.convertValues(source["ProTeam"], ProfessionalTeam);
     this.AllProTeams = this.convertValues(
       source["AllProTeams"],
@@ -3322,13 +3339,20 @@ export class BootstrapData {
       ProfessionalStandings
     );
     this.ProRosterMap = source["ProRosterMap"];
-    this.CapsheetMap = this.convertValues(
-      source["CapsheetMap"],
-      ProCapsheet,
-      true
-    );
     this.AffiliatePlayers = this.convertValues(
       source["AffiliatePlayers"],
+      ProfessionalPlayer
+    );
+    this.TopPHLGoals = this.convertValues(
+      source["TopPHLGoals"],
+      ProfessionalPlayer
+    );
+    this.TopPHLAssists = this.convertValues(
+      source["TopPHLAssists"],
+      ProfessionalPlayer
+    );
+    this.TopPHLSaves = this.convertValues(
+      source["TopPHLSaves"],
       ProfessionalPlayer
     );
     this.FreeAgentOffers = this.convertValues(
@@ -3338,6 +3362,11 @@ export class BootstrapData {
     this.WaiverWireOffers = this.convertValues(
       source["WaiverWireOffers"],
       WaiverOffer
+    );
+    this.CapsheetMap = this.convertValues(
+      source["CapsheetMap"],
+      ProCapsheet,
+      true
     );
     this.ProInjuryReport = this.convertValues(
       source["ProInjuryReport"],
@@ -3375,24 +3404,13 @@ export class BootstrapData {
       ExtensionOffer,
       true
     );
-    this.TopCHLGoals = this.convertValues(source["TopCHLGoals"], CollegePlayer);
-    this.TopCHLAssists = this.convertValues(
-      source["TopCHLAssists"],
-      CollegePlayer
+    this.ProTradeProposalMap = source["ProTradeProposalMap"];
+    this.ProTradePreferenceMap = this.convertValues(
+      source["ProTradePreferenceMap"],
+      TradePreferences,
+      true
     );
-    this.TopCHLSaves = this.convertValues(source["TopCHLSaves"], CollegePlayer);
-    this.TopPHLGoals = this.convertValues(
-      source["TopPHLGoals"],
-      ProfessionalPlayer
-    );
-    this.TopPHLAssists = this.convertValues(
-      source["TopPHLAssists"],
-      ProfessionalPlayer
-    );
-    this.TopPHLSaves = this.convertValues(
-      source["TopPHLSaves"],
-      ProfessionalPlayer
-    );
+    this.DraftPicks = this.convertValues(source["DraftPicks"], DraftPick);
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4259,6 +4277,7 @@ export class FreeAgencyOfferDTO {
   Y4Bonus: number;
   Y5BaseSalary: number;
   Y5Bonus: number;
+  ToAffiliate: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -4276,6 +4295,7 @@ export class FreeAgencyOfferDTO {
     this.Y4Bonus = source["Y4Bonus"];
     this.Y5BaseSalary = source["Y5BaseSalary"];
     this.Y5Bonus = source["Y5Bonus"];
+    this.ToAffiliate = source["ToAffiliate"];
   }
 }
 
@@ -5076,6 +5096,7 @@ export class CollegePlayerGameStats {
   CreatedAt: Time;
   UpdatedAt: Time;
   DeletedAt: DeletedAt;
+  StartedGame: boolean;
   PlayerID: number;
   TeamID: number;
   SeasonID: number;
@@ -5129,6 +5150,7 @@ export class CollegePlayerGameStats {
     this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
     this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
     this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.StartedGame = source["StartedGame"];
     this.PlayerID = source["PlayerID"];
     this.TeamID = source["TeamID"];
     this.SeasonID = source["SeasonID"];
@@ -5799,6 +5821,9 @@ export class Timestamp {
   Y4Capspace: number;
   Y5Capspace: number;
   DeadCapLimit: number;
+  PreseasonPhase: number;
+  IsPreseason: boolean;
+  SeasonPhase: number;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -5840,6 +5865,9 @@ export class Timestamp {
     this.Y4Capspace = source["Y4Capspace"];
     this.Y5Capspace = source["Y5Capspace"];
     this.DeadCapLimit = source["DeadCapLimit"];
+    this.PreseasonPhase = source["PreseasonPhase"];
+    this.IsPreseason = source["IsPreseason"];
+    this.SeasonPhase = source["SeasonPhase"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -5905,6 +5933,224 @@ export class SearchStatsResponse {
       source["PHLTeamSeasonStats"],
       ProfessionalTeamSeasonStats
     );
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
+    }
+    if (Array.isArray(a)) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
+}
+export class TradePreferences {
+  ID: number;
+  CreatedAt: Time;
+  UpdatedAt: Time;
+  DeletedAt: DeletedAt;
+  TeamID: number;
+  Centers: boolean;
+  CentersType: number;
+  Forwards: boolean;
+  ForwardsType: number;
+  Defenders: boolean;
+  DefendersType: number;
+  Goalies: boolean;
+  GoaliesType: number;
+  DraftPicks: boolean;
+  DraftPickType: number;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.ID = source["ID"];
+    this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
+    this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
+    this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.TeamID = source["TeamID"];
+    this.Centers = source["Centers"];
+    this.CentersType = source["CentersType"];
+    this.Forwards = source["Forwards"];
+    this.ForwardsType = source["ForwardsType"];
+    this.Defenders = source["Defenders"];
+    this.DefendersType = source["DefendersType"];
+    this.Goalies = source["Goalies"];
+    this.GoaliesType = source["GoaliesType"];
+    this.DraftPicks = source["DraftPicks"];
+    this.DraftPickType = source["DraftPickType"];
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
+    }
+    if (Array.isArray(a)) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
+}
+export class TradeOption {
+  ID: number;
+  CreatedAt: Time;
+  UpdatedAt: Time;
+  DeletedAt: DeletedAt;
+  TradeProposalID: number;
+  TeamID: number;
+  PlayerID: number;
+  DraftPickID: number;
+  OptionType: string;
+  SalaryPercentage: number;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.ID = source["ID"];
+    this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
+    this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
+    this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.TradeProposalID = source["TradeProposalID"];
+    this.TeamID = source["TeamID"];
+    this.PlayerID = source["PlayerID"];
+    this.DraftPickID = source["DraftPickID"];
+    this.OptionType = source["OptionType"];
+    this.SalaryPercentage = source["SalaryPercentage"];
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
+    }
+    if (Array.isArray(a)) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
+}
+export class TradeProposal {
+  ID: number;
+  CreatedAt: Time;
+  UpdatedAt: Time;
+  DeletedAt: DeletedAt;
+  TeamID: number;
+  RecepientTeamID: number;
+  IsTradeAccepted: boolean;
+  IsTradeRejected: boolean;
+  IsSynced: boolean;
+  TeamTradeOptions: TradeOption[];
+  RecepientTeamTradeOptions: TradeOption[];
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.ID = source["ID"];
+    this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
+    this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
+    this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.TeamID = source["TeamID"];
+    this.RecepientTeamID = source["RecepientTeamID"];
+    this.IsTradeAccepted = source["IsTradeAccepted"];
+    this.IsTradeRejected = source["IsTradeRejected"];
+    this.IsSynced = source["IsSynced"];
+    this.TeamTradeOptions = this.convertValues(
+      source["TeamTradeOptions"],
+      TradeOption
+    );
+    this.RecepientTeamTradeOptions = this.convertValues(
+      source["RecepientTeamTradeOptions"],
+      TradeOption
+    );
+  }
+
+  convertValues(a: any, classs: any, asMap: boolean = false): any {
+    if (!a) {
+      return a;
+    }
+    if (Array.isArray(a)) {
+      return (a as any[]).map((elem) => this.convertValues(elem, classs));
+    } else if ("object" === typeof a) {
+      if (asMap) {
+        for (const key of Object.keys(a)) {
+          a[key] = new classs(a[key]);
+        }
+        return a;
+      }
+      return new classs(a);
+    }
+    return a;
+  }
+}
+export class DraftPick {
+  ID: number;
+  CreatedAt: Time;
+  UpdatedAt: Time;
+  DeletedAt: DeletedAt;
+  SeasonID: number;
+  Season: number;
+  DrafteeID: number;
+  DraftRound: number;
+  DraftNumber: number;
+  TeamID: number;
+  Team: string;
+  OriginalTeamID: number;
+  OriginalTeam: string;
+  PreviousTeamID: number;
+  PreviousTeam: string;
+  DraftValue: number;
+  Notes: string;
+  SelectedPlayerID: number;
+  SelectedPlayerName: string;
+  SelectedPlayerPosition: string;
+  IsCompensation: boolean;
+  IsVoid: boolean;
+
+  constructor(source: any = {}) {
+    if ("string" === typeof source) source = JSON.parse(source);
+    this.ID = source["ID"];
+    this.CreatedAt = this.convertValues(source["CreatedAt"], Time);
+    this.UpdatedAt = this.convertValues(source["UpdatedAt"], Time);
+    this.DeletedAt = this.convertValues(source["DeletedAt"], DeletedAt);
+    this.SeasonID = source["SeasonID"];
+    this.Season = source["Season"];
+    this.DrafteeID = source["DrafteeID"];
+    this.DraftRound = source["DraftRound"];
+    this.DraftNumber = source["DraftNumber"];
+    this.TeamID = source["TeamID"];
+    this.Team = source["Team"];
+    this.OriginalTeamID = source["OriginalTeamID"];
+    this.OriginalTeam = source["OriginalTeam"];
+    this.PreviousTeamID = source["PreviousTeamID"];
+    this.PreviousTeam = source["PreviousTeam"];
+    this.DraftValue = source["DraftValue"];
+    this.Notes = source["Notes"];
+    this.SelectedPlayerID = source["SelectedPlayerID"];
+    this.SelectedPlayerName = source["SelectedPlayerName"];
+    this.SelectedPlayerPosition = source["SelectedPlayerPosition"];
+    this.IsCompensation = source["IsCompensation"];
+    this.IsVoid = source["IsVoid"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

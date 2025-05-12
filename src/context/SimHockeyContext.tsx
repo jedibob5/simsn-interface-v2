@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useAuthStore } from "./AuthContext";
@@ -47,6 +48,9 @@ import {
   ProfessionalTeamGameStats,
   ProfessionalTeamSeasonStats,
   SearchStatsResponse,
+  TradeProposal,
+  TradePreferences,
+  DraftPick,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -67,6 +71,7 @@ import { RecruitService } from "../_services/recruitService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
 import { StatsService } from "../_services/statsService";
 import { GenerateNumberFromRange } from "../_helper/utilHelper";
+import { TradeService } from "../_services/tradeService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -120,6 +125,8 @@ interface SimHCKContextProps {
   topPHLGoals: ProfessionalPlayer[];
   topPHLAssists: ProfessionalPlayer[];
   topPHLSaves: ProfessionalPlayer[];
+  tradeProposalsMap: Record<number, TradeProposal[]>;
+  tradePreferencesMap: Record<number, TradePreferences>;
   updatePointsOnRecruit: (id: number, name: string, points: number) => void;
   removeUserfromCHLTeamCall: (teamID: number) => Promise<void>;
   removeUserfromPHLTeamCall: (request: ProTeamRequest) => Promise<void>;
@@ -146,6 +153,14 @@ interface SimHCKContextProps {
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   SearchHockeyStats: (dto: any) => Promise<void>;
   ExportHockeyStats: (dto: any) => Promise<void>;
+  proposeTrade: (dto: TradeProposal) => Promise<void>;
+  acceptTrade: (dto: TradeProposal) => Promise<void>;
+  rejectTrade: (dto: TradeProposal) => Promise<void>;
+  cancelTrade: (dto: TradeProposal) => Promise<void>;
+  PlacePHLPlayerOnTradeBlock: (
+    playerID: number,
+    teamID: number
+  ) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -159,6 +174,10 @@ interface SimHCKContextProps {
   phlPlayerSeasonStatsMap: Record<number, ProfessionalPlayerSeasonStats[]>;
   phlTeamGameStatsMap: Record<number, ProfessionalTeamGameStats[]>;
   phlTeamSeasonStatsMap: Record<number, ProfessionalTeamSeasonStats[]>;
+  phlDraftPicks: DraftPick[];
+  phlDraftPickMap: Record<number, DraftPick[]>;
+  individualDraftPickMap: Record<number, DraftPick>;
+  proPlayerMap: Record<number, ProfessionalPlayer>;
 }
 
 // ✅ Default context value
@@ -207,6 +226,10 @@ const defaultContext: SimHCKContextProps = {
   currentProSeasonGames: [],
   proTeamsGames: [],
   proNotifications: [],
+  tradeProposalsMap: {},
+  tradePreferencesMap: {},
+  phlDraftPicks: [],
+  phlDraftPickMap: {},
   removeUserfromCHLTeamCall: async () => {},
   removeUserfromPHLTeamCall: async () => {},
   addUserToCHLTeam: () => {},
@@ -233,6 +256,11 @@ const defaultContext: SimHCKContextProps = {
   CancelWaiverWireOffer: async () => {},
   SearchHockeyStats: async () => {},
   ExportHockeyStats: async () => {},
+  PlacePHLPlayerOnTradeBlock: async () => {},
+  proposeTrade: async () => {},
+  acceptTrade: async () => {},
+  rejectTrade: async () => {},
+  cancelTrade: async () => {},
   topCHLGoals: [],
   topCHLAssists: [],
   topCHLSaves: [],
@@ -250,6 +278,8 @@ const defaultContext: SimHCKContextProps = {
   phlPlayerSeasonStatsMap: {},
   phlTeamGameStatsMap: {},
   phlTeamSeasonStatsMap: {},
+  individualDraftPickMap: {},
+  proPlayerMap: {},
 };
 
 // ✅ Create the context
@@ -396,6 +426,53 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [phlTeamSeasonStatsMap, setPhlTeamSeasonStats] = useState<
     Record<number, ProfessionalTeamSeasonStats[]>
   >([]);
+  const [tradeProposalsMap, setTradeProposalsMap] = useState<
+    Record<number, TradeProposal[]>
+  >([]);
+  const [tradePreferencesMap, setTradePreferencesMap] = useState<
+    Record<number, TradePreferences>
+  >([]);
+  const [phlDraftPicks, setPHLDraftPicks] = useState<DraftPick[]>([]);
+
+  const phlDraftPickMap = useMemo(() => {
+    if (!phlDraftPicks) return {};
+    const pickMap: Record<number, DraftPick[]> = {};
+    for (let i = 0; i < phlDraftPicks.length; i++) {
+      const pick = phlDraftPicks[i];
+      if (!pickMap[pick.TeamID]) {
+        pickMap[pick.TeamID] = [pick];
+      } else {
+        pickMap[pick.TeamID].push(pick);
+      }
+    }
+    return pickMap;
+  }, [phlDraftPicks]);
+
+  const individualDraftPickMap = useMemo(() => {
+    const pickMap: Record<number, DraftPick> = {};
+
+    for (let i = 0; i < phlDraftPicks.length; i++) {
+      const pick = phlDraftPicks[i];
+      pickMap[pick.ID] = pick;
+    }
+
+    return pickMap;
+  }, [phlDraftPicks]);
+
+  const proPlayerMap = useMemo(() => {
+    const playerMap: Record<number, ProfessionalPlayer> = {};
+
+    for (let i = 0; i < phlTeams.length; i++) {
+      const team = phlTeams[i];
+      const roster = proRosterMap[team.ID];
+      for (let j = 0; j < roster.length; j++) {
+        const p = roster[j];
+        playerMap[p.ID] = p;
+      }
+    }
+
+    return playerMap;
+  }, [proRosterMap, phlTeams]);
 
   useEffect(() => {
     if (currentUser) {
@@ -450,6 +527,9 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setTopPHLGoals(res.TopPHLGoals);
     setTopPHLAssists(res.TopPHLAssists);
     setTopPHLSaves(res.TopPHLSaves);
+    setTradeProposalsMap(res.ProTradeProposalMap);
+    setTradePreferencesMap(res.ProTradePreferenceMap);
+    setPHLDraftPicks(res.DraftPicks);
 
     if (res.AllCollegeGames.length > 0 && hck_Timestamp) {
       const currentSeasonGames = res.AllCollegeGames.filter(
@@ -660,6 +740,29 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setProRosterMap(rosterMap);
     },
     [proRosterMap]
+  );
+
+  const PlacePHLPlayerOnTradeBlock = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.SendPHLPlayerToTradeBlock(playerID);
+      setProRosterMap((prevMap) => {
+        const teamRoster = prevMap[teamID];
+        if (!teamRoster) return prevMap;
+
+        return {
+          ...prevMap,
+          [teamID]: teamRoster.map((player) =>
+            player.ID === playerID
+              ? new ProfessionalPlayer({
+                  ...player,
+                  IsOnTradeBlock: !player.IsOnTradeBlock,
+                })
+              : player
+          ),
+        };
+      });
+    },
+    []
   );
 
   const affiliatePlayer = useCallback(
@@ -1006,6 +1109,64 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const proposeTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKCreateTradeProposal(dto as TradeProposal);
+    enqueueSnackbar(
+      `Sent trade proposal to ${phlTeamMap[dto.RecepientTeamID].TeamName}!`,
+      {
+        variant: "success",
+        autoHideDuration: 3000,
+      }
+    );
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID], dto],
+      };
+    });
+  }, []);
+
+  const acceptTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKAcceptTradeProposal(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
+  const rejectTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKRejectTradeProposal(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
+  const cancelTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKCancelTradeProposal(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1059,6 +1220,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         topPHLGoals,
         topPHLAssists,
         topPHLSaves,
+        phlDraftPicks,
+        phlDraftPickMap,
         removeUserfromCHLTeamCall,
         removeUserfromPHLTeamCall,
         addUserToCHLTeam,
@@ -1067,6 +1230,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         redshirtPlayer,
         promisePlayer,
         cutPHLPlayer,
+        PlacePHLPlayerOnTradeBlock,
         affiliatePlayer,
         updateCHLRosterMap,
         updateProRosterMap,
@@ -1096,6 +1260,14 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         phlTeamSeasonStatsMap,
         SearchHockeyStats,
         ExportHockeyStats,
+        tradeProposalsMap,
+        tradePreferencesMap,
+        proposeTrade,
+        acceptTrade,
+        rejectTrade,
+        cancelTrade,
+        individualDraftPickMap,
+        proPlayerMap,
       }}
     >
       {children}

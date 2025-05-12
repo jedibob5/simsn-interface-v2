@@ -13,6 +13,7 @@ import {
   Overview,
   SimCBB,
   SimNBA,
+  TradeBlock,
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
@@ -27,6 +28,7 @@ import {
   PHLRosterTable,
   CBBRosterTable,
   NBARosterTable,
+  PHLTradeBlockTable,
 } from "./TeamPageTables";
 import { SelectDropdown } from "../../_design/Select";
 import { SingleValue } from "react-select";
@@ -36,7 +38,9 @@ import { Text } from "../../_design/Typography";
 import { useModal } from "../../_hooks/useModal";
 import {
   CollegePlayer as CHLPlayer,
+  DraftPick,
   ProfessionalPlayer as PHLPlayer,
+  TradeProposal,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
@@ -52,6 +56,11 @@ import { darkenColor } from "../../_utility/getDarkerColor";
 import { useParams } from "react-router-dom";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { CollegePlayer, NBAPlayer } from "../../models/basketballModels";
+import { TradeBlockRow } from "./TeamPageTypes";
+import {
+  ManageTradeModal,
+  ProposeTradeModal,
+} from "./Common/ManageTradesModal";
 
 interface TeamPageProps {
   league: League;
@@ -138,7 +147,6 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
   const [modalPlayer, setModalPlayer] = useState<CHLPlayer | null>(null);
   const [selectedTeam, setSelectedTeam] = useState(() => {
-    console.log({ teamId });
     if (teamId) {
       const id = Number(teamId);
       return chlTeamMap[id];
@@ -303,6 +311,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const hkStore = useSimHCKStore();
   const {
     phlTeam,
+    phlTeams,
     phlTeamMap,
     phlTeamOptions,
     proRosterMap: phlRosterMap,
@@ -310,8 +319,18 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proStandingsMap: phlStandingsMap,
     proContractMap: phlContractMap,
     proExtensionMap: phlExtensionMap,
+    tradeProposalsMap,
+    tradePreferencesMap,
+    phlDraftPickMap,
+    proPlayerMap,
+    individualDraftPickMap,
     cutPHLPlayer,
     affiliatePlayer,
+    PlacePHLPlayerOnTradeBlock,
+    proposeTrade,
+    cancelTrade,
+    acceptTrade,
+    rejectTrade
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -337,13 +356,132 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   }
   const secondaryBorderColor = teamColors.Three;
   const textColorClass = teamColors.TextColorOne;
-  const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
 
   const selectedRoster = useMemo(() => {
     if (selectedTeam) {
       return phlRosterMap[selectedTeam.ID];
     }
   }, [phlRosterMap, selectedTeam]);
+
+  const draftPicks = useMemo(() => {
+    if (!selectedTeam || !phlDraftPickMap) return [];
+    return phlDraftPickMap[selectedTeam.ID];
+  }, [selectedTeam, phlDraftPickMap]);
+
+  const teamTradeBlock = useMemo(() => {
+    const roster = phlRosterMap[phlTeam!.ID];
+    const tradeBlockSet: TradeBlockRow[] = [];
+    const tradeBlockPlayers = roster?.filter((player) => player.IsOnTradeBlock);
+    if (tradeBlockPlayers) {
+      for (let i = 0; i < tradeBlockPlayers!.length; i++) {
+        const player = tradeBlockPlayers![i];
+        const contract = phlContractMap![player.ID];
+        const block: TradeBlockRow = {
+          id: player.ID,
+          player: player,
+          name: `${player.FirstName} ${player.LastName}`,
+          position: player.Position,
+          arch: player.Archetype,
+          year: player.Year.toString(),
+          overall: player.Overall.toString(),
+          draftRound: "N/A",
+          draftPick: "N/A",
+          value: contract.ContractValue.toString(),
+          isPlayer: true,
+        };
+        tradeBlockSet.push(block);
+      }
+    }
+    const userTeamPicks = phlDraftPickMap[phlTeam!.ID];
+    if (userTeamPicks) {
+      for (let i = 0; i < userTeamPicks.length; i++) {
+        const pick = userTeamPicks[i];
+        const block: TradeBlockRow = {
+          id: pick.ID,
+          pick: pick,
+          name: `N/A`,
+          position: "N/A",
+          arch: "N/A",
+          year: pick.Season.toString(),
+          overall: "N/A",
+          draftRound: pick.DraftRound.toString(),
+          draftPick: pick.DraftNumber.toString(),
+          value: pick.DraftValue.toString(),
+          isPlayer: false,
+          season: pick.Season,
+        };
+        tradeBlockSet.push(block);
+      }
+    }
+    return tradeBlockSet;
+  }, [phlRosterMap, phlTeam, phlDraftPickMap, phlContractMap]);
+
+  const selectedTeamTradeBlock = useMemo(() => {
+    const tradeBlockSet: TradeBlockRow[] = [];
+    const tradeBlockPlayers = selectedRoster?.filter(
+      (player) => player.IsOnTradeBlock
+    );
+    if (tradeBlockPlayers) {
+      for (let i = 0; i < tradeBlockPlayers!.length; i++) {
+        const player = tradeBlockPlayers![i];
+        const contract = phlContractMap![player.ID];
+        const block: TradeBlockRow = {
+          id: player.ID,
+          player: player,
+          name: `${player.FirstName} ${player.LastName}`,
+          position: player.Position,
+          arch: player.Archetype,
+          year: player.Year.toString(),
+          overall: player.Overall.toString(),
+          draftRound: "N/A",
+          draftPick: "N/A",
+          value: contract.ContractValue.toString(),
+          isPlayer: true,
+        };
+        tradeBlockSet.push(block);
+      }
+    }
+    if (draftPicks) {
+      for (let i = 0; i < draftPicks.length; i++) {
+        const pick = draftPicks[i];
+        const block: TradeBlockRow = {
+          id: pick.ID,
+          pick: pick,
+          name: `N/A`,
+          position: "N/A",
+          arch: "N/A",
+          year: pick.Season.toString(),
+          overall: "N/A",
+          draftRound: pick.DraftRound.toString(),
+          draftPick: pick.DraftNumber.toString(),
+          value: pick.DraftValue.toString(),
+          isPlayer: false,
+          season: pick.Season,
+        };
+        tradeBlockSet.push(block);
+      }
+    }
+    return tradeBlockSet;
+  }, [selectedRoster, draftPicks, phlContractMap]);
+
+  const receivedProposals = useMemo(() => {
+    const proposals: TradeProposal[] = [];
+    for (let i = 0; i < phlTeams.length; i++) {
+      const team = phlTeams[i];
+      const proposalsList = tradeProposalsMap[team.ID];
+      if (proposalsList) {
+        for (let j = 0; j < proposalsList.length; j++) {
+          const proposal = proposalsList[j];
+          if (proposal.IsTradeAccepted || proposal.IsTradeRejected) continue;
+          if (proposal.RecepientTeamID === phlTeam!.ID) {
+            proposals.push(proposal);
+          }
+        }
+      }
+    }
+    return proposals;
+  }, [phlTeam, phlTeams, tradeProposalsMap]);
 
   const rosterContracts = useMemo(() => {
     if (!selectedRoster || !phlContractMap) return null;
@@ -372,11 +510,13 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     setSelectedTeam(nextTeam);
     setCategory(Overview);
   };
+
   const openModal = (action: ModalAction, player: PHLPlayer) => {
     handleOpenModal();
     setModalAction(action);
     setModalPlayer(player);
   };
+
   const capsheetMap = useMemo(() => {
     if (selectedTeam && phlCapsheetMap) {
       return phlCapsheetMap[selectedTeam.ID];
@@ -390,8 +530,41 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     }
   }, [phlContractMap, modalPlayer]);
 
+  const manageTradesModal = useModal();
+  const proposeTradeModal = useModal();
+
   return (
     <>
+      <ManageTradeModal
+        isOpen={manageTradesModal.isModalOpen}
+        onClose={manageTradesModal.handleCloseModal}
+        team={phlTeam!!}
+        league={SimPHL}
+        userCapSheet={phlCapsheetMap[phlTeam!.ID]}
+        sentTradeProposals={tradeProposalsMap[phlTeam!.ID]}
+        receivedTradeProposals={receivedProposals}
+        ts={ts}
+        individualDraftPickMap={individualDraftPickMap}
+        proPlayerMap={proPlayerMap}
+        cancelTrade={cancelTrade}
+        acceptTrade={acceptTrade}
+        rejectTrade={rejectTrade}
+      />
+      <ProposeTradeModal
+        isOpen={proposeTradeModal.isModalOpen}
+        onClose={proposeTradeModal.handleCloseModal}
+        userTeam={phlTeam!!}
+        recipientTeam={selectedTeam!!}
+        league={SimPHL}
+        userTradeBlock={teamTradeBlock}
+        otherTeamTradeBlock={selectedTeamTradeBlock}
+        userCapSheet={phlCapsheetMap[phlTeam!.ID]}
+        recipientCapSheet={phlCapsheetMap[selectedTeam!.ID]}
+        backgroundColor={backgroundColor}
+        borderColor={borderColor}
+        ts={ts}
+        proposeTrade={proposeTrade}
+      />
       {modalPlayer && (
         <ActionModal
           isOpen={isModalOpen}
@@ -405,6 +578,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           player={modalPlayer}
           cutPlayer={cutPHLPlayer}
           affiliatePlayer={affiliatePlayer}
+          tradeBlockPlayer={PlacePHLPlayerOnTradeBlock}
         />
       )}
       <div className="flex flex-row lg:flex-col w-full max-[450px]:max-w-full">
@@ -413,6 +587,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           isRetro={currentUser?.isRetro}
           Roster={selectedRoster}
           Team={selectedTeam}
+          isUserTeam={selectedTeam!.ID === phlTeam!.ID}
           League={league}
           ts={ts}
           isPro={true}
@@ -428,6 +603,9 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           backgroundColor={backgroundColor}
           headerColor={headerColor}
           borderColor={borderColor}
+          draftPickCount={draftPicks.length}
+          openTradeModal={manageTradesModal.handleOpenModal}
+          openProposeTradeModal={proposeTradeModal.handleOpenModal}
         />
       </div>
       <div className="flex flex-row md:flex-col w-full">
@@ -443,6 +621,45 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
             <SelectDropdown
               options={phlTeamOptions}
               onChange={selectTeamOption}
+              styles={{
+                control: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                  color: "#ffffff",
+                  width: "15rem",
+                  maxWidth: "300px",
+                  padding: "0.3rem",
+                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                  borderRadius: "8px",
+                  transition: "all 0.2s ease",
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  backgroundColor: "#1a202c",
+                  borderRadius: "8px",
+                }),
+                menuList: (provided) => ({
+                  ...provided,
+                  backgroundColor: "#1a202c",
+                  padding: "0",
+                }),
+                option: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                  color: "#ffffff",
+                  padding: "10px",
+                  cursor: "pointer",
+                }),
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: "#ffffff",
+                }),
+                placeholder: (provided) => ({
+                  ...provided,
+                  color: "#ffffff",
+                }),
+              }}
             />
           </div>
           <div className="flex flex-row gap-x-1 sm:gap-x-4">
@@ -483,6 +700,17 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Potentials</Text>
               </Button>
             )}
+            {!isMobile && !isTablet && (
+              <Button
+                size="sm"
+                disabled={selectedTeam?.ID !== phlTeam?.ID}
+                isSelected={category === TradeBlock}
+                onClick={() => setCategory(TradeBlock)}
+                classes="w-[8rem]"
+              >
+                <Text variant="small">Trade Block</Text>
+              </Button>
+            )}
             <Button variant="primary" size="sm">
               <Text variant="small">Export</Text>
             </Button>
@@ -496,18 +724,33 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           borderColor: headerColor,
         }}
       >
-        <PHLRosterTable
-          roster={selectedRoster}
-          contracts={rosterContracts}
-          ts={ts}
-          team={selectedTeam}
-          category={category}
-          backgroundColor={backgroundColor}
-          headerColor={headerColor}
-          borderColor={borderColor}
-          openModal={openModal}
-          disable={selectedTeam!.ID !== phlTeam!.ID}
-        />
+        {category !== TradeBlock && (
+          <PHLRosterTable
+            roster={selectedRoster}
+            contracts={rosterContracts}
+            ts={ts}
+            team={selectedTeam}
+            category={category}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
+            openModal={openModal}
+            disable={selectedTeam!.ID !== phlTeam!.ID}
+          />
+        )}
+        {category === TradeBlock && (
+          <PHLTradeBlockTable
+            roster={selectedTeamTradeBlock}
+            ts={ts}
+            team={selectedTeam}
+            category={category}
+            backgroundColor={backgroundColor}
+            headerColor={headerColor}
+            borderColor={borderColor}
+            openModal={openModal}
+            disable={selectedTeam!.ID !== phlTeam!.ID}
+          />
+        )}
       </Border>
     </>
   );
