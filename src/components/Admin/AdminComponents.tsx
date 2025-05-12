@@ -18,6 +18,8 @@ export const CommissionerHub = ({
   league
 }: CommissionerHubProps) => {
 
+  let capBreach: { teamID: string; capOverage: number }[] = [];
+  let rosterBreach: { teamID: string; playerCount: number }[] = [];
 
   switch (league) {
     case SimNFL:
