@@ -603,6 +603,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
           backgroundColor={backgroundColor}
           headerColor={headerColor}
           borderColor={borderColor}
+          draftPickCount={draftPicks.length}
           openTradeModal={manageTradesModal.handleOpenModal}
           openProposeTradeModal={proposeTradeModal.handleOpenModal}
         />

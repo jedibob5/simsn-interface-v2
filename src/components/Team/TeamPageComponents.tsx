@@ -45,6 +45,7 @@ interface TeamInfoProps {
   isUserTeam?: boolean;
   openTradeModal?: () => void;
   openProposeTradeModal?: () => void;
+  draftPickCount?: number;
 }
 
 export const TeamInfo: FC<TeamInfoProps> = ({
@@ -73,6 +74,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   isRetro = false,
   openTradeModal,
   openProposeTradeModal,
+  draftPickCount = 0,
 }) => {
   const sectionBg = darkenColor("#1f2937", -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
@@ -151,6 +153,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               isUserTeam={isUserTeam}
               openTradeModal={openTradeModal}
               openProposeTradeModal={openProposeTradeModal}
+              draftPickCount={draftPickCount}
             />
           </div>
         )}
@@ -566,6 +569,7 @@ export const AdditionalTeamInfo = ({
   isUserTeam = true,
   openTradeModal,
   openProposeTradeModal,
+  draftPickCount,
 }: any) => {
   const { isMobile, isDesktop, isTablet } = useResponsive();
   const home = league === SimCFB || league === SimNFL ? "Stadium" : "Arena";
@@ -661,7 +665,7 @@ export const AdditionalTeamInfo = ({
             Draft Picks
           </Text>
           <Text variant="xs" classes={`${textColorClass}`}>
-            69
+            {draftPickCount}
           </Text>
         </div>
         <div className="flex flex-col items-center text-nowrap">

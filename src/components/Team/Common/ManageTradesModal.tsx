@@ -104,7 +104,7 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
       <Modal
         title={title}
         isOpen={isOpen}
-        maxWidth="max-w-[75vw]"
+        maxWidth="max-w-[85vw]"
         onClose={onClose}
         actions={<></>}
       >
