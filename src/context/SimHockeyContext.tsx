@@ -470,6 +470,13 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         playerMap[p.ID] = p;
       }
     }
+    const freeAgents = proRosterMap[0];
+    if (freeAgents) {
+      for (let i = 0; i < freeAgents.length; i++) {
+        const p = freeAgents[i];
+        playerMap[p.ID] = p;
+      }
+    }
 
     return playerMap;
   }, [proRosterMap, phlTeams]);
@@ -1000,9 +1007,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         variant: "success",
         autoHideDuration: 3000,
       });
-      console.log({ res, dto });
       setFreeAgentOffers((prevOffers) => {
-        const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
+        const offers = [...prevOffers].filter((offer) => offer.ID !== dto.ID);
         return offers;
       });
     }

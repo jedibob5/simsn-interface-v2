@@ -27,7 +27,11 @@ import { getLogo } from "../../../_utility/getLogo";
 import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
-import { CrossCircle, CurrencyDollar } from "../../../_design/Icons";
+import {
+  CrossCircle,
+  CurrencyDollar,
+  QuestionMark,
+} from "../../../_design/Icons";
 import { Logo } from "../../../_design/Logo";
 import {
   getFACompetitivePreference,
@@ -82,6 +86,7 @@ export const OfferTable: FC<OfferTableProps> = ({
   const backgroundColor = colorOne;
   const rosterColumns = useMemo(() => {
     let columns = [
+      { header: "Team", accessor: "Team" },
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -175,6 +180,11 @@ export const OfferTable: FC<OfferTableProps> = ({
       offerIds = offers && offers.map((x) => x.TeamID);
       logos = offers && offerIds.map((id) => getLogo(SimPHL, id, false));
     }
+    let winningLogo = "FA";
+    let teamID = player.TeamID;
+    if (teamID > 0) {
+      winningLogo = getLogo(SimPHL, teamID, false);
+    }
 
     return (
       <div
@@ -182,6 +192,17 @@ export const OfferTable: FC<OfferTableProps> = ({
         className={`table-row border-b dark:border-gray-700 text-left`}
         style={{ backgroundColor }}
       >
+        <TableCell classes="w-[5em] min-[430px]:w-[4em]">
+          <div className="flex flex-row">
+            {player.TeamID > 0 ? (
+              <Logo url={winningLogo} variant="tiny" containerClass="p-2" />
+            ) : (
+              <div className="ml-2">
+                <QuestionMark />
+              </div>
+            )}
+          </div>
+        </TableCell>
         {attributes.map((attr, idx) => (
           <TableCell
             key={idx}
@@ -256,7 +277,7 @@ export const OfferTable: FC<OfferTableProps> = ({
             <Button
               variant="success"
               size="xs"
-              disabled={ts.IsFreeAgencyLocked}
+              disabled={ts.IsFreeAgencyLocked || item.IsRejected}
               onClick={() =>
                 handleOfferModal(FreeAgentOffer, player as PHLPlayer)
               }
