@@ -45,6 +45,7 @@ export const usePHLFreeAgency = () => {
     waiverOffers,
     proRosterMap,
     affiliatePlayers,
+    proPlayerMap,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [freeAgencyCategory, setFreeAgencyCategory] = useState(Overview);
@@ -64,14 +65,6 @@ export const usePHLFreeAgency = () => {
   const freeAgents = useMemo(() => {
     return proRosterMap[0].filter((player) => player.IsFreeAgent);
   }, [proRosterMap]);
-
-  const freeAgentMap = useMemo(() => {
-    const dict: Record<number, ProfessionalPlayer> = {};
-    for (let i = 0; i < freeAgents.length; i++) {
-      dict[freeAgents[i].ID] = freeAgents[i];
-    }
-    return dict;
-  }, [freeAgents]);
 
   const waiverPlayers = useMemo(() => {
     return proRosterMap[0].filter((player) => player.IsWaived);
@@ -297,7 +290,7 @@ export const usePHLFreeAgency = () => {
     country,
     regionOptions,
     filteredFA,
-    freeAgentMap,
+    freeAgentMap: proPlayerMap,
     waiverPlayerMap,
     teamFreeAgentOffers,
     teamWaiverOffers,
