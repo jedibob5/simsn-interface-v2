@@ -470,7 +470,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-start pt-1 md:pt-0 h-full md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[20em] 3xl:max-w-[42em] justify-center">
+          <div className="flex flex-col items-start pt-1 md:pt-0 h-full md:h-auto md:w-[32em] md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[20em] 3xl:max-w-[42em] justify-center">
             {!isMobile && (
               <Border
                 classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full max-w-full md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"

@@ -34,7 +34,7 @@ export const CommissionerHub = ({
   }
   
   return (
-    <div className="flex flex-row justify-between gap-8 p-4 max-w-[95vw]">
+    <div className="flex flex-row justify-between gap-8 p-4 max-w-[95vw] max-h-[35em] overflow-auto">
       <div className="flex flex-col w-1/2">
         <Text variant="h3" className="mb-4">Cap Breaches</Text>
         <div className="flex flex-wrap w-full justify-around gap-1">
