@@ -1007,7 +1007,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         variant: "success",
         autoHideDuration: 3000,
       });
-      console.log({ res, dto });
       setFreeAgentOffers((prevOffers) => {
         const offers = [...prevOffers].filter((offer) => offer.ID !== dto.ID);
         return offers;
