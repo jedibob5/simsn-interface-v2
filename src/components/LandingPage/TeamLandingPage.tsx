@@ -23,6 +23,7 @@ import {
   TeamStats,
   TeamNews,
   TeamQuickLinks,
+  TeamInjuries
 } from "./TeamLandingPageComponents";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
@@ -58,6 +59,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
     proNotifications,
     allCFBStandings,
     allProStandings,
+    cfbRosterMap,
+    proRosterMap,
     allCollegeGames,
     allProGames,
     collegeNews,
@@ -78,6 +81,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
     proNotifications: nbaNotifications,
     allCBBStandings,
     allProStandings: allNBAStandings,
+    cbbRosterMap,
+    proRosterMap: nbaRosterMap,
     allCollegeGames: allCBBGames,
     allProGames: allNBAGames,
     collegeNews: cbbNews,
@@ -97,6 +102,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
     proNotifications: phlNotifications,
     allCHLStandings,
     allProStandings: allPHLStandings,
+    chlRosterMap,
+    proRosterMap: phlRosterMap,
     allCollegeGames: allCHLGames,
     allProGames: allPHLGames,
     collegeNews: chlNews,
@@ -124,7 +131,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
     awayLabel: string = "",
     teamStats: any = {},
     teamNews: any[] = [],
-    gameWeek: number = 0;
+    gameWeek: number = 0,
+    teamInjuries: any = {};
 
   switch (league) {
     case SimCFB:
@@ -140,6 +148,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
+        teamInjuries
       } = getLandingCFBData(
         team,
         currentWeek,
@@ -152,7 +161,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         topCFBPassers,
         topCFBRushers,
         topCFBReceivers,
-        collegeNews
+        collegeNews,
+        cfbRosterMap
       ));
       break;
 
@@ -169,6 +179,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
+        teamInjuries
       } = getLandingNFLData(
         team,
         currentWeek,
@@ -181,7 +192,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         topNFLPassers,
         topNFLRushers,
         topNFLReceivers,
-        proNews
+        proNews,
+        proRosterMap
       ));
       break;
 
@@ -198,6 +210,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
+        teamInjuries
       } = getLandingCBBData(
         team,
         currentWeek,
@@ -210,7 +223,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         topCBBPoints,
         topCBBAssists,
         topCBBRebounds,
-        cbbNews
+        cbbNews,
+        cbbRosterMap
       ));
       break;
 
@@ -227,6 +241,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
+        teamInjuries
       } = getLandingNBAData(
         team,
         currentWeek,
@@ -239,7 +254,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         topNBAPoints,
         topNBAAssists,
         topNBARebounds,
-        nbaNews
+        nbaNews,
+        nbaRosterMap
       ));
       break;
 
@@ -256,6 +272,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
+        teamInjuries
       } = getLandingCHLData(
         team,
         currentWeek,
@@ -269,7 +286,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         chlNews,
         topCHLGoals,
         topCHLAssists,
-        topCHLSaves
+        topCHLSaves,
+        chlRosterMap
       ));
       break;
 
@@ -286,6 +304,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         gameWeek,
         teamStats,
+        teamInjuries
       } = getLandingPHLData(
         team,
         currentWeek,
@@ -299,7 +318,8 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         phlNews,
         topPHLGoals,
         topPHLAssists,
-        topPHLSaves
+        topPHLSaves,
+        phlRosterMap
       ));
       break;
 
@@ -370,6 +390,27 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   isLoadingTwo={isLoadingTwo}
                 />
               </Border>
+            {isMobile && (
+              <Border
+                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
+                styles={{
+                  backgroundColor: borderColor,
+                  borderColor: backgroundColor,
+                }}
+              >
+                <TeamInjuries
+                  team={team}
+                  league={league}
+                  teamInjuries={teamInjuries}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoadingTwo}
+                />
+              </Border>
+            )}
               {isMobile && (
                 <Border
                   classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full max-w-full md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
@@ -429,10 +470,10 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center pt-1 md:pt-0 h-full md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[20em] 3xl:max-w-[42em] justify-center gap-3">
+          <div className="flex flex-col items-start pt-1 md:pt-0 h-full md:h-auto md:w-auto md:min-w-[20em] md:max-w-[30em] 3xl:min-w-[20em] 3xl:max-w-[42em] justify-center">
             {!isMobile && (
               <Border
-                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full max-w-full md:w-full md:min-w-[18em] md:max-w-full md:max-h-[35em]"
+                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full max-w-full md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
                 styles={{
                   backgroundColor: borderColor,
                   borderColor: backgroundColor,
@@ -449,6 +490,27 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                 />
               </Border>
             )}
+              {!isMobile && (
+              <Border
+                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
+                styles={{
+                  backgroundColor: borderColor,
+                  borderColor: backgroundColor,
+                }}
+              >
+                <TeamInjuries
+                  team={team}
+                  league={league}
+                  teamInjuries={teamInjuries}
+                  backgroundColor={backgroundColor}
+                  headerColor={headerColor}
+                  borderColor={borderColor}
+                  textColorClass={textColorClass}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  isLoadingTwo={isLoadingTwo}
+                />
+              </Border>
+              )}
             <div className="flex flex-row md:flex-none md:flex-col w-full">
               <Border
                 classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
@@ -463,26 +525,6 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   header="Team Statistics"
                   teamStats={teamStats}
                   titles={headers}
-                  backgroundColor={backgroundColor}
-                  headerColor={headerColor}
-                  borderColor={borderColor}
-                  textColorClass={textColorClass}
-                  darkerBackgroundColor={darkerBackgroundColor}
-                  isLoadingTwo={isLoadingTwo}
-                />
-              </Border>
-              <Border
-                classes="border-4 h-full w-[30%] md:w-full md:h-auto md:min-w-[18em] md:max-w-[30em] md:max-h-[22em]"
-                styles={{
-                  backgroundColor: borderColor,
-                  borderColor: backgroundColor,
-                }}
-              >
-                <TeamOverview
-                  team={team}
-                  league={league}
-                  ts={ts}
-                  currentUser={currentUser}
                   backgroundColor={backgroundColor}
                   headerColor={headerColor}
                   borderColor={borderColor}

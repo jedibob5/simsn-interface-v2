@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import routes from "../../_constants/routes";
 import { useDeepLink } from "../../context/DeepLinkContext";
 import { ClickableTeamLabel } from "../Common/Labels";
+import { Medic } from "../../_design/Icons";
 
 interface GamesBarProps {
   games: any[];
@@ -438,7 +439,7 @@ export const TeamMatchUp = ({
               </Text>
             )}
             <Text variant="small">{`Week ${week}`}</Text>
-            <Text variant="small">
+            <Text variant="small" classes="pb-2">
               {matchUp[0].IsConference
                 ? matchUp[0].IsDivisional
                   ? "Conference Divisional Game"
@@ -446,7 +447,7 @@ export const TeamMatchUp = ({
                 : "Non-Conference Game"}
             </Text>
             {(league === SimCFB || league === SimNFL) && (
-              <div className="flex justify-center gap-2 pt-1">
+              <div className="flex justify-center gap-2 pt-2">
                 <Button
                   variant="primary"
                   size="sm"
@@ -457,7 +458,7 @@ export const TeamMatchUp = ({
               </div>
             )}
             {(league === SimCHL || league === SimPHL) && (
-              <div className="flex justify-center gap-2 pt-1">
+              <div className="flex justify-center gap-2 pt-2">
                 <Button
                   variant="primary"
                   size="sm"
@@ -468,7 +469,7 @@ export const TeamMatchUp = ({
               </div>
             )}
             {(league === SimCBB || league === SimNBA) && (
-              <div className="flex justify-center gap-2 pt-1">
+              <div className="flex justify-center gap-2 pt-2">
                 <Button
                   variant="primary"
                   size="sm"
@@ -659,7 +660,7 @@ export const TeamMailbox = ({
   borderColor,
   textColorClass,
   darkerBackgroundColor,
-  isLoadingTwo,
+  isLoadingTwo
 }: TeamMailboxProps) => {
   return (
     <SectionCards
@@ -690,7 +691,7 @@ export const TeamMailbox = ({
           </div>
         ))
       ) : (
-        <Text variant="small" classes={`${textColorClass} pt-2`}>
+        <Text variant="small" classes={`${textColorClass} pt-2 pb-2`}>
           Your Inbox is Empty
         </Text>
       )}
@@ -974,126 +975,126 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
         textColorClass={textColorClass}
         darkerBackgroundColor={darkerBackgroundColor}
       >
-        <ButtonGroup classes="p-1 md:p-3 mt-4">
+        <ButtonGroup classes="flex justify-around p-1 md:py-3 mt-4">
           {league === SimCFB && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CFB_RECRUITING)}>
+              <Button size="xs" onClick={() => navigate(routes.CFB_RECRUITING)}>
                 Recruiting
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CFB_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.CFB_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CFB_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.CFB_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CFB_TRANSFER)}>
+              <Button size="xs" onClick={() => navigate(routes.CFB_TRANSFER)}>
                 Portal
               </Button>
             </>
           )}
           {league === SimNFL && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
               <Button
-                size="sm"
+                size="xs"
                 onClick={() => navigate(routes.NFL_FREE_AGENCY)}
               >
                 Free Agency
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NFL_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.NFL_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NFL_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.NFL_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NFL_DRAFT_ROOM)}>
+              <Button size="xs" onClick={() => navigate(routes.NFL_DRAFT_ROOM)}>
                 Draft
               </Button>
             </>
           )}
           {league === SimCBB && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CBB_RECRUITING)}>
+              <Button size="xs" onClick={() => navigate(routes.CBB_RECRUITING)}>
                 Recruiting
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CBB_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.CBB_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CBB_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.CBB_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CBB_TRANSFER)}>
+              <Button size="xs" onClick={() => navigate(routes.CBB_TRANSFER)}>
                 Portal
               </Button>
             </>
           )}
           {league === SimNBA && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
               <Button
-                size="sm"
+                size="xs"
                 onClick={() => navigate(routes.NBA_FREE_AGENCY)}
               >
                 Free Agency
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NBA_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.NBA_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NBA_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.NBA_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.NBA_DRAFT_ROOM)}>
+              <Button size="xs" onClick={() => navigate(routes.NBA_DRAFT_ROOM)}>
                 Draft
               </Button>
             </>
           )}
           {league === SimCHL && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CHL_RECRUITING)}>
+              <Button size="xs" onClick={() => navigate(routes.CHL_RECRUITING)}>
                 Recruiting
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CHL_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.CHL_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CHL_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.CHL_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.CHL_TRANSFER)}>
+              <Button size="xs" onClick={() => navigate(routes.CHL_TRANSFER)}>
                 Portal
               </Button>
             </>
           )}
           {league === SimPHL && (
             <>
-              <Button size="sm" onClick={() => goToTeamPage(league)}>
+              <Button size="xs" onClick={() => goToTeamPage(league)}>
                 Roster
               </Button>
               <Button
-                size="sm"
+                size="xs"
                 onClick={() => navigate(routes.PHL_FREE_AGENCY)}
               >
                 Free Agency
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.PHL_SCHEDULE)}>
+              <Button size="xs" onClick={() => navigate(routes.PHL_SCHEDULE)}>
                 Schedule
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.PHL_STATS)}>
+              <Button size="xs" onClick={() => navigate(routes.PHL_STATS)}>
                 Stats
               </Button>
-              <Button size="sm" onClick={() => navigate(routes.PHL_DRAFT_ROOM)}>
+              <Button size="xs" onClick={() => navigate(routes.PHL_DRAFT_ROOM)}>
                 Draft
               </Button>
             </>
@@ -1101,5 +1102,75 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
         </ButtonGroup>
       </SectionCards>
     </>
+  );
+};
+
+interface TeamInjuriesProps {
+  league: League;
+  team: any;
+  teamInjuries: any[] | null;
+  backgroundColor: string;
+  headerColor: string;
+  borderColor: string;
+  textColorClass: string;
+  darkerBackgroundColor: string;
+  isLoadingTwo: boolean;
+}
+
+export const TeamInjuries = ({
+  team,
+  teamInjuries,
+  backgroundColor,
+  headerColor,
+  borderColor,
+  textColorClass,
+  darkerBackgroundColor,
+  isLoadingTwo,
+}: TeamInjuriesProps) => {
+
+  return (
+    <SectionCards
+      team={team}
+      header="Injury Report"
+      classes={`${textColorClass}`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      textColorClass={textColorClass}
+      darkerBackgroundColor={darkerBackgroundColor}
+    >
+      {isLoadingTwo ? (
+        <div className="flex justify-center items-center pb-2">
+          <Text variant="small" classes={`${textColorClass}`}>
+            Loading...
+          </Text>
+        </div>
+      ) : teamInjuries && teamInjuries.length > 0 ? (
+        <>
+          <div className="flex flex-col rounded-md p-2 overflow-x-auto">
+            <div className="flex justify-center overflow-x-auto flex-wrap gap-2 pt-2">
+            {teamInjuries.map((injury: any, index: number) => (
+              <div key={index} className="flex flex-col p-2 w-[8em] h-[5em] max-h-[7em] sm:w-[12em] sm:h-[8em] border rounded-md bg-red-900 justify-center items-center">
+                <Medic textColorClass="text-red-500 rounded-xl bg-white" />
+                <Text variant="xs" classes={`${textColorClass} font-semibold`}>
+                  {injury.Position} {injury.FirstName} {injury.LastName}
+                </Text>
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {injury.InjuryType}
+                </Text>
+                <Text variant="xs" classes={`${textColorClass}`}>
+                  {injury.WeeksOfRecovery} {injury.WeeksOfRecovery === 1 ? "game" : "games"}
+                </Text>
+              </div>
+            ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <Text variant="small" classes={`${textColorClass} pt-2`}>
+          You don't have any injuries.
+        </Text>
+      )}
+    </SectionCards>
   );
 };

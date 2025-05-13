@@ -21,6 +21,7 @@ import {
   InformationCircleIcon,
   PaperAirplaneIcon,
   ArrowPathIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -206,4 +207,8 @@ export const PaperAirplane: React.FC<LockIconProps> = ({
 
 export const Refresh: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <ArrowPathIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const Medic: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <PlusCircleIcon className={`size-5 ${textColorClass}`} />;
 };
