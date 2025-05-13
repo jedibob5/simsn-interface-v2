@@ -22,6 +22,9 @@ import {
   PaperAirplaneIcon,
   ArrowPathIcon,
   PlusCircleIcon,
+  BellIcon,
+  BellAlertIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -211,4 +214,22 @@ export const Refresh: React.FC<LockIconProps> = ({ textColorClass }) => {
 
 export const Medic: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <PlusCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const Bell: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <BellIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const BellAlert: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <BellAlertIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const ChatBubble: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return (
+    <ChatBubbleOvalLeftEllipsisIcon className={`size-5 ${textColorClass}`} />
+  );
+};
+
+export const Close: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <XCircleIcon className={`size-5 ${textColorClass}`} />;
 };

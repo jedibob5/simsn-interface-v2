@@ -9,12 +9,15 @@ import {
   SimPHL,
   MAX_TEAM_INFO_COLUMNS,
   MAX_TEAM_PHL_INFO_COLUMNS,
+  SimNBA,
 } from "../../_constants/constants";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
 import { useResponsive } from "../../_hooks/useMobile";
+import { Button } from "../../_design/Buttons";
+import { Bell, ChatBubble } from "../../_design/Icons";
 
 interface TeamInfoProps {
   id?: number;
@@ -39,6 +42,10 @@ interface TeamInfoProps {
   headerColor?: string;
   borderColor?: string;
   isRetro?: boolean;
+  isUserTeam?: boolean;
+  openTradeModal?: () => void;
+  openProposeTradeModal?: () => void;
+  draftPickCount?: number;
 }
 
 export const TeamInfo: FC<TeamInfoProps> = ({
@@ -46,6 +53,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   id,
   TeamName = "",
   Team,
+  isUserTeam,
   Owner = "None",
   Coach = "None",
   GM = "None",
@@ -64,6 +72,9 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   headerColor,
   borderColor,
   isRetro = false,
+  openTradeModal,
+  openProposeTradeModal,
+  draftPickCount = 0,
 }) => {
   const sectionBg = darkenColor("#1f2937", -5);
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
@@ -72,7 +83,7 @@ export const TeamInfo: FC<TeamInfoProps> = ({
   return (
     <Border
       direction="row"
-      classes="w-full py-6 px-4 justify-around gap-x-4"
+      classes="w-full p-4 justify-around gap-x-4"
       styles={{
         backgroundColor,
         borderColor: headerColor,
@@ -139,6 +150,10 @@ export const TeamInfo: FC<TeamInfoProps> = ({
               borderColor={headerColor}
               backgroundColor={backgroundColor}
               isPro={isPro}
+              isUserTeam={isUserTeam}
+              openTradeModal={openTradeModal}
+              openProposeTradeModal={openProposeTradeModal}
+              draftPickCount={draftPickCount}
             />
           </div>
         )}
@@ -551,7 +566,12 @@ export const AdditionalTeamInfo = ({
   roster,
   isPro,
   textColorClass,
+  isUserTeam = true,
+  openTradeModal,
+  openProposeTradeModal,
+  draftPickCount,
 }: any) => {
+  const { isMobile, isDesktop, isTablet } = useResponsive();
   const home = league === SimCFB || league === SimNFL ? "Stadium" : "Arena";
   const totalPlayers = roster?.length || 0;
   const specialPlayersCount =
@@ -567,6 +587,7 @@ export const AdditionalTeamInfo = ({
         return player?.IsRedshirting || false;
       }
     }).length || 0;
+    
     const injuryReserveCount =
     roster?.filter((player: any) => {
       if (isPro) {
@@ -578,51 +599,110 @@ export const AdditionalTeamInfo = ({
       }
     }).length || 0;
 
+  const tradeBlockCount =
+    roster?.filter((player: any) => {
+      if (isPro) {
+        if (league === SimNFL) {
+          return player?.IsOnTradeBlock || false;
+        }
+        if (league === SimPHL) {
+          return player?.IsOnTradeBlock || false;
+        }
+        if (league === SimNBA) {
+          return player?.IsOnTradeBlock || false;
+        }
+      } else {
+        return false;
+      }
+    }).length || 0;
   const activeRoster = totalPlayers - specialPlayersCount - injuryReserveCount;
+
   return (
-    <div className="flex flex-row space-around w-full gap-5 text-center">
-      <div className="flex flex-col">
-        <Text
-          variant="small"
-          classes={`${textColorClass} font-semibold`}
-        >
-          {`${home}`}
-        </Text>
-        <Text variant="xs" classes={`${textColorClass}`}>
-          {arena}
-        </Text>
+    <>
+      <div className="grid grid-cols-4 gap-x-2 space-x-4 mb-4">
+        <div className="flex flex-col">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            {`${home}`}
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {arena}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            Capacity
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {capacity}
+          </Text>
+        </div>
+        <div className="flex flex-col text-nowrap">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            Active Roster
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {activeRoster}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            {isPro
+              ? league === SimNFL
+                ? "Practice Squad"
+                : league === SimPHL
+                ? "Reserves"
+                : "Unknown"
+              : "Redshirts"}
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {specialPlayersCount}
+          </Text>
+        </div>
       </div>
-      <div className="flex flex-col">
-        <Text variant="small" classes={`${textColorClass} font-semibold`}>
-          Capacity
-        </Text>
-        <Text variant="xs" classes={`${textColorClass}`}>
-          {capacity}
-        </Text>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-2 space-x-4">
+        <div className="flex flex-col text-nowrap">
+          <Text
+            variant="small"
+            classes={`${textColorClass} font-semibold text-left`}
+          >
+            Tradeable Players
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {tradeBlockCount}
+          </Text>
+        </div>
+        <div className="flex flex-col text-nowrap">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            Draft Picks
+          </Text>
+          <Text variant="xs" classes={`${textColorClass}`}>
+            {draftPickCount}
+          </Text>
+        </div>
+        <div className="flex flex-col items-center text-nowrap">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            Manage Trades
+          </Text>
+          <Button size="sm" disabled={!isUserTeam} onClick={openTradeModal}>
+            <Bell />
+          </Button>
+        </div>
+        <div className="flex flex-col items-center text-nowrap">
+          <Text variant="small" classes={`${textColorClass} font-semibold`}>
+            Propose Trade
+          </Text>
+          <Button
+            size="sm"
+            classes="text-center justify-center"
+            disabled={isUserTeam}
+            onClick={openProposeTradeModal}
+          >
+            <ChatBubble />
+          </Button>
+        </div>
+        <div className="flex flex-col"></div>
       </div>
-      <div className="flex flex-col">
-        <Text variant="small" classes={`${textColorClass} font-semibold`}>
-          Active Roster
-        </Text>
-        <Text variant="xs" classes={`${textColorClass}`}>
-          {activeRoster}
-        </Text>
-      </div>
-      <div className="flex flex-col">
-        <Text variant="small" classes={`${textColorClass} font-semibold`}>
-          {isPro
-            ? league === SimNFL
-              ? "Practice Squad"
-              : league === SimPHL
-              ? "Reserves"
-              : "Unknown"
-            : "Redshirts"}
-        </Text>
-        <Text variant="xs" classes={`${textColorClass}`}>
-          {specialPlayersCount}
-        </Text>
-      </div>
-    </div>
+    </>
   );
 };
 

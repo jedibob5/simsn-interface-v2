@@ -20,6 +20,7 @@ import {
   ProfessionalPlayer as PHLPlayer,
   ProContract as PHLContract,
   Croot,
+  DraftPick,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
@@ -67,6 +68,7 @@ import {
   CollegePlayer as CBBPlayer,
   NBAPlayer,
 } from "../../models/basketballModels";
+import { TradeBlockRow } from "./TeamPageTypes";
 
 export const getCHLAttributes = (
   player: CHLPlayer,
@@ -168,6 +170,10 @@ export const getPHLAttributes = (
           { label: "NTC", value: contract.NoTradeClause },
           { label: "NMC", value: contract.NoMovementClause },
           {
+            label: "TradeBlock",
+            value: player.IsOnTradeBlock ? "Yes" : "No",
+          },
+          {
             label: "Competitiveness",
             value: getCompetitivenessLabel(player.Competitiveness),
           },
@@ -226,6 +232,28 @@ export const getPHLContracts = (contract: any) => {
     { label: "NTC", value: contract.NoTradeClause || "None" },
     { label: "NMC", value: contract.NoMovementClause || "None" },
   ];
+};
+
+export const getPHLTradeBlockAttributes = (
+  item: TradeBlockRow,
+  isPlayer: boolean,
+  isMobile: boolean,
+  isTablet: boolean,
+  category: string
+) => {
+  const attributes = [
+    { label: "Type", value: isPlayer ? "Player" : "Pick" },
+    { label: "Name", value: item.name },
+    { label: "Pos", value: item.position },
+    { label: "Arch", value: item.arch },
+    { label: "Yr", value: item.year },
+    { label: "Ovr", value: item.overall },
+    { label: "DR", value: item.draftRound },
+    { label: "PN", value: item.draftPick },
+    { label: "value", value: item.value },
+  ];
+
+  return attributes;
 };
 
 export const getCHLCrootAttributes = (
