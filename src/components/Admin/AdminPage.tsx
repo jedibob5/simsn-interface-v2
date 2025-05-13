@@ -55,7 +55,6 @@ export const AdminPage = () => {
   const leagueStore = useLeagueStore();
   const { ts, selectedLeague, setSelectedLeague } = leagueStore;
   const { selectedTab, setSelectedTab } = useAdminPage();
-  console.log(ts)
 
   return (
     <>
@@ -169,12 +168,14 @@ export const AdminPage = () => {
             {selectedTab === Teams && <AdminTeamsTab />}
           </div>
         </Border>
-        <Border classes="w-full">
+      {selectedLeague === SimNFL && (
+        <Border classes="w-full sm:max-w-[65vw]">
           <div className="flex justify-center p-4">
             <Text variant="h6">{selectedLeague} Commissioner Hub</Text>
           </div>
           <CommissionerHub league={selectedLeague} />
         </Border>
+      )}
       </PageContainer>
     </>
   );
