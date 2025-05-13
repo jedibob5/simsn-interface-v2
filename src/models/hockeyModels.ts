@@ -713,6 +713,7 @@ export class FreeAgencyOffer {
   ContractValue: number;
   BonusPercentage: number;
   IsActive: boolean;
+  IsRejected: boolean;
   Syncs: number;
   ToAffiliate: boolean;
 
@@ -740,6 +741,7 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.IsActive = source["IsActive"];
+    this.IsRejected = source["IsRejected"];
     this.Syncs = source["Syncs"];
     this.ToAffiliate = source["ToAffiliate"];
   }
