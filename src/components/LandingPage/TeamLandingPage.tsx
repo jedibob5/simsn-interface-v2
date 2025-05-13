@@ -513,7 +513,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
               )}
             <div className="flex flex-row md:flex-none md:flex-col w-full">
               <Border
-                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
+                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
                 styles={{
                   backgroundColor: borderColor,
                   borderColor: backgroundColor,
