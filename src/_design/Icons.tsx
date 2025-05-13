@@ -21,6 +21,7 @@ import {
   InformationCircleIcon,
   PaperAirplaneIcon,
   ArrowPathIcon,
+  PlusCircleIcon,
   BellIcon,
   BellAlertIcon,
   ChatBubbleOvalLeftEllipsisIcon,
@@ -210,6 +211,10 @@ export const PaperAirplane: React.FC<LockIconProps> = ({
 
 export const Refresh: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <ArrowPathIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const Medic: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <PlusCircleIcon className={`size-5 ${textColorClass}`} />;
 };
 
 export const Bell: React.FC<LockIconProps> = ({ textColorClass }) => {

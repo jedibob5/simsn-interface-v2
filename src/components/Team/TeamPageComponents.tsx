@@ -144,12 +144,12 @@ export const TeamInfo: FC<TeamInfoProps> = ({
             <AdditionalTeamInfo
               league={League}
               arena={Arena}
+              roster={Roster}
               capacity={Capacity}
               textColorClass={textColorClass}
               borderColor={headerColor}
               backgroundColor={backgroundColor}
               isPro={isPro}
-              roster={Roster}
               isUserTeam={isUserTeam}
               openTradeModal={openTradeModal}
               openProposeTradeModal={openProposeTradeModal}
@@ -587,6 +587,17 @@ export const AdditionalTeamInfo = ({
         return player?.IsRedshirting || false;
       }
     }).length || 0;
+    
+    const injuryReserveCount =
+    roster?.filter((player: any) => {
+      if (isPro) {
+        if (league === SimNFL) {
+          return player?.InjuryReserve || false;
+        }
+      } else {
+        return false;
+      }
+    }).length || 0;
 
   const tradeBlockCount =
     roster?.filter((player: any) => {
@@ -604,7 +615,7 @@ export const AdditionalTeamInfo = ({
         return false;
       }
     }).length || 0;
-  const activeRoster = totalPlayers - specialPlayersCount;
+  const activeRoster = totalPlayers - specialPlayersCount - injuryReserveCount;
 
   return (
     <>

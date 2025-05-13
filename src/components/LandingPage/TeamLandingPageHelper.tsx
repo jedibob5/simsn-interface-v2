@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   CollegeStandings,
   NFLStandings,
@@ -52,7 +53,8 @@ export const getLandingCFBData = (
   topCFBPassers: CollegePlayer[],
   topCFBRushers: CollegePlayer[],
   topCFBReceivers: CollegePlayer[],
-  collegeNews: NewsLog[]
+  collegeNews: NewsLog[],
+  cfbRosterMap: Record<number, CollegePlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allCFBStandings
@@ -136,6 +138,13 @@ export const getLandingCFBData = (
   const topRusher = userRushers.length > 0 ? userRushers[0] : null;
   const topReceiver = userReceivers.length > 0 ? userReceivers[0] : null;
 
+  const teamInjuries = useMemo(() => {
+    if (cfbRosterMap && team.ID) {
+      return cfbRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+    }
+    return [];
+  }, [cfbRosterMap, team.ID]);
+
   const teamStats = {
     TopPasser: topPasser,
     TopRusher: topRusher,
@@ -160,6 +169,7 @@ export const getLandingCFBData = (
     awayLabel,
     teamStats,
     teamNews,
+    teamInjuries
   };
 };
 
@@ -175,7 +185,8 @@ export const getLandingNFLData = (
   topNFLPassers: NFLPlayer[],
   topNFLRushers: NFLPlayer[],
   topNFLReceivers: NFLPlayer[],
-  proNews: NewsLog[]
+  proNews: NewsLog[],
+  proRosterMap: Record<number, NFLPlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allProStandings
@@ -265,6 +276,15 @@ export const getLandingNFLData = (
     TopReceiver: topReceiver,
   };
 
+  // Team Injuries
+  const teamInjuries = useMemo(() => {
+  if (proRosterMap && team.ID) {
+    return proRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+  }
+  return [];
+}, [proRosterMap, team.ID]);
+
+
   // Team News
   const teamNews = proNews
     .filter((newsItem) => newsItem.TeamID === team.ID)
@@ -283,6 +303,7 @@ export const getLandingNFLData = (
     awayLabel,
     teamStats,
     teamNews,
+    teamInjuries
   };
 };
 
@@ -298,7 +319,8 @@ export const getLandingCBBData = (
   topCBBPoints: CBBPlayer[],
   topCBBAssists: CBBPlayer[],
   topCBBRebounds: CBBPlayer[],
-  cbbNews: BasketballNewsLog[]
+  cbbNews: BasketballNewsLog[],
+  cbbRosterMap: Record<number, CBBPlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allCBBStandings
@@ -386,6 +408,14 @@ export const getLandingCBBData = (
     TopRebounds: topRebounds,
   };
 
+  // Team Injuries
+  const teamInjuries = useMemo(() => {
+  if (cbbRosterMap && team.ID) {
+    return cbbRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+  }
+  return [];
+}, [cbbRosterMap, team.ID]);
+
   // Team News
   const teamNews = cbbNews
     .filter((newsItem) => newsItem.TeamID === team.ID)
@@ -404,6 +434,7 @@ export const getLandingCBBData = (
     awayLabel,
     teamStats,
     teamNews,
+    teamInjuries
   };
 };
 
@@ -419,7 +450,8 @@ export const getLandingNBAData = (
   topNBAPoints: NBAPlayer[],
   topNBAAssists: NBAPlayer[],
   topNBARebounds: NBAPlayer[],
-  nbaNews: BasketballNewsLog[]
+  nbaNews: BasketballNewsLog[],
+  nbaRosterMap: Record<number, NBAPlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allNBAStandings
@@ -507,6 +539,14 @@ export const getLandingNBAData = (
     TopRebounds: topRebounds,
   };
 
+  // Team Injuries
+  const teamInjuries = useMemo(() => {
+  if (nbaRosterMap && team.ID) {
+    return nbaRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+  }
+  return [];
+}, [nbaRosterMap, team.ID]);
+
   // Team News
   const teamNews = nbaNews
     .filter((newsItem) => newsItem.TeamID === team.ID)
@@ -525,6 +565,7 @@ export const getLandingNBAData = (
     awayLabel,
     teamStats,
     teamNews,
+    teamInjuries
   };
 };
 
@@ -541,7 +582,8 @@ export const getLandingCHLData = (
   chlNews: HockeyNewsLog[],
   topCHLGoals: CHLPlayer[],
   topCHLAssists: CHLPlayer[],
-  topCHLSaves: CHLPlayer[]
+  topCHLSaves: CHLPlayer[],
+  chlRosterMap: Record<number, CHLPlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allCHLStandings
@@ -637,6 +679,14 @@ export const getLandingCHLData = (
     TopAssists: topAssists,
   };
 
+    // Team Injuries
+  const teamInjuries = useMemo(() => {
+  if (chlRosterMap && team.ID) {
+    return chlRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+  }
+  return [];
+}, [chlRosterMap, team.ID]);
+
   // Team News
   const teamNews = chlNews
     .filter((newsItem) => newsItem.TeamID === team.ID)
@@ -655,6 +705,7 @@ export const getLandingCHLData = (
     teamNews,
     gameWeek,
     teamStats,
+    teamInjuries
   };
 };
 
@@ -671,7 +722,8 @@ export const getLandingPHLData = (
   phlNews: HockeyNewsLog[],
   topPHLGoals: PHLPlayer[],
   topPHLAssists: PHLPlayer[],
-  topPHLSaves: PHLPlayer[]
+  topPHLSaves: PHLPlayer[],
+  phlRosterMap: Record<number, PHLPlayer[]> | null
 ) => {
   // Team Standings
   const teamStandings = allPHLStandings
@@ -766,6 +818,14 @@ export const getLandingPHLData = (
     TopAssists: topAssists,
   };
 
+    // Team Injuries
+  const teamInjuries = useMemo(() => {
+  if (phlRosterMap && team.ID) {
+    return phlRosterMap[team.ID]?.filter((player) => player.IsInjured) || [];
+  }
+  return [];
+}, [phlRosterMap, team.ID]);
+
   // Team News
   const teamNews = phlNews
     .filter((newsItem) => newsItem.TeamID === team.ID)
@@ -784,6 +844,7 @@ export const getLandingPHLData = (
     teamNews,
     gameWeek,
     teamStats,
+    teamInjuries
   };
 };
 

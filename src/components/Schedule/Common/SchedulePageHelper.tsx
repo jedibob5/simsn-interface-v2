@@ -25,11 +25,25 @@ import { getLogo } from "../../../_utility/getLogo";
 import {
   SimCHL,
   SimPHL,
+  SimCFB,
   SimNFL,
   Divisions,
   CHLConferenceNames,
   PHLConferenceNames,
   PHLDivisionNames,
+} from "../../../_constants/constants";
+import { 
+  ThursdayNight,
+  FridayNight,
+  SaturdayMorning,
+  SaturdayAfternoon,
+  SaturdayEvening,
+  SaturdayNight,
+  ThursdayNightFootball,
+  SundayNoon,
+  SundayAfternoon,
+  SundayNightFootball,
+  MondayNightFootball
 } from "../../../_constants/constants";
 import { useCurrentUser } from "../../../_hooks/useCurrentUser";
 
@@ -430,9 +444,13 @@ export const processWeeklyGames = (
   ts: any,
   league: League
 ) => {
+  console.log(schedule)
   const sortGames = (games: any[]) => {
     if (league === SimCHL || league === SimPHL) {
       return games.sort((a, b) => (a.GameDay > b.GameDay ? 1 : -1));
+    }
+    if (league === SimCFB || league === SimNFL) {
+      return sortFootballGames(games, league);
     }
     return games;
   };
@@ -557,4 +575,36 @@ export const processLeagueStandings = (
   });
 
   return { groupedStandings, sortedGroupNames };
+};
+
+const sortFootballGames = (games: any[], league: League) => {
+  const cfbPriority: Record<string, number> = {
+    [ThursdayNight]: 1,
+    [FridayNight]: 2,
+    [SaturdayMorning]: 3,
+    [SaturdayAfternoon]: 4,
+    [SaturdayEvening]: 5,
+    [SaturdayNight]: 6,
+  };
+  
+  const nflPriority: Record<string, number> = {
+    [ThursdayNightFootball]: 1,
+    [SundayNoon]: 2,
+    [SundayAfternoon]: 3,
+    [SundayNightFootball]: 4,
+    [MondayNightFootball]: 5,
+  };
+
+  const priorityMap = league === SimCFB ? cfbPriority : nflPriority;
+
+  return games.sort((a, b) => {
+    const priorityA = priorityMap[a.TimeSlot as string] || 999;
+    const priorityB = priorityMap[b.TimeSlot as string] || 999;
+
+    if (priorityA === priorityB) {
+      return games.indexOf(a) - games.indexOf(b);
+    }
+
+    return priorityA - priorityB;
+  });
 };

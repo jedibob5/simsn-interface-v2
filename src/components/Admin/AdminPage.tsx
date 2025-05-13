@@ -22,6 +22,7 @@ import { useAdminPage } from "../../context/AdminPageContext";
 import { AdminTeamsTab } from "./AdminTeamsTab";
 import { AdminRequestsTab } from "./AdminRequestsTab";
 import { Refresh } from "../../_design/Icons";
+import { CommissionerHub } from "./AdminComponents";
 
 interface UnAuthPageProps {
   navigate: NavigateFunction;
@@ -167,6 +168,14 @@ export const AdminPage = () => {
             {selectedTab === Teams && <AdminTeamsTab />}
           </div>
         </Border>
+      {selectedLeague === SimNFL && (
+        <Border classes="w-full sm:max-w-[65vw]">
+          <div className="flex justify-center p-4">
+            <Text variant="h6">{selectedLeague} Commissioner Hub</Text>
+          </div>
+          <CommissionerHub league={selectedLeague} />
+        </Border>
+      )}
       </PageContainer>
     </>
   );
