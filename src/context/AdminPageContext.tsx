@@ -12,6 +12,7 @@ import {
   CollegeTeamRequest,
   ProTeamRequest,
   TeamRequestsResponse as HCKRequestResponse,
+  TradeProposal as HCKTradeProposal,
 } from "../models/hockeyModels";
 import {
   NFLRequest,
@@ -37,6 +38,8 @@ import { useSimHCKStore } from "./SimHockeyContext";
 interface AdminPageContextType {
   hckCHLRequests: CollegeTeamRequest[];
   hckPHLRequests: ProTeamRequest[];
+  hckTradeProposals: HCKTradeProposal[];
+  refreshHCKTradeProposals: (id: number) => void;
   acceptCHLRequest: (request: CollegeTeamRequest) => Promise<void>;
   rejectCHLRequest: (request: CollegeTeamRequest) => Promise<void>;
   acceptPHLRequest: (request: ProTeamRequest) => Promise<void>;
@@ -76,6 +79,9 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
     []
   );
   const [hckPHLRequests, setHCKPHLRequests] = useState<ProTeamRequest[]>([]);
+  const [hckTradeProposals, setHCKTradePropsals] = useState<HCKTradeProposal[]>(
+    []
+  );
   const [fbaCFBRequests, setFBACFBRequests] = useState<CFBRequest[]>([]);
   const [fbaNFLRequests, setFBANFLRequests] = useState<NFLRequest[]>([]);
   const [bbaCBBRequests, setBBACBBRequests] = useState<CBBRequest[]>([]);
@@ -111,6 +117,7 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
     const model = res as HCKRequestResponse;
     setHCKCHLRequests(model.CollegeRequests);
     setHCKPHLRequests(model.ProRequest);
+    setHCKTradePropsals(model.AcceptedTrades);
   };
   const getFootballRequests = async () => {
     const res = await RequestService.GetLeagueRequests(
@@ -249,11 +256,18 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
     await getHockeyRequests();
   }, []);
 
+  const refreshHCKTradeProposals = useCallback((id: number) => {
+    setHCKTradePropsals((proposals) =>
+      proposals.filter((item) => item.ID !== id)
+    );
+  }, []);
+
   return (
     <AdminPageContext.Provider
       value={{
         hckCHLRequests,
         hckPHLRequests,
+        hckTradeProposals,
         bbaCBBRequests,
         bbaNBARequests,
         acceptCHLRequest,
@@ -269,6 +283,7 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
         selectedTab,
         setSelectedTab,
         RefreshRequests,
+        refreshHCKTradeProposals,
       }}
     >
       {children}

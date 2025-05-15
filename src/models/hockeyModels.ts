@@ -5676,6 +5676,7 @@ export class ProfessionalTeamGameStats {
 export class TeamRequestsResponse {
   CollegeRequests: CollegeTeamRequest[];
   ProRequest: ProTeamRequest[];
+  AcceptedTrades: TradeProposal[];
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -5684,6 +5685,10 @@ export class TeamRequestsResponse {
       CollegeTeamRequest
     );
     this.ProRequest = this.convertValues(source["ProRequest"], ProTeamRequest);
+    this.AcceptedTrades = this.convertValues(
+      source["AcceptedTrades"],
+      TradeProposal
+    );
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

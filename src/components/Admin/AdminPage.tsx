@@ -16,6 +16,7 @@ import {
   SimNFL,
   SimPHL,
   Teams,
+  Trades,
 } from "../../_constants/constants";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { useAdminPage } from "../../context/AdminPageContext";
@@ -23,6 +24,7 @@ import { AdminTeamsTab } from "./AdminTeamsTab";
 import { AdminRequestsTab } from "./AdminRequestsTab";
 import { Refresh } from "../../_design/Icons";
 import { CommissionerHub } from "./AdminComponents";
+import { AdminTradesTab } from "./AdminTradestab";
 
 interface UnAuthPageProps {
   navigate: NavigateFunction;
@@ -160,22 +162,32 @@ export const AdminPage = () => {
                 selected={selectedTab === Teams}
                 setSelected={setSelectedTab}
               />
+              {selectedLeague === SimPHL && (
+                <>
+                  <Tab
+                    label={Trades}
+                    selected={selectedTab === Trades}
+                    setSelected={setSelectedTab}
+                  />
+                </>
+              )}
             </TabGroup>
           </div>
           <div className="flex sm:flex-col md:flex-row md:justify-evenly flex-wrap md:gap-2 w-full max-h-[calc(55vh-12rem)] overflow-y-auto">
             {/* Logic for league select & tab selected here */}
             {selectedTab === Requests && <AdminRequestsTab />}
             {selectedTab === Teams && <AdminTeamsTab />}
+            {selectedTab === Trades && <AdminTradesTab />}
           </div>
         </Border>
-      {selectedLeague === SimNFL && (
-        <Border classes="w-full sm:max-w-[65vw]">
-          <div className="flex justify-center p-4">
-            <Text variant="h6">{selectedLeague} Commissioner Hub</Text>
-          </div>
-          <CommissionerHub league={selectedLeague} />
-        </Border>
-      )}
+        {selectedLeague === SimNFL && (
+          <Border classes="w-full sm:max-w-[65vw]">
+            <div className="flex justify-center p-4">
+              <Text variant="h6">{selectedLeague} Commissioner Hub</Text>
+            </div>
+            <CommissionerHub league={selectedLeague} />
+          </Border>
+        )}
       </PageContainer>
     </>
   );

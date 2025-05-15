@@ -68,7 +68,7 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
   ts,
   cancelTrade,
   acceptTrade,
-  rejectTrade
+  rejectTrade,
 }) => {
   const { phlTeamMap } = useSimHCKStore();
   const sectionBg = darkenColor("#1f2937", -5);
@@ -89,15 +89,15 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
 
   const cancel = async (dto: TradeProposal) => {
     return await cancelTrade(dto);
-  }
+  };
 
   const accept = async (dto: TradeProposal) => {
     return await acceptTrade(dto);
-  }
+  };
 
   const reject = async (dto: TradeProposal) => {
     return await rejectTrade(dto);
-  }
+  };
 
   return (
     <>
@@ -126,13 +126,15 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
             <Text as="h4" classes="mb-2">
               Sent
             </Text>
-            {cleanSentTrades.length === 0 && <>
-              <Border classes="mt-2 p-4">
-                <Text as="h4">No pending trades</Text>
-              </Border>
-            </>}
-            {cleanSentTrades.map((trade) =>               
-            <TradeSection 
+            {cleanSentTrades.length === 0 && (
+              <>
+                <Border classes="mt-2 p-4">
+                  <Text as="h4">No pending trades</Text>
+                </Border>
+              </>
+            )}
+            {cleanSentTrades.map((trade) => (
+              <TradeSection
                 otherTeam={phlTeamMap[trade.RecepientTeamID]}
                 trade={trade}
                 league={league}
@@ -142,19 +144,22 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
                 accept={accept}
                 reject={reject}
                 isSentTrade
-              />)}
+              />
+            ))}
           </div>
           <div className="flex  flex-col">
             <Text as="h4" classes="mb-2">
               Received
             </Text>
-            {cleanReceivedTrades.length === 0 && <>
-              <Border classes="mt-2 p-4">
-                <Text as="h4">No received trades</Text>
-              </Border>
-            </>}
-            {cleanReceivedTrades.map((trade) => 
-              <TradeSection 
+            {cleanReceivedTrades.length === 0 && (
+              <>
+                <Border classes="mt-2 p-4">
+                  <Text as="h4">No received trades</Text>
+                </Border>
+              </>
+            )}
+            {cleanReceivedTrades.map((trade) => (
+              <TradeSection
                 otherTeam={phlTeamMap[trade.TeamID]}
                 trade={trade}
                 league={league}
@@ -164,7 +169,7 @@ export const ManageTradeModal: FC<ManageTradeModalProps> = ({
                 accept={accept}
                 reject={reject}
               />
-            )}
+            ))}
           </div>
         </div>
       </Modal>
@@ -184,14 +189,17 @@ interface TradeSectionProps {
   isSentTrade?: boolean;
 }
 
-const TradeSection: FC<TradeSectionProps> = ({ trade, 
-  otherTeam, 
-  league, 
+const TradeSection: FC<TradeSectionProps> = ({
+  trade,
+  otherTeam,
+  league,
   individualDraftPickMap,
   proPlayerMap,
-  cancel, 
-  accept, reject, isSentTrade }) => {
-
+  cancel,
+  accept,
+  reject,
+  isSentTrade,
+}) => {
   const otherLogo = getLogo(league, otherTeam.ID, false);
   return (
     <Border direction="row" classes="p-4">
@@ -223,23 +231,26 @@ const TradeSection: FC<TradeSectionProps> = ({ trade,
             />
           ))}
         </div>
-        {isSentTrade ? 
-        (<div className="flex flex-col items-end gap-y-2">
-          <Button size="sm" classes="w-[5rem]" onClick={() => cancel(trade)}>
-            Cancel
-          </Button>
-        </div>) : (
+        {isSentTrade ? (
           <div className="flex flex-col items-end gap-y-2">
-          <Button size="sm" classes="w-[5rem]" onClick={() => accept(trade)}>
-            Accept
-          </Button>
-          <Button size="sm" classes="w-[5rem]" onClick={() => reject(trade)}>
-            Reject
-          </Button>
-        </div>)}
+            <Button size="sm" classes="w-[5rem]" onClick={() => cancel(trade)}>
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-end gap-y-2">
+            <Button size="sm" classes="w-[5rem]" onClick={() => accept(trade)}>
+              Accept
+            </Button>
+            <Button size="sm" classes="w-[5rem]" onClick={() => reject(trade)}>
+              Reject
+            </Button>
+          </div>
+        )}
       </div>
-    </Border>)
-}
+    </Border>
+  );
+};
 
 interface ManageOptionProps {
   item: HCKTradeOption;
@@ -247,7 +258,7 @@ interface ManageOptionProps {
   pick: DraftPick;
 }
 
-const ManageOption: FC<ManageOptionProps> = ({ item, player, pick }) => {
+export const ManageOption: FC<ManageOptionProps> = ({ item, player, pick }) => {
   const isPlayer = item.OptionType === "Player";
   let label = "";
   if (isPlayer) {

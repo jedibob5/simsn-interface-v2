@@ -21,6 +21,7 @@ export const CollegeTeams = "College Teams";
 export const ProTeams = "Pro Teams";
 export const Requests = "Requests";
 export const Teams = "Teams";
+export const Trades = "Trades";
 export const Owner = "Owner";
 export const Coach = "Coach";
 export const GM = "GM";

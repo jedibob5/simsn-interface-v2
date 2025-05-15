@@ -159,6 +159,8 @@ interface SimHCKContextProps {
   acceptTrade: (dto: TradeProposal) => Promise<void>;
   rejectTrade: (dto: TradeProposal) => Promise<void>;
   cancelTrade: (dto: TradeProposal) => Promise<void>;
+  syncAcceptedTrade: (dto: TradeProposal) => Promise<void>;
+  vetoTrade: (dto: TradeProposal) => Promise<void>;
   PlacePHLPlayerOnTradeBlock: (
     playerID: number,
     teamID: number
@@ -265,6 +267,8 @@ const defaultContext: SimHCKContextProps = {
   acceptTrade: async () => {},
   rejectTrade: async () => {},
   cancelTrade: async () => {},
+  syncAcceptedTrade: async () => {},
+  vetoTrade: async () => {},
   topCHLGoals: [],
   topCHLAssists: [],
   topCHLSaves: [],
@@ -1201,6 +1205,32 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     await RecruitService.ExportCHLRecruits();
   }, []);
 
+  const syncAcceptedTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKProcessAcceptedTrade(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
+  const vetoTrade = useCallback(async (dto: TradeProposal) => {
+    const res = await TradeService.HCKVetoAcceptedTrade(dto.ID);
+
+    setTradeProposalsMap((tp) => {
+      const team = tp[dto.TeamID];
+      if (!team) return tp;
+      return {
+        ...tp,
+        [dto.TeamID]: [...tp[dto.TeamID]].filter((x) => x.ID !== dto.ID),
+      };
+    });
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1300,6 +1330,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         acceptTrade,
         rejectTrade,
         cancelTrade,
+        syncAcceptedTrade,
+        vetoTrade,
         individualDraftPickMap,
         proPlayerMap,
         ExportHCKRoster,

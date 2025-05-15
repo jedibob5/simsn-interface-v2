@@ -1,4 +1,4 @@
-import { TradeProposal } from "../../../models/hockeyModels";
+import { TradeOption, TradeProposal } from "../../../models/hockeyModels";
 import { TradeBlockRow } from "../TeamPageTypes";
 
 export const getTradeOptionsList = (rows: TradeBlockRow[]) => {
@@ -59,6 +59,24 @@ export const mapTradeProposals = (
       ),
     });
     list.push(obj);
+  }
+  return list;
+};
+
+export const mapTradeOptions = (
+  options: TradeOption[],
+  teamID: number
+): TradeOption[] => {
+  const list: TradeOption[] = [];
+  if (!options || options.length === 0) return list;
+  for (let i = 0; i < options.length; i++) {
+    const item = options[i];
+    if (item.TeamID === teamID) {
+      const obj = new TradeOption({
+        ...item,
+      });
+      list.push(obj);
+    }
   }
   return list;
 };
