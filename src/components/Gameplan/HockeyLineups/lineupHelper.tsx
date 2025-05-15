@@ -203,7 +203,6 @@ export function updateLineupFieldWithClass<T extends Record<string, any>>(
   setState((prevState) => {
     const updated = new ClassConstructor({ ...prevState });
     updated[key] = value;
-    console.log({ prevState, updated, key, value });
     return updated;
   });
 }

@@ -464,7 +464,6 @@ export const PHLLineupPage = () => {
   const [currentLineups, setCurrentLineups] = useState(phlLineups);
   const [currentShootoutLineups, setCurrentShootoutLineups] =
     useState<ProfessionalShootoutLineup>(phlShootoutLineup);
-  console.log({ phlShootoutLineup });
   const [modalAction, setModalAction] = useState<ModalAction>(Help1);
   const [modalPlayer, setModalPlayer] = useState<
     CollegePlayer | ProfessionalPlayer

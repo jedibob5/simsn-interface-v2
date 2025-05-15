@@ -32,7 +32,7 @@ import {
   PHLConferenceNames,
   PHLDivisionNames,
 } from "../../../_constants/constants";
-import { 
+import {
   ThursdayNight,
   FridayNight,
   SaturdayMorning,
@@ -43,7 +43,7 @@ import {
   SundayNoon,
   SundayAfternoon,
   SundayNightFootball,
-  MondayNightFootball
+  MondayNightFootball,
 } from "../../../_constants/constants";
 import { useCurrentUser } from "../../../_hooks/useCurrentUser";
 
@@ -88,7 +88,7 @@ export const getScheduleCFBData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     }));
 
   // Weekly Games
@@ -105,7 +105,7 @@ export const getScheduleCFBData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     });
     return acc;
   }, {});
@@ -158,7 +158,7 @@ export const getScheduleNFLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     }));
 
   // Weekly Games
@@ -175,7 +175,7 @@ export const getScheduleNFLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     });
     return acc;
   }, {});
@@ -229,7 +229,7 @@ export const getScheduleCHLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     }));
 
   // Weekly Games
@@ -246,7 +246,7 @@ export const getScheduleCHLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     });
     return acc;
   }, {});
@@ -299,7 +299,7 @@ export const getSchedulePHLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     }));
 
   // Weekly Games
@@ -316,7 +316,7 @@ export const getSchedulePHLData = (
       AwayTeamName: teamNameMap.get(game.AwayTeamID),
       AwayTeamMascot: teamMascotMap.get(game.AwayTeamID),
       HomeTeamLogo: getLogo(league, game.HomeTeamID, false),
-      AwayTeamLogo: getLogo(league, game.AwayTeamID, false)
+      AwayTeamLogo: getLogo(league, game.AwayTeamID, false),
     });
     return acc;
   }, {});
@@ -362,7 +362,8 @@ export const processSchedule = (
     let userLoss = false;
     let gameScore = "TBC";
     let headerGameScore = "TBC";
-    const shootoutScore = game.HomeTeamShootoutScore + game.AwayTeamShootoutScore;
+    const shootoutScore =
+      game.HomeTeamShootoutScore + game.AwayTeamShootoutScore;
     let isShootout = shootoutScore > 0 ? true : false;
     let userShootoutScore;
     let opponentShootoutScore;
@@ -374,7 +375,7 @@ export const processSchedule = (
       const opponentScore = isHomeGame
         ? game.AwayTeamScore
         : game.HomeTeamScore;
-    
+
       if (isShootout) {
         userShootoutScore = isHomeGame
           ? game.HomeTeamShootoutScore
@@ -382,7 +383,7 @@ export const processSchedule = (
         opponentShootoutScore = isHomeGame
           ? game.AwayTeamShootoutScore
           : game.HomeTeamShootoutScore;
-    
+
         userWin = userShootoutScore > opponentShootoutScore;
         userLoss = userShootoutScore < opponentShootoutScore;
       } else {
@@ -390,10 +391,18 @@ export const processSchedule = (
         userLoss = userTeamScore < opponentScore;
       }
 
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0 && game.HomeTeamShootoutScore === 0 && game.AwayTeamShootoutScore === 0) {
+      if (
+        game.HomeTeamScore === 0 &&
+        game.AwayTeamScore === 0 &&
+        game.HomeTeamShootoutScore === 0 &&
+        game.AwayTeamShootoutScore === 0
+      ) {
         gameScore = "TBC";
         headerGameScore = "TBC";
-      } else if (game.HomeTeamShootoutScore > 0 || game.AwayTeamShootoutScore > 0) {
+      } else if (
+        game.HomeTeamShootoutScore > 0 ||
+        game.AwayTeamShootoutScore > 0
+      ) {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
         headerGameScore = `${userTeamScore} - ${opponentScore} (${userShootoutScore} - ${opponentShootoutScore})`;
       } else {
@@ -444,7 +453,6 @@ export const processWeeklyGames = (
   ts: any,
   league: League
 ) => {
-  console.log(schedule)
   const sortGames = (games: any[]) => {
     if (league === SimCHL || league === SimPHL) {
       return games.sort((a, b) => (a.GameDay > b.GameDay ? 1 : -1));
@@ -467,10 +475,18 @@ export const processWeeklyGames = (
     let gameScore = "TBC";
     let headerGameScore = "TBC";
     if (revealResult) {
-      if (game.HomeTeamScore === 0 && game.AwayTeamScore === 0 && game.HomeTeamShootoutScore === 0 && game.AwayTeamShootoutScore === 0) {
+      if (
+        game.HomeTeamScore === 0 &&
+        game.AwayTeamScore === 0 &&
+        game.HomeTeamShootoutScore === 0 &&
+        game.AwayTeamShootoutScore === 0
+      ) {
         gameScore = "TBC";
         headerGameScore = "TBC";
-      } else if (game.HomeTeamShootoutScore > 0 || game.AwayTeamShootoutScore > 0) {
+      } else if (
+        game.HomeTeamShootoutScore > 0 ||
+        game.AwayTeamShootoutScore > 0
+      ) {
         gameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
         headerGameScore = `${game.HomeTeamScore} - ${game.AwayTeamScore} (${game.HomeTeamShootoutScore} - ${game.AwayTeamShootoutScore})`;
       } else {
@@ -586,7 +602,7 @@ const sortFootballGames = (games: any[], league: League) => {
     [SaturdayEvening]: 5,
     [SaturdayNight]: 6,
   };
-  
+
   const nflPriority: Record<string, number> = {
     [ThursdayNightFootball]: 1,
     [SundayNoon]: 2,

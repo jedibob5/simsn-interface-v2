@@ -70,7 +70,6 @@ export const OfferModal: FC<OfferModalProps> = ({
   capsheet,
   confirmOffer,
 }) => {
-  console.log({ existingOffer });
   const [offer, setOffer] = useState<
     | PHLFreeAgencyOffer
     | PHLWaiverOffer
