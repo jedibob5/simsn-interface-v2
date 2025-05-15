@@ -24,7 +24,7 @@ import { AdminTeamsTab } from "./AdminTeamsTab";
 import { AdminRequestsTab } from "./AdminRequestsTab";
 import { Refresh } from "../../_design/Icons";
 import { CommissionerHub } from "./AdminComponents";
-import { AdminTradesTab } from "./AdminTradestab";
+import { AdminTradesTab } from "./AdminTradesTab";
 
 interface UnAuthPageProps {
   navigate: NavigateFunction;

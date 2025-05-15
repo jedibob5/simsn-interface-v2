@@ -91,7 +91,7 @@ export const CHLRecruiting = () => {
   const helpModal = useModal();
   const aiSettingsModal = useModal();
   const lockMessage = useLoadMessage(CHLRecruitLockedMessages, 5000);
-  const exportRecruits = async () => {
+  const recruitsExport = async () => {
     await ExportCHLRecruits();
   };
   return (
@@ -255,7 +255,7 @@ export const CHLRecruiting = () => {
                   <Button
                     type="button"
                     variant="primary"
-                    onClick={exportRecruits}
+                    onClick={recruitsExport}
                     size="sm"
                   >
                     Export
