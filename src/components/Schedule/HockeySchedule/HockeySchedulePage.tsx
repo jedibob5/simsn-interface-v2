@@ -83,9 +83,12 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const playerMap = useMemo(() => {
     if (!chlRosterMap) return {};
-  
-    const map: Record<number, Record<number, { FirstName: string; LastName: string; Position: string }>> = {};
-  
+
+    const map: Record<
+      number,
+      Record<number, { FirstName: string; LastName: string; Position: string }>
+    > = {};
+
     Object.entries(chlRosterMap).forEach(([teamId, roster]) => {
       map[Number(teamId)] = roster.reduce((acc, player) => {
         acc[player.ID] = {
@@ -96,7 +99,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         return acc;
       }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
     });
-  
+
     return map;
   }, [chlRosterMap]);
 
@@ -361,9 +364,12 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const playerMap = useMemo(() => {
     if (!phlRosterMap) return {};
-  
-    const map: Record<number, Record<number, { FirstName: string; LastName: string; Position: string }>> = {};
-  
+
+    const map: Record<
+      number,
+      Record<number, { FirstName: string; LastName: string; Position: string }>
+    > = {};
+
     Object.entries(phlRosterMap).forEach(([teamId, roster]) => {
       map[Number(teamId)] = roster.reduce((acc, player) => {
         acc[player.ID] = {
@@ -374,7 +380,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         return acc;
       }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
     });
-  
+
     return map;
   }, [phlRosterMap]);
 
@@ -478,6 +484,57 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       options={phlTeamOptions}
                       placeholder="Select Team..."
                       onChange={selectTeamOption}
+                      styles={{
+                        control: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isFocused
+                            ? "#2d3748"
+                            : "#1a202c",
+                          borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                          color: "#ffffff",
+                          width: "15rem",
+                          maxWidth: "300px",
+                          padding: "0.3rem",
+                          boxShadow: state.isFocused
+                            ? "0 0 0 1px #4A90E2"
+                            : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                          zIndex: 100000,
+                        }),
+                        menu: (provided) => ({
+                          ...provided,
+                          backgroundColor: "#1a202c",
+                          borderRadius: "8px",
+                          zIndex: 100000,
+                        }),
+                        menuList: (provided) => ({
+                          ...provided,
+                          backgroundColor: "#1a202c",
+                          padding: "0",
+                          zIndex: 100000,
+                        }),
+                        option: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isFocused
+                            ? "#2d3748"
+                            : "#1a202c",
+                          color: "#ffffff",
+                          padding: "10px",
+                          cursor: "pointer",
+                          zIndex: 1000,
+                        }),
+                        singleValue: (provided) => ({
+                          ...provided,
+                          color: "#ffffff",
+                          zIndex: 1000,
+                        }),
+                        placeholder: (provided) => ({
+                          ...provided,
+                          color: "#ffffff",
+                          zIndex: 1000,
+                        }),
+                      }}
                     />
                   </>
                 ) : (
@@ -493,6 +550,57 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                         const selectedWeek = Number(selectedOption?.value);
                         setSelectedWeek(selectedWeek);
                       }}
+                      styles={{
+                        control: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isFocused
+                            ? "#2d3748"
+                            : "#1a202c",
+                          borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                          color: "#ffffff",
+                          width: "15rem",
+                          maxWidth: "300px",
+                          padding: "0.3rem",
+                          boxShadow: state.isFocused
+                            ? "0 0 0 1px #4A90E2"
+                            : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                          zIndex: 100000,
+                        }),
+                        menu: (provided) => ({
+                          ...provided,
+                          backgroundColor: "#1a202c",
+                          borderRadius: "8px",
+                          zIndex: 100000,
+                        }),
+                        menuList: (provided) => ({
+                          ...provided,
+                          backgroundColor: "#1a202c",
+                          padding: "0",
+                          zIndex: 100000,
+                        }),
+                        option: (provided, state) => ({
+                          ...provided,
+                          backgroundColor: state.isFocused
+                            ? "#2d3748"
+                            : "#1a202c",
+                          color: "#ffffff",
+                          padding: "10px",
+                          cursor: "pointer",
+                          zIndex: 1000,
+                        }),
+                        singleValue: (provided) => ({
+                          ...provided,
+                          color: "#ffffff",
+                          zIndex: 1000,
+                        }),
+                        placeholder: (provided) => ({
+                          ...provided,
+                          color: "#ffffff",
+                          zIndex: 1000,
+                        }),
+                      }}
                     />
                   </>
                 )}
@@ -506,6 +614,51 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                     const selectedSeason = Number(selectedOption?.value);
                     setSelectedWeek(selectedSeason);
                   }}
+                  styles={{
+                    control: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                      borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                      color: "#ffffff",
+                      width: "15rem",
+                      maxWidth: "300px",
+                      padding: "0.3rem",
+                      boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                      borderRadius: "8px",
+                      transition: "all 0.2s ease",
+                      zIndex: 100000,
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#1a202c",
+                      borderRadius: "8px",
+                      zIndex: 100000,
+                    }),
+                    menuList: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#1a202c",
+                      padding: "0",
+                      zIndex: 100000,
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                      color: "#ffffff",
+                      padding: "10px",
+                      cursor: "pointer",
+                      zIndex: 1000,
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      color: "#ffffff",
+                      zIndex: 1000,
+                    }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: "#ffffff",
+                      zIndex: 1000,
+                    }),
+                  }}
                 />
               </div>
             </div>
@@ -516,6 +669,51 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   options={phlTeamOptions}
                   placeholder="Select Timeslot..."
                   onChange={selectTeamOption}
+                  styles={{
+                    control: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                      borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                      color: "#ffffff",
+                      width: "15rem",
+                      maxWidth: "300px",
+                      padding: "0.3rem",
+                      boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                      borderRadius: "8px",
+                      transition: "all 0.2s ease",
+                      zIndex: 100000,
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#1a202c",
+                      borderRadius: "8px",
+                      zIndex: 100000,
+                    }),
+                    menuList: (provided) => ({
+                      ...provided,
+                      backgroundColor: "#1a202c",
+                      padding: "0",
+                      zIndex: 100000,
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                      color: "#ffffff",
+                      padding: "10px",
+                      cursor: "pointer",
+                      zIndex: 1000,
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      color: "#ffffff",
+                      zIndex: 1000,
+                    }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: "#ffffff",
+                      zIndex: 1000,
+                    }),
+                  }}
                 />
               </div>
             )}

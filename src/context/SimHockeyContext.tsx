@@ -786,13 +786,22 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         return;
       }
       const res = await PlayerService.SendPHLPlayerToAffiliate(playerID);
-      const rosterMap = { ...proRosterMap };
-      const playerIdx = rosterMap[teamID].findIndex((p) => p.ID === playerID);
-      if (playerIdx > -1) {
-        rosterMap[teamID][playerIdx].IsAffiliatePlayer =
-          !rosterMap[teamID][playerIdx].IsAffiliatePlayer;
-      }
-      setProRosterMap(rosterMap);
+      setProRosterMap((prevMap) => {
+        const teamRoster = prevMap[teamID];
+        if (!teamRoster) return prevMap;
+
+        return {
+          ...prevMap,
+          [teamID]: teamRoster.map((player) =>
+            player.ID === playerID
+              ? new ProfessionalPlayer({
+                  ...player,
+                  IsIsAffiliatePlayer: !player.IsAffiliatePlayer,
+                })
+              : player
+          ),
+        };
+      });
     },
     [proRosterMap]
   );
