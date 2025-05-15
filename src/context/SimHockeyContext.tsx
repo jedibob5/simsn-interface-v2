@@ -153,6 +153,8 @@ interface SimHCKContextProps {
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   SearchHockeyStats: (dto: any) => Promise<void>;
   ExportHockeyStats: (dto: any) => Promise<void>;
+  ExportHCKRoster: (teamID: number, isPro: boolean) => Promise<void>;
+  ExportCHLRecruits: () => Promise<void>;
   proposeTrade: (dto: TradeProposal) => Promise<void>;
   acceptTrade: (dto: TradeProposal) => Promise<void>;
   rejectTrade: (dto: TradeProposal) => Promise<void>;
@@ -256,6 +258,8 @@ const defaultContext: SimHCKContextProps = {
   CancelWaiverWireOffer: async () => {},
   SearchHockeyStats: async () => {},
   ExportHockeyStats: async () => {},
+  ExportHCKRoster: async () => {},
+  ExportCHLRecruits: async () => {},
   PlacePHLPlayerOnTradeBlock: async () => {},
   proposeTrade: async () => {},
   acceptTrade: async () => {},
@@ -1182,6 +1186,21 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     });
   }, []);
 
+  const ExportHCKRoster = useCallback(
+    async (teamID: number, isPro: boolean) => {
+      if (isPro) {
+        await TeamService.ExportPHLRoster(teamID);
+      } else {
+        await TeamService.ExportCHLRoster(teamID);
+      }
+    },
+    []
+  );
+
+  const ExportCHLRecruits = useCallback(async () => {
+    await RecruitService.ExportCHLRecruits();
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1283,6 +1302,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         cancelTrade,
         individualDraftPickMap,
         proPlayerMap,
+        ExportHCKRoster,
+        ExportCHLRecruits,
       }}
     >
       {children}

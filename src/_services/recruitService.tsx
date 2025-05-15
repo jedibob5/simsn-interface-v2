@@ -1,5 +1,5 @@
 import { bbaUrl, hckUrl } from "../_constants/urls";
-import { PostCall } from "../_helper/fetchHelper";
+import { GetExportCall, PostCall } from "../_helper/fetchHelper";
 import {
   PlayerRecruitProfile as BBAPlayerRecruitProfile,
   UpdateRecruitingBoardDto as BBAUpdateRecruitingBoardDto,
@@ -67,5 +67,9 @@ export const RecruitService = {
 
   BBASaveAISettings: async (dto: any): Promise<BBAUpdateRecruitingBoardDto> => {
     return await PostCall(`${bbaUrl}recruiting/save/ai/`, dto);
+  },
+
+  ExportCHLRecruits: async () => {
+    await GetExportCall(`${hckUrl}export/college/recruits/all`, "blob");
   },
 };

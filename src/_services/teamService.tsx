@@ -8,6 +8,7 @@ import {
 import { bbaUrl, fbaUrl, hckUrl } from "../_constants/urls";
 import {
   GetCall,
+  GetExportCall,
   GetLeagueAbbr,
   PostCall,
   PUTCall,
@@ -158,5 +159,13 @@ export const TeamService = {
       `${bbaUrl}team/nba/removeUserFromTeam/${teamID}`,
       request
     );
+  },
+
+  ExportCHLRoster: async (teamID: number) => {
+    await GetExportCall(`${hckUrl}export/college/roster/${teamID}`, "blob");
+  },
+
+  ExportPHLRoster: async (teamID: number) => {
+    await GetExportCall(`${hckUrl}export/pro/roster/${teamID}`, "blob");
   },
 };

@@ -142,6 +142,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     cutCHLPlayer,
     redshirtPlayer,
     promisePlayer,
+    ExportHCKRoster,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -192,6 +193,10 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
     handleOpenModal();
     setModalAction(action);
     setModalPlayer(player);
+  };
+
+  const exportRoster = async () => {
+    await ExportHCKRoster(selectedTeam!.ID, false);
   };
 
   return (
@@ -275,7 +280,7 @@ const CHLTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Potentials</Text>
               </Button>
             )}
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={exportRoster}>
               <Text variant="small">Export</Text>
             </Button>
           </div>
@@ -330,7 +335,8 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
     proposeTrade,
     cancelTrade,
     acceptTrade,
-    rejectTrade
+    rejectTrade,
+    ExportHCKRoster,
   } = hkStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const [modalAction, setModalAction] = useState<ModalAction>(Cut);
@@ -533,6 +539,10 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
   const manageTradesModal = useModal();
   const proposeTradeModal = useModal();
 
+  const exportRoster = async () => {
+    await ExportHCKRoster(selectedTeam!.ID, true);
+  };
+
   return (
     <>
       <ManageTradeModal
@@ -711,7 +721,7 @@ const PHLTeamPage = ({ league, ts }: TeamPageProps) => {
                 <Text variant="small">Trade Block</Text>
               </Button>
             )}
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={exportRoster}>
               <Text variant="small">Export</Text>
             </Button>
           </div>
