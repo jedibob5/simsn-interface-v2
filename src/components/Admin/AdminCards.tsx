@@ -2,6 +2,8 @@ import { Border } from "../../_design/Borders";
 import { Button } from "../../_design/Buttons";
 import { Logo } from "../../_design/Logo";
 import { Text } from "../../_design/Typography";
+import { TradeOption } from "../../models/hockeyModels";
+import { ManageOption } from "../Team/Common/ManageTradesModal";
 
 interface AdminTeamCardProps {
   logo: string;
@@ -137,5 +139,100 @@ export const AdminRequestCard: React.FC<AdminRequestCardProps> = ({
         </div>
       </div>
     </Border>
+  );
+};
+
+interface AdminTradeCardProps {
+  sendingTeamLabel: string;
+  sendingTradeOptions: TradeOption[];
+  receivingTeamLabel: string;
+  receivingTradeOptions: TradeOption[];
+  sendingTeamLogo: string;
+  receivingTeamLogo: string;
+  accept: () => Promise<void>;
+  veto: () => Promise<void>;
+  backgroundColor?: string;
+  borderColor?: string;
+  proPlayerMap: any;
+  draftPickMap: any;
+}
+
+export const AdminTradeCard: React.FC<AdminTradeCardProps> = ({
+  backgroundColor,
+  borderColor,
+  sendingTeamLabel,
+  sendingTeamLogo,
+  sendingTradeOptions,
+  receivingTeamLabel,
+  receivingTeamLogo,
+  receivingTradeOptions,
+  proPlayerMap,
+  draftPickMap,
+  accept,
+  veto,
+}) => {
+  return (
+    <>
+      <Border classes={`w-full px-3`}>
+        <div className="grid grid-cols-5 items-center h-[12rem] w-full space-x-2">
+          <Border
+            classes="items-center justify-center mt-1"
+            styles={{ backgroundColor, borderColor }}
+          >
+            <div className="flex flex-col w-full items-center justify-center p-4">
+              <Logo
+                url={sendingTeamLogo}
+                label={sendingTeamLabel}
+                variant="normal"
+                classes=""
+                containerClass="p-4"
+              />
+            </div>
+          </Border>
+          <div className="flex flex-col justify-center p-2 flex-1">
+            {sendingTradeOptions &&
+              sendingTradeOptions.map((item) => (
+                <ManageOption
+                  item={item}
+                  player={proPlayerMap[item.PlayerID]}
+                  pick={draftPickMap[item.DraftPickID]}
+                />
+              ))}
+          </div>
+          <div className="flex flex-col justify-center p-2 flex-1">
+            {receivingTradeOptions &&
+              receivingTradeOptions.map((item) => (
+                <ManageOption
+                  item={item}
+                  player={proPlayerMap[item.PlayerID]}
+                  pick={draftPickMap[item.DraftPickID]}
+                />
+              ))}
+          </div>
+          <Border
+            classes="items-center justify-center mt-1"
+            styles={{ backgroundColor, borderColor }}
+          >
+            <div className="flex flex-col w-full items-center justify-center p-4">
+              <Logo
+                url={receivingTeamLogo}
+                label={receivingTeamLabel}
+                variant="normal"
+                classes=""
+                containerClass="p-4"
+              />
+            </div>
+          </Border>
+          <div className="flex flex-col justify-center space-y-2">
+            <Button variant="success" size="sm" onClick={accept}>
+              Accept
+            </Button>
+            <Button variant="danger" size="sm" onClick={veto}>
+              Reject
+            </Button>
+          </div>
+        </div>
+      </Border>
+    </>
   );
 };
