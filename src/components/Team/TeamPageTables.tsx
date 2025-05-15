@@ -56,6 +56,8 @@ import {
   NBAPlayer,
 } from "../../models/basketballModels";
 import { TradeBlockRow } from "./TeamPageTypes";
+import { SingleValue } from "react-select";
+import { SelectOption } from "../../_hooks/useSelectStyles";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -335,6 +337,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
         { header: "NTC", accessor: "NoTradeClause" },
         { header: "NMC", accessor: "NoMovementClause" },
         { header: "Trade Block", accessor: "IsOnTradeBlock" },
+        { header: "Affiliate", accessor: "IsAffiliatePlayer" },
         { header: "Competitiveness", accessor: "Competitiveness" },
         { header: "Finance", accessor: "FinancialPref" },
         { header: "Market", accessor: "MarketPref" },
@@ -439,11 +442,19 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                   <User textColorClass={`w-full text-center ${TextGreen}`} />
                 )}
               </>
-            ) : attr.label === "TradeBlock" ? <>
-            {attr.value === "Yes" ? <CheckCircle textColorClass={`w-full text-center ${TextGreen}`}
-          /> : <CrossCircle textColorClass={`w-full text-center text-red-500`}
-          />}
-    </> : attr.label === "Name" ? (
+            ) : attr.label === "TradeBlock" || attr.label === "Affiliate" ? (
+              <>
+                {attr.value === "Yes" ? (
+                  <CheckCircle
+                    textColorClass={`w-full text-center ${TextGreen}`}
+                  />
+                ) : (
+                  <CrossCircle
+                    textColorClass={`w-full text-center text-red-500`}
+                  />
+                )}
+              </>
+            ) : attr.label === "Name" ? (
               <span
                 className={`cursor-pointer font-semibold`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
@@ -494,7 +505,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
                 label: `Trade Block - ${item.FirstName} ${item.LastName}`,
               },
             ]}
-            onChange={(selectedOption) => {
+            onChange={(selectedOption: SingleValue<SelectOption>) => {
               if (selectedOption?.value === "cut") {
                 openModal(Cut, item);
               } else if (selectedOption?.value === "affiliate") {
@@ -1713,7 +1724,7 @@ export const PHLTradeBlockTable: FC<PHLTradeBlockTableProps> = ({
               >
                 <Text variant="small">{attr.value}</Text>
               </span>
-            )  : (
+            ) : (
               <Text variant="small" classes="text-start">
                 {attr.value}
               </Text>

@@ -174,6 +174,10 @@ export const getPHLAttributes = (
             value: player.IsOnTradeBlock ? "Yes" : "No",
           },
           {
+            label: "Affiliate",
+            value: player.IsAffiliatePlayer ? "Yes" : "No",
+          },
+          {
             label: "Competitiveness",
             value: getCompetitivenessLabel(player.Competitiveness),
           },

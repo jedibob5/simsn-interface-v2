@@ -153,6 +153,8 @@ interface SimHCKContextProps {
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   SearchHockeyStats: (dto: any) => Promise<void>;
   ExportHockeyStats: (dto: any) => Promise<void>;
+  ExportHCKRoster: (teamID: number, isPro: boolean) => Promise<void>;
+  ExportCHLRecruits: () => Promise<void>;
   proposeTrade: (dto: TradeProposal) => Promise<void>;
   acceptTrade: (dto: TradeProposal) => Promise<void>;
   rejectTrade: (dto: TradeProposal) => Promise<void>;
@@ -258,6 +260,8 @@ const defaultContext: SimHCKContextProps = {
   CancelWaiverWireOffer: async () => {},
   SearchHockeyStats: async () => {},
   ExportHockeyStats: async () => {},
+  ExportHCKRoster: async () => {},
+  ExportCHLRecruits: async () => {},
   PlacePHLPlayerOnTradeBlock: async () => {},
   proposeTrade: async () => {},
   acceptTrade: async () => {},
@@ -790,13 +794,22 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         return;
       }
       const res = await PlayerService.SendPHLPlayerToAffiliate(playerID);
-      const rosterMap = { ...proRosterMap };
-      const playerIdx = rosterMap[teamID].findIndex((p) => p.ID === playerID);
-      if (playerIdx > -1) {
-        rosterMap[teamID][playerIdx].IsAffiliatePlayer =
-          !rosterMap[teamID][playerIdx].IsAffiliatePlayer;
-      }
-      setProRosterMap(rosterMap);
+      setProRosterMap((prevMap) => {
+        const teamRoster = prevMap[teamID];
+        if (!teamRoster) return prevMap;
+
+        return {
+          ...prevMap,
+          [teamID]: teamRoster.map((player) =>
+            player.ID === playerID
+              ? new ProfessionalPlayer({
+                  ...player,
+                  IsIsAffiliatePlayer: !player.IsAffiliatePlayer,
+                })
+              : player
+          ),
+        };
+      });
     },
     [proRosterMap]
   );
@@ -1177,6 +1190,21 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     });
   }, []);
 
+  const ExportHCKRoster = useCallback(
+    async (teamID: number, isPro: boolean) => {
+      if (isPro) {
+        await TeamService.ExportPHLRoster(teamID);
+      } else {
+        await TeamService.ExportCHLRoster(teamID);
+      }
+    },
+    []
+  );
+
+  const ExportCHLRecruits = useCallback(async () => {
+    await RecruitService.ExportCHLRecruits();
+  }, []);
+
   const syncAcceptedTrade = useCallback(async (dto: TradeProposal) => {
     const res = await TradeService.HCKProcessAcceptedTrade(dto.ID);
 
@@ -1306,6 +1334,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         vetoTrade,
         individualDraftPickMap,
         proPlayerMap,
+        ExportHCKRoster,
+        ExportCHLRecruits,
       }}
     >
       {children}

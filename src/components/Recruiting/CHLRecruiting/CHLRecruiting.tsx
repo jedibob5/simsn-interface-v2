@@ -48,6 +48,7 @@ export const CHLRecruiting = () => {
     scoutCrootAttribute,
     SaveRecruitingBoard,
     SaveAIRecruitingSettings,
+    ExportCHLRecruits,
   } = hkStore;
   const {
     teamProfile,
@@ -90,7 +91,9 @@ export const CHLRecruiting = () => {
   const helpModal = useModal();
   const aiSettingsModal = useModal();
   const lockMessage = useLoadMessage(CHLRecruitLockedMessages, 5000);
-
+  const recruitsExport = async () => {
+    await ExportCHLRecruits();
+  };
   return (
     <>
       {modalPlayer && (
@@ -245,12 +248,22 @@ export const CHLRecruiting = () => {
                     type="button"
                     variant="primary"
                     onClick={helpModal.handleOpenModal}
+                    size="sm"
                   >
                     Help
                   </Button>
                   <Button
                     type="button"
                     variant="primary"
+                    onClick={recruitsExport}
+                    size="sm"
+                  >
+                    Export
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
                     onClick={aiSettingsModal.handleOpenModal}
                   >
                     Settings
@@ -260,6 +273,7 @@ export const CHLRecruiting = () => {
                     variant={
                       teamProfile!.SpentPoints < 50 ? "primary" : "warning"
                     }
+                    size="sm"
                     onClick={SaveRecruitingBoard}
                     disabled={recruitingLocked}
                   >

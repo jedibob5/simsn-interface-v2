@@ -46,14 +46,11 @@ export const SignUpPage = () => {
   // ✅ Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log({ name, value });
     setForm((prevForm) => ({
       ...prevForm,
       [name]: { value },
     }));
   };
-
-  console.log({ form });
 
   // ✅ Handle form submission
   const submitForm = async (e: FormEvent) => {

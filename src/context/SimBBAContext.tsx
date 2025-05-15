@@ -814,7 +814,6 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
           variant: "success",
           autoHideDuration: 3000,
         });
-        console.log({ res, dto });
         setFreeAgentOffers((prevOffers) => {
           const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
           return offers;
