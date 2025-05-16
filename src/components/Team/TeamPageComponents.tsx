@@ -587,8 +587,8 @@ export const AdditionalTeamInfo = ({
         return player?.IsRedshirting || false;
       }
     }).length || 0;
-    
-    const injuryReserveCount =
+
+  const injuryReserveCount =
     roster?.filter((player: any) => {
       if (isPro) {
         if (league === SimNFL) {
@@ -659,49 +659,51 @@ export const AdditionalTeamInfo = ({
           </Text>
         </div>
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-2 space-x-4">
-        <div className="flex flex-col text-nowrap">
-          <Text
-            variant="small"
-            classes={`${textColorClass} font-semibold text-left`}
-          >
-            Tradeable Players
-          </Text>
-          <Text variant="xs" classes={`${textColorClass}`}>
-            {tradeBlockCount}
-          </Text>
+      {isPro && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-2 space-x-4">
+          <div className="flex flex-col text-nowrap">
+            <Text
+              variant="small"
+              classes={`${textColorClass} font-semibold text-left`}
+            >
+              Tradeable Players
+            </Text>
+            <Text variant="xs" classes={`${textColorClass}`}>
+              {tradeBlockCount}
+            </Text>
+          </div>
+          <div className="flex flex-col text-nowrap">
+            <Text variant="small" classes={`${textColorClass} font-semibold`}>
+              Draft Picks
+            </Text>
+            <Text variant="xs" classes={`${textColorClass}`}>
+              {draftPickCount}
+            </Text>
+          </div>
+          <div className="flex flex-col items-center text-nowrap">
+            <Text variant="small" classes={`${textColorClass} font-semibold`}>
+              Manage Trades
+            </Text>
+            <Button size="sm" disabled={!isUserTeam} onClick={openTradeModal}>
+              <Bell />
+            </Button>
+          </div>
+          <div className="flex flex-col items-center text-nowrap">
+            <Text variant="small" classes={`${textColorClass} font-semibold`}>
+              Propose Trade
+            </Text>
+            <Button
+              size="sm"
+              classes="text-center justify-center"
+              disabled={isUserTeam}
+              onClick={openProposeTradeModal}
+            >
+              <ChatBubble />
+            </Button>
+          </div>
+          <div className="flex flex-col"></div>
         </div>
-        <div className="flex flex-col text-nowrap">
-          <Text variant="small" classes={`${textColorClass} font-semibold`}>
-            Draft Picks
-          </Text>
-          <Text variant="xs" classes={`${textColorClass}`}>
-            {draftPickCount}
-          </Text>
-        </div>
-        <div className="flex flex-col items-center text-nowrap">
-          <Text variant="small" classes={`${textColorClass} font-semibold`}>
-            Manage Trades
-          </Text>
-          <Button size="sm" disabled={!isUserTeam} onClick={openTradeModal}>
-            <Bell />
-          </Button>
-        </div>
-        <div className="flex flex-col items-center text-nowrap">
-          <Text variant="small" classes={`${textColorClass} font-semibold`}>
-            Propose Trade
-          </Text>
-          <Button
-            size="sm"
-            classes="text-center justify-center"
-            disabled={isUserTeam}
-            onClick={openProposeTradeModal}
-          >
-            <ChatBubble />
-          </Button>
-        </div>
-        <div className="flex flex-col"></div>
-      </div>
+      )}
     </>
   );
 };
