@@ -58,6 +58,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     return <></>;
   }
   const player = rosterMap[playerID];
+  const isNonGoalie = player.Position === "G";
   const GetValue = useCallback(
     (opts: SingleValue<SelectOption>) => {
       if (opts) {
