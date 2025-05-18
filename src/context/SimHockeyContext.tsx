@@ -51,6 +51,8 @@ import {
   TradeProposal,
   TradePreferences,
   DraftPick,
+  CollegeGameplan,
+  ProGameplan,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -87,8 +89,10 @@ interface SimHCKContextProps {
   currentCHLStandings: CollegeStandings[];
   chlStandingsMap: Record<number, CollegeStandings>;
   chlRosterMap: Record<number, CollegePlayer[]>;
+  chlGameplan: CollegeGameplan;
   chlLineups: CollegeLineup[];
   chlShootoutLineup: CollegeShootoutLineup;
+  phlGameplan: ProGameplan;
   phlLineups: ProfessionalLineup[];
   phlShootoutLineup: ProfessionalShootoutLineup;
   recruits: Croot[]; // Replace with a more specific type if available
@@ -198,8 +202,10 @@ const defaultContext: SimHCKContextProps = {
   currentCHLStandings: [],
   chlStandingsMap: {},
   chlRosterMap: {},
+  chlGameplan: {} as CollegeGameplan,
   chlLineups: [],
   chlShootoutLineup: {} as CollegeShootoutLineup,
+  phlGameplan: {} as ProGameplan,
   phlLineups: [],
   phlShootoutLineup: {} as ProfessionalShootoutLineup,
   recruits: [],
@@ -325,9 +331,15 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [chlRosterMap, setCHLRosterMap] = useState<
     Record<number, CollegePlayer[]>
   >({});
+  const [chlGameplan, setCHLGameplan] = useState<CollegeGameplan>(
+    {} as CollegeGameplan
+  );
   const [chlLineups, setCHLLineups] = useState<CollegeLineup[]>([]);
   const [chlShootoutLineup, setCHLShootoutLineup] =
     useState<CollegeShootoutLineup>({} as CollegeShootoutLineup);
+  const [phlGameplan, setPHLGameplan] = useState<ProGameplan>(
+    {} as CollegeGameplan
+  );
   const [phlLineups, setPHLLineups] = useState<ProfessionalLineup[]>([]);
   const [phlShootoutLineup, setPHLShootoutLineup] =
     useState<CollegeShootoutLineup>({} as ProfessionalShootoutLineup);
@@ -518,8 +530,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setProNews(res.ProNews);
     setCollegeNotifications(res.CollegeNotifications);
     setAllCHLStandings(res.CollegeStandings);
+    setCHLGameplan(res.CHLGameplan);
     setCHLLineups(res.CollegeTeamLineups);
     setPHLLineups(res.ProTeamLineups);
+    setPHLGameplan(res.PHLGameplan);
     setCHLShootoutLineup(res.CollegeTeamShootoutLineup);
     setPHLShootoutLineup(res.ProTeamShootoutLineup);
     setAllProStandings(res.ProStandings);
@@ -1247,8 +1261,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         currentCHLStandings,
         chlStandingsMap,
         chlRosterMap,
+        chlGameplan,
         chlLineups,
         chlShootoutLineup,
+        phlGameplan,
         phlLineups,
         phlShootoutLineup,
         recruits,

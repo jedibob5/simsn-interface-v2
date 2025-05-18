@@ -3281,6 +3281,8 @@ export class BootstrapData {
   ProTradeProposalMap: { [key: number]: TradeProposal[] };
   ProTradePreferenceMap: { [key: number]: TradePreferences };
   DraftPicks: DraftPick[];
+  CHLGameplan: CollegeGameplan;
+  PHLGameplan: ProGameplan;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -3413,6 +3415,11 @@ export class BootstrapData {
       true
     );
     this.DraftPicks = this.convertValues(source["DraftPicks"], DraftPick);
+    this.CHLGameplan = this.convertValues(
+      source["CHLGameplan"],
+      CollegeGameplan
+    );
+    this.PHLGameplan = this.convertValues(source["PHLGameplan"], ProGameplan);
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
