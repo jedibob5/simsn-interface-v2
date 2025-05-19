@@ -1,11 +1,13 @@
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import {
+  CollegeGameplan,
   CollegePlayer,
   CollegeShootoutLineup,
   ProfessionalPlayer,
   ProfessionalShootoutLineup,
+  ProGameplan,
 } from "../../../models/hockeyModels";
-import { Input } from "../../../_design/Inputs";
+import { Input, ToggleSwitch } from "../../../_design/Inputs";
 import { SelectDropdown } from "../../../_design/Select";
 import {
   Help1,
@@ -15,10 +17,11 @@ import {
   League,
   Lineup,
   ModalAction,
+  SimCHL,
 } from "../../../_constants/constants";
 import { CSSObjectWithLabel, SingleValue } from "react-select";
 import { SelectOption, selectStyles } from "../../../_hooks/useSelectStyles";
-import { getShootoutOptionList, getShootoutPlaceholder } from "./lineupHelper";
+import { getHCKAIGameplanOptionsOptions, getShootoutOptionList, getShootoutPlaceholder } from "./lineupHelper";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
 import { Modal } from "../../../_design/Modal";
@@ -515,6 +518,429 @@ export const LineupHelpModal: FC<HelpModalProps> = ({
             </Text>
           </div>
         )}
+      </Modal>
+    </>
+  );
+};
+
+interface HCKAIGameplanModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  league: League;
+  gameplan: CollegeGameplan | ProGameplan;
+  saveGameplan: (dto: any) => Promise<void>;
+}
+
+export const HCKAIGameplanModal: FC<HCKAIGameplanModalProps> = ({
+  isOpen,
+  onClose,
+  league,
+  gameplan,
+  saveGameplan,
+}) => {
+  let title = "AI Gameplan Settings";
+  const [currentGameplan, setCurrentGameplan] = useState<CollegeGameplan|ProGameplan>(gameplan);
+
+  const save = async () => {
+    onClose();
+    await saveGameplan(gameplan);
+  }
+
+  const toggleAIGameplan = () => {
+    if (league === SimCHL) {
+    setCurrentGameplan((gp) => {
+      return new CollegeGameplan({...gp, IsAI: !gp.IsAI});
+    })
+    } else {
+      setCurrentGameplan((gp) => {
+      return new ProGameplan({...gp, IsAI: !gp.IsAI});
+    })
+    }
+  }
+
+  const toggleLongPasses = () => {
+    if (league === SimCHL) {
+    setCurrentGameplan((gp) => {
+      return new CollegeGameplan({...gp, LongerPassesEnabled: !gp.LongerPassesEnabled});
+    })
+    } else {
+      setCurrentGameplan((gp) => {
+      return new ProGameplan({...gp, LongerPassesEnabled: !gp.LongerPassesEnabled});
+    })
+    }
+  }
+
+  const GetForwardShotPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+      const val = Number(opts?.value);
+      if (opts) {
+        if (league === SimCHL) {
+          setCurrentGameplan((gp) => {
+            return new CollegeGameplan({...gp, ForwardShotPreference: val});
+          })
+        } else {
+          setCurrentGameplan((gp) => {
+            return new ProGameplan({...gp, ForwardShotPreference: val});
+          })
+        }
+      }
+    },[]);
+
+  const GetDefenderShotPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+      const val = Number(opts?.value);
+      if (opts) {
+        if (league === SimCHL) {
+          setCurrentGameplan((gp) => {
+            return new CollegeGameplan({...gp, DefenderShotPreference: val});
+          })
+        } else {
+          setCurrentGameplan((gp) => {
+            return new ProGameplan({...gp, DefenderShotPreference: val});
+          })
+        }
+      }
+    },[]);
+
+    const GetCenterSortPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+    },[]);
+
+    const GetForwardSortPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+    },[]);
+
+    const GetDefenderSortPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+    },[]);
+
+    const GetGoalieSortPreference = useCallback(
+    (opts: SingleValue<SelectOption>) => {
+    },[]);
+
+    const dropdownOptions= getHCKAIGameplanOptionsOptions();
+  return (
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        actions={
+          <>
+            <ButtonGroup>
+              <Button size="sm" variant="primary" onClick={onClose}>
+                <Text variant="small">Close</Text>
+              </Button>
+              <Button size="sm" variant="primary" onClick={save}>
+                <Text variant="small">Confirm</Text>
+              </Button>
+            </ButtonGroup>
+          </>
+        }
+      >
+      <div className="grid grid-cols-2 items-start space-x-2  mb-4">
+        <div className="flex flex-row space-x-3">
+          <Text>AI Toggle</Text>
+          <ToggleSwitch checked={currentGameplan.IsAI} onChange={toggleAIGameplan} />
+        </div>
+        <div className="flex flex-row space-x-3">
+          <Text>Enable Long Passes</Text>
+          <ToggleSwitch checked={currentGameplan.LongerPassesEnabled} onChange={toggleLongPasses} />
+        </div>
+       </div>
+       <div className="grid grid-cols-2 gap-x-2 space-2 mb-2">
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Forward Shot Preference
+          </label>
+          <SelectDropdown
+            onChange={GetForwardShotPreference}
+            options={dropdownOptions.shotPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Defender Shot Preference
+          </label>
+          <SelectDropdown
+            onChange={GetDefenderShotPreference}
+            options={dropdownOptions.shotPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+       </div>
+      <div className="grid grid-cols-2 gap-2 space-2">
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Center Sort Preference
+          </label>
+          <SelectDropdown
+            onChange={GetCenterSortPreference}
+            options={dropdownOptions.playerSortPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Forward Sort Preference
+          </label>
+          <SelectDropdown
+            onChange={GetForwardSortPreference}
+            options={dropdownOptions.playerSortPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Defender Sort Preference
+          </label>
+          <SelectDropdown
+            onChange={GetDefenderSortPreference}
+            options={dropdownOptions.playerSortPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+        <div className="flex flex-col w-full">
+          <label className="flex items-center min-[1025px]:justify-start mr-2">
+            Goalie Sort Preference
+          </label>
+          <SelectDropdown
+            onChange={GetGoalieSortPreference}
+            options={dropdownOptions.goalieSortPreferenceOptions}
+            styles={{
+              control: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                color: "#ffffff",
+                width: "100%",
+                maxWidth: "300px",
+                padding: "0.3rem",
+                boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                borderRadius: "8px",
+                transition: "all 0.2s ease",
+              }),
+              menu: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                borderRadius: "8px",
+              }),
+              menuList: (provided) => ({
+                ...provided,
+                backgroundColor: "#1a202c",
+                padding: "0",
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                color: "#ffffff",
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              singleValue: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: "#ffffff",
+              }),
+            }}
+          />
+        </div>
+       </div>
+ 
       </Modal>
     </>
   );

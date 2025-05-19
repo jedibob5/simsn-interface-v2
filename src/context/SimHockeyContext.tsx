@@ -144,7 +144,9 @@ interface SimHCKContextProps {
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
   updateProRosterMap: (newMap: Record<number, ProfessionalPlayer[]>) => void;
   saveCHLGameplan: (dto: any) => Promise<void>;
+  saveCHLAIGameplan: (dto: any) => Promise<void>;
   savePHLGameplan: (dto: any) => Promise<void>;
+  savePHLAIGameplan: (dto: any) => Promise<void>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
@@ -253,6 +255,8 @@ const defaultContext: SimHCKContextProps = {
   updateProRosterMap: () => {},
   saveCHLGameplan: async () => {},
   savePHLGameplan: async () => {},
+  saveCHLAIGameplan: async () => {},
+  savePHLAIGameplan: async () => {},
   addRecruitToBoard: async () => {},
   removeRecruitFromBoard: async () => {},
   updatePointsOnRecruit: () => {},
@@ -856,6 +860,24 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     });
   };
 
+  const saveCHLAIGameplan = async (dto: any) => {
+    const res = await GameplanService.SaveCHLAIGameplan(dto);
+    setCHLGameplan(dto);
+    enqueueSnackbar("AI Gameplan saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const savePHLAIGameplan = async (dto: any) => {
+    const res = await GameplanService.SavePHLAIGameplan(dto);
+    setPHLGameplan(dto);
+    enqueueSnackbar("Lineups saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
   const addRecruitToBoard = async (dto: any) => {
     const apiDTO = {
       ...dto,
@@ -1316,6 +1338,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         updateProRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
+        saveCHLAIGameplan,
+        savePHLAIGameplan,
         addRecruitToBoard,
         removeRecruitFromBoard,
         updatePointsOnRecruit,

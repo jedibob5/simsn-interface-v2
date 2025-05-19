@@ -37,6 +37,7 @@ import {
   updateLineupFieldWithClass,
 } from "./lineupHelper";
 import {
+  HCKAIGameplanModal,
   LineupHelpModal,
   LineupPlayer,
   ShootoutPlayer,
@@ -53,6 +54,8 @@ export const CHLLineupPage = () => {
     chlLineups,
     chlShootoutLineup,
     saveCHLGameplan,
+    chlGameplan,
+    saveCHLAIGameplan,
   } = hkStore;
   const [lineCategory, setLineCategory] = useState<Lineup>(LineupF1);
   const [zoneCategory, setZoneCategory] = useState<Zone>(DefendingGoalZone);
@@ -187,8 +190,17 @@ export const CHLLineupPage = () => {
     return lineCategory === LineupG1 || lineCategory === LineupG2;
   }, [lineCategory]);
 
+  const aiGameplanModal = useModal();
+
   return (
     <>
+      <HCKAIGameplanModal
+        isOpen={aiGameplanModal.isModalOpen}
+        onClose={aiGameplanModal.handleCloseModal}
+        league={SimCHL}
+        gameplan={chlGameplan}
+        saveGameplan={saveCHLAIGameplan}
+      />
       <div className="w-full grid grid-flow-row max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[6fr_4fr] grid-auto-rows-fr h-full max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <div className="flex flex-col w-full h-full max-[1024px]:gap-y-2">
           <div className="flex flex-row md:flex-col w-full h-full">
@@ -276,7 +288,7 @@ export const CHLLineupPage = () => {
                 disabled={errors.length > 0}
                 variant="primary"
                 size="xs"
-                onClick={Save}
+                onClick={aiGameplanModal.handleOpenModal}
               >
                 <Text variant="small">AI</Text>
               </Button>
