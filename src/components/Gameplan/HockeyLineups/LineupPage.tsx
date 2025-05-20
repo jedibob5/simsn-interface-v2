@@ -26,6 +26,7 @@ import {
   ModalAction,
   navyBlueColor,
   SimCHL,
+  SimPHL,
   Zone,
 } from "../../../_constants/constants";
 import { Text } from "../../../_design/Typography";
@@ -494,6 +495,8 @@ export const PHLLineupPage = () => {
     phlLineups,
     phlShootoutLineup,
     savePHLGameplan,
+    phlGameplan,
+    savePHLAIGameplan,
   } = hkStore;
   const [lineCategory, setLineCategory] = useState<Lineup>(LineupF1);
   const [zoneCategory, setZoneCategory] = useState<Zone>(DefendingGoalZone);
@@ -615,8 +618,29 @@ export const PHLLineupPage = () => {
     setModalPlayer(player);
     handleOpenModal();
   };
+
+  const changeLineCategory = useCallback((x: Lineup) => {
+    setLineCategory(x);
+    if (x === LineupG1 || x === LineupG2) {
+      setZoneCategory(DefendingGoalZone);
+    }
+  }, []);
+
+  const isGoalieLineup = useMemo(() => {
+    return lineCategory === LineupG1 || lineCategory === LineupG2;
+  }, [lineCategory]);
+
+  const aiGameplanModal = useModal();
+
   return (
     <>
+      <HCKAIGameplanModal
+        isOpen={aiGameplanModal.isModalOpen}
+        onClose={aiGameplanModal.handleCloseModal}
+        league={SimPHL}
+        gameplan={phlGameplan}
+        saveGameplan={savePHLAIGameplan}
+      />
       <div className="grid grid-flow-row max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[6fr_4fr] grid-auto-rows-fr h-full max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <div className="flex flex-col w-full h-full max-[1024px]:gap-y-2">
           <div className="flex flex-row md:flex-col w-full h-full">
@@ -628,18 +652,19 @@ export const PHLLineupPage = () => {
                 backgroundColor: navyBlueColor,
               }}
             >
-              <ButtonGroup>
+              <ButtonGrid>
                 {lineupCategories.map((x) => (
                   <Button
                     key={x}
                     size="sm"
+                    classes="lg:text-nowrap"
                     isSelected={lineCategory === x}
-                    onClick={() => setLineCategory(x as Lineup)}
+                    onClick={() => changeLineCategory(x as Lineup)}
                   >
                     <Text variant="small">{x}</Text>
                   </Button>
                 ))}
-              </ButtonGroup>
+              </ButtonGrid>
             </Border>
           </div>
           <div className="flex flex-row md:flex-col w-full h-full">
@@ -651,18 +676,20 @@ export const PHLLineupPage = () => {
                 backgroundColor: navyBlueColor,
               }}
             >
-              <ButtonGroup classes="justify-center">
+              <ButtonGrid classes="justify-center">
                 {zoneCategories.map((x) => (
                   <Button
                     key={x}
                     size="sm"
+                    classes="lg:text-nowrap"
                     isSelected={zoneCategory === x}
                     onClick={() => setZoneCategory(x as Zone)}
+                    disabled={isGoalieLineup && x !== DefendingGoalZone}
                   >
                     <Text variant="small">{x}</Text>
                   </Button>
                 ))}
-              </ButtonGroup>
+              </ButtonGrid>
             </Border>
           </div>
         </div>
@@ -692,10 +719,20 @@ export const PHLLineupPage = () => {
                 disabled={errors.length > 0}
                 variant={errors.length > 0 ? "danger" : "success"}
                 onClick={Save}
+                size="xs"
               >
                 <Text variant="small">Save</Text>
               </Button>
-              <Button classes="w-full" onClick={ResetLineups}>
+              <Button
+                classes="w-full"
+                disabled={errors.length > 0}
+                variant="primary"
+                size="xs"
+                onClick={aiGameplanModal.handleOpenModal}
+              >
+                <Text variant="small">AI</Text>
+              </Button>
+              <Button classes="w-full" onClick={ResetLineups} size="xs">
                 <Text variant="small">Reset</Text>
               </Button>
               <Button
@@ -704,6 +741,7 @@ export const PHLLineupPage = () => {
                   setModalAction(Help1);
                   handleOpenModal();
                 }}
+                size="xs"
               >
                 <Text variant="small">Help</Text>
               </Button>
