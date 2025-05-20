@@ -10,6 +10,14 @@ export const GameplanService = {
     await PostCall(`${hckUrl}phl/strategy/update`, dto);
   },
 
+  SaveCHLAIGameplan: async (dto: any): Promise<void> => {
+    await PostCall(`${hckUrl}chl/gameplan/update`, dto);
+  },
+
+  SavePHLAIGameplan: async (dto: any): Promise<void> => {
+    await PostCall(`${hckUrl}phl/gameplan/update`, dto);
+  },
+
   SaveCBBGameplan: async (dto: any): Promise<void> => {
     await PostCall(`${bbaUrl}cbb/gameplans/update`, dto);
   },

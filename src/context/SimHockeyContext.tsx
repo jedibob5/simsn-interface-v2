@@ -51,6 +51,8 @@ import {
   TradeProposal,
   TradePreferences,
   DraftPick,
+  CollegeGameplan,
+  ProGameplan,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -87,8 +89,10 @@ interface SimHCKContextProps {
   currentCHLStandings: CollegeStandings[];
   chlStandingsMap: Record<number, CollegeStandings>;
   chlRosterMap: Record<number, CollegePlayer[]>;
+  chlGameplan: CollegeGameplan;
   chlLineups: CollegeLineup[];
   chlShootoutLineup: CollegeShootoutLineup;
+  phlGameplan: ProGameplan;
   phlLineups: ProfessionalLineup[];
   phlShootoutLineup: ProfessionalShootoutLineup;
   recruits: Croot[]; // Replace with a more specific type if available
@@ -140,7 +144,9 @@ interface SimHCKContextProps {
   updateCHLRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
   updateProRosterMap: (newMap: Record<number, ProfessionalPlayer[]>) => void;
   saveCHLGameplan: (dto: any) => Promise<void>;
+  saveCHLAIGameplan: (dto: any) => Promise<void>;
   savePHLGameplan: (dto: any) => Promise<void>;
+  savePHLAIGameplan: (dto: any) => Promise<void>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
@@ -198,8 +204,10 @@ const defaultContext: SimHCKContextProps = {
   currentCHLStandings: [],
   chlStandingsMap: {},
   chlRosterMap: {},
+  chlGameplan: {} as CollegeGameplan,
   chlLineups: [],
   chlShootoutLineup: {} as CollegeShootoutLineup,
+  phlGameplan: {} as ProGameplan,
   phlLineups: [],
   phlShootoutLineup: {} as ProfessionalShootoutLineup,
   recruits: [],
@@ -247,6 +255,8 @@ const defaultContext: SimHCKContextProps = {
   updateProRosterMap: () => {},
   saveCHLGameplan: async () => {},
   savePHLGameplan: async () => {},
+  saveCHLAIGameplan: async () => {},
+  savePHLAIGameplan: async () => {},
   addRecruitToBoard: async () => {},
   removeRecruitFromBoard: async () => {},
   updatePointsOnRecruit: () => {},
@@ -325,9 +335,15 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [chlRosterMap, setCHLRosterMap] = useState<
     Record<number, CollegePlayer[]>
   >({});
+  const [chlGameplan, setCHLGameplan] = useState<CollegeGameplan>(
+    {} as CollegeGameplan
+  );
   const [chlLineups, setCHLLineups] = useState<CollegeLineup[]>([]);
   const [chlShootoutLineup, setCHLShootoutLineup] =
     useState<CollegeShootoutLineup>({} as CollegeShootoutLineup);
+  const [phlGameplan, setPHLGameplan] = useState<ProGameplan>(
+    {} as CollegeGameplan
+  );
   const [phlLineups, setPHLLineups] = useState<ProfessionalLineup[]>([]);
   const [phlShootoutLineup, setPHLShootoutLineup] =
     useState<CollegeShootoutLineup>({} as ProfessionalShootoutLineup);
@@ -518,8 +534,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setProNews(res.ProNews);
     setCollegeNotifications(res.CollegeNotifications);
     setAllCHLStandings(res.CollegeStandings);
+    setCHLGameplan(res.CHLGameplan);
     setCHLLineups(res.CollegeTeamLineups);
     setPHLLineups(res.ProTeamLineups);
+    setPHLGameplan(res.PHLGameplan);
     setCHLShootoutLineup(res.CollegeTeamShootoutLineup);
     setPHLShootoutLineup(res.ProTeamShootoutLineup);
     setAllProStandings(res.ProStandings);
@@ -836,6 +854,24 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     const res = await GameplanService.SavePHLGameplan(dto);
     setPHLLineups(dto.PHLLineups);
     setPHLShootoutLineup(dto.CHLShootoutLineup);
+    enqueueSnackbar("Lineups saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const saveCHLAIGameplan = async (dto: any) => {
+    const res = await GameplanService.SaveCHLAIGameplan(dto);
+    setCHLGameplan(dto);
+    enqueueSnackbar("AI Gameplan saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const savePHLAIGameplan = async (dto: any) => {
+    const res = await GameplanService.SavePHLAIGameplan(dto);
+    setPHLGameplan(dto);
     enqueueSnackbar("Lineups saved!", {
       variant: "success",
       autoHideDuration: 3000,
@@ -1247,8 +1283,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         currentCHLStandings,
         chlStandingsMap,
         chlRosterMap,
+        chlGameplan,
         chlLineups,
         chlShootoutLineup,
+        phlGameplan,
         phlLineups,
         phlShootoutLineup,
         recruits,
@@ -1300,6 +1338,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         updateProRosterMap,
         saveCHLGameplan,
         savePHLGameplan,
+        saveCHLAIGameplan,
+        savePHLAIGameplan,
         addRecruitToBoard,
         removeRecruitFromBoard,
         updatePointsOnRecruit,
