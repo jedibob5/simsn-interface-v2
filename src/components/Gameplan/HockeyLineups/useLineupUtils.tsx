@@ -590,3 +590,46 @@ export const usePHLLineupUtils = (
     errors,
   };
 };
+
+export const getHCKAISortObject = (value: number): any => {
+  const sortMap: any = {
+    1: { label: "Overall", value: "1" },
+    2: { label: "Close Shot", value: "2" },
+    3: { label: "Long Shot", value: "3" },
+    4: { label: "Agility", value: "4" },
+    5: { label: "Puck Handling", value: "5" },
+    6: { label: "Strength", value: "6" },
+    7: { label: "Body Check", value: "7" },
+    8: { label: "Stick Check", value: "8" },
+    9: { label: "Faceoff", value: "9" },
+    10: { label: "Passing", value: "10" },
+  };
+  return sortMap[value];
+};
+
+export const getHCKGoalieSortObject = (value: number): any => {
+  const goalieSortMap: any = {
+    1: { label: "Overall", value: 1 },
+    2: { label: "Goalkeeping", value: 2 },
+    3: { label: "GoalieVision", value: 3 },
+  };
+  return goalieSortMap[value];
+};
+
+export const getHCKAIShotPreferenceObject = (value: number): any => {
+  const shotPrefMap: any = {
+    1: { label: "Close", value: 1 },
+    2: { label: "Balanced", value: 2 },
+    3: { label: "Long", value: 3 },
+  };
+  return shotPrefMap[value];
+};
+
+export const getHCKAICheckPreferenceObject = (value: number): any => {
+  const shotPrefMap: any = {
+    1: { label: "Body Check", value: 1 },
+    2: { label: "Balanced", value: 2 },
+    3: { label: "Stick Check", value: 3 },
+  };
+  return shotPrefMap[value];
+};

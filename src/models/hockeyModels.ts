@@ -6186,6 +6186,7 @@ export class DraftPick {
   }
 }
 export class CollegeGameplan {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -6252,6 +6253,7 @@ export class CollegeGameplan {
   }
 }
 export class ProGameplan {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;

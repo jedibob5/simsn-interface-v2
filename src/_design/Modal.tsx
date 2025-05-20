@@ -27,12 +27,17 @@ export const Modal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // If click was inside our modal, ignore
+      if (modalRef.current?.contains(target)) return;
       if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
+        target.closest(".my-select__control") ||
+        target.closest(".my-select__menu") ||
+        target.closest(".my-select__clear-indicator")
       ) {
-        onClose();
+        return;
       }
+      onClose();
     };
 
     // ✅ Add event listener only if the modal is open

@@ -65,6 +65,7 @@ const mobileFriendlySelectStyles = {
 
 export const SelectDropdown = <IsMulti extends boolean = false>({
   styles: userStyles,
+  components,
   ...rest
 }: SelectDropdownProps<IsMulti>) => {
   const { isMobile } = useResponsive();
@@ -82,6 +83,8 @@ export const SelectDropdown = <IsMulti extends boolean = false>({
         typeof document !== "undefined" ? document.body : undefined
       }
       menuPosition="fixed"
+      className="my-select"
+      classNamePrefix="my-select"
     />
   );
 };
