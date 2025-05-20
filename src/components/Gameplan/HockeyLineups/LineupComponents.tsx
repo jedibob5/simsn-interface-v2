@@ -823,419 +823,421 @@ export const HCKAIGameplanModal: FC<HCKAIGameplanModalProps> = ({
           </>
         }
       >
-        <div className="grid grid-cols-2 items-start space-x-2  mb-4">
-          <div className="flex flex-row space-x-3">
-            <Text>AI Toggle</Text>
-            <ToggleSwitch
-              checked={currentGameplan.IsAI}
-              onChange={toggleAIGameplan}
-            />
+        <div className="overflow-y-auto max-h-[60vh] md:max-h-full">
+          <div className="grid grid-cols-2 items-start space-x-2  mb-4">
+            <div className="flex flex-row space-x-3">
+              <Text>AI Toggle</Text>
+              <ToggleSwitch
+                checked={currentGameplan.IsAI}
+                onChange={toggleAIGameplan}
+              />
+            </div>
+            <div className="flex flex-row space-x-3">
+              <Text>Enable Long Passes</Text>
+              <ToggleSwitch
+                checked={currentGameplan.LongerPassesEnabled}
+                onChange={toggleLongPasses}
+              />
+            </div>
           </div>
-          <div className="flex flex-row space-x-3">
-            <Text>Enable Long Passes</Text>
-            <ToggleSwitch
-              checked={currentGameplan.LongerPassesEnabled}
-              onChange={toggleLongPasses}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 space-2 mb-2">
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Forward Shot Preference
+              </label>
+              <SelectDropdown
+                value={selectedForwardShotPreference}
+                onChange={GetForwardShotPreference}
+                options={dropdownOptions.shotPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Defender Shot Preference
+              </label>
+              <SelectDropdown
+                value={selectedDefenderShotPreference}
+                onChange={GetDefenderShotPreference}
+                options={dropdownOptions.shotPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Forward Check Preference
+              </label>
+              <SelectDropdown
+                value={selectedForwardCheckPreference}
+                onChange={GetForwardCheckPreference}
+                options={dropdownOptions.defensePreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Defender Check Preference
+              </label>
+              <SelectDropdown
+                value={selectedDefenderCheckPreference}
+                onChange={GetDefenderCheckPreference}
+                options={dropdownOptions.defensePreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 space-2 mb-2">
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Forward Shot Preference
-            </label>
-            <SelectDropdown
-              value={selectedForwardShotPreference}
-              onChange={GetForwardShotPreference}
-              options={dropdownOptions.shotPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Defender Shot Preference
-            </label>
-            <SelectDropdown
-              value={selectedDefenderShotPreference}
-              onChange={GetDefenderShotPreference}
-              options={dropdownOptions.shotPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Forward Check Preference
-            </label>
-            <SelectDropdown
-              value={selectedForwardCheckPreference}
-              onChange={GetForwardCheckPreference}
-              options={dropdownOptions.defensePreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Defender Check Preference
-            </label>
-            <SelectDropdown
-              value={selectedDefenderCheckPreference}
-              onChange={GetDefenderCheckPreference}
-              options={dropdownOptions.defensePreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 space-2">
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Center Sort Preference
-            </label>
-            <SelectDropdown
-              isMulti
-              value={selectedCenterSort}
-              onChange={GetCenterSortPreference}
-              options={dropdownOptions.playerSortPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Forward Sort Preference
-            </label>
-            <SelectDropdown
-              isMulti
-              value={selectedForwardSort}
-              onChange={GetForwardSortPreference}
-              options={dropdownOptions.playerSortPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Defender Sort Preference
-            </label>
-            <SelectDropdown
-              isMulti
-              value={selectedDefenderSort}
-              onChange={GetDefenderSortPreference}
-              options={dropdownOptions.playerSortPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="flex items-center min-[1025px]:justify-start mr-2">
-              Goalie Sort Preference
-            </label>
-            <SelectDropdown
-              value={selectedGoalieSort}
-              onChange={GetGoalieSortPreference}
-              options={dropdownOptions.goalieSortPreferenceOptions}
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
-                  color: "#ffffff",
-                  width: "100%",
-                  maxWidth: "300px",
-                  padding: "0.3rem",
-                  boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
-                  borderRadius: "8px",
-                  transition: "all 0.2s ease",
-                }),
-                menu: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  borderRadius: "8px",
-                }),
-                menuList: (provided) => ({
-                  ...provided,
-                  backgroundColor: "#1a202c",
-                  padding: "0",
-                }),
-                option: (provided, state) => ({
-                  ...provided,
-                  backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
-                  color: "#ffffff",
-                  padding: "10px",
-                  cursor: "pointer",
-                }),
-                singleValue: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  color: "#ffffff",
-                }),
-              }}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 space-2">
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Center Sort Preference
+              </label>
+              <SelectDropdown
+                isMulti
+                value={selectedCenterSort}
+                onChange={GetCenterSortPreference}
+                options={dropdownOptions.playerSortPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Forward Sort Preference
+              </label>
+              <SelectDropdown
+                isMulti
+                value={selectedForwardSort}
+                onChange={GetForwardSortPreference}
+                options={dropdownOptions.playerSortPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Defender Sort Preference
+              </label>
+              <SelectDropdown
+                isMulti
+                value={selectedDefenderSort}
+                onChange={GetDefenderSortPreference}
+                options={dropdownOptions.playerSortPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full">
+              <label className="flex items-center min-[1025px]:justify-start mr-2">
+                Goalie Sort Preference
+              </label>
+              <SelectDropdown
+                value={selectedGoalieSort}
+                onChange={GetGoalieSortPreference}
+                options={dropdownOptions.goalieSortPreferenceOptions}
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                    color: "#ffffff",
+                    width: "100%",
+                    maxWidth: "300px",
+                    padding: "0.3rem",
+                    boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
+                    borderRadius: "8px",
+                    transition: "all 0.2s ease",
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    borderRadius: "8px",
+                  }),
+                  menuList: (provided) => ({
+                    ...provided,
+                    backgroundColor: "#1a202c",
+                    padding: "0",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
+                    color: "#ffffff",
+                    padding: "10px",
+                    cursor: "pointer",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#ffffff",
+                  }),
+                }}
+              />
+            </div>
           </div>
         </div>
       </Modal>
