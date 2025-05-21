@@ -20,16 +20,23 @@ import {
   SimNBA,
   SimPHL,
   SimCFB,
-  SimNFL
+  SimNFL,
+  statsOptions,
+  StatsCategory
 } from "../../../_constants/constants";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
 import { TeamProfileCards } from "./TeamProfileCards";
 import { Table, TableCell } from "../../../_design/Table";
+import { SelectDropdown } from "../../../_design/Select";
+import { SelectOption } from "../../../_hooks/useSelectStyles";
+import { SingleValue } from "react-select";
+import { getFBAStatColumns, processTopPlayers } from "./TeamProfileHelper";
 
 interface TeamProfileComponentsProps {
   league: League;
   team: any;
   data: any;
+  playerMap?: any;
   title?: string;
   backgroundColor: string;
   borderColor: string;
@@ -158,19 +165,56 @@ export const TeamPlayerCareerStats = ({
   league,
   team,
   data,
+  playerMap,
   title,
   backgroundColor,
   borderColor,
   headerColor,
   darkerBackgroundColor,
   textColorClass,
-  statColumns
-}: TeamProfileComponentsProps & { statColumns: any[] }) => {
-  const stats = Array.isArray(data) ? data : Object.values(data ?? {});
-  const statsLength = stats.length;
+}: TeamProfileComponentsProps ) => {
 
-  const topThree = stats.slice(0, 3);
+  const [statsCategory, setStatsCategory] = useState<StatsCategory>("Passing");
+  const selectStatsOption = (opts: SingleValue<SelectOption>) => {
+    if (opts?.value) setStatsCategory(opts.value as StatsCategory);
+  };
+console.log(data)
+  const statColumns = getFBAStatColumns(statsCategory);
+  const {
+    topPassing,
+    topRushing,
+    topReceiving,
+    topTackles,
+    topSacks,
+    topINTs,
+  } = processTopPlayers(data, playerMap);
 
+let stats: any[] = [];
+switch (statsCategory) {
+  case "Passing":
+    stats = topPassing;
+    break;
+  case "Rushing":
+    stats = topRushing;
+    break;
+  case "Receiving":
+    stats = topReceiving;
+    break;
+  case "Tackles":
+    stats = topTackles;
+    break;
+  case "Sacks":
+    stats = topSacks;
+    break;
+  case "Interceptions":
+    stats = topINTs;
+    break;
+  default:
+    stats = [];
+}
+
+const statsLength = stats.length;
+const topThree = stats.slice(0, 3);
 
   const borderColors = [
     "#FFD700",
@@ -199,59 +243,67 @@ export const TeamPlayerCareerStats = ({
     <TeamProfileCards
       team={team}
       header={title || "Stats Leaders"}
-      classes={`${textColorClass} h-full`}
+      classes={`${textColorClass} overflow-auto`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
       darkerBackgroundColor={darkerBackgroundColor}
       textColorClass={textColorClass}
     >
-
-      <div className="flex flex-row justify-center items-end gap-4 mb-4">
-        {topThree.map((player, idx) => (
-          <div
-            key={player.CollegePlayerID || idx}
-            className="flex flex-col items-center"
-          >
-            <div className="rounded-lg mb-2 border h-[5em] w-[5em]"
-              style={{
-                border: `4px solid ${borderColors[idx]}`,
-                background: "#242424"
-              }}
+      <div className="flex flex-col items-center w-full">
+        <div className="flex flex-row justify-center items-end gap-4 mb-4">
+          {topThree.map((player, idx) => (
+            <div
+              key={player.CollegePlayerID || idx}
+              className="flex flex-col items-center pt-2"
             >
-              <PlayerPicture
-                playerID={player.CollegePlayerID}
-                team={team}
-                league={league}
-              />
+              <div className="rounded-lg mb-2 border h-[5em] w-[5em]"
+                style={{
+                  border: `4px solid ${borderColors[idx]}`,
+                  background: "#242424"
+                }}
+              >
+                <PlayerPicture
+                  playerID={player.CollegePlayerID}
+                  team={team}
+                  league={league}
+                />
+              </div>
+              <Text variant="body" classes="font-bold">{player.Position}</Text>
+              <Text variant="body-small" classes="text-center">
+                {player.FirstName} {player.LastName}
+              </Text>
+              <Text variant="xs" classes="font-semibold mt-1">
+                {idx === 0 ? "1st" : idx === 1 ? "2nd" : "3rd"}
+              </Text>
             </div>
-            <Text variant="body" classes="font-bold">{player.Position}</Text>
-            <Text variant="body-small" classes="text-center">
-              {player.FirstName} {player.LastName}
-            </Text>
-            <Text variant="xs" classes="font-semibold mt-1">
-              {idx === 0 ? "1st" : idx === 1 ? "2nd" : "3rd"}
-            </Text>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="flex justify-center">
+          <SelectDropdown
+            options={statsOptions}
+            onChange={selectStatsOption}
+            className=""
+          />
+        </div>
+        <Table
+          columns={statColumns}
+          data={stats}
+          team={team}
+          rowRenderer={(item, index, bg) => (
+            <div className="table-row text-left" style={{ backgroundColor: bg }}>
+              {statColumns.map((col) => (
+                <TableCell key={col.accessor}>
+                  {col.render ? col.render(item, index) : item[col.accessor]}
+                </TableCell>
+              ))}
+            </div>
+          )}
+          rowBgColor={backgroundColor}
+          darkerRowBgColor={darkerBackgroundColor}
+          league={league}
+        />
       </div>
-      <Table
-        columns={statColumns}
-        data={stats}
-        team={team}
-        rowRenderer={(item, index, bg) => (
-          <div className="table-row text-left" style={{ backgroundColor: bg }}>
-            {statColumns.map((col) => (
-              <TableCell key={col.accessor}>
-                {col.render ? col.render(item) : item[col.accessor]}
-              </TableCell>
-            ))}
-          </div>
-        )}
-        rowBgColor={backgroundColor}
-        darkerRowBgColor={darkerBackgroundColor}
-        league={league}
-      />
     </TeamProfileCards>
   );
 };

@@ -115,12 +115,12 @@ export function processTopPlayers(careerStats: any[], playerMap: { [key: number]
     .filter(p => p.Tackles > 0);
 
   const topSacks = [...enhancedStats]
-    .sort((a, b) => (b.Sacks || 0) - (a.Sacks || 0))
-    .filter(p => p.Sacks > 0);
+    .sort((a, b) => (b.SacksMade || 0) - (a.SacksMade || 0))
+    .filter(p => p.SacksMade > 0);
 
   const topINTs = [...enhancedStats]
-    .sort((a, b) => (b.Interceptions || 0) - (a.Interceptions || 0))
-    .filter(p => p.Interceptions > 0);
+    .sort((a, b) => (b.InterceptionsCaught || 0) - (a.InterceptionsCaught || 0))
+    .filter(p => p.InterceptionsCaught > 0);
 
   return {
     topPassing,
@@ -131,3 +131,85 @@ export function processTopPlayers(careerStats: any[], playerMap: { [key: number]
     topINTs,
   };
 }
+
+export const getFBAStatColumns = (
+  type: "Passing" | "Rushing" | "Receiving" | "Tackles" | "Sacks" | "Interceptions" = "Passing"
+) => {
+  const rankColumn = {
+    header: "#",
+    accessor: "Rank",
+    render: (_row: any, idx: number) => idx + 1,
+  };
+
+  switch (type) {
+    case "Passing":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "TD", accessor: "PassingTDs" },
+        { header: "INT", accessor: "Interceptions" },
+        { header: "Yards", accessor: "PassingYards" },
+      ];
+    case "Rushing":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "Yards", accessor: "RushingYards" },
+        { header: "TD", accessor: "RushingTDs" },
+      ];
+    case "Receiving":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "Yards", accessor: "ReceivingYards" },
+        { header: "TD", accessor: "ReceivingTDs" },
+      ];
+    case "Tackles":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "Tackles", accessor: "SoloTackles" },
+        { header: "TFL", accessor: "TacklesForLoss" },
+      ];
+    case "Sacks":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "Sacks", accessor: "SacksMade" },
+        { header: "FF", accessor: "ForcedFumbles" },
+      ];
+    case "Interceptions":
+      return [
+        rankColumn,
+        {
+          header: "Player",
+          accessor: "Player",
+          render: (row: any) => `${row.Position} ${row.FirstName} ${row.LastName}`,
+        },
+        { header: "INT", accessor: "InterceptionsCaught" },
+        { header: "PD", accessor: "PassDeflections" },
+      ];
+    default:
+      return [];
+  }
+};

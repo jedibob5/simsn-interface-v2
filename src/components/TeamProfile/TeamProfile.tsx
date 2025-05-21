@@ -6,7 +6,8 @@ import {
   SimCFB,
   SimNFL,
   SimCBB,
-  SimNBA
+  SimNBA,
+  statsOptions
 } from "../../_constants/constants";
 import { Border } from "../../_design/Borders";
 import { PageContainer } from "../../_design/Container";
@@ -106,6 +107,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   const teamHistoryService = new FBATeamHistoryService();
   let selectedTeamLogo = "";
   const [allTeamHistory, setAllTeamHistory] = useState<{ [key: number]: CFBTeamProfileData }>({});
+  const [statsCategory, setStatsCategory] = useState("Passing");
 
   useEffect(() => {
     const fetchAllHistory = async () => {
@@ -178,42 +180,16 @@ useEffect(() => {
   setIsLoading(false);
 }, [selectedTeam, allTeamHistory, cfbTeamMap]);
 
-const {
-  topPassing,
-  topRushing,
-  topReceiving,
-  topTackles,
-  topSacks,
-  topINTs,
-} = processTopPlayers(careerStats, playerMap);
-
   return (
     <>
       <div className="flex w-full">
         {isLoading ? (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
+          <div className="flex items-center justify-center w-full h-full pt-40">
             <LoadSpinner />
           </div>
         ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-h-[40em]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-h-[40em] max-h-[40em]">
           <div className="flex flex-col items-center">
-            <TeamPlayerCareerStats
-              league={league}
-              team={selectedTeam}
-              data={topPassing}
-              title="Top Passing"
-              backgroundColor={backgroundColor}
-              borderColor={borderColor}
-              headerColor={headerColor}
-              darkerBackgroundColor={darkerBackgroundColor}
-              textColorClass={textColorClass}
-              statColumns={[
-                { header: "Name", accessor: "FullName" },
-                { header: "Position", accessor: "Position" },
-                { header: "Yards", accessor: "PassingYards" },
-                { header: "TD", accessor: "PassingTD" },
-              ]}
-            />
           </div>
           <div className="flex flex-col items-center">
             <Border
@@ -245,27 +221,17 @@ const {
               />
             </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center overflow-y-auto">
             <TeamPlayerCareerStats
               league={league}
               team={selectedTeam}
-              data={topPassing}
-              title="Top Passing"
+              data={careerStats}
+              playerMap={playerMap}
               backgroundColor={backgroundColor}
               borderColor={borderColor}
               headerColor={headerColor}
               darkerBackgroundColor={darkerBackgroundColor}
               textColorClass={textColorClass}
-              statColumns={[
-                {
-                  header: "Name",
-                  accessor: "Name",
-                  render: (row: any) => `${row.FirstName} ${row.LastName}`,
-                },
-                { header: "Position", accessor: "Position" },
-                { header: "Yards", accessor: "PassingYards" },
-                { header: "TD", accessor: "PassingTDs" },
-              ]}
             />
           </div>
         </div>

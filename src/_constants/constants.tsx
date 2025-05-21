@@ -536,3 +536,14 @@ export const PHLWeeks: { label: string; value: string }[] = Array.from(
 
 export const MAX_TEAM_INFO_COLUMNS = 4;
 export const MAX_TEAM_PHL_INFO_COLUMNS = 5;
+
+export const statsOptions = [
+  { label: "Passing", value: "Passing" },
+  { label: "Rushing", value: "Rushing" },
+  { label: "Receiving", value: "Receiving" },
+  { label: "Tackles", value: "Tackles" },
+  { label: "Sacks", value: "Sacks" },
+  { label: "Interceptions", value: "Interceptions" },
+] as const;
+
+export type StatsCategory = typeof statsOptions[number]["value"];
