@@ -53,6 +53,8 @@ import {
   DraftPick,
   CollegeGameplan,
   ProGameplan,
+  CollegePollOfficial,
+  CollegePollSubmission,
 } from "../models/hockeyModels";
 import { TeamService } from "../_services/teamService";
 import {
@@ -101,6 +103,8 @@ interface SimHCKContextProps {
   portalPlayers: CollegePlayer[]; // Replace with a more specific type if available
   collegeInjuryReport: CollegePlayer[];
   collegeNews: NewsLog[];
+  collegePolls: CollegePollOfficial[];
+  collegePollSubmission: CollegePollSubmission;
   allCollegeGames: CollegeGame[];
   currentCollegeSeasonGames: CollegeGame[];
   collegeTeamsGames: CollegeGame[];
@@ -242,6 +246,8 @@ const defaultContext: SimHCKContextProps = {
   tradePreferencesMap: {},
   phlDraftPicks: [],
   phlDraftPickMap: {},
+  collegePolls: [],
+  collegePollSubmission: {} as CollegePollSubmission,
   removeUserfromCHLTeamCall: async () => {},
   removeUserfromPHLTeamCall: async () => {},
   addUserToCHLTeam: () => {},
@@ -420,6 +426,14 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     ExtensionOffer
   > | null>({});
 
+  /*
+  collegePolls: [],
+  collegePollSubmission: {} as CollegePollSubmission,
+  */
+  const [collegePolls, setCollegePolls] = useState<CollegePollOfficial[]>([]);
+  const [collegePollSubmission, setCollegePollSubmission] =
+    useState<CollegePollSubmission>({} as CollegePollSubmission);
+
   const [topCHLGoals, setTopCHLGoals] = useState<CollegePlayer[]>([]);
   const [topCHLAssists, setTopCHLAssists] = useState<CollegePlayer[]>([]);
   const [topCHLSaves, setTopCHLSaves] = useState<CollegePlayer[]>([]);
@@ -532,6 +546,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setPHLTeam(res.ProTeam);
     setCollegeNews(res.CollegeNews);
     setProNews(res.ProNews);
+    setCollegePolls(res.OfficialPolls);
+    setCollegePollSubmission(res.CollegePoll);
     setCollegeNotifications(res.CollegeNotifications);
     setAllCHLStandings(res.CollegeStandings);
     setCHLGameplan(res.CHLGameplan);
@@ -1376,6 +1392,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         proPlayerMap,
         ExportHCKRoster,
         ExportCHLRecruits,
+        collegePolls,
+        collegePollSubmission,
       }}
     >
       {children}
