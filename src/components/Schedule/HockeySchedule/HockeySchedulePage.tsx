@@ -35,6 +35,7 @@ import {
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { ToggleSwitch } from "../../../_design/Inputs";
+import { NonFBAExportOptions } from "./hockeyScheduleHelper";
 
 interface SchedulePageProps {
   league: League;
@@ -63,6 +64,22 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
   const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
+  const hckExportOptions = useMemo(() => NonFBAExportOptions(), []);
+  const selectedWeekOption = useMemo(() => {
+    let numVal = selectedWeek.toString();
+    return {
+      label: numVal,
+      value: numVal,
+    };
+  }, [selectedWeek]);
+
+  const selectedSeasonOption = useMemo(() => {
+    let numVal = selectedSeason.toString();
+    return {
+      label: numVal,
+      value: numVal,
+    };
+  }, [selectedSeason]);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -205,6 +222,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                     <>
                       <Text variant="body">Week</Text>
                       <SelectDropdown
+                        value={selectedWeekOption}
                         options={Array.from({ length: 22 }, (_, i) => ({
                           label: `${i + 1}`,
                           value: (i + 1).toString(),
@@ -221,6 +239,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 <div className="flex flex-col items-center gap-2 justify-center">
                   <Text variant="body">Seasons</Text>
                   <SelectDropdown
+                    value={selectedSeasonOption}
                     options={HockeySeasons}
                     placeholder="Select Season..."
                     onChange={(selectedOption) => {
@@ -234,9 +253,10 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 <div className="flex flex-col items-center gap-2 justify-center">
                   <Text variant="body">Export Day of Week</Text>
                   <SelectDropdown
-                    options={chlTeamOptions}
+                    options={hckExportOptions}
                     placeholder="Select Timeslot..."
-                    onChange={selectTeamOption}
+                    // onChange={selectTeamOption}
+                    isDisabled={view === TeamGames}
                   />
                 </div>
               )}

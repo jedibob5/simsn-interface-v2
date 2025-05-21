@@ -201,7 +201,11 @@ export const getScheduleCHLData = (
   // Team Standings
   const teamStandings = allCHLStandings
     .filter((standings) => standings.ConferenceID === team.ConferenceID)
-    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+    .map((standings, index) => ({
+      ...standings,
+      TeamAbbr: standings.TeamName,
+      Rank: index + 1,
+    }));
 
   const teamAbbrMap = new Map(
     allCollegeTeams.map((team) => [team.ID, team.Abbreviation])
@@ -271,7 +275,11 @@ export const getSchedulePHLData = (
   // Team Standings
   const teamStandings = allPHLStandings
     .filter((standings) => standings.ConferenceID === team.ConferenceID)
-    .map((standings, index) => ({ ...standings, Rank: index + 1 }));
+    .map((standings, index) => ({
+      ...standings,
+      TeamAbbr: standings.TeamName,
+      Rank: index + 1,
+    }));
 
   const teamAbbrMap = new Map(
     allPHLTeams.map((team) => [team.ID, team.Abbreviation])
