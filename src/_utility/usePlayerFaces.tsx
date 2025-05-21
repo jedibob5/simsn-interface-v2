@@ -42,16 +42,23 @@ const PlayerPicture: React.FC<PlayerPictureProps> = ({ classes, playerID, team, 
   useEffect(() => {
     const playerFaceData = faceData[playerID];
     if (playerFaceData) {
-        const face = getPlayerFace(playerFaceData, team)
+      const face = getPlayerFace(playerFaceData, team);
 
       if (faceContainerRef.current) {
         display(faceContainerRef.current, face);
+
+        setTimeout(() => {
+          const svg = faceContainerRef.current?.querySelector('svg');
+          if (svg) {
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          }
+        }, 0);
       }
     }
   }, [faceData, playerID]);
 
   return <div ref={faceContainerRef} id="face-container" 
-              className={`flex justify-center items-center h-full w-full ${classes}`} />;
+              className={`flex justify-center items-center h-full w-full text-center ${classes}`} />;
 };
 
 export default PlayerPicture;
