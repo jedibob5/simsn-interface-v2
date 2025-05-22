@@ -693,6 +693,8 @@ export const getNFLAttributes = (
           },
           { label: "Years Left", value: nflContract.ContractLength },
           { label: "Is Tagged", value: nflContract.IsTagged },
+          { label: "IsOnTradeBlock", value: player.IsOnTradeBlock },
+          { label: "PS", value: player.IsPracticeSquad },
           { label: "Personality", value: player.Personality },
           { label: "Work Ethic", value: player.WorkEthic },
         ]
