@@ -228,7 +228,7 @@ useEffect(() => {
                 />
               </div>
             </Border>
-            <div className="w-full pt-2">
+            <div className="w-full md:pt-2">
               <TeamRivalry
                 league={league}
                 team={selectedTeam}
