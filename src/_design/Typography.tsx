@@ -13,6 +13,7 @@ export type TextVariant =
   | "small"
   | "xs"
   | "h1-alt"
+  | "h2-alt"
   | "h3-alt"
   | "alternate"
   | "primary"
@@ -42,6 +43,7 @@ const tags: Record<TextVariant, keyof JSX.IntrinsicElements> = {
   small: "p",
   xs: "p",
   "h1-alt": "h1",
+  "h2-alt": "h2",
   "h3-alt": "p",
   alternate: "p",
   primary: "p",
@@ -62,6 +64,7 @@ const sizes: Record<TextVariant, string> = {
   small: "text-xs sm:text-sm 3xl:text-md",
   xs: "text-[0.5em] sm:text-[0.7em] 3xl:text-base",
   "h1-alt": "text-3xl sm:text-8xl",
+  "h2-alt": "text-xl sm:text-5xl",
   "h3-alt": "text-xs sm:text-2xl",
   alternate: "text-xs sm:text-lg 3xl:text-xl",
   primary: "text-base",
@@ -87,6 +90,7 @@ const styles: Record<TextVariant, string> = {
   xs: "",
   alternate: "",
   "h3-alt": "",
+  "h2-alt": "",
   "h1-alt": "",
 };
 

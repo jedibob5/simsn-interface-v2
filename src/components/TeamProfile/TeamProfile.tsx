@@ -34,11 +34,12 @@ import { useParams } from "react-router-dom";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import FBATeamHistoryService from "../../_services/teamHistoryService";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
-import { TeamRivalry, TeamPlayerCareerStats } from "./Common/TeamProfileComponents";
+import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory } from "./Common/TeamProfileComponents";
 import { LoadSpinner } from "../../_design/LoadSpinner";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
-import { processRivalries, processTopPlayers } from "./Common/TeamProfileHelper";
+import { processRivalries, processSeasonHistory } from "./Common/TeamProfileHelper";
+import { Text } from "../../_design/Typography";
 
 interface TeamProfilePageProps {
   league: League;
@@ -102,6 +103,8 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [careerStats, setCareerStats] = useState<CFBPlayerSeasonStats[]>([]);
   const [collegeStandings, setCollegeStandings] = useState<CFBStandings[]>([]);
+  const [totalWins, setTotalWins] = useState<number>(0);
+  const [totalLosses, setTotalLosses] = useState<number>(0);
   const [rivalries, setRivalries] = useState<any[]>([]);
   const [playerMap, setPlayerMap] = useState<{ [key: number]: CFBPlayer }>({});
   const teamHistoryService = new FBATeamHistoryService();
@@ -168,18 +171,18 @@ useEffect(() => {
     return;
   }
 
-  const orderedCollegeStandings = Array.isArray(teamProfile.CollegeStandings)
-    ? [...teamProfile.CollegeStandings].sort((a, b) => b.SeasonID - a.SeasonID)
-    : [];
+  const { processedSeasonHistory, totalWins, totalLosses } = processSeasonHistory(teamProfile.CollegeStandings);
   const processedRivalries = processRivalries(teamProfile, selectedTeam, cfbTeamMap);
 
   setCareerStats(Array.isArray(teamProfile.CareerStats) ? teamProfile.CareerStats : []);
-  setCollegeStandings(orderedCollegeStandings);
+  setCollegeStandings(processedSeasonHistory);
+  setTotalWins(totalWins);
+  setTotalLosses(totalLosses);
   setPlayerMap(teamProfile.PlayerMap || {});
   setRivalries(processedRivalries);
   setIsLoading(false);
 }, [selectedTeam, allTeamHistory, cfbTeamMap]);
-
+console.log(collegeStandings)
   return (
     <>
       <div className="flex w-full">
@@ -189,9 +192,21 @@ useEffect(() => {
           </div>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-h-[40em] max-h-[40em]">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col w-[30em] items-center h-full overflow-y-auto">
+              <TeamSeasonHistory
+                league={league}
+                team={selectedTeam}
+                data={collegeStandings}
+                wins={totalWins}
+                losses={totalLosses}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col w-[30em] items-center">
             <Border
               direction="col"
               classes="w-full p-2 gap-2 items-center justify-center"
@@ -200,15 +215,20 @@ useEffect(() => {
                 borderColor: headerColor,
               }}
             >
-              <Logo url={selectedTeamLogo} variant="large" classes="h-[20em]" />
+              <Logo url={selectedTeamLogo} variant="large" classes="h-[8em]" />
+              <div className="flex flex-col items-center justify-center">
+                <Text variant="body" classes="font-semibold">{selectedTeam?.TeamName}</Text>
+                <Text variant="h2-alt" classes="font-semibold">{selectedTeam?.Mascot}</Text>
+              </div>
               <div className="flex justify-center w-full">
                 <SelectDropdown
                   options={cfbTeamOptions}
+                  placeholder="Select a team..."
                   onChange={selectTeamOption}
                 />
               </div>
             </Border>
-            <div className="w-full mt-4">
+            <div className="w-[30em] mt-4">
               <TeamRivalry
                 league={league}
                 team={selectedTeam}

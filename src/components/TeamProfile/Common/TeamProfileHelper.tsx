@@ -49,11 +49,19 @@ export function processRivalries(
     if (selectedTeamWonLatest) {
       latestResultScore = selectedTeamMScore;
       latestResultSeason = selectedTeamMSeason;
-    } else {
+    } else if (!selectedTeamWonLatest && rivalry.LatestWin) {
       latestResultScore = swapScore(opponentTeamMScore);
       latestResultSeason = opponentTeamMSeason;
+    } else {
+      latestResultScore = "N/A";
+      latestResultSeason = "N/A";
     }
-    const latestResultColor = selectedTeamWonLatest ? winsColor : lossesColor;
+
+    const latestResultColor = selectedTeamWonLatest 
+                                ? winsColor 
+                                : !selectedTeamWonLatest && rivalry.LatestWin
+                                  ? lossesColor
+                                  : "n/a"
 
     const streakIsWin = selectedTeamWonLatest;
     const streakColor = streakIsWin ? winsColor : lossesColor;
@@ -64,7 +72,7 @@ export function processRivalries(
     const streakText =
       rivalry.CurrentStreak !== 0
         ? `${Math.abs(rivalry.CurrentStreak)} ${streakLabel}`
-        : "No Current Streak";
+        : "N/A";
 
     return {
       ...rivalry,
@@ -130,6 +138,35 @@ export function processTopPlayers(careerStats: any[], playerMap: { [key: number]
     topSacks,
     topINTs,
   };
+};
+
+export function processSeasonHistory(collegeStandings: any[]): { processedSeasonHistory: any[]; totalWins: number; totalLosses: number } {
+  if (!Array.isArray(collegeStandings)) return { processedSeasonHistory: [], totalWins: 0, totalLosses: 0 };
+
+  let totalWins = 0;
+  let totalLosses = 0;
+
+  const processedSeasonHistory = [...collegeStandings]
+    .sort((a, b) => b.SeasonID - a.SeasonID)
+    .reduce((acc, record, idx) => {
+      totalWins += record.TotalWins || 0;
+      totalLosses += record.TotalLosses || 0;
+
+      if (record.Season === 0) {
+        const prevSeason = acc[idx - 1]?.Season ?? new Date().getFullYear();
+        const updated = Object.assign(
+          Object.create(Object.getPrototypeOf(record)),
+          record,
+          { Season: prevSeason - 1 }
+        );
+        acc.push(updated);
+      } else {
+        acc.push(record);
+      }
+      return acc;
+    }, []);
+
+  return { processedSeasonHistory, totalWins, totalLosses };
 }
 
 export const getFBAStatColumns = (

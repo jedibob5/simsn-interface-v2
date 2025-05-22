@@ -36,6 +36,8 @@ interface TeamProfileComponentsProps {
   league: League;
   team: any;
   data: any;
+  wins?: number;
+  losses?: number;
   playerMap?: any;
   title?: string;
   backgroundColor: string;
@@ -62,12 +64,14 @@ export const TeamRivalry = ({
 
   const handlePrev = () => setCurrentIndex((prev) => prev === 0 ? rivals - 1 : prev - 1);
   const handleNext = () => setCurrentIndex((prev) => prev === rivals - 1 ? 0 : prev + 1);
+  const winsColor = "#189E5B";
+  const lossesColor = "#ef4444";
 
   if (!rivals || rivals === 0) {
     return (
       <TeamProfileCards
         team={team}
-        header="Rivalries History"
+        header="Rivalries"
         classes={`${textColorClass} h-full`}
         backgroundColor={backgroundColor}
         headerColor={headerColor}
@@ -115,11 +119,25 @@ export const TeamRivalry = ({
         <Text variant="h4" classes={textColorClass}>vs {rival.opponentTeamName}</Text>
         <div className="flex justify-around items-center w-full">
           <div className="flex flex-col pl-4">
-            <Text variant="h1-alt" classes={`text-[${rival.winsColor}]`}>{rival.selectedTeamWins}</Text>
+            <Text variant="h1-alt" 
+                  classes={rival.selectedTeamWins > rival.selectedTeamLosses 
+                    ? `text-[${winsColor}] w-1/3` 
+                    : rival.selectedTeamWins < rival.selectedTeamLosses 
+                      ? `text-[${lossesColor}] w-1/3`
+                      : `${textColorClass}`
+                  }>
+              {rival.selectedTeamWins}
+            </Text>
             <Text variant="small">Wins</Text>
           </div>
           <div className="flex flex-col">
-            <Text variant="body" classes={`font-semibold text-[${rival.rivalryColor}]`}>
+            <Text variant="body" 
+                  classes={rival.selectedTeamWins > rival.selectedTeamLosses 
+                    ? `text-[${winsColor}] font-semibold` 
+                    : rival.selectedTeamWins < rival.selectedTeamLosses 
+                      ? `text-[${lossesColor}] font-semibold`
+                      : `${textColorClass} font-semibold`
+                  }>
               {rival.rivalryTie
                 ? "Tied"
                 : rival.selectedTeamLeads
@@ -129,7 +147,15 @@ export const TeamRivalry = ({
             </Text>
           </div>
           <div className="flex flex-col pr-4">
-            <Text variant="h1-alt" classes={`text-[#ef4444]`}>{rival.selectedTeamLosses}</Text>
+            <Text variant="h1-alt" 
+                  classes={rival.selectedTeamWins > rival.selectedTeamLosses 
+                    ? `text-[${winsColor}] w-1/3` 
+                    : rival.selectedTeamWins < rival.selectedTeamLosses 
+                      ? `text-[${lossesColor}] w-1/3`
+                      : `${textColorClass}`
+                  }>
+              {rival.selectedTeamLosses}
+            </Text>
             <Text variant="small">Losses</Text>
           </div>
         </div>
@@ -147,7 +173,11 @@ export const TeamRivalry = ({
             <div className="border" style={{ borderColor }} />
           </div>
           <div className="flex flex-col w-[40%] items-center justify-center py-2">
-            <Text variant="h3-alt" classes={`font-semibold text-[${rival.streakColor}]`}>
+            <Text variant="h3-alt"                   
+                  classes={rival.CurrentStreak > 0 
+                    ? `text-[${rival.streakColor}] font-semibold` 
+                    : `${textColorClass}`
+                  }>
               {rival.streakText}
             </Text>
             <Text variant="small" classes={``}>Current Streak</Text>
@@ -178,7 +208,6 @@ export const TeamPlayerCareerStats = ({
   const selectStatsOption = (opts: SingleValue<SelectOption>) => {
     if (opts?.value) setStatsCategory(opts.value as StatsCategory);
   };
-console.log(data)
   const statColumns = getFBAStatColumns(statsCategory);
   const {
     topPassing,
@@ -189,44 +218,44 @@ console.log(data)
     topINTs,
   } = processTopPlayers(data, playerMap);
 
-let stats: any[] = [];
-switch (statsCategory) {
-  case "Passing":
-    stats = topPassing;
-    break;
-  case "Rushing":
-    stats = topRushing;
-    break;
-  case "Receiving":
-    stats = topReceiving;
-    break;
-  case "Tackles":
-    stats = topTackles;
-    break;
-  case "Sacks":
-    stats = topSacks;
-    break;
-  case "Interceptions":
-    stats = topINTs;
-    break;
-  default:
-    stats = [];
-}
+  let stats: any[] = [];
+  switch (statsCategory) {
+    case "Passing":
+      stats = topPassing;
+      break;
+    case "Rushing":
+      stats = topRushing;
+      break;
+    case "Receiving":
+      stats = topReceiving;
+      break;
+    case "Tackles":
+      stats = topTackles;
+      break;
+    case "Sacks":
+      stats = topSacks;
+      break;
+    case "Interceptions":
+      stats = topINTs;
+      break;
+    default:
+      stats = [];
+  }
 
-const statsLength = stats.length;
-const topThree = stats.slice(0, 3);
+  const statsLength = stats.length;
+  const topThree = stats.slice(0, 3);
 
-  const borderColors = [
-    "#FFD700",
-    "#C0C0C0",
-    "#CD7F32",
-  ];
+    const borderColors = [
+      "#FFD700",
+      "#C0C0C0",
+      "#CD7F32",
+    ];
 
   if (!stats || statsLength === 0) {
     return (
       <TeamProfileCards
         team={team}
-        header={title || "Stats Leaders"}
+        header={title || "All-Time Stats Leaders"}
         classes={`${textColorClass} h-full`}
         backgroundColor={backgroundColor}
         headerColor={headerColor}
@@ -242,8 +271,8 @@ const topThree = stats.slice(0, 3);
   return (
     <TeamProfileCards
       team={team}
-      header={title || "Stats Leaders"}
-      classes={`${textColorClass} overflow-auto`}
+      header={title || "All-Time Stats Leaders"}
+      classes={`${textColorClass} h-full overflow-y-auto`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -291,7 +320,7 @@ const topThree = stats.slice(0, 3);
           data={stats}
           team={team}
           rowRenderer={(item, index, bg) => (
-            <div className="table-row text-left" style={{ backgroundColor: bg }}>
+            <div className="table-row text-left text-lg" style={{ backgroundColor: bg }}>
               {statColumns.map((col) => (
                 <TableCell key={col.accessor}>
                   {col.render ? col.render(item, index) : item[col.accessor]}
@@ -304,6 +333,152 @@ const topThree = stats.slice(0, 3);
           league={league}
         />
       </div>
+    </TeamProfileCards>
+  );
+};
+
+export const TeamSeasonHistory = ({
+  league,
+  team,
+  data,
+  wins,
+  losses,
+  backgroundColor,
+  borderColor,
+  headerColor,
+  darkerBackgroundColor,
+  textColorClass
+}: TeamProfileComponentsProps) => {
+  const winsColor = "#189E5B";
+  const lossesColor = "#ef4444";
+  if (!data || data === 0) {
+    return (
+      <TeamProfileCards
+        team={team}
+        header="Seasons History"
+        classes={`${textColorClass} h-full`}
+        backgroundColor={backgroundColor}
+        headerColor={headerColor}
+        borderColor={borderColor}
+        darkerBackgroundColor={darkerBackgroundColor}
+        textColorClass={textColorClass}
+      >
+        <Text variant="small" classes={textColorClass}>No season data found.</Text>
+      </TeamProfileCards>
+    );
+  }
+
+  return (
+    <TeamProfileCards
+      team={team}
+      header="Past Seasons"
+      classes={`${textColorClass} w-full`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      darkerBackgroundColor={darkerBackgroundColor}
+      textColorClass={textColorClass}
+    >
+      <div className="flex flex-col justify-center gap-4 items-center py-2">
+        <div className="flex flex-col gap-2 font-semibold">
+          <Text variant="h3-alt" classes={`${textColorClass}`}>
+            Overall Record
+          </Text>
+        </div>          
+      {wins && losses && (
+        <div className="flex gap-2 font-semibold pb-2">
+          <Text variant="h2-alt" 
+                classes={
+                  wins > losses
+                    ? `text-[${winsColor}]`
+                    : wins < losses
+                      ? `text-[${lossesColor}]`
+                      : textColorClass
+                }>
+            {wins}
+          </Text>
+          <Text variant="h2-alt" 
+                classes={
+                  wins > losses
+                    ? `text-[${winsColor}]`
+                    : wins < losses
+                      ? `text-[${lossesColor}]`
+                      : textColorClass
+                }>
+            -
+          </Text>
+          <Text variant="h2-alt" 
+                classes={
+                  wins > losses
+                    ? `text-[${winsColor}]`
+                    : wins < losses
+                      ? `text-[${lossesColor}]`
+                      : textColorClass
+                }>
+            {losses}
+          </Text>
+        </div> 
+      )}
+      </div>
+      <div className="flex justify-between gap-8 items-center py-2">
+        <div className="flex flex-col gap-2 w-1/3 font-semibold">
+          <Text variant="h3-alt" classes={`${textColorClass}`}>
+            Season
+          </Text>
+        </div>
+        <div className="flex flex-col gap-2 w-1/3 font-semibold">
+          <Text variant="h3-alt" classes={`${textColorClass}`}>
+            Coach
+          </Text>
+        </div>
+        <div className="flex flex-col gap-2 w-1/3 font-semibold">
+          <Text variant="h3-alt" classes={`${textColorClass}`}>
+            Record
+          </Text>
+        </div>
+      </div>
+    {data.length > 0 ? (
+      data.map((season: any, index: number) => (
+        <div key={index} className="p-2">
+          <div className="flex justify-between gap-8 items-center">
+            <div className="flex flex-col w-1/3">
+              <Text variant="h3-alt" classes={`${textColorClass}`}>
+                {season.Season}
+              </Text>
+            </div>
+            <div className="flex flex-col w-1/3">
+              <Text variant="h3-alt" classes={`${textColorClass}`}>
+                {season.Coach}
+              </Text>
+            </div>
+            <div className="flex w-1/3 justify-center">
+              <Text variant="h3-alt" 
+                    classes={season.TotalWins > season.TotalLosses 
+                      ? `text-[${winsColor}] w-1/3` 
+                      : `text-[${lossesColor}] w-1/3`}>
+                {season.TotalWins}
+              </Text>
+              <Text variant="h3-alt" 
+                    classes={season.TotalWins > season.TotalLosses 
+                      ? `text-[${winsColor}] w-1/5` 
+                      : `text-[${lossesColor}] w-1/5`}>
+                -
+              </Text>
+              <Text variant="h3-alt" 
+                    classes={season.TotalWins > season.TotalLosses 
+                      ? `text-[${winsColor}] w-1/3` 
+                      : `text-[${lossesColor}] w-1/3`}>
+                {season.TotalLosses}
+              </Text>
+            </div>
+          </div>
+        </div>
+      ))
+    ) : (
+      <Text variant="small" classes={`${textColorClass} pt-2 pb-2`}>
+        No season data
+      </Text>
+    )}
     </TeamProfileCards>
   );
 };
