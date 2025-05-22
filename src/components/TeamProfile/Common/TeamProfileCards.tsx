@@ -29,7 +29,7 @@ export const TeamProfileCards: React.FC<TeamProfileCardsProps> = ({
 
   return (
     <div
-      className={`flex flex-col rounded-lg p-4 max-w-[50em] h-full shadow-md border-2 ${classes}`}
+      className={`flex flex-col rounded-lg p-4 w-full md:max-w-[50em] h-full shadow-md border-2 ${classes}`}
       style={{ borderColor: headerColor, backgroundColor }}
     >
       <div

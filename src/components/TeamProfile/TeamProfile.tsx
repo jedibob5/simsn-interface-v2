@@ -191,8 +191,8 @@ useEffect(() => {
             <LoadSpinner />
           </div>
         ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full min-h-[40em] max-h-[40em]">
-          <div className="flex flex-col w-[30em] items-center h-full overflow-y-auto">
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 w-[95vw] max-w-[95vw] md:max-w-full md:w-full md:min-h-[40em] md:max-h-[40em]">
+          <div className="hidden md:flex flex-col md:col-span-1 w-full items-center h-full overflow-y-auto">
               <TeamSeasonHistory
                 league={league}
                 team={selectedTeam}
@@ -206,7 +206,7 @@ useEffect(() => {
                 textColorClass={textColorClass}
               />
           </div>
-          <div className="flex flex-col w-[30em] items-center">
+          <div className="flex flex-col w-full items-center md:col-span-1">
             <Border
               direction="col"
               classes="w-full p-2 gap-2 items-center justify-center"
@@ -215,7 +215,7 @@ useEffect(() => {
                 borderColor: headerColor,
               }}
             >
-              <Logo url={selectedTeamLogo} variant="large" classes="h-[8em]" />
+              <Logo url={selectedTeamLogo} variant="large" classes="md:h-[8em]" />
               <div className="flex flex-col items-center justify-center">
                 <Text variant="body" classes="font-semibold">{selectedTeam?.TeamName}</Text>
                 <Text variant="h2-alt" classes="font-semibold">{selectedTeam?.Mascot}</Text>
@@ -228,7 +228,7 @@ useEffect(() => {
                 />
               </div>
             </Border>
-            <div className="w-[30em] mt-4">
+            <div className="w-full pt-2">
               <TeamRivalry
                 league={league}
                 team={selectedTeam}
@@ -241,7 +241,21 @@ useEffect(() => {
               />
             </div>
           </div>
-          <div className="flex flex-col items-center overflow-y-auto">
+          <div className="flex md:hidden flex-col md:col-span-1 w-full items-center h-full overflow-y-auto">
+            <TeamSeasonHistory
+              league={league}
+              team={selectedTeam}
+              data={collegeStandings}
+              wins={totalWins}
+              losses={totalLosses}
+              backgroundColor={backgroundColor}
+              borderColor={borderColor}
+              headerColor={headerColor}
+              darkerBackgroundColor={darkerBackgroundColor}
+              textColorClass={textColorClass}
+            />
+          </div>
+          <div className="flex flex-col w-full md:col-span-1 items-center md:overflow-y-auto">
             <TeamPlayerCareerStats
               league={league}
               team={selectedTeam}
