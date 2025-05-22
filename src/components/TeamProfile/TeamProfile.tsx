@@ -206,7 +206,7 @@ useEffect(() => {
                 textColorClass={textColorClass}
               />
           </div>
-          <div className="flex flex-col w-full items-center md:col-span-1">
+          <div className="flex flex-col w-full md:min-w-[35em] items-center md:col-span-1">
             <Border
               direction="col"
               classes="w-full p-2 gap-2 items-center justify-center"
@@ -215,7 +215,7 @@ useEffect(() => {
                 borderColor: headerColor,
               }}
             >
-              <Logo url={selectedTeamLogo} variant="large" classes="md:h-[8em]" />
+              <Logo url={selectedTeamLogo} variant="large" classes="md:h-[6em]" />
               <div className="flex flex-col items-center justify-center">
                 <Text variant="body" classes="font-semibold">{selectedTeam?.TeamName}</Text>
                 <Text variant="h2-alt" classes="font-semibold">{selectedTeam?.Mascot}</Text>
