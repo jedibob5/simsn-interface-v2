@@ -8,6 +8,7 @@ import {
   HockeySeasons,
   Divisions,
   Conferences,
+  AdminRole,
 } from "../../../_constants/constants";
 import { useAuthStore } from "../../../context/AuthContext";
 import { SelectDropdown } from "../../../_design/Select";
@@ -56,6 +57,8 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     allCHLStandings,
     allCollegeGames: allCHLGames,
     isLoading,
+    collegePolls,
+    collegePollSubmission,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
@@ -64,6 +67,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
   const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
+  const [resultsOverride, setResultsOverride] = useState<boolean>(false);
   const hckExportOptions = useMemo(() => NonFBAExportOptions(), []);
   const selectedWeekOption = useMemo(() => {
     let numVal = selectedWeek.toString();
@@ -150,15 +154,16 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   ]);
 
   const processedSchedule = useMemo(
-    () => processSchedule(teamSchedule, selectedTeam, ts, league),
-    [teamSchedule, selectedTeam, ts, league]
+    () =>
+      processSchedule(teamSchedule, selectedTeam, ts, league, resultsOverride),
+    [teamSchedule, selectedTeam, ts, league, resultsOverride]
   );
 
   const weeklyGames = useMemo(() => {
     if (!selectedWeek) return [];
     const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
-    return processWeeklyGames(gamesForWeek, ts, league);
-  }, [groupedWeeklyGames, selectedWeek, ts, league]);
+    return processWeeklyGames(gamesForWeek, ts, league, resultsOverride);
+  }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
 
   return (
     <>
@@ -190,22 +195,42 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   variant="primary"
                   classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]"
                 >
+                  <Text variant="small">Submit Poll</Text>
+                </Button>
+                <Button
+                  size="md"
+                  variant="primary"
+                  classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]"
+                >
                   <Text variant="small">College Poll</Text>
                 </Button>
               </ButtonGroup>
             </div>
             <div className="flex flex-col gap-2 sm:gap-4 items-center">
               {category === Overview && (
-                <div className="flex justify-center items-center gap-2">
-                  <ToggleSwitch
-                    onChange={(checked) => {
-                      setView(checked ? WeeklyGames : TeamGames);
-                      setIsChecked(checked);
-                    }}
-                    checked={isChecked}
-                  />
-                  <Text variant="small">Weekly Games</Text>
-                </div>
+                <>
+                  <div className="flex justify-center items-center gap-2">
+                    <ToggleSwitch
+                      onChange={(checked) => {
+                        setView(checked ? WeeklyGames : TeamGames);
+                        setIsChecked(checked);
+                      }}
+                      checked={isChecked}
+                    />
+                    <Text variant="small">Weekly Games</Text>
+                  </div>
+                  {currentUser?.roleID === AdminRole && (
+                    <div className="flex justify-center items-center gap-2">
+                      <ToggleSwitch
+                        onChange={() => {
+                          setResultsOverride((res) => !res);
+                        }}
+                        checked={resultsOverride}
+                      />
+                      <Text variant="small">Show Results</Text>
+                    </div>
+                  )}
+                </>
               )}
               <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
                 <div className="flex flex-col items-center gap-2 justify-center">
@@ -364,6 +389,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [selectedWeek, setSelectedWeek] = useState(currentWeek ?? 1);
   const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
   const [standingsView, setStandingsView] = useState(Conferences);
+  const [resultsOverride, setResultsOverride] = useState<boolean>(false);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -434,15 +460,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   ]);
 
   const processedSchedule = useMemo(
-    () => processSchedule(teamSchedule, selectedTeam, ts, league),
-    [teamSchedule, selectedTeam, ts, league]
+    () =>
+      processSchedule(teamSchedule, selectedTeam, ts, league, resultsOverride),
+    [teamSchedule, selectedTeam, ts, league, resultsOverride]
   );
 
   const weeklyGames = useMemo(() => {
     if (!selectedWeek) return [];
     const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
-    return processWeeklyGames(gamesForWeek, ts, league);
-  }, [groupedWeeklyGames, selectedWeek, ts, league]);
+    return processWeeklyGames(gamesForWeek, ts, league, resultsOverride);
+  }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
 
   return (
     <>
@@ -472,16 +499,29 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               </ButtonGroup>
             </div>
             {category === Overview && (
-              <div className="flex justify-center items-center gap-2">
-                <ToggleSwitch
-                  onChange={(checked) => {
-                    setScheduleView(checked ? WeeklyGames : TeamGames);
-                    setIsChecked(checked);
-                  }}
-                  checked={isChecked}
-                />
-                <Text variant="small">Weekly Games</Text>
-              </div>
+              <>
+                <div className="flex justify-center items-center gap-2">
+                  <ToggleSwitch
+                    onChange={(checked) => {
+                      setScheduleView(checked ? WeeklyGames : TeamGames);
+                      setIsChecked(checked);
+                    }}
+                    checked={isChecked}
+                  />
+                  <Text variant="small">Weekly Games</Text>
+                </div>
+                {currentUser?.roleID === AdminRole && (
+                  <div className="flex justify-center items-center gap-2">
+                    <ToggleSwitch
+                      onChange={() => {
+                        setResultsOverride((res) => !res);
+                      }}
+                      checked={resultsOverride}
+                    />
+                    <Text variant="small">Show Results</Text>
+                  </div>
+                )}
+              </>
             )}
             {category === Standings && (
               <div className="flex justify-center items-center gap-2">
