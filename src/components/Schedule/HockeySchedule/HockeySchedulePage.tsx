@@ -9,6 +9,7 @@ import {
   Divisions,
   Conferences,
   AdminRole,
+  SimCHL,
 } from "../../../_constants/constants";
 import { useAuthStore } from "../../../context/AuthContext";
 import { SelectDropdown } from "../../../_design/Select";
@@ -37,6 +38,8 @@ import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { darkenColor } from "../../../_utility/getDarkerColor";
 import { ToggleSwitch } from "../../../_design/Inputs";
 import { NonFBAExportOptions } from "./hockeyScheduleHelper";
+import { useModal } from "../../../_hooks/useModal";
+import { SubmitPollModal } from "../Common/SubmitPollModal";
 
 interface SchedulePageProps {
   league: League;
@@ -59,6 +62,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     isLoading,
     collegePolls,
     collegePollSubmission,
+    submitCollegePoll,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
@@ -165,8 +169,18 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     return processWeeklyGames(gamesForWeek, ts, league, resultsOverride);
   }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
 
+  const submitPollModal = useModal();
+
   return (
     <>
+      <SubmitPollModal
+        league={SimCHL}
+        isOpen={submitPollModal.isModalOpen}
+        onClose={submitPollModal.handleCloseModal}
+        pollSubmission={collegePollSubmission}
+        submitPoll={submitCollegePoll}
+        timestamp={ts}
+      />
       <div className="flex flex-col w-full">
         <div className="sm:grid sm:grid-cols-6 sm:gap-4 w-full h-[82vh]">
           <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
@@ -194,6 +208,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   size="md"
                   variant="primary"
                   classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]"
+                  onClick={submitPollModal.handleOpenModal}
                 >
                   <Text variant="small">Submit Poll</Text>
                 </Button>

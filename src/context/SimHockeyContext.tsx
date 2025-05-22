@@ -76,6 +76,7 @@ import { FreeAgencyService } from "../_services/freeAgencyService";
 import { StatsService } from "../_services/statsService";
 import { GenerateNumberFromRange } from "../_helper/utilHelper";
 import { TradeService } from "../_services/tradeService";
+import { CollegePollService } from "../_services/collegePollService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -175,6 +176,8 @@ interface SimHCKContextProps {
     playerID: number,
     teamID: number
   ) => Promise<void>;
+  submitCollegePoll: (dto: any) => Promise<void>;
+
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -285,6 +288,7 @@ const defaultContext: SimHCKContextProps = {
   cancelTrade: async () => {},
   syncAcceptedTrade: async () => {},
   vetoTrade: async () => {},
+  submitCollegePoll: async () => {},
   topCHLGoals: [],
   topCHLAssists: [],
   topCHLSaves: [],
@@ -520,10 +524,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   }, [proRosterMap, phlTeams]);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && hck_Timestamp) {
       getBootstrapData();
     }
-  }, [currentUser]);
+  }, [currentUser, hck_Timestamp]);
 
   const getBootstrapData = async () => {
     let chlid = 0;
@@ -1283,6 +1287,13 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     });
   }, []);
 
+  const submitCollegePoll = useCallback(async (dto: any) => {
+    const res = await CollegePollService.HCKSubmitPoll(dto);
+    if (res) {
+      setCollegePollSubmission(res);
+    }
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1394,6 +1405,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         ExportCHLRecruits,
         collegePolls,
         collegePollSubmission,
+        submitCollegePoll,
       }}
     >
       {children}

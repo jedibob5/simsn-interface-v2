@@ -661,7 +661,10 @@ export const getNFLAttributes = (
       }`,
     },
     { label: "Arch", value: `${arch1}${arch2.length > 0 ? `/${arch2}` : ""}` },
-    { label: "Yr", value: GetNFLYear(nflPlayer.Experience) },
+    {
+      label: "Yr",
+      value: `${nflPlayer.Age} / ${GetNFLYear(nflPlayer.Experience)}`,
+    },
     {
       label: "Ovr",
       value: showLetterGrade
