@@ -219,7 +219,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                     />
                     <Text variant="small">Weekly Games</Text>
                   </div>
-                  {currentUser?.roleID === AdminRole && (
+                  {currentUser?.roleID && currentUser.roleID === AdminRole && (
                     <div className="flex justify-center items-center gap-2">
                       <ToggleSwitch
                         onChange={() => {
@@ -510,7 +510,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   />
                   <Text variant="small">Weekly Games</Text>
                 </div>
-                {currentUser?.roleID === AdminRole && (
+                {currentUser?.roleID && currentUser.roleID === AdminRole && (
                   <div className="flex justify-center items-center gap-2">
                     <ToggleSwitch
                       onChange={() => {
