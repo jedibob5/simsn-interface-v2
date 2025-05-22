@@ -58,13 +58,13 @@ export function processRivalries(
     }
 
     const latestResultColor = selectedTeamWonLatest 
-                                ? winsColor 
+                                ? `text-[${winsColor}]` 
                                 : !selectedTeamWonLatest && rivalry.LatestWin
-                                  ? lossesColor
-                                  : "n/a"
+                                  ? `text-red-500`
+                                  : `text-inherit`
 
     const streakIsWin = selectedTeamWonLatest;
-    const streakColor = streakIsWin ? winsColor : lossesColor;
+    const streakColor = streakIsWin ? `text-[${winsColor}]` : `text-red-500`;
     const streakLabel =
       Math.abs(rivalry.CurrentStreak) === 1
         ? (streakIsWin ? "Win" : "Loss")

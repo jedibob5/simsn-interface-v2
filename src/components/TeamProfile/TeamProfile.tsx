@@ -182,7 +182,7 @@ useEffect(() => {
   setRivalries(processedRivalries);
   setIsLoading(false);
 }, [selectedTeam, allTeamHistory, cfbTeamMap]);
-console.log(collegeStandings)
+
   return (
     <>
       <div className="flex w-full">

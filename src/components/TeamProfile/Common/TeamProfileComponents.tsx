@@ -65,7 +65,6 @@ export const TeamRivalry = ({
   const handlePrev = () => setCurrentIndex((prev) => prev === 0 ? rivals - 1 : prev - 1);
   const handleNext = () => setCurrentIndex((prev) => prev === rivals - 1 ? 0 : prev + 1);
   const winsColor = "#189E5B";
-  const lossesColor = "#ef4444";
 
   if (!rivals || rivals === 0) {
     return (
@@ -123,7 +122,7 @@ export const TeamRivalry = ({
                   classes={rival.selectedTeamWins > rival.selectedTeamLosses 
                     ? `text-[${winsColor}] w-1/3` 
                     : rival.selectedTeamWins < rival.selectedTeamLosses 
-                      ? `text-[${lossesColor}] w-1/3`
+                      ? `text-red-500 w-1/3`
                       : `${textColorClass}`
                   }>
               {rival.selectedTeamWins}
@@ -135,7 +134,7 @@ export const TeamRivalry = ({
                   classes={rival.selectedTeamWins > rival.selectedTeamLosses 
                     ? `text-[${winsColor}] font-semibold` 
                     : rival.selectedTeamWins < rival.selectedTeamLosses 
-                      ? `text-[${lossesColor}] font-semibold`
+                      ? `text-red-500 font-semibold`
                       : `${textColorClass} font-semibold`
                   }>
               {rival.rivalryTie
@@ -151,7 +150,7 @@ export const TeamRivalry = ({
                   classes={rival.selectedTeamWins > rival.selectedTeamLosses 
                     ? `text-[${winsColor}] w-1/3` 
                     : rival.selectedTeamWins < rival.selectedTeamLosses 
-                      ? `text-[${lossesColor}] w-1/3`
+                      ? `text-red-500 w-1/3`
                       : `${textColorClass}`
                   }>
               {rival.selectedTeamLosses}
@@ -163,7 +162,7 @@ export const TeamRivalry = ({
           <div className="flex w-[40%] flex-col items-center justify-center py-2">
             <Text
               variant="h3-alt"
-              classes={`font-semibold text-[${rival.latestResultColor}]`}
+              classes={`font-semibold ${rival.latestResultColor}`}
             >
               {rival.latestResultScore}
             </Text>
@@ -175,7 +174,7 @@ export const TeamRivalry = ({
           <div className="flex flex-col w-[40%] items-center justify-center py-2">
             <Text variant="h3-alt"                   
                   classes={rival.CurrentStreak > 0 
-                    ? `text-[${rival.streakColor}] font-semibold` 
+                    ? `${rival.streakColor} font-semibold` 
                     : `${textColorClass}`
                   }>
               {rival.streakText}
@@ -350,7 +349,7 @@ export const TeamSeasonHistory = ({
   textColorClass
 }: TeamProfileComponentsProps) => {
   const winsColor = "#189E5B";
-  const lossesColor = "#ef4444";
+  const lossesColor = "text-red-500";
   if (!data || data === 0) {
     return (
       <TeamProfileCards
@@ -392,7 +391,7 @@ export const TeamSeasonHistory = ({
                   wins > losses
                     ? `text-[${winsColor}]`
                     : wins < losses
-                      ? `text-[${lossesColor}]`
+                      ? `text-red-500`
                       : textColorClass
                 }>
             {wins}
@@ -402,7 +401,7 @@ export const TeamSeasonHistory = ({
                   wins > losses
                     ? `text-[${winsColor}]`
                     : wins < losses
-                      ? `text-[${lossesColor}]`
+                      ? `text-red-500`
                       : textColorClass
                 }>
             -
@@ -412,7 +411,7 @@ export const TeamSeasonHistory = ({
                   wins > losses
                     ? `text-[${winsColor}]`
                     : wins < losses
-                      ? `text-[${lossesColor}]`
+                      ? `text-red-500`
                       : textColorClass
                 }>
             {losses}
@@ -455,19 +454,19 @@ export const TeamSeasonHistory = ({
               <Text variant="h3-alt" 
                     classes={season.TotalWins > season.TotalLosses 
                       ? `text-[${winsColor}] w-1/3` 
-                      : `text-[${lossesColor}] w-1/3`}>
+                      : `text-red-500 w-1/3`}>
                 {season.TotalWins}
               </Text>
               <Text variant="h3-alt" 
                     classes={season.TotalWins > season.TotalLosses 
                       ? `text-[${winsColor}] w-1/5` 
-                      : `text-[${lossesColor}] w-1/5`}>
+                      : `text-red-500 w-1/5`}>
                 -
               </Text>
               <Text variant="h3-alt" 
                     classes={season.TotalWins > season.TotalLosses 
                       ? `text-[${winsColor}] w-1/3` 
-                      : `text-[${lossesColor}] w-1/3`}>
+                      : `text-red-500 w-1/3`}>
                 {season.TotalLosses}
               </Text>
             </div>
