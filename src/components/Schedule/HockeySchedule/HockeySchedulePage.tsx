@@ -190,8 +190,8 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
         timestamp={ts}
       />
       <div className="flex flex-col w-full">
-        <div className="sm:grid sm:grid-cols-6 sm:gap-4 w-full h-[82vh]">
-          <div className="flex flex-col w-full sm:col-span-1 items-center gap-4 pb-2">
+        <div className="sm:grid sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-6 sm:gap-4 w-full h-[82vh]">
+          <div className="flex flex-col w-full sm:col-span-1 md:col-span-2 lg:col-span-1 items-center gap-4 pb-2">
             <div className="flex gap-4 justify-center items-center sm:w-full">
               <ButtonGroup classes="flex justify-center w-full">
                 <Button
@@ -265,6 +265,53 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                         options={chlTeamOptions}
                         placeholder="Select Team..."
                         onChange={selectTeamOption}
+                        styles={{
+                          control: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: state.isFocused
+                              ? "#2d3748"
+                              : "#1a202c",
+                            borderColor: state.isFocused
+                              ? "#4A90E2"
+                              : "#4A5568",
+                            color: "#ffffff",
+                            width: "100%",
+                            maxWidth: "300px",
+                            padding: "0.3rem",
+                            boxShadow: state.isFocused
+                              ? "0 0 0 1px #4A90E2"
+                              : "none",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                          }),
+                          menu: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#1a202c",
+                            borderRadius: "8px",
+                          }),
+                          menuList: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#1a202c",
+                            padding: "0",
+                          }),
+                          option: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: state.isFocused
+                              ? "#2d3748"
+                              : "#1a202c",
+                            color: "#ffffff",
+                            padding: "10px",
+                            cursor: "pointer",
+                          }),
+                          singleValue: (provided) => ({
+                            ...provided,
+                            color: "#ffffff",
+                          }),
+                          placeholder: (provided) => ({
+                            ...provided,
+                            color: "#ffffff",
+                          }),
+                        }}
                       />
                     </>
                   ) : (
@@ -281,6 +328,53 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           const selectedWeek = Number(selectedOption?.value);
                           setSelectedWeek(selectedWeek);
                         }}
+                        styles={{
+                          control: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: state.isFocused
+                              ? "#2d3748"
+                              : "#1a202c",
+                            borderColor: state.isFocused
+                              ? "#4A90E2"
+                              : "#4A5568",
+                            color: "#ffffff",
+                            width: "100%",
+                            maxWidth: "300px",
+                            padding: "0.3rem",
+                            boxShadow: state.isFocused
+                              ? "0 0 0 1px #4A90E2"
+                              : "none",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                          }),
+                          menu: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#1a202c",
+                            borderRadius: "8px",
+                          }),
+                          menuList: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#1a202c",
+                            padding: "0",
+                          }),
+                          option: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: state.isFocused
+                              ? "#2d3748"
+                              : "#1a202c",
+                            color: "#ffffff",
+                            padding: "10px",
+                            cursor: "pointer",
+                          }),
+                          singleValue: (provided) => ({
+                            ...provided,
+                            color: "#ffffff",
+                          }),
+                          placeholder: (provided) => ({
+                            ...provided,
+                            color: "#ffffff",
+                          }),
+                        }}
                       />
                     </>
                   )}
@@ -295,6 +389,51 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       const selectedSeason = Number(selectedOption?.value);
                       setSelectedSeason(selectedSeason);
                     }}
+                    styles={{
+                      control: (provided, state) => ({
+                        ...provided,
+                        backgroundColor: state.isFocused
+                          ? "#2d3748"
+                          : "#1a202c",
+                        borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                        color: "#ffffff",
+                        width: "100%",
+                        maxWidth: "300px",
+                        padding: "0.3rem",
+                        boxShadow: state.isFocused
+                          ? "0 0 0 1px #4A90E2"
+                          : "none",
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                      }),
+                      menu: (provided) => ({
+                        ...provided,
+                        backgroundColor: "#1a202c",
+                        borderRadius: "8px",
+                      }),
+                      menuList: (provided) => ({
+                        ...provided,
+                        backgroundColor: "#1a202c",
+                        padding: "0",
+                      }),
+                      option: (provided, state) => ({
+                        ...provided,
+                        backgroundColor: state.isFocused
+                          ? "#2d3748"
+                          : "#1a202c",
+                        color: "#ffffff",
+                        padding: "10px",
+                        cursor: "pointer",
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: "#ffffff",
+                      }),
+                      placeholder: (provided) => ({
+                        ...provided,
+                        color: "#ffffff",
+                      }),
+                    }}
                   />
                 </div>
               </div>
@@ -306,6 +445,51 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                     placeholder="Select Timeslot..."
                     // onChange={selectTeamOption}
                     isDisabled={view === TeamGames}
+                    styles={{
+                      control: (provided, state) => ({
+                        ...provided,
+                        backgroundColor: state.isFocused
+                          ? "#2d3748"
+                          : "#1a202c",
+                        borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
+                        color: "#ffffff",
+                        width: "100%",
+                        maxWidth: "300px",
+                        padding: "0.3rem",
+                        boxShadow: state.isFocused
+                          ? "0 0 0 1px #4A90E2"
+                          : "none",
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                      }),
+                      menu: (provided) => ({
+                        ...provided,
+                        backgroundColor: "#1a202c",
+                        borderRadius: "8px",
+                      }),
+                      menuList: (provided) => ({
+                        ...provided,
+                        backgroundColor: "#1a202c",
+                        padding: "0",
+                      }),
+                      option: (provided, state) => ({
+                        ...provided,
+                        backgroundColor: state.isFocused
+                          ? "#2d3748"
+                          : "#1a202c",
+                        color: "#ffffff",
+                        padding: "10px",
+                        cursor: "pointer",
+                      }),
+                      singleValue: (provided) => ({
+                        ...provided,
+                        color: "#ffffff",
+                      }),
+                      placeholder: (provided) => ({
+                        ...provided,
+                        color: "#ffffff",
+                      }),
+                    }}
                   />
                 </div>
               )}
@@ -369,7 +553,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
             </div>
           )}
           {category === Overview && (
-            <div className="flex flex-col h-full col-span-2">
+            <div className="flex flex-col h-full col-span-2 md:col-span-3 lg:col-span-2">
               <TeamStandings
                 team={selectedTeam}
                 currentUser={currentUser}
