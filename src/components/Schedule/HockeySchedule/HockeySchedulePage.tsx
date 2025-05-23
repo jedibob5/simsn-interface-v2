@@ -40,6 +40,7 @@ import { ToggleSwitch } from "../../../_design/Inputs";
 import { NonFBAExportOptions } from "./hockeyScheduleHelper";
 import { useModal } from "../../../_hooks/useModal";
 import { SubmitPollModal } from "../Common/SubmitPollModal";
+import { CollegePollModal } from "../Common/CollegePollModal";
 
 interface SchedulePageProps {
   league: League;
@@ -170,9 +171,16 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
 
   const submitPollModal = useModal();
+  const collegePollModal = useModal();
 
   return (
     <>
+      <CollegePollModal
+        league={SimCHL}
+        isOpen={collegePollModal.isModalOpen}
+        onClose={collegePollModal.handleCloseModal}
+        timestamp={ts}
+      />
       <SubmitPollModal
         league={SimCHL}
         isOpen={submitPollModal.isModalOpen}
@@ -216,6 +224,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   size="md"
                   variant="primary"
                   classes="px-5 py-2 sm:w-[92%] sm:max-w-[350px]"
+                  onClick={collegePollModal.handleOpenModal}
                 >
                   <Text variant="small">College Poll</Text>
                 </Button>

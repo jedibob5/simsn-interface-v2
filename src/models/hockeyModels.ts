@@ -6132,6 +6132,7 @@ export class ProGameplan {
   }
 }
 export class CollegePollOfficial {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
