@@ -64,6 +64,71 @@ export const CollegePollModal: FC<CollegePollModalProps> = ({
   );
 };
 
+interface CollegePollRowProps {
+  poll: any;
+  idx: number;
+  darkerBackgroundColor: string;
+  backgroundColor: string;
+  teamMap: any;
+  standingsMap: any;
+  league: League;
+  isRetro: boolean;
+}
+
+const CollegePollRow: FC<CollegePollRowProps> = ({
+  poll,
+  idx,
+  darkerBackgroundColor,
+  backgroundColor,
+  teamMap,
+  standingsMap,
+  league,
+  isRetro,
+}) => {
+  const team = teamMap[poll.TeamID];
+  const standings = standingsMap[poll.TeamID];
+  const logo = getLogo(league, team.ID, isRetro);
+  let description = "";
+  if (standings) {
+    description = `${standings.TotalWins}-${standings.TotalLosses}-${standings.TotalOTLosses} (${standings.ConferenceWins}-${standings.ConferenceLosses}-${standings.ConferenceOTLosses})`;
+  }
+  return (
+    <div
+      className="grid grid-cols-10 border-b border-b-[#34455d] h-[3rem]"
+      style={{
+        backgroundColor:
+          idx % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+      }}
+    >
+      <div className="text-left col-span-1 flex items-center">
+        <Text variant="xs" className="font-semibold">
+          {idx + 1}
+        </Text>
+      </div>
+      <div className="text-left col-span-4">
+        <div className="grid grid-cols-5 space-x-4 h-full">
+          <div className="col-span-1 items-center flex">
+            <Logo url={logo} variant="xs" />
+          </div>
+          <div className="col-span-4 items-center flex">
+            <Text variant="xs">{team.TeamName}</Text>
+          </div>
+        </div>
+      </div>
+      <div className="text-left col-span-3 flex items-center">
+        <Text variant="xs" className="font-semibold">
+          {description}
+        </Text>
+      </div>
+      <div className="text-left col-span-2 flex items-center">
+        <Text variant="xs" className="font-semibold">
+          {poll.Votes} Votes ({poll.No1Votes})
+        </Text>
+      </div>
+    </div>
+  );
+};
+
 export const HCKCollegePollModal: FC<CollegePollModalProps> = ({
   league,
   timestamp,
@@ -186,50 +251,19 @@ export const HCKCollegePollModal: FC<CollegePollModalProps> = ({
           </Text>
         )}
         {CurrentCollegePoll.length > 0 &&
-          CurrentCollegePoll.map((poll, idx) => {
-            const team = chlTeamMap[poll.TeamID];
-            const standings = chlStandingsMap[poll.TeamID];
-            const logo = getLogo(league, team.ID, currentUser?.isRetro);
-            let description = "";
-            if (standings) {
-              description = `${standings.TotalWins}-${standings.TotalLosses}-${standings.TotalOTLosses} (${standings.ConferenceWins}-${standings.ConferenceLosses}-${standings.ConferenceOTLosses})`;
-            }
-            return (
-              <div
-                className="grid grid-cols-10 border-b border-b-[#34455d] h-[3rem]"
-                style={{
-                  backgroundColor:
-                    idx % 2 === 0 ? darkerBackgroundColor : backgroundColor,
-                }}
-              >
-                <div className="text-left col-span-1 flex items-center">
-                  <Text variant="xs" className="font-semibold">
-                    {idx + 1}
-                  </Text>
-                </div>
-                <div className="text-left col-span-4">
-                  <div className="grid grid-cols-5 space-x-4 h-full">
-                    <div className="col-span-1 items-center flex">
-                      <Logo url={logo} variant="xs" />
-                    </div>
-                    <div className="col-span-4 items-center flex">
-                      <Text variant="xs">{team.TeamName}</Text>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-left col-span-3 flex items-center">
-                  <Text variant="xs" className="font-semibold">
-                    {description}
-                  </Text>
-                </div>
-                <div className="text-left col-span-2 flex items-center">
-                  <Text variant="xs" className="font-semibold">
-                    {poll.Votes} Votes ({poll.No1Votes})
-                  </Text>
-                </div>
-              </div>
-            );
-          })}
+          CurrentCollegePoll.map((poll, idx) => (
+            <CollegePollRow
+              key={idx}
+              poll={poll}
+              idx={idx}
+              darkerBackgroundColor={darkerBackgroundColor}
+              backgroundColor={backgroundColor}
+              teamMap={chlTeamMap}
+              standingsMap={chlStandingsMap}
+              league={league}
+              isRetro={currentUser?.isRetro || false}
+            />
+          ))}
       </div>
     </>
   );
