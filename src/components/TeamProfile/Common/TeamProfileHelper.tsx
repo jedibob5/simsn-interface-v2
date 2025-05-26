@@ -1,6 +1,6 @@
 import React from "react";
 import { CollegeTeamProfileData, FlexComparisonModel } from "../../../models/footballModels";
-import { Trophy, CrossCircle } from "../../../_design/Icons";
+import { Trophy, CrossCircle, TrophyTwo, Ribbon, Medal } from "../../../_design/Icons";
 
 type TeamProfileType = CollegeTeamProfileData;
 type SelectedTeamType = { ID: number; [key: string]: any };
@@ -391,27 +391,41 @@ export const getFBAPastSeasonColumns = (
       if (teamTrophies.NationalChampionshipWins.includes(seasonId)) {
         return (
           <span className="flex items-center gap-2">
-            <Trophy textColorClass="text-yellow-500" />
+            <TrophyTwo textColorClass="text-yellow-500" />
             <span>National Champions</span>
           </span>
         );
       } else if (teamTrophies.NationalChampionshipLosses.includes(seasonId)) {
         return (
           <span className="flex items-center gap-2">
-            <Trophy textColorClass="text-gray-400" />
+            <TrophyTwo textColorClass="text-gray-400" />
             <span>Runners Up</span>
           </span>
         );
       } else if (teamTrophies.PlayoffAppearances.includes(seasonId)) {
         return (
           <span className="flex items-center gap-2">
-            <Trophy textColorClass="text-blue-500" />
+            <Ribbon textColorClass="text-blue-500" />
             <span>Play-Offs</span>
+          </span>
+        );
+      } else if (teamTrophies.BowlWins.includes(seasonId)) {
+        return (
+          <span className="flex items-center gap-2">
+            <Medal textColorClass="text-purple-500" />
+            <span>Bowl Win</span>
+          </span>
+        );
+      } else if (teamTrophies.BowlLosses.includes(seasonId)) {
+        return (
+          <span className="flex items-center gap-2">
+            <Medal textColorClass="text-gray-500" />
+            <span>Bowl Loss</span>
           </span>
         );
       } else {
         return (
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 opacity-50">
             <CrossCircle textColorClass="text-red-500" />
             <span>None</span>
           </span>

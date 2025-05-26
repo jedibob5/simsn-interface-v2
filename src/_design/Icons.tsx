@@ -28,6 +28,10 @@ import {
   QuestionMarkCircleIcon,
   TrophyIcon
 } from "@heroicons/react/16/solid";
+import { GiDiamondTrophy, GiTrophyCup, GiRibbonMedal, GiTrophy } from "react-icons/gi";
+import { IoIosRibbon } from "react-icons/io";
+import { FaMedal } from "react-icons/fa";
+
 
 // 🔑 Define Props Interface for LockIcon
 interface LockIconProps {
@@ -241,5 +245,17 @@ export const QuestionMark: React.FC<LockIconProps> = ({ textColorClass }) => {
 };
 
 export const Trophy: React.FC<LockIconProps> = ({ textColorClass }) => {
-  return <TrophyIcon className={`size-5 ${textColorClass}`} />;
+  return <GiTrophyCup className={`size-5 ${textColorClass}`} />;
+};
+
+export const TrophyTwo: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiDiamondTrophy className={`size-5 ${textColorClass}`} />;
+};
+
+export const Medal: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiTrophy className={`size-5 ${textColorClass}`} />;
+};
+
+export const Ribbon: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiRibbonMedal className={`size-5 ${textColorClass}`} />;
 };

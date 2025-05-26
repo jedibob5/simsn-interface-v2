@@ -31,7 +31,7 @@ import { SelectDropdown } from "../../../_design/Select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { SingleValue } from "react-select";
 import { getFBAStatColumns, processTopPlayers, getFBAPastSeasonColumns, FBATrophies } from "./TeamProfileHelper";
-import { Trophy, CrossCircle, CheckCircle } from "../../../_design/Icons";
+import { Trophy, Ribbon, TrophyTwo, Medal } from "../../../_design/Icons";
 
 interface TeamProfileComponentsProps {
   league: League;
@@ -501,7 +501,7 @@ export const TeamTrophyCabinet = ({
             </Text>
           </div>
           <div className="flex gap-2">
-            <Trophy textColorClass="text-yellow-500 size-14" />
+            <TrophyTwo textColorClass="text-yellow-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
                 <Text variant="xs" classes="text-right w-full">Wins: </Text>
@@ -529,7 +529,7 @@ export const TeamTrophyCabinet = ({
             </Text>
           </div>
           <div className="flex gap-2">
-            <Trophy textColorClass="text-gray-400 size-14" />
+            <Trophy textColorClass="text-gray-400 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
                 <Text variant="xs" classes="text-right w-full">Wins: </Text>
@@ -557,7 +557,7 @@ export const TeamTrophyCabinet = ({
             </Text>
           </div>
           <div className="flex gap-2">
-            <div className="bg-yellow-500 size-14 rounded-full border-2" />
+             <Medal textColorClass="text-purple-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
                 <Text variant="xs" classes="text-right w-full">Wins: </Text>
