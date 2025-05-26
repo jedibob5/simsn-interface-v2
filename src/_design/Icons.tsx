@@ -26,6 +26,7 @@ import {
   BellAlertIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   QuestionMarkCircleIcon,
+  TrophyIcon
 } from "@heroicons/react/16/solid";
 
 // 🔑 Define Props Interface for LockIcon
@@ -237,4 +238,8 @@ export const Close: React.FC<LockIconProps> = ({ textColorClass }) => {
 
 export const QuestionMark: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <QuestionMarkCircleIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const Trophy: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <TrophyIcon className={`size-5 ${textColorClass}`} />;
 };

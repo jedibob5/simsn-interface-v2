@@ -9039,6 +9039,7 @@ export class CollegeTeamProfileData {
   CollegeStandings: CollegeStandings[];
   Rivalries: FlexComparisonModel[];
   PlayerMap: { [key: number]: CollegePlayer };
+  CollegeGames: CollegeGame[];
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -9058,6 +9059,10 @@ export class CollegeTeamProfileData {
       source["PlayerMap"],
       CollegePlayer,
       true
+    );
+    this.CollegeGames = this.convertValues(
+      source["CollegeGames"],
+      CollegeGame
     );
   }
 

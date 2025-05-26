@@ -1,5 +1,6 @@
 import React from "react";
 import { CollegeTeamProfileData, FlexComparisonModel } from "../../../models/footballModels";
+import { Trophy, CrossCircle } from "../../../_design/Icons";
 
 type TeamProfileType = CollegeTeamProfileData;
 type SelectedTeamType = { ID: number; [key: string]: any };
@@ -169,6 +170,73 @@ export function processSeasonHistory(collegeStandings: any[]): { processedSeason
   return { processedSeasonHistory, totalWins, totalLosses };
 }
 
+export interface FBATrophies {
+  NationalChampionshipWins: number[];
+  NationalChampionshipLosses: number[];
+  ConferenceChampionshipWins: number[];
+  ConferenceChampionshipLosses: number[];
+  BowlWins: number[];
+  BowlLosses: number[];
+  PlayoffAppearances: number[];
+}
+
+export function processTeamTrophies(games: any[], teamId: number): FBATrophies {
+  const NationalChampionshipWins: number[] = [];
+  const NationalChampionshipLosses: number[] = [];
+  const ConferenceChampionshipWins: number[] = [];
+  const ConferenceChampionshipLosses: number[] = [];
+  const BowlWins: number[] = [];
+  const BowlLosses: number[] = [];
+  const PlayoffAppearancesSet = new Set<number>();
+
+  for (const game of games) {
+    if (!game.GameComplete) continue;
+
+    const seasonId = game.SeasonID;
+    const isAway = game.AwayTeamID === teamId;
+    const isHome = game.HomeTeamID === teamId;
+    const teamWon = (isAway && game.AwayTeamWin) || (isHome && game.HomeTeamWin);
+
+    if (game.IsNationalChampionship) {
+      if (teamWon) {
+        NationalChampionshipWins.push(seasonId);
+      } else if (isHome || isAway) {
+        NationalChampionshipLosses.push(seasonId);
+      }
+    }
+
+    if (game.IsConferenceChampionship) {
+      if (teamWon) {
+        ConferenceChampionshipWins.push(seasonId);
+      } else if (isHome || isAway) {
+        ConferenceChampionshipLosses.push(seasonId);
+      }
+    }
+
+    if (game.IsBowlGame) {
+      if (teamWon) {
+        BowlWins.push(seasonId);
+      } else if (isHome || isAway) {
+        BowlLosses.push(seasonId);
+      }
+    }
+
+    if (game.IsPlayoffGame && (isHome || isAway)) {
+      PlayoffAppearancesSet.add(seasonId);
+    }
+  }
+
+  return {
+    NationalChampionshipWins,
+    NationalChampionshipLosses,
+    ConferenceChampionshipWins,
+    ConferenceChampionshipLosses,
+    BowlWins,
+    BowlLosses,
+    PlayoffAppearances: Array.from(PlayoffAppearancesSet).sort((a, b) => b - a),
+  };
+}
+
 export const getFBAStatColumns = (
   type: "Passing" | "Rushing" | "Receiving" | "Tackles" | "Sacks" | "Interceptions" = "Passing"
 ) => {
@@ -250,3 +318,105 @@ export const getFBAStatColumns = (
       return [];
   }
 };
+
+export const getFBAPastSeasonColumns = (
+  winsColor: string,
+  textColorClass: string,
+  teamTrophies: FBATrophies,
+) => [
+  {
+    header: "Season",
+    accessor: "Season",
+    render: (row: any) => <span className={textColorClass}>{row.Season}</span>,
+  },
+  {
+    header: "Coach",
+    accessor: "Coach",
+    render: (row: any) => <span className={textColorClass}>{row.Coach}</span>,
+  },
+  {
+    header: "Record",
+    accessor: "Record",
+    render: (row: any) => (
+      <span className="flex items-center">
+        <span
+          className={
+            row.TotalWins > row.TotalLosses
+              ? `text-[${winsColor}] w-1/3`
+              : row.TotalWins < row.TotalLosses
+                ? `text-red-500 w-1/3`
+                : textColorClass
+          }
+        >
+          {row.TotalWins}
+        </span>
+        <span
+          className={
+            row.TotalWins > row.TotalLosses
+              ? `text-[${winsColor}] w-1/5`
+              : row.TotalWins < row.TotalLosses
+                ? `text-red-500 w-1/5`
+                : textColorClass
+          }
+        >
+          -
+        </span>
+        <span
+          className={
+            row.TotalWins > row.TotalLosses
+              ? `text-[${winsColor}] w-1/3`
+              : row.TotalWins < row.TotalLosses
+                ? `text-red-500 w-1/3`
+                : textColorClass
+          }
+        >
+          {row.TotalLosses}
+        </span>
+      </span>
+    ),
+  },
+{
+    header: "Post-Season",
+    accessor: "PostSeasonStatus",
+    render: (row: any) => {
+      const seasonId = row.SeasonID;
+      if (!teamTrophies) {
+        return (
+          <span className="flex items-center gap-2">
+            <CrossCircle textColorClass="text-red-500" />
+            <span>Nothing</span>
+          </span>
+        );
+      }
+      if (teamTrophies.NationalChampionshipWins.includes(seasonId)) {
+        return (
+          <span className="flex items-center gap-2">
+            <Trophy textColorClass="text-yellow-500" />
+            <span>National Champions</span>
+          </span>
+        );
+      } else if (teamTrophies.NationalChampionshipLosses.includes(seasonId)) {
+        return (
+          <span className="flex items-center gap-2">
+            <Trophy textColorClass="text-gray-400" />
+            <span>Runners Up</span>
+          </span>
+        );
+      } else if (teamTrophies.PlayoffAppearances.includes(seasonId)) {
+        return (
+          <span className="flex items-center gap-2">
+            <Trophy textColorClass="text-blue-500" />
+            <span>Play-Offs</span>
+          </span>
+        );
+      } else {
+        return (
+          <span className="flex items-center gap-2">
+            <CrossCircle textColorClass="text-red-500" />
+            <span>None</span>
+          </span>
+        );
+      }
+    },
+  },
+];

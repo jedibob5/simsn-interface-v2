@@ -30,12 +30,14 @@ import { Table, TableCell } from "../../../_design/Table";
 import { SelectDropdown } from "../../../_design/Select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { SingleValue } from "react-select";
-import { getFBAStatColumns, processTopPlayers } from "./TeamProfileHelper";
+import { getFBAStatColumns, processTopPlayers, getFBAPastSeasonColumns, FBATrophies } from "./TeamProfileHelper";
+import { Trophy, CrossCircle, CheckCircle } from "../../../_design/Icons";
 
 interface TeamProfileComponentsProps {
   league: League;
   team: any;
   data: any;
+  teamTrophies?: any;
   wins?: number;
   losses?: number;
   playerMap?: any;
@@ -279,30 +281,33 @@ export const TeamPlayerCareerStats = ({
       textColorClass={textColorClass}
     >
       <div className="flex flex-col items-center w-full">
-        <div className="flex flex-row justify-center items-end gap-4 mb-4">
+        <div className="flex flex-row justify-center items-end gap-8 mb-4 w-full">
           {topThree.map((player, idx) => (
             <div
               key={player.CollegePlayerID || idx}
-              className="flex flex-col items-center pt-2"
+              className="flex flex-col items-center pt-2 w-1/4"
             >
-              <div className="rounded-lg mb-2 border h-[5em] w-[5em]"
+              <div className="rounded-lg mb-2 border h-[7em] w-[5em]"
                 style={{
                   border: `4px solid ${borderColors[idx]}`,
                   background: "#242424"
                 }}
               >
+                <Text variant="xs" classes="font-semibold">
+                  {idx === 0 ? "1st" : idx === 1 ? "2nd" : "3rd"}
+                </Text>
                 <PlayerPicture
                   playerID={player.CollegePlayerID}
                   team={team}
                   league={league}
+                  classes="max-h-[5em]"
                 />
               </div>
-              <Text variant="body" classes="font-bold">{player.Position}</Text>
-              <Text variant="body-small" classes="text-center">
-                {player.FirstName} {player.LastName}
+              <Text variant="xs" classes="text-center">
+                {player.FirstName}
               </Text>
-              <Text variant="xs" classes="font-semibold mt-1">
-                {idx === 0 ? "1st" : idx === 1 ? "2nd" : "3rd"}
+              <Text variant="h3-alt" classes="text-center font-semibold">
+                {player.LastName}
               </Text>
             </div>
           ))}
@@ -311,6 +316,7 @@ export const TeamPlayerCareerStats = ({
           <SelectDropdown
             options={statsOptions}
             onChange={selectStatsOption}
+            placeholder="Passing"
             className=""
           />
         </div>
@@ -340,6 +346,7 @@ export const TeamSeasonHistory = ({
   league,
   team,
   data,
+  teamTrophies,
   wins,
   losses,
   backgroundColor,
@@ -349,7 +356,6 @@ export const TeamSeasonHistory = ({
   textColorClass
 }: TeamProfileComponentsProps) => {
   const winsColor = "#189E5B";
-  const lossesColor = "text-red-500";
   if (!data || data === 0) {
     return (
       <TeamProfileCards
@@ -367,11 +373,13 @@ export const TeamSeasonHistory = ({
     );
   }
 
+  const columns = getFBAPastSeasonColumns(winsColor, textColorClass, teamTrophies);
+
   return (
     <TeamProfileCards
       team={team}
       header="Past Seasons"
-      classes={`${textColorClass} w-full`}
+      classes={`${textColorClass} w-full overflow-y-auto`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
@@ -380,104 +388,197 @@ export const TeamSeasonHistory = ({
     >
       <div className="flex flex-col justify-center gap-4 items-center py-2">
         <div className="flex flex-col gap-2 font-semibold">
-          <Text variant="h3-alt" classes={`${textColorClass}`}>
+          <Text variant="h3-alt" classes={textColorClass}>
             Overall Record
           </Text>
-        </div>          
-      {wins && losses && (
-        <div className="flex gap-2 font-semibold pb-2">
-          <Text variant="h2-alt" 
-                classes={
-                  wins > losses
-                    ? `text-[${winsColor}]`
-                    : wins < losses
-                      ? `text-red-500`
-                      : textColorClass
-                }>
-            {wins}
-          </Text>
-          <Text variant="h2-alt" 
-                classes={
-                  wins > losses
-                    ? `text-[${winsColor}]`
-                    : wins < losses
-                      ? `text-red-500`
-                      : textColorClass
-                }>
-            -
-          </Text>
-          <Text variant="h2-alt" 
-                classes={
-                  wins > losses
-                    ? `text-[${winsColor}]`
-                    : wins < losses
-                      ? `text-red-500`
-                      : textColorClass
-                }>
-            {losses}
-          </Text>
-        </div> 
-      )}
+        </div>
+        {wins !== undefined && losses !== undefined && (
+          <div className="flex gap-2 font-semibold pb-2">
+            <Text variant="h2-alt"
+              classes={
+                wins > losses
+                  ? `text-[${winsColor}]`
+                  : wins < losses
+                    ? `text-red-500`
+                    : textColorClass
+              }>
+              {wins}
+            </Text>
+            <Text variant="h2-alt"
+              classes={
+                wins > losses
+                  ? `text-[${winsColor}]`
+                  : wins < losses
+                    ? `text-red-500`
+                    : textColorClass
+              }>
+              -
+            </Text>
+            <Text variant="h2-alt"
+              classes={
+                wins > losses
+                  ? `text-[${winsColor}]`
+                  : wins < losses
+                    ? `text-red-500`
+                    : textColorClass
+              }>
+              {losses}
+            </Text>
+          </div>
+        )}
       </div>
-      <div className="flex justify-between gap-8 items-center py-2">
-        <div className="flex flex-col gap-2 w-1/3 font-semibold">
-          <Text variant="h3-alt" classes={`${textColorClass}`}>
-            Season
-          </Text>
-        </div>
-        <div className="flex flex-col gap-2 w-1/3 font-semibold">
-          <Text variant="h3-alt" classes={`${textColorClass}`}>
-            Coach
-          </Text>
-        </div>
-        <div className="flex flex-col gap-2 w-1/3 font-semibold">
-          <Text variant="h3-alt" classes={`${textColorClass}`}>
-            Record
-          </Text>
-        </div>
+      <div className="overflow-x-auto w-full">
+        <Table
+          columns={columns}
+          data={data}
+          team={team}
+          rowRenderer={(item: any, index: number, bg: string) => (
+            <div className="table-row text-left text-lg" style={{ backgroundColor: bg }}>
+              {columns.map((col) => (
+                <TableCell key={col.accessor}>
+                  {col.render ? col.render(item) : item[col.accessor]}
+                </TableCell>
+              ))}
+            </div>
+          )}
+          rowBgColor={backgroundColor}
+          darkerRowBgColor={darkerBackgroundColor}
+          league={league}
+        />
       </div>
-    {data.length > 0 ? (
-      data.map((season: any, index: number) => (
-        <div key={index} className="p-2">
-          <div className="flex justify-between gap-8 items-center">
-            <div className="flex flex-col w-1/3">
-              <Text variant="h3-alt" classes={`${textColorClass}`}>
-                {season.Season}
-              </Text>
-            </div>
-            <div className="flex flex-col w-1/3">
-              <Text variant="h3-alt" classes={`${textColorClass}`}>
-                {season.Coach}
-              </Text>
-            </div>
-            <div className="flex w-1/3 justify-center">
-              <Text variant="h3-alt" 
-                    classes={season.TotalWins > season.TotalLosses 
-                      ? `text-[${winsColor}] w-1/3` 
-                      : `text-red-500 w-1/3`}>
-                {season.TotalWins}
-              </Text>
-              <Text variant="h3-alt" 
-                    classes={season.TotalWins > season.TotalLosses 
-                      ? `text-[${winsColor}] w-1/5` 
-                      : `text-red-500 w-1/5`}>
-                -
-              </Text>
-              <Text variant="h3-alt" 
-                    classes={season.TotalWins > season.TotalLosses 
-                      ? `text-[${winsColor}] w-1/3` 
-                      : `text-red-500 w-1/3`}>
-                {season.TotalLosses}
-              </Text>
+    </TeamProfileCards>
+  );
+};
+
+export const TeamTrophyCabinet = ({
+  league,
+  team,
+  data,
+  wins,
+  losses,
+  backgroundColor,
+  borderColor,
+  headerColor,
+  darkerBackgroundColor,
+  textColorClass
+}: TeamProfileComponentsProps) => {
+  const winsColor = "#189E5B";
+  console.log(data)
+  if (!data || data === 0) {
+    return (
+      <TeamProfileCards
+        team={team}
+        header="Trophy Cabinet"
+        classes={`${textColorClass} h-full`}
+        backgroundColor={backgroundColor}
+        headerColor={headerColor}
+        borderColor={borderColor}
+        darkerBackgroundColor={darkerBackgroundColor}
+        textColorClass={textColorClass}
+      >
+        <Text variant="small" classes={textColorClass}>No trophy data found.</Text>
+      </TeamProfileCards>
+    );
+  }
+
+
+  return (
+    <TeamProfileCards
+      team={team}
+      header="Trophy Cabinet"
+      classes={`${textColorClass} w-full`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      darkerBackgroundColor={darkerBackgroundColor}
+      textColorClass={textColorClass}
+    >
+      <div className="flex justify-between">
+        <div className="flex flex-col justify-center gap-4 items-center py-2">
+          <div className="flex flex-col gap-2 font-semibold">
+            <Text variant="body-small" classes={textColorClass}>
+              National Championships
+            </Text>
+          </div>
+          <div className="flex gap-2">
+            <Trophy textColorClass="text-yellow-500 size-14" />
+            <div className="flex flex-col justify-center">
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Wins: </Text>
+                <Text variant="xs" classes="">
+                  {data.NationalChampionshipWins.length > 0
+                    ? data.NationalChampionshipWins.length
+                    : "0"}
+                </Text>
+              </div>
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Losses: </Text>
+                <Text variant="xs" classes="">
+                  {data.NationalChampionshipLosses.length > 0
+                    ? data.NationalChampionshipLosses.length
+                    : "0"}
+                </Text>
+              </div>
             </div>
           </div>
         </div>
-      ))
-    ) : (
-      <Text variant="small" classes={`${textColorClass} pt-2 pb-2`}>
-        No season data
-      </Text>
-    )}
+        <div className="flex flex-col justify-center gap-4 items-center py-2">
+          <div className="flex flex-col gap-2 font-semibold">
+            <Text variant="body-small" classes={textColorClass}>
+              Conference Titles
+            </Text>
+          </div>
+          <div className="flex gap-2">
+            <Trophy textColorClass="text-gray-400 size-14" />
+            <div className="flex flex-col justify-center">
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Wins: </Text>
+                <Text variant="xs" classes="">
+                  {data.ConferenceChampionshipWins.length > 0
+                    ? data.ConferenceChampionshipWins.length
+                    : "0"}
+                </Text>
+              </div>
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Losses: </Text>
+                <Text variant="xs" classes="">
+                  {data.ConferenceChampionshipLosses.length > 0
+                    ? data.ConferenceChampionshipLosses.length
+                    : "0"}
+                </Text>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center gap-4 items-center py-2">
+          <div className="flex flex-col gap-2 font-semibold">
+            <Text variant="body-small" classes={textColorClass}>
+              Bowl Wins
+            </Text>
+          </div>
+          <div className="flex gap-2">
+            <div className="bg-yellow-500 size-14 rounded-full border-2" />
+            <div className="flex flex-col justify-center">
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Wins: </Text>
+                <Text variant="xs" classes="">
+                  {data.BowlWins.length > 0
+                    ? data.BowlWins.length
+                    : "0"}
+                </Text>
+              </div>
+              <div className="flex gap-2">
+                <Text variant="xs" classes="text-right w-full">Losses: </Text>
+                <Text variant="xs" classes="">
+                  {data.BowlLosses.length > 0
+                    ? data.BowlLosses.length
+                    : "0"}
+                </Text>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </TeamProfileCards>
   );
 };
