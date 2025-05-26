@@ -390,7 +390,7 @@ export const getFBAPastSeasonColumns = (
       }
       if (teamTrophies.NationalChampionshipWins.includes(seasonId)) {
         return (
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 font-semibold">
             <TrophyTwo textColorClass="text-yellow-500" />
             <span>National Champions</span>
           </span>

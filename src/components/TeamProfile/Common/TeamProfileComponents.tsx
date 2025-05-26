@@ -504,14 +504,14 @@ export const TeamTrophyCabinet = ({
             <TrophyTwo textColorClass="text-yellow-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="xs" classes="text-right w-full">Wins: </Text>
-                <Text variant="xs" classes="">
+                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="body" classes="font-semibold">
                   {data.NationalChampionshipWins.length > 0
                     ? data.NationalChampionshipWins.length
                     : "0"}
                 </Text>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 opacity-80">
                 <Text variant="xs" classes="text-right w-full">Losses: </Text>
                 <Text variant="xs" classes="">
                   {data.NationalChampionshipLosses.length > 0
@@ -532,14 +532,14 @@ export const TeamTrophyCabinet = ({
             <Trophy textColorClass="text-gray-400 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="xs" classes="text-right w-full">Wins: </Text>
-                <Text variant="xs" classes="">
+                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="body" classes="font-semibold">
                   {data.ConferenceChampionshipWins.length > 0
                     ? data.ConferenceChampionshipWins.length
                     : "0"}
                 </Text>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 opacity-80">
                 <Text variant="xs" classes="text-right w-full">Losses: </Text>
                 <Text variant="xs" classes="">
                   {data.ConferenceChampionshipLosses.length > 0
@@ -560,14 +560,14 @@ export const TeamTrophyCabinet = ({
              <Medal textColorClass="text-purple-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="xs" classes="text-right w-full">Wins: </Text>
-                <Text variant="xs" classes="">
+                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="body" classes="font-semibold">
                   {data.BowlWins.length > 0
                     ? data.BowlWins.length
                     : "0"}
                 </Text>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 opacity-80">
                 <Text variant="xs" classes="text-right w-full">Losses: </Text>
                 <Text variant="xs" classes="">
                   {data.BowlLosses.length > 0
