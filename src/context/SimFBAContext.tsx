@@ -31,6 +31,7 @@ import {
   NFLExtensionOffer,
   FreeAgencyOffer,
   NFLWaiverOffer,
+  CollegeTeamProfileData as CFBTeamProfileData,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -38,6 +39,7 @@ import { fba_ws } from "../_constants/urls";
 import { SimFBA } from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
+import FBATeamHistoryService from "../_services/teamHistoryService";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -101,6 +103,7 @@ interface SimFBAContextProps {
   };
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
+  allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
 }
 
 // ✅ Initial Context State
@@ -161,6 +164,7 @@ const defaultContext: SimFBAContextProps = {
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
+  allCFBTeamHistory: {},
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -283,6 +287,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     number,
     NFLExtensionOffer
   > | null>({});
+  const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{ [key: number]: CFBTeamProfileData }>({});
 
   useEffect(() => {
     if (currentUser && !isFetching.current) {
@@ -465,6 +470,13 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setProExtensionMap(res.ExtensionMap);
   };
 
+  const teamHistoryService = new FBATeamHistoryService();
+    const fetchAllHistory = async () => {
+      const response = await teamHistoryService.GetCFBTeamHistory();
+      setAllCFBTeamHistory(response);
+    };
+    fetchAllHistory();
+
   const cutCFBPlayer = useCallback(
     async (playerID: number, teamID: number) => {
       const rosterMap = { ...cfbRosterMap };
@@ -590,6 +602,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         playerFaces,
         proContractMap,
         proExtensionMap,
+        allCFBTeamHistory,
       }}
     >
       {children}

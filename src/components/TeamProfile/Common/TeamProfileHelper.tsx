@@ -1,6 +1,8 @@
 import React from "react";
 import { CollegeTeamProfileData, FlexComparisonModel } from "../../../models/footballModels";
 import { Trophy, CrossCircle, TrophyTwo, Ribbon, Medal } from "../../../_design/Icons";
+import { Logo } from "../../../_design/Logo";
+import { getLogo } from "../../../_utility/getLogo";
 
 type TeamProfileType = CollegeTeamProfileData;
 type SelectedTeamType = { ID: number; [key: string]: any };
@@ -237,6 +239,43 @@ export function processTeamTrophies(games: any[], teamId: number): FBATrophies {
   };
 }
 
+export function processBowlGames(
+  games: any[],
+  userTeamId: number,
+  cfbTeamMap: any,
+) {
+  const bowlGames = [];
+
+  const sortedGames = [...games].sort((a, b) => b.SeasonID - a.SeasonID);
+
+  for (const game of sortedGames) {
+    if (!game.IsBowlGame) continue;
+
+    const isHome = game.HomeTeamID === userTeamId;
+    const isAway = game.AwayTeamID === userTeamId;
+    if (!isHome && !isAway) continue;
+
+    const opponentId = isHome ? game.AwayTeamID : game.HomeTeamID;
+    const opponentName = cfbTeamMap?.[opponentId]?.TeamName || "Unknown";
+    const opponentScore = isHome ? game.AwayTeamScore : game.HomeTeamScore;
+    const userScore = isHome ? game.HomeTeamScore : game.AwayTeamScore;
+    const userWin = isHome ? game.HomeTeamWin : game.AwayTeamWin;
+    const Season = 2020 + game.SeasonID;
+
+    bowlGames.push({
+      OpponentName: opponentName,
+      OpponentId: opponentId,
+      OpponentScore: opponentScore,
+      UserScore: userScore,
+      SeasonID: game.SeasonID,
+      Season,
+      UserWin: !!userWin,
+    });
+  }
+
+  return bowlGames;
+}
+
 export const getFBAStatColumns = (
   type: "Passing" | "Rushing" | "Receiving" | "Tackles" | "Sacks" | "Interceptions" = "Passing"
 ) => {
@@ -431,6 +470,52 @@ export const getFBAPastSeasonColumns = (
           </span>
         );
       }
+    },
+  },
+];
+
+export const getFBAPastBowlGamesColumns = (
+  winsColor: string,
+  data: any,
+  textColorClass: string,
+  cfbTeamMap: any,
+) => [
+  {
+    header: "Season",
+    accessor: "SeasonID",
+    render: (row: any) => <span className={textColorClass}>{row.Season}</span>,
+  },
+  {
+    header: "Opponent",
+    accessor: "OpponentName",
+    render: (row: any) => {
+      if (!cfbTeamMap) {
+        return <span className={textColorClass}>{row.OpponentName}</span>;
+      }
+      const opponent = Object.values(cfbTeamMap).find(
+        (team: any) => team.TeamName === row.OpponentName
+      );
+      return (
+        <span className="flex items-center gap-2">
+          <Logo
+            variant="small"
+            url={getLogo("SimCFB", row.OpponentId, false)}
+          />
+          <span className={textColorClass}>{row.OpponentName}</span>
+        </span>
+      );
+    },
+  },
+  {
+    header: "Score",
+    accessor: "Score",
+    render: (row: any) => {
+      const color = row.UserWin ? `text-[${winsColor}]` : `text-red-500`;
+      return (
+        <span className={`font-semibold ${color}`}>
+          {row.UserScore} - {row.OpponentScore}
+        </span>
+      );
     },
   },
 ];

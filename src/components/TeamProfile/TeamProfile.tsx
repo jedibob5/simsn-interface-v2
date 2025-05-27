@@ -32,13 +32,12 @@ import { useResponsive } from "../../_hooks/useMobile";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import { useParams } from "react-router-dom";
 import { useSimBBAStore } from "../../context/SimBBAContext";
-import FBATeamHistoryService from "../../_services/teamHistoryService";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
-import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet } from "./Common/TeamProfileComponents";
+import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet, TeamBowlResults } from "./Common/TeamProfileComponents";
 import { LoadSpinner } from "../../_design/LoadSpinner";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
-import { processRivalries, processSeasonHistory, processTeamTrophies, FBATrophies } from "./Common/TeamProfileHelper";
+import { processRivalries, processSeasonHistory, processTeamTrophies, processBowlGames, FBATrophies } from "./Common/TeamProfileHelper";
 import { Text } from "../../_design/Typography";
 
 interface TeamProfilePageProps {
@@ -99,6 +98,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
     cfbTeam,
     cfbTeamMap,
     cfbTeamOptions,
+    allCFBTeamHistory
   } = fbStore;
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [careerStats, setCareerStats] = useState<CFBPlayerSeasonStats[]>([]);
@@ -107,20 +107,10 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   const [totalLosses, setTotalLosses] = useState<number>(0);
   const [rivalries, setRivalries] = useState<any[]>([]);
   const [teamTrophies, setTeamTrophies] = useState<FBATrophies | null>(null);
+  const [bowlGames, setBowlGames] = useState<any[]>([]);
   const [playerMap, setPlayerMap] = useState<{ [key: number]: CFBPlayer }>({});
-  const teamHistoryService = new FBATeamHistoryService();
   let selectedTeamLogo = "";
-  const [allTeamHistory, setAllTeamHistory] = useState<{ [key: number]: CFBTeamProfileData }>({});
   const [statsCategory, setStatsCategory] = useState("Passing");
-
-  useEffect(() => {
-    const fetchAllHistory = async () => {
-      const response = await teamHistoryService.GetCFBTeamHistory();
-      setAllTeamHistory(response);
-      console.log(response)
-    };
-    fetchAllHistory();
-  }, []);
 
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && cfbTeamMap) {
@@ -155,39 +145,53 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
     selectedTeamLogo = getLogo(league, selectedTeam?.ID, currentUser?.isRetro);
   }
 
-useEffect(() => {
-  if (!selectedTeam || !allTeamHistory || Object.keys(allTeamHistory).length === 0) {
+  const teamHistoryProfile = useMemo(() => {
+    if (!selectedTeam || !allCFBTeamHistory || Object.keys(allCFBTeamHistory).length === 0) {
+      return null;
+    }
+    const teamProfile = allCFBTeamHistory[selectedTeam.ID];
+    if (!teamProfile) return null;
+
+    const { processedSeasonHistory, totalWins, totalLosses } = processSeasonHistory(teamProfile.CollegeStandings);
+    const processedRivalries = processRivalries(teamProfile, selectedTeam, cfbTeamMap);
+    const processedTrophies = processTeamTrophies(teamProfile.CollegeGames || [], selectedTeam.ID);
+    const processedBowlGames = processBowlGames(teamProfile.CollegeGames || [], selectedTeam.ID, cfbTeamMap);
+
+
+    return {
+      careerStats: Array.isArray(teamProfile.CareerStats) ? teamProfile.CareerStats : [],
+      processedSeasonHistory,
+      totalWins,
+      totalLosses,
+      playerMap: teamProfile.PlayerMap || {},
+      processedRivalries,
+      processedTrophies,
+      processedBowlGames
+    };
+  }, [selectedTeam, allCFBTeamHistory, cfbTeamMap]);
+
+  useEffect(() => {
     setIsLoading(true);
-    return;
-  }
-
-  setIsLoading(true);
-
-  const teamProfile = allTeamHistory[selectedTeam.ID];
-  if (!teamProfile) {
-    setCareerStats([]);
-    setCollegeStandings([]);
-    setPlayerMap({});
-    setRivalries([]);
-    setTeamTrophies(null);
+    if (!teamHistoryProfile) {
+      setCareerStats([]);
+      setCollegeStandings([]);
+      setPlayerMap({});
+      setRivalries([]);
+      setTeamTrophies(null);
+      setBowlGames([]);
+      setIsLoading(false);
+      return;
+    }
+    setCareerStats(teamHistoryProfile.careerStats);
+    setCollegeStandings(teamHistoryProfile.processedSeasonHistory);
+    setTotalWins(teamHistoryProfile.totalWins);
+    setTotalLosses(teamHistoryProfile.totalLosses);
+    setPlayerMap(teamHistoryProfile.playerMap);
+    setRivalries(teamHistoryProfile.processedRivalries);
+    setTeamTrophies(teamHistoryProfile.processedTrophies);
+    setBowlGames(teamHistoryProfile.processedBowlGames)
     setIsLoading(false);
-    return;
-  }
-console.log(teamProfile)
-  const { processedSeasonHistory, totalWins, totalLosses } = processSeasonHistory(teamProfile.CollegeStandings);
-  const processedRivalries = processRivalries(teamProfile, selectedTeam, cfbTeamMap);
-  const processedTrophies = processTeamTrophies(teamProfile.CollegeGames || [], selectedTeam.ID);
-
-
-  setCareerStats(Array.isArray(teamProfile.CareerStats) ? teamProfile.CareerStats : []);
-  setCollegeStandings(processedSeasonHistory);
-  setTotalWins(totalWins);
-  setTotalLosses(totalLosses);
-  setPlayerMap(teamProfile.PlayerMap || {});
-  setRivalries(processedRivalries);
-  setTeamTrophies(processedTrophies);
-  setIsLoading(false);
-}, [selectedTeam, allTeamHistory, cfbTeamMap]);
+  }, [teamHistoryProfile]);
 
   return (
     <>
@@ -264,19 +268,36 @@ console.log(teamProfile)
               />
             </div>
           </div>
-          <div className="flex md:hidden flex-col md:col-span-1 w-full items-center h-full overflow-y-auto">
-            <TeamSeasonHistory
-              league={league}
-              team={selectedTeam}
-              data={collegeStandings}
-              wins={totalWins}
-              losses={totalLosses}
-              backgroundColor={backgroundColor}
-              borderColor={borderColor}
-              headerColor={headerColor}
-              darkerBackgroundColor={darkerBackgroundColor}
-              textColorClass={textColorClass}
-            />
+          <div className="flex md:hidden flex-col gap-2 md:col-span-1 w-full items-center h-full overflow-y-auto">
+            <div className="w-full h-full">
+              <TeamSeasonHistory
+                league={league}
+                team={selectedTeam}
+                data={collegeStandings}
+                teamTrophies={teamTrophies}
+                wins={totalWins}
+                losses={totalLosses}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
+            </div>
+            <div className="w-full h-full">
+              <TeamTrophyCabinet
+                league={league}
+                team={selectedTeam}
+                data={teamTrophies}
+                wins={totalWins}
+                losses={totalLosses}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
+            </div>
           </div>
           <div className="flex flex-col w-full md:col-span-1 items-center md:overflow-y-auto">
             <TeamPlayerCareerStats
@@ -290,6 +311,35 @@ console.log(teamProfile)
               darkerBackgroundColor={darkerBackgroundColor}
               textColorClass={textColorClass}
             />
+          </div>
+          <div className="">
+              <TeamBowlResults
+                league={league}
+                team={selectedTeam}
+                data={bowlGames}
+                wins={totalWins}
+                losses={totalLosses}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
+          </div>
+          <div className="">
+              <TeamTrophyCabinet
+                league={league}
+                team={selectedTeam}
+                data={teamTrophies}
+                teamMap={cfbTeamMap}
+                wins={totalWins}
+                losses={totalLosses}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
           </div>
         </div>
       )}

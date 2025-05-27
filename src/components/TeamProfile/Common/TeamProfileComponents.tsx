@@ -30,7 +30,7 @@ import { Table, TableCell } from "../../../_design/Table";
 import { SelectDropdown } from "../../../_design/Select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { SingleValue } from "react-select";
-import { getFBAStatColumns, processTopPlayers, getFBAPastSeasonColumns, FBATrophies } from "./TeamProfileHelper";
+import { getFBAStatColumns, processTopPlayers, getFBAPastSeasonColumns, getFBAPastBowlGamesColumns, FBATrophies } from "./TeamProfileHelper";
 import { Trophy, Ribbon, TrophyTwo, Medal } from "../../../_design/Icons";
 
 interface TeamProfileComponentsProps {
@@ -38,6 +38,7 @@ interface TeamProfileComponentsProps {
   team: any;
   data: any;
   teamTrophies?: any;
+  teamMap?: any;
   wins?: number;
   losses?: number;
   playerMap?: any;
@@ -463,7 +464,6 @@ export const TeamTrophyCabinet = ({
   textColorClass
 }: TeamProfileComponentsProps) => {
   const winsColor = "#189E5B";
-  console.log(data)
   if (!data || data === 0) {
     return (
       <TeamProfileCards
@@ -496,16 +496,16 @@ export const TeamTrophyCabinet = ({
       <div className="flex justify-between">
         <div className="flex flex-col justify-center gap-4 items-center py-2">
           <div className="flex flex-col gap-2 font-semibold">
-            <Text variant="body-small" classes={textColorClass}>
-              National Championships
+            <Text variant="alternate" classes={textColorClass}>
+              National Champion
             </Text>
           </div>
           <div className="flex gap-2">
             <TrophyTwo textColorClass="text-yellow-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
-                <Text variant="body" classes="font-semibold">
+                <Text variant="alternate" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="alternate" classes="font-semibold">
                   {data.NationalChampionshipWins.length > 0
                     ? data.NationalChampionshipWins.length
                     : "0"}
@@ -524,16 +524,16 @@ export const TeamTrophyCabinet = ({
         </div>
         <div className="flex flex-col justify-center gap-4 items-center py-2">
           <div className="flex flex-col gap-2 font-semibold">
-            <Text variant="body-small" classes={textColorClass}>
-              Conference Titles
+            <Text variant="alternate" classes={textColorClass}>
+              Conference Champion
             </Text>
           </div>
           <div className="flex gap-2">
             <Trophy textColorClass="text-gray-400 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
-                <Text variant="body" classes="font-semibold">
+                <Text variant="alternate" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="alternate" classes="font-semibold">
                   {data.ConferenceChampionshipWins.length > 0
                     ? data.ConferenceChampionshipWins.length
                     : "0"}
@@ -552,16 +552,16 @@ export const TeamTrophyCabinet = ({
         </div>
         <div className="flex flex-col justify-center gap-4 items-center py-2">
           <div className="flex flex-col gap-2 font-semibold">
-            <Text variant="body-small" classes={textColorClass}>
-              Bowl Wins
+            <Text variant="alternate" classes={textColorClass}>
+              Bowl Winner
             </Text>
           </div>
           <div className="flex gap-2">
              <Medal textColorClass="text-purple-500 w-12 h-12" />
             <div className="flex flex-col justify-center">
               <div className="flex gap-2">
-                <Text variant="body" classes="text-right w-full font-semibold">Wins: </Text>
-                <Text variant="body" classes="font-semibold">
+                <Text variant="alternate" classes="text-right w-full font-semibold">Wins: </Text>
+                <Text variant="alternate" classes="font-semibold">
                   {data.BowlWins.length > 0
                     ? data.BowlWins.length
                     : "0"}
@@ -578,6 +578,73 @@ export const TeamTrophyCabinet = ({
             </div>
           </div>
         </div>
+      </div>
+    </TeamProfileCards>
+  );
+};
+
+export const TeamBowlResults = ({
+  league,
+  team,
+  data,
+  teamMap,
+  wins,
+  losses,
+  backgroundColor,
+  borderColor,
+  headerColor,
+  darkerBackgroundColor,
+  textColorClass
+}: TeamProfileComponentsProps) => {
+  const winsColor = "#189E5B";
+  if (!data || data === 0) {
+    return (
+      <TeamProfileCards
+        team={team}
+        header="Bowl Results"
+        classes={`${textColorClass} h-full`}
+        backgroundColor={backgroundColor}
+        headerColor={headerColor}
+        borderColor={borderColor}
+        darkerBackgroundColor={darkerBackgroundColor}
+        textColorClass={textColorClass}
+      >
+        <Text variant="small" classes={textColorClass}>No season data found.</Text>
+      </TeamProfileCards>
+    );
+  }
+
+  const columns = getFBAPastBowlGamesColumns(winsColor, textColorClass, data, teamMap);
+
+  return (
+    <TeamProfileCards
+      team={team}
+      header="Bowl Results"
+      classes={`${textColorClass} w-full overflow-y-auto`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      darkerBackgroundColor={darkerBackgroundColor}
+      textColorClass={textColorClass}
+    >
+      <div className="overflow-x-auto w-full">
+        <Table
+          columns={columns}
+          data={data}
+          team={team}
+          rowRenderer={(item: any, index: number, bg: string) => (
+            <div className="table-row text-left text-lg" style={{ backgroundColor: bg }}>
+              {columns.map((col) => (
+                <TableCell key={col.accessor}>
+                  {col.render ? col.render(item) : item[col.accessor]}
+                </TableCell>
+              ))}
+            </div>
+          )}
+          rowBgColor={backgroundColor}
+          darkerRowBgColor={darkerBackgroundColor}
+          league={league}
+        />
       </div>
     </TeamProfileCards>
   );
