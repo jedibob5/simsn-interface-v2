@@ -78,6 +78,7 @@ export const getCHLAttributes = (
 ) => {
   const heightObj = HeightToFeetAndInches(player.Height);
   const attributes = [
+    { label: "ID", value: `${player.ID}` },
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     { label: "Pos", value: player.Position },
     { label: "Arch", value: player.Archetype },
@@ -143,6 +144,7 @@ export const getPHLAttributes = (
 ) => {
   const phlContract = contract as PHLContract;
   const attributes = [
+    { label: "ID", value: `${player.ID}` },
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     { label: "Pos", value: player.Position },
     { label: "Arch", value: player.Archetype },
@@ -653,6 +655,7 @@ export const getNFLAttributes = (
     );
   }
   const nflPlayerAttributes = [
+    { label: "ID", value: `${nflPlayer.ID}` },
     { label: "Name", value: `${nflPlayer.FirstName} ${nflPlayer.LastName}` },
     {
       label: "Pos",
@@ -807,6 +810,7 @@ export const getCFBAttributes = (
     );
   }
   const attributes = [
+    { label: "ID", value: `${player.ID}` },
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     {
       label: "Pos",
@@ -2065,6 +2069,7 @@ export const getCBBAttributes = (
   category: string
 ) => {
   const attributes = [
+    { label: "ID", value: `${player.ID}` },
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     {
       label: "Pos",
@@ -2210,6 +2215,7 @@ export const getNBAAttributes = (
   category: string
 ) => {
   const attributes = [
+    { label: "ID", value: `${player.ID}` },
     { label: "Name", value: `${player.FirstName} ${player.LastName}` },
     {
       label: "Pos",

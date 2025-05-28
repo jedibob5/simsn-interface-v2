@@ -85,6 +85,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 
   let rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       {
         header: !isDesktop && !isTablet ? "Pos" : "Position",
@@ -309,6 +310,7 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
 
   const rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       {
         header: !isDesktop && !isTablet ? "Pos" : "Position",
@@ -599,6 +601,7 @@ export const CFBRosterTable: FC<CFBRosterTableProps> = ({
 
   let rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -856,6 +859,7 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
 
   const rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -1142,6 +1146,7 @@ export const CBBRosterTable: FC<CBBRosterTableProps> = ({
 
   let rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -1391,6 +1396,7 @@ export const NBARosterTable: FC<NBARosterTableProps> = ({
 
   let rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: !isDesktop ? "Pos" : "Position", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
