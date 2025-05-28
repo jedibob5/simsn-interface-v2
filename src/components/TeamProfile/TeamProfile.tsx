@@ -111,7 +111,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   const [playerMap, setPlayerMap] = useState<{ [key: number]: CFBPlayer }>({});
   let selectedTeamLogo = "";
   const [statsCategory, setStatsCategory] = useState("Passing");
-
+console.log(allCFBTeamHistory)
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && cfbTeamMap) {
       const id = Number(teamId);
@@ -219,10 +219,10 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
             <div className="w-full h-full">
-              <TeamTrophyCabinet
+              <TeamBowlResults
                 league={league}
                 team={selectedTeam}
-                data={teamTrophies}
+                data={bowlGames}
                 wins={totalWins}
                 losses={totalLosses}
                 backgroundColor={backgroundColor}
@@ -233,10 +233,10 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
           </div>
-          <div className="flex flex-col w-full md:min-w-[35em] items-center md:col-span-1">
+          <div className="flex flex-col w-full md:min-w-[35em] h-full items-center md:col-span-1 gap-2 md:gap-4">
             <Border
               direction="col"
-              classes="w-full p-2 gap-2 items-center justify-center"
+              classes="w-full p-2 gap-2 items-center justify-center mb-0"
               styles={{
                 backgroundColor: backgroundColor,
                 borderColor: headerColor,
@@ -255,17 +255,33 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                 />
               </div>
             </Border>
-            <div className="w-full md:pt-2">
-              <TeamRivalry
-                league={league}
-                team={selectedTeam}
-                data={rivalries}
-                backgroundColor={backgroundColor}
-                borderColor={borderColor}
-                headerColor={headerColor}
-                darkerBackgroundColor={darkerBackgroundColor}
-                textColorClass={textColorClass}
-              />
+            <div className="flex flex-col w-full h-full gap-2 md:gap-4">
+              <div className="w-full">
+                <TeamRivalry
+                  league={league}
+                  team={selectedTeam}
+                  data={rivalries}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                  headerColor={headerColor}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  textColorClass={textColorClass}
+                />
+              </div>
+              <div className="w-full">
+                <TeamTrophyCabinet
+                  league={league}
+                  team={selectedTeam}
+                  data={teamTrophies}
+                  wins={totalWins}
+                  losses={totalLosses}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                  headerColor={headerColor}
+                  darkerBackgroundColor={darkerBackgroundColor}
+                  textColorClass={textColorClass}
+                />
+              </div>
             </div>
           </div>
           <div className="flex md:hidden flex-col gap-2 md:col-span-1 w-full items-center h-full overflow-y-auto">
@@ -311,35 +327,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               darkerBackgroundColor={darkerBackgroundColor}
               textColorClass={textColorClass}
             />
-          </div>
-          <div className="">
-              <TeamBowlResults
-                league={league}
-                team={selectedTeam}
-                data={bowlGames}
-                wins={totalWins}
-                losses={totalLosses}
-                backgroundColor={backgroundColor}
-                borderColor={borderColor}
-                headerColor={headerColor}
-                darkerBackgroundColor={darkerBackgroundColor}
-                textColorClass={textColorClass}
-              />
-          </div>
-          <div className="">
-              <TeamTrophyCabinet
-                league={league}
-                team={selectedTeam}
-                data={teamTrophies}
-                teamMap={cfbTeamMap}
-                wins={totalWins}
-                losses={totalLosses}
-                backgroundColor={backgroundColor}
-                borderColor={borderColor}
-                headerColor={headerColor}
-                darkerBackgroundColor={darkerBackgroundColor}
-                textColorClass={textColorClass}
-              />
           </div>
         </div>
       )}

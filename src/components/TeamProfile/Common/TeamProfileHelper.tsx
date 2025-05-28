@@ -496,13 +496,9 @@ export const getFBAPastBowlGamesColumns = (
         (team: any) => team.TeamName === row.OpponentName
       );
       return (
-        <span className="flex items-center gap-2">
-          <Logo
-            variant="small"
-            url={getLogo("SimCFB", row.OpponentId, false)}
-          />
+        <div className="flex items-center gap-2">
           <span className={textColorClass}>{row.OpponentName}</span>
-        </span>
+        </div>
       );
     },
   },
@@ -510,9 +506,9 @@ export const getFBAPastBowlGamesColumns = (
     header: "Score",
     accessor: "Score",
     render: (row: any) => {
-      const color = row.UserWin ? `text-[${winsColor}]` : `text-red-500`;
+      const color = row.UserWin ? `text-[${winsColor}] font-semibold` : `text-red-500 opacity-80`;
       return (
-        <span className={`font-semibold ${color}`}>
+        <span className={`${color}`}>
           {row.UserScore} - {row.OpponentScore}
         </span>
       );

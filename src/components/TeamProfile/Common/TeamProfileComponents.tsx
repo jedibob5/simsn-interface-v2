@@ -68,7 +68,6 @@ export const TeamRivalry = ({
   const handlePrev = () => setCurrentIndex((prev) => prev === 0 ? rivals - 1 : prev - 1);
   const handleNext = () => setCurrentIndex((prev) => prev === rivals - 1 ? 0 : prev + 1);
   const winsColor = "#189E5B";
-
   if (!rivals || rivals === 0) {
     return (
       <TeamProfileCards
@@ -602,7 +601,7 @@ export const TeamBowlResults = ({
       <TeamProfileCards
         team={team}
         header="Bowl Results"
-        classes={`${textColorClass} h-full`}
+        classes={`${textColorClass}`}
         backgroundColor={backgroundColor}
         headerColor={headerColor}
         borderColor={borderColor}
@@ -620,7 +619,7 @@ export const TeamBowlResults = ({
     <TeamProfileCards
       team={team}
       header="Bowl Results"
-      classes={`${textColorClass} w-full overflow-y-auto`}
+      classes={`${textColorClass} w-full max-h-[30em] overflow-y-auto`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}
