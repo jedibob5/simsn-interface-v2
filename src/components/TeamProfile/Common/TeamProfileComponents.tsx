@@ -37,6 +37,7 @@ interface TeamProfileComponentsProps {
   league: League;
   team: any;
   data: any;
+  teamColors?: any;
   teamTrophies?: any;
   teamMap?: any;
   wins?: number;
@@ -98,24 +99,20 @@ export const TeamRivalry = ({
     >
       <div className="flex flex-col items-center gap-2 pt-2">
         <div className="flex w-full items-center justify-between gap-4">
-          {rivals > 1 && (
             <button onClick={handlePrev} aria-label="Previous Rival"
               className="flex size-8 items-center justify-center rounded-full"
               style={{ backgroundColor: darkerBackgroundColor, borderColor: headerColor, color: borderColor }}>
               {"<"}
             </button>
-          )}
           <Logo
             url={getLogo(league, rival.opponentTeamId, false)}
             variant="large"
           />
-          {rivals > 1 && (
             <button onClick={handleNext} aria-label="Next Rival"
               className="flex size-8 items-center justify-center rounded-full"
               style={{ backgroundColor: darkerBackgroundColor, borderColor: headerColor, color: borderColor }}>
               {">"}
             </button>
-          )}
         </div>
         <Text variant="h4" classes={textColorClass}>vs {rival.opponentTeamName}</Text>
         <div className="flex justify-around items-center w-full">
@@ -644,6 +641,52 @@ export const TeamBowlResults = ({
           darkerRowBgColor={darkerBackgroundColor}
           league={league}
         />
+      </div>
+    </TeamProfileCards>
+  );
+};
+
+export const TeamJerseys = ({
+  league,
+  team,
+  data,
+  teamColors,
+  backgroundColor,
+  borderColor,
+  headerColor,
+  darkerBackgroundColor,
+  textColorClass
+}: TeamProfileComponentsProps) => {
+
+  const [playerID, setPlayerID] = useState<number | null>(null);
+
+  useEffect(() => {
+    const playerIds = data ? Object.keys(data) : [];
+    if (playerIds.length > 0) {
+      const randomId = Number(playerIds[Math.floor(Math.random() * playerIds.length)]);
+      setPlayerID(randomId);
+    } else {
+      setPlayerID(10);
+    }
+  }, [team]);
+ 
+  return (
+    <TeamProfileCards
+      team={team}
+      header="Team Jerseys"
+      classes={`${textColorClass} w-full h-[10em]`}
+      backgroundColor={backgroundColor}
+      headerColor={headerColor}
+      borderColor={borderColor}
+      darkerBackgroundColor={darkerBackgroundColor}
+      textColorClass={textColorClass}
+    >
+      <div className="flex">
+        <div className="">
+        {playerID !== null && (
+          <PlayerPicture playerID={playerID} league={league} team={team} />
+        )}
+        </div>
       </div>
     </TeamProfileCards>
   );

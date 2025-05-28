@@ -33,7 +33,7 @@ import { darkenColor } from "../../_utility/getDarkerColor";
 import { useParams } from "react-router-dom";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
-import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet, TeamBowlResults } from "./Common/TeamProfileComponents";
+import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet, TeamBowlResults, TeamJerseys } from "./Common/TeamProfileComponents";
 import { LoadSpinner } from "../../_design/LoadSpinner";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
@@ -111,7 +111,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   const [playerMap, setPlayerMap] = useState<{ [key: number]: CFBPlayer }>({});
   let selectedTeamLogo = "";
   const [statsCategory, setStatsCategory] = useState("Passing");
-console.log(allCFBTeamHistory)
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && cfbTeamMap) {
       const id = Number(teamId);
@@ -189,7 +188,7 @@ console.log(allCFBTeamHistory)
     setPlayerMap(teamHistoryProfile.playerMap);
     setRivalries(teamHistoryProfile.processedRivalries);
     setTeamTrophies(teamHistoryProfile.processedTrophies);
-    setBowlGames(teamHistoryProfile.processedBowlGames)
+    setBowlGames(teamHistoryProfile.processedBowlGames);
     setIsLoading(false);
   }, [teamHistoryProfile]);
 
@@ -201,7 +200,7 @@ console.log(allCFBTeamHistory)
             <LoadSpinner />
           </div>
         ) : (
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 w-[95vw] max-w-[95vw] md:max-w-full md:w-full md:min-h-[40em] md:max-h-[40em]">
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 w-[95vw] max-w-[95vw] md:max-w-full md:w-full md:min-h-[40em] md:max-h-[95vh]">
           <div className="hidden md:flex flex-col md:col-span-1 w-full items-center h-full gap-4">
             <div className="w-full h-full">
               <TeamSeasonHistory
@@ -233,7 +232,7 @@ console.log(allCFBTeamHistory)
               />
             </div>
           </div>
-          <div className="flex flex-col w-full md:min-w-[35em] h-full items-center md:col-span-1 gap-2 md:gap-4">
+          <div className="flex flex-col w-full md:min-w-[35em] h-full items-center md:col-span-1 gap-2 md:gap-2">
             <Border
               direction="col"
               classes="w-full p-2 gap-2 items-center justify-center mb-0"
@@ -256,7 +255,7 @@ console.log(allCFBTeamHistory)
               </div>
             </Border>
             <div className="flex flex-col w-full h-full gap-2 md:gap-4">
-              <div className="w-full">
+              <div className="w-full h-[30em]">
                 <TeamRivalry
                   league={league}
                   team={selectedTeam}
@@ -315,18 +314,33 @@ console.log(allCFBTeamHistory)
               />
             </div>
           </div>
-          <div className="flex flex-col w-full md:col-span-1 items-center md:overflow-y-auto">
-            <TeamPlayerCareerStats
-              league={league}
-              team={selectedTeam}
-              data={careerStats}
-              playerMap={playerMap}
-              backgroundColor={backgroundColor}
-              borderColor={borderColor}
-              headerColor={headerColor}
-              darkerBackgroundColor={darkerBackgroundColor}
-              textColorClass={textColorClass}
-            />
+          <div className="flex flex-col w-full md:col-span-1 items-center gap-2 md:gap-4">
+            <div className="w-full h-[45em] max-h-[45em]">
+              <TeamPlayerCareerStats
+                league={league}
+                team={selectedTeam}
+                data={careerStats}
+                playerMap={playerMap}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
+            </div>
+            <div className="w-full">
+              <TeamJerseys
+                league={league}
+                team={selectedTeam}
+                teamColors={teamColors}
+                data={playerMap}
+                backgroundColor={backgroundColor}
+                borderColor={borderColor}
+                headerColor={headerColor}
+                darkerBackgroundColor={darkerBackgroundColor}
+                textColorClass={textColorClass}
+              />
+            </div>
           </div>
         </div>
       )}
