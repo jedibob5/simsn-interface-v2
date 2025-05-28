@@ -602,7 +602,7 @@ export const PHLLineupPage = () => {
         (x) => x.ID === playerID
       );
 
-      if (playerIdx && playerIdx > -1) {
+      if (playerIdx > -1) {
         updatedRosterMap[phlTeam!.ID][playerIdx] = new ProfessionalPlayer({
           ...updatedRosterMap[phlTeam!.ID][playerIdx],
           [key]: value,
@@ -752,7 +752,7 @@ export const PHLLineupPage = () => {
       <LineupHelpModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        league={SimCHL}
+        league={SimPHL}
         modalAction={modalAction}
         player={modalPlayer}
       />
