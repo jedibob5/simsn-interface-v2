@@ -536,6 +536,7 @@ export const processLeagueStandings = (
       );
       return {
         ...team,
+        TeamAbbr: team.TeamName,
         ConferenceName: conference ? conference.name : "Unknown",
       };
     });
@@ -547,6 +548,7 @@ export const processLeagueStandings = (
         );
         return {
           ...team,
+          TeamAbbr: team.TeamName,
           DivisionName: division ? division.name : "Unknown",
         };
       });

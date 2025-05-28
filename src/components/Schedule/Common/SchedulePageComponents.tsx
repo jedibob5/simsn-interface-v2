@@ -648,7 +648,7 @@ export const LeagueStandings = ({
                           {standing.Rank}
                         </Text>
                       </div>
-                      <div className="flex text-left w-1/2 mx-auto justify-start col-span-2 pl-1 items-center">
+                      <div className="flex text-left w-full mx-auto justify-start col-span-2 pl-1 items-center">
                         <Logo
                           variant="xs"
                           classes="w-4 h-4 p-0"
