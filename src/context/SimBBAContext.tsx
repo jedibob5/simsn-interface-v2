@@ -341,11 +341,11 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   > | null>({});
 
   useEffect(() => {
-    if (currentUser && !isFetching.current) {
+    if (!isFetching.current) {
       isFetching.current = true;
       bootstrapAllData();
     }
-  }, [currentUser]);
+  }, []);
 
   const bootstrapAllData = async () => {
     await getFirstBootstrapData();

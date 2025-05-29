@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useAuthStore } from "./AuthContext";
@@ -322,6 +323,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
   const { hck_Timestamp } = useWebSockets(hck_ws, SimHCK);
+  const isFetching = useRef(false);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chlTeam, setCHLTeam] = useState<CollegeTeam | null>(null); // College Hockey
   const [phlTeam, setPHLTeam] = useState<ProfessionalTeam | null>(null); // Pro Hockey
@@ -524,10 +527,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   }, [proRosterMap, phlTeams]);
 
   useEffect(() => {
-    if (currentUser && hck_Timestamp) {
+    if (!isFetching.current) {
+      isFetching.current = true;
       getBootstrapData();
     }
-  }, [currentUser, hck_Timestamp]);
+  }, []);
 
   const getBootstrapData = async () => {
     let chlid = 0;
@@ -669,6 +673,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setProStandingsMap(proStandingsMap);
     }
     setIsLoading(false);
+    isFetching.current = false;
   };
 
   const removeUserfromCHLTeamCall = useCallback(

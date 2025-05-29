@@ -285,11 +285,11 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   > | null>({});
 
   useEffect(() => {
-    if (currentUser && !isFetching.current) {
+    if (!isFetching.current) {
       isFetching.current = true;
       bootstrapAllData();
     }
-  }, [currentUser]);
+  }, []);
 
   const bootstrapAllData = async () => {
     await getFirstBootstrapData();
