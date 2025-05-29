@@ -87,6 +87,7 @@ export const OfferTable: FC<OfferTableProps> = ({
   const rosterColumns = useMemo(() => {
     let columns = [
       { header: "Team", accessor: "Team" },
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },

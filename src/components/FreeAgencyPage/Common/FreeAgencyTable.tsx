@@ -73,6 +73,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
   const backgroundColor = colorOne;
   const rosterColumns = useMemo(() => {
     let columns = [
+      { header: "ID", accessor: "ID" },
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: !isDesktop ? "Arch" : "Archetype", accessor: "Archetype" },
