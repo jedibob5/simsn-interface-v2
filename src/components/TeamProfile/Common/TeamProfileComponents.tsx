@@ -270,7 +270,7 @@ export const TeamPlayerCareerStats = ({
     <TeamProfileCards
       team={team}
       header={title || "All-Time Stats Leaders"}
-      classes={`${textColorClass} h-full overflow-y-auto`}
+      classes={`${textColorClass} overflow-y-auto`}
       backgroundColor={backgroundColor}
       headerColor={headerColor}
       borderColor={borderColor}

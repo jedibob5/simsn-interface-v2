@@ -98,9 +98,9 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
     cfbTeam,
     cfbTeamMap,
     cfbTeamOptions,
-    allCFBTeamHistory
+    allCFBTeamHistory,
+    isLoading
   } = fbStore;
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [careerStats, setCareerStats] = useState<CFBPlayerSeasonStats[]>([]);
   const [collegeStandings, setCollegeStandings] = useState<CFBStandings[]>([]);
   const [totalWins, setTotalWins] = useState<number>(0);
@@ -156,7 +156,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
     const processedTrophies = processTeamTrophies(teamProfile.CollegeGames || [], selectedTeam.ID);
     const processedBowlGames = processBowlGames(teamProfile.CollegeGames || [], selectedTeam.ID, cfbTeamMap);
 
-
     return {
       careerStats: Array.isArray(teamProfile.CareerStats) ? teamProfile.CareerStats : [],
       processedSeasonHistory,
@@ -170,7 +169,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
   }, [selectedTeam, allCFBTeamHistory, cfbTeamMap]);
 
   useEffect(() => {
-    setIsLoading(true);
     if (!teamHistoryProfile) {
       setCareerStats([]);
       setCollegeStandings([]);
@@ -178,7 +176,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
       setRivalries([]);
       setTeamTrophies(null);
       setBowlGames([]);
-      setIsLoading(false);
       return;
     }
     setCareerStats(teamHistoryProfile.careerStats);
@@ -189,7 +186,6 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
     setRivalries(teamHistoryProfile.processedRivalries);
     setTeamTrophies(teamHistoryProfile.processedTrophies);
     setBowlGames(teamHistoryProfile.processedBowlGames);
-    setIsLoading(false);
   }, [teamHistoryProfile]);
 
   return (
@@ -200,9 +196,16 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
             <LoadSpinner />
           </div>
         ) : (
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 w-[95vw] max-w-[95vw] md:max-w-full md:w-full md:min-h-[40em] md:max-h-[95vh]">
+        <div 
+          className="flex flex-col 
+            md:grid md:grid-cols-3 
+            gap-2 md:gap-4 w-[95vw] max-w-[95vw] 
+            md:max-w-full md:w-full 
+            md:min-h-[40em] md:max-h-[95vh] 
+            h-full overflow-hidden"
+        >
           <div className="hidden md:flex flex-col md:col-span-1 w-full items-center h-full gap-4">
-            <div className="w-full h-full">
+            <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamSeasonHistory
                 league={league}
                 team={selectedTeam}
@@ -217,7 +220,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                 textColorClass={textColorClass}
               />
             </div>
-            <div className="w-full h-full">
+            <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamBowlResults
                 league={league}
                 team={selectedTeam}
@@ -255,7 +258,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               </div>
             </Border>
             <div className="flex flex-col w-full h-full gap-2 md:gap-4">
-              <div className="w-full h-[30em]">
+              <div className="w-full h-[30em] max-h-full overflow-y-auto">
                 <TeamRivalry
                   league={league}
                   team={selectedTeam}
@@ -267,7 +270,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                   textColorClass={textColorClass}
                 />
               </div>
-              <div className="w-full">
+              <div className="w-full max-h-full overflow-y-auto">
                 <TeamTrophyCabinet
                   league={league}
                   team={selectedTeam}
@@ -284,7 +287,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
             </div>
           </div>
           <div className="flex md:hidden flex-col gap-2 md:col-span-1 w-full items-center h-full overflow-y-auto">
-            <div className="w-full h-full">
+            <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamSeasonHistory
                 league={league}
                 team={selectedTeam}
@@ -299,7 +302,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                 textColorClass={textColorClass}
               />
             </div>
-            <div className="w-full h-full">
+            <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamTrophyCabinet
                 league={league}
                 team={selectedTeam}
@@ -314,8 +317,8 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
           </div>
-          <div className="flex flex-col w-full md:col-span-1 items-center gap-2 md:gap-4">
-            <div className="w-full h-[45em] max-h-[45em]">
+          <div className="flex flex-col w-full md:col-span-1 items-center gap-2 md:gap-4 h-full max-h-full">
+            <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamPlayerCareerStats
                 league={league}
                 team={selectedTeam}

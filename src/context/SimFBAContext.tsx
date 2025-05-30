@@ -47,6 +47,7 @@ interface SimFBAContextProps {
   isLoading: boolean;
   isLoadingTwo: boolean;
   isLoadingThree: boolean;
+  isLoadingFour: boolean;
   cfbTeam: CollegeTeam | null;
   cfbTeams: CollegeTeam[];
   cfbTeamMap: Record<number, CollegeTeam> | null;
@@ -112,6 +113,7 @@ const defaultContext: SimFBAContextProps = {
   isLoading: true,
   isLoadingTwo: true,
   isLoadingThree: true,
+  isLoadingFour: true,
   cfbTeam: null,
   cfbTeams: [],
   cfbTeamOptions: [],
@@ -182,6 +184,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingTwo, setIsLoadingTwo] = useState<boolean>(true);
   const [isLoadingThree, setIsLoadingThree] = useState<boolean>(true);
+  const [isLoadingFour, setIsLoadingFour] = useState<boolean>(true);
   const [cfbTeam, setCFBTeam] = useState<CollegeTeam | null>(null);
   const [cfbTeams, setCFBTeams] = useState<CollegeTeam[]>([]);
   const [cfbTeamMap, setCFBTeamMap] = useState<Record<number, CollegeTeam>>({});
@@ -497,6 +500,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     const fetchAllHistory = async () => {
       const response = await teamHistoryService.GetCFBTeamHistory();
       setAllCFBTeamHistory(response);
+      setIsLoadingFour(false)
     };
     fetchAllHistory();
 
@@ -626,6 +630,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         proContractMap,
         proExtensionMap,
         allCFBTeamHistory,
+        isLoadingFour,
       }}
     >
       {children}
