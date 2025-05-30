@@ -219,7 +219,7 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
 
     return obj;
   };
-console.log(viewableHomePlayers)
+
   const { isOvertime, OvertimeHomeScore, OvertimeAwayScore } = useMemo(() => {
     if (!score) {
       return { isOvertime: false, OvertimeHomeScore: 0, OvertimeAwayScore: 0 };
