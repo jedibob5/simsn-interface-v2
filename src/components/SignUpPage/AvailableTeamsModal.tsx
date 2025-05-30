@@ -212,7 +212,10 @@ export const AvailableTeamsModal: FC<AvailableTeamsModalProps> = ({
           {teamRows?.map((team) => {
             const url = getLogo(selectedLeague, team.Logo, false);
             return (
-              <div className="grid grid-cols-4 gap-2 text-sm border-b py-2">
+              <div
+                className="grid grid-cols-4 gap-2 text-sm border-b py-2"
+                key={`${team.Logo}${team.Team}${team.Conference}`}
+              >
                 <Logo url={url} variant="small" />
                 <Text variant="xs" classes="text-left">
                   {team.Team}
