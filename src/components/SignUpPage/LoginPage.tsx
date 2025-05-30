@@ -4,6 +4,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AuthService } from "../../_services/auth";
 import { fieldImage } from "../../_utility/getField";
 import { simLogos } from "../../_constants/logos";
+import { Button } from "../../_design/Buttons";
+import { useModal } from "../../_hooks/useModal";
+import { AvailableTeamsModal } from "./AvailableTeamsModal";
 
 // ✅ Define form structure with TypeScript
 interface LoginForm {
@@ -17,6 +20,7 @@ export const LoginPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [fieldImg] = useState<string>(fieldImage());
   const navigate = useNavigate();
+  const handleAvailableTeamsModal = useModal();
 
   const [form, setForm] = useState<LoginForm>({
     email: { value: "" },
@@ -76,6 +80,10 @@ export const LoginPage = () => {
 
   return (
     <section className="w-screen">
+      <AvailableTeamsModal
+        isOpen={handleAvailableTeamsModal.isModalOpen}
+        onClose={handleAvailableTeamsModal.handleCloseModal}
+      />
       <div className="lg:grid lg:grid-cols-12 lg:w-full xl:grid xl:min-h-screen">
         <section className="relative flex items-end bg-gray-900 col-span-12 h-[100vh]">
           <img
@@ -146,19 +154,29 @@ export const LoginPage = () => {
                 />
               </div>
 
-              <div className="col-span-12 sm:col-span-full sm:flex-col sm:items-center sm:gap-4">
+              <div className="col-span-12 sm:col-span-full sm:flex-col sm:items-center sm:gap-4 space-x-2">
                 <button
                   type="submit"
-                  className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                  className="shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
                 >
                   {processing ? "Processing..." : "Login"}
                 </button>
 
-                <p className="mt-4 text-sm text-gray-500 sm:mt-0">
+                <p className="mt-4 text-sm text-gray-500">
                   Don't have an account?{" "}
                   <NavLink to={"/register"} className=" underline">
                     Create New Account Here
                   </NavLink>
+                  .
+                </p>
+                <p className="mt-4 text-sm text-gray-500">
+                  Want to view teams?{" "}
+                  <span
+                    className=" underline font-semibold cursor-pointer text-[#646cff] hover:text-[#535bf2]"
+                    onClick={handleAvailableTeamsModal.handleOpenModal}
+                  >
+                    Click Here
+                  </span>
                   .
                 </p>
               </div>
@@ -228,11 +246,21 @@ export const LoginPage = () => {
                       {processing ? "Processing..." : "Login"}
                     </button>
 
-                    <p className="mt-4 text-sm text-gray-500 sm:mt-0">
+                    <p className="mt-4 text-sm text-gray-500">
                       Don't have an account?{" "}
                       <NavLink to={"/register"} className=" underline">
                         Create New Account Here
                       </NavLink>
+                      .
+                    </p>
+                    <p className="mt-4 text-sm text-gray-500">
+                      Want to view teams?{" "}
+                      <span
+                        className=" underline font-semibold cursor-pointer text-[#646cff] hover:text-[#535bf2]"
+                        onClick={handleAvailableTeamsModal.handleOpenModal}
+                      >
+                        Click Here
+                      </span>
                       .
                     </p>
                   </div>

@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useAuthStore } from "./AuthContext";
@@ -322,6 +323,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
   const { hck_Timestamp } = useWebSockets(hck_ws, SimHCK);
+  const isFetching = useRef(false);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chlTeam, setCHLTeam] = useState<CollegeTeam | null>(null); // College Hockey
   const [phlTeam, setPHLTeam] = useState<ProfessionalTeam | null>(null); // Pro Hockey
@@ -504,19 +507,23 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const proPlayerMap = useMemo(() => {
     const playerMap: Record<number, ProfessionalPlayer> = {};
 
-    for (let i = 0; i < phlTeams.length; i++) {
-      const team = phlTeams[i];
-      const roster = proRosterMap[team.ID];
-      for (let j = 0; j < roster.length; j++) {
-        const p = roster[j];
-        playerMap[p.ID] = p;
+    if (proRosterMap) {
+      for (let i = 0; i < phlTeams.length; i++) {
+        const team = phlTeams[i];
+        const roster = proRosterMap[team.ID];
+        if (roster) {
+          for (let j = 0; j < roster.length; j++) {
+            const p = roster[j];
+            playerMap[p.ID] = p;
+          }
+        }
       }
-    }
-    const freeAgents = proRosterMap[0];
-    if (freeAgents) {
-      for (let i = 0; i < freeAgents.length; i++) {
-        const p = freeAgents[i];
-        playerMap[p.ID] = p;
+      const freeAgents = proRosterMap[0];
+      if (freeAgents) {
+        for (let i = 0; i < freeAgents.length; i++) {
+          const p = freeAgents[i];
+          playerMap[p.ID] = p;
+        }
       }
     }
 
@@ -524,10 +531,65 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   }, [proRosterMap, phlTeams]);
 
   useEffect(() => {
-    if (currentUser && hck_Timestamp) {
+    getBootstrapTeamData();
+  }, []);
+
+  const getBootstrapTeamData = async () => {
+    const res = await BootstrapService.GetHCKBootstrapTeamData();
+    setCHLTeams(res.AllCollegeTeams);
+    setProTeams(res.AllProTeams);
+    if (res.AllCollegeTeams.length > 0) {
+      const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
+        a.TeamName.localeCompare(b.TeamName)
+      );
+      const chlTeamOptions = sortedCollegeTeams.map((team) => ({
+        label: team.TeamName,
+        value: team.ID.toString(),
+      }));
+      const chlConferenceOptions = Array.from(
+        new Map(
+          sortedCollegeTeams.map((team) => [
+            team.ConferenceID,
+            { label: team.Conference, value: team.ConferenceID.toString() },
+          ])
+        ).values()
+      ).sort((a, b) => a.label.localeCompare(b.label));
+      const chlTeamMap = Object.fromEntries(
+        sortedCollegeTeams.map((team) => [team.ID, team])
+      );
+      setCHLTeamOptions(chlTeamOptions);
+      setCHLConferenceOptions(chlConferenceOptions);
+      setCHLTeamMap(chlTeamMap);
+    }
+
+    if (res.AllProTeams.length > 0) {
+      const sortedTeams = res.AllProTeams.sort((a, b) =>
+        a.TeamName.localeCompare(b.TeamName)
+      );
+      const teamOptionsList = sortedTeams.map((x) => {
+        return { label: x.TeamName, value: x.ID.toString() };
+      });
+      const confs = sortedTeams.map((x) => {
+        return { label: x.Conference, value: x.ConferenceID.toString() };
+      });
+      const filtered = Array.from(
+        new Map(confs.map((item) => [item.value, item])).values()
+      ).sort((a, b) => a.label.localeCompare(b.label));
+      setProTeamOptions(teamOptionsList);
+      setProConferenceOptions(filtered);
+      const ProTeamMap = Object.fromEntries(
+        res.AllProTeams.map((team) => [team.ID, team])
+      );
+      setProTeamMap(ProTeamMap);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser && !isFetching.current) {
+      isFetching.current = true;
       getBootstrapData();
     }
-  }, [currentUser, hck_Timestamp]);
+  }, [currentUser]);
 
   const getBootstrapData = async () => {
     let chlid = 0;
@@ -539,8 +601,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       phlid = currentUser.PHLTeamID;
     }
     const res = await BootstrapService.GetHCKBootstrapData(chlid, phlid);
-    setCHLTeams(res.AllCollegeTeams);
-    setProTeams(res.AllProTeams);
     setAllCollegeGames(res.AllCollegeGames);
     setAllProGames(res.AllProGames);
     setCapsheetMap(res.CapsheetMap);
@@ -582,9 +642,15 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     setTopPHLSaves(res.TopPHLSaves);
     setTradeProposalsMap(res.ProTradeProposalMap);
     setTradePreferencesMap(res.ProTradePreferenceMap);
-    setPHLDraftPicks(res.DraftPicks);
+    if (res.DraftPicks) {
+      setPHLDraftPicks(res.DraftPicks);
+    }
 
-    if (res.AllCollegeGames.length > 0 && hck_Timestamp) {
+    if (
+      res.AllCollegeGames &&
+      res.AllCollegeGames.length > 0 &&
+      hck_Timestamp
+    ) {
       const currentSeasonGames = res.AllCollegeGames.filter(
         (x) => x.SeasonID === hck_Timestamp.SeasonID
       );
@@ -594,30 +660,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       );
       setCollegeTeamsGames(teamGames);
     }
-    if (res.AllCollegeTeams.length > 0) {
-      const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
-        a.TeamName.localeCompare(b.TeamName)
-      );
-      const chlTeamOptions = sortedCollegeTeams.map((team) => ({
-        label: team.TeamName,
-        value: team.ID.toString(),
-      }));
-      const chlConferenceOptions = Array.from(
-        new Map(
-          sortedCollegeTeams.map((team) => [
-            team.ConferenceID,
-            { label: team.Conference, value: team.ConferenceID.toString() },
-          ])
-        ).values()
-      ).sort((a, b) => a.label.localeCompare(b.label));
-      const chlTeamMap = Object.fromEntries(
-        sortedCollegeTeams.map((team) => [team.ID, team])
-      );
-      setCHLTeamOptions(chlTeamOptions);
-      setCHLConferenceOptions(chlConferenceOptions);
-      setCHLTeamMap(chlTeamMap);
-    }
-    if (res.CollegeStandings.length > 0 && hck_Timestamp) {
+    if (
+      res.CollegeStandings &&
+      res.CollegeStandings.length > 0 &&
+      hck_Timestamp
+    ) {
       const currentSeasonStandings = res.CollegeStandings.filter(
         (x) => x.SeasonID === hck_Timestamp.SeasonID
       );
@@ -628,7 +675,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setCHLStandingsMap(collegeStandingsMap);
     }
 
-    if (res.AllProGames.length > 0 && hck_Timestamp) {
+    if (res.AllProGames && res.AllProGames.length > 0 && hck_Timestamp) {
       const currentSeasonGames = res.AllProGames.filter(
         (x) => x.SeasonID === hck_Timestamp.SeasonID
       );
@@ -638,27 +685,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       );
       setProTeamsGames(teamGames);
     }
-    if (res.AllProTeams.length > 0) {
-      const sortedTeams = res.AllProTeams.sort((a, b) =>
-        a.TeamName.localeCompare(b.TeamName)
-      );
-      const teamOptionsList = sortedTeams.map((x) => {
-        return { label: x.TeamName, value: x.ID.toString() };
-      });
-      const confs = sortedTeams.map((x) => {
-        return { label: x.Conference, value: x.ConferenceID.toString() };
-      });
-      const filtered = Array.from(
-        new Map(confs.map((item) => [item.value, item])).values()
-      ).sort((a, b) => a.label.localeCompare(b.label));
-      setProTeamOptions(teamOptionsList);
-      setProConferenceOptions(filtered);
-      const ProTeamMap = Object.fromEntries(
-        res.AllProTeams.map((team) => [team.ID, team])
-      );
-      setProTeamMap(ProTeamMap);
-    }
-    if (res.ProStandings.length > 0 && hck_Timestamp) {
+    if (res.ProStandings && res.ProStandings.length > 0 && hck_Timestamp) {
       const currentSeasonStandings = res.ProStandings.filter(
         (x) => x.SeasonID === hck_Timestamp.SeasonID
       );
@@ -669,6 +696,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setProStandingsMap(proStandingsMap);
     }
     setIsLoading(false);
+    isFetching.current = false;
   };
 
   const removeUserfromCHLTeamCall = useCallback(

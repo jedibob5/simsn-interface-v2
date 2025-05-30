@@ -7,6 +7,8 @@ import { AuthService } from "../../_services/auth";
 import { simLogos } from "../../_constants/logos";
 import { useAuthStore } from "../../context/AuthContext";
 import { CurrentUser } from "../../_hooks/useCurrentUser";
+import { AvailableTeamsModal } from "./AvailableTeamsModal";
+import { useModal } from "../../_hooks/useModal";
 
 // ✅ Form State Interface
 interface SignUpForm {
@@ -28,6 +30,7 @@ export const SignUpPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [fieldImg] = useState(() => fieldImage());
+  const handleAvailableTeamsModal = useModal();
 
   const [form, setForm] = useState<SignUpForm>({
     username: { value: "" },
@@ -100,6 +103,10 @@ export const SignUpPage = () => {
 
   return (
     <section className="w-screen">
+      <AvailableTeamsModal
+        isOpen={handleAvailableTeamsModal.isModalOpen}
+        onClose={handleAvailableTeamsModal.handleCloseModal}
+      />
       <div className="lg:grid lg:grid-cols-12 lg:w-full xl:grid xl:min-h-screen">
         <section className="relative flex items-end bg-gray-900 col-span-12 h-[100vh]">
           <img
@@ -186,6 +193,16 @@ export const SignUpPage = () => {
                   </NavLink>
                   .
                 </p>
+                <p className="mt-4 text-sm text-gray-500">
+                  Want to view teams?{" "}
+                  <span
+                    className=" underline font-semibold cursor-pointer text-[#646cff] hover:text-[#535bf2]"
+                    onClick={handleAvailableTeamsModal.handleOpenModal}
+                  >
+                    Click Here
+                  </span>
+                  .
+                </p>
               </div>
             </form>
           </div>
@@ -264,6 +281,16 @@ export const SignUpPage = () => {
                       <NavLink to={"/login"} className=" underline">
                         Log in
                       </NavLink>
+                      .
+                    </p>
+                    <p className="mt-4 text-sm text-gray-500">
+                      Want to view teams?{" "}
+                      <span
+                        className=" underline font-semibold cursor-pointer text-[#646cff] hover:text-[#535bf2]"
+                        onClick={handleAvailableTeamsModal.handleOpenModal}
+                      >
+                        Click Here
+                      </span>
                       .
                     </p>
                   </div>

@@ -341,47 +341,13 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   > | null>({});
 
   useEffect(() => {
-    if (currentUser && !isFetching.current) {
-      isFetching.current = true;
-      bootstrapAllData();
-    }
-  }, [currentUser]);
+    getBootstrapTeamData();
+  }, []);
 
-  const bootstrapAllData = async () => {
-    await getFirstBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
-    await getSecondBootstrapData();
-    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
-    await getThirdBootstrapData();
-    isFetching.current = false;
-  };
-
-  const getFirstBootstrapData = async () => {
-    let cbbID = 0;
-    let nbaID = 0;
-    if (currentUser && currentUser.cbb_id) {
-      cbbID = currentUser.cbb_id;
-    }
-    if (currentUser && currentUser.NBATeamID) {
-      nbaID = currentUser.NBATeamID;
-    }
-    const res = await BootstrapService.GetBBABootstrapData(cbbID, nbaID);
-    setCBBTeam(res.CollegeTeam);
+  const getBootstrapTeamData = async () => {
+    const res = await BootstrapService.GetBBABootstrapTeamData();
     setCBBTeams(res.AllCollegeTeams);
-    setNBATeam(res.NBATeam);
     setNBATeams(res.AllProTeams);
-    setCollegeInjuryReport(res.CollegeInjuryReport);
-    setCollegeNotifications(res.CollegeNotifications);
-    setCBBRosterMap(res.CollegeRosterMap);
-    setPortalPlayers(res.PortalPlayers);
-    setProNotifications(res.ProNotifications);
-    setCollegeGameplan(res.CollegeGameplan);
-    setNBAGameplan(res.NBAGameplan);
-    setTopCBBPoints(res.TopCBBPoints);
-    setTopCBBAssists(res.TopCBBAssists);
-    setTopCBBRebounds(res.TopCBBRebounds);
-    setPlayerFaces(res.FaceData);
-
     if (res.AllCollegeTeams.length > 0) {
       const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
         a.Team.localeCompare(b.Team)
@@ -428,6 +394,47 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       );
       setProTeamMap(nbaTeamMap);
     }
+  };
+
+  useEffect(() => {
+    if (currentUser && !isFetching.current) {
+      isFetching.current = true;
+      bootstrapAllData();
+    }
+  }, [currentUser]);
+
+  const bootstrapAllData = async () => {
+    await getFirstBootstrapData();
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
+    await getSecondBootstrapData();
+    await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
+    await getThirdBootstrapData();
+    isFetching.current = false;
+  };
+
+  const getFirstBootstrapData = async () => {
+    let cbbID = 0;
+    let nbaID = 0;
+    if (currentUser && currentUser.cbb_id) {
+      cbbID = currentUser.cbb_id;
+    }
+    if (currentUser && currentUser.NBATeamID) {
+      nbaID = currentUser.NBATeamID;
+    }
+    const res = await BootstrapService.GetBBABootstrapData(cbbID, nbaID);
+    setCBBTeam(res.CollegeTeam);
+    setNBATeam(res.NBATeam);
+    setCollegeInjuryReport(res.CollegeInjuryReport);
+    setCollegeNotifications(res.CollegeNotifications);
+    setCBBRosterMap(res.CollegeRosterMap);
+    setPortalPlayers(res.PortalPlayers);
+    setProNotifications(res.ProNotifications);
+    setCollegeGameplan(res.CollegeGameplan);
+    setNBAGameplan(res.NBAGameplan);
+    setTopCBBPoints(res.TopCBBPoints);
+    setTopCBBAssists(res.TopCBBAssists);
+    setTopCBBRebounds(res.TopCBBRebounds);
+    setPlayerFaces(res.FaceData);
     setIsLoading(false);
   };
 
@@ -447,7 +454,11 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     setTopNBAAssists(res.TopNBAAssists);
     setTopNBARebounds(res.TopNBARebounds);
     setAllCBBStandings(res.CollegeStandings);
-    if (res.CollegeStandings.length > 0 && cbb_Timestamp) {
+    if (
+      res.CollegeStandings &&
+      res.CollegeStandings.length > 0 &&
+      cbb_Timestamp
+    ) {
       const currentSeasonStandings = res.CollegeStandings.filter(
         (x) => x.SeasonID === cbb_Timestamp.SeasonID
       );
@@ -463,7 +474,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     setInternationalPlayers(res.InternationalPlayers);
     setProInjuryReport(res.ProInjuryReport);
     setAllProStandings(res.ProStandings);
-    if (res.ProStandings.length > 0 && cbb_Timestamp) {
+    if (res.ProStandings && res.ProStandings.length > 0 && cbb_Timestamp) {
       const currentSeasonStandings = res.ProStandings.filter(
         (x) => x.SeasonID === cbb_Timestamp.SeasonID
       );
@@ -491,9 +502,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     setRecruitProfiles(res.RecruitProfiles);
     setFreeAgentOffers(res.FreeAgentOffers);
     setWaiverOffers(res.WaiverOffers);
-    setAllCollegeGames(res.AllCollegeGames);
     setProContractMap(res.ContractMap);
     setProExtensionMap(res.ExtensionMap);
+    setAllCollegeGames(res.AllCollegeGames);
 
     if (res.AllCollegeGames.length > 0 && cbb_Timestamp) {
       const currentSeasonGames = res.AllCollegeGames.filter(
@@ -506,7 +517,8 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       setCollegeTeamsGames(teamGames);
     }
     setAllProGames(res.AllProGames);
-    if (res.AllProGames.length > 0 && cbb_Timestamp) {
+
+    if (res.AllProGames && res.AllProGames.length > 0 && cbb_Timestamp) {
       const currentSeasonGames = res.AllProGames.filter(
         (x) => x.SeasonID === cbb_Timestamp.SeasonID
       );
