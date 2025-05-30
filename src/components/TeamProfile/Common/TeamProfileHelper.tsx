@@ -445,7 +445,7 @@ export const getFBAPastSeasonColumns = (
         return (
           <span className="flex items-center gap-2">
             <Ribbon textColorClass="text-blue-500" />
-            <span>Play-Offs</span>
+            <span>Playoffs</span>
           </span>
         );
       } else if (teamTrophies.BowlWins.includes(seasonId)) {

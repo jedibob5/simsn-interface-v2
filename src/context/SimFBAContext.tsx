@@ -496,13 +496,15 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setProExtensionMap(res.ExtensionMap);
   };
 
-  const teamHistoryService = new FBATeamHistoryService();
+  useEffect(() => {
+    const teamHistoryService = new FBATeamHistoryService();
     const fetchAllHistory = async () => {
       const response = await teamHistoryService.GetCFBTeamHistory();
       setAllCFBTeamHistory(response);
-      setIsLoadingFour(false)
+      setIsLoadingFour(false);
     };
     fetchAllHistory();
+  }, []);
 
   const cutCFBPlayer = useCallback(
     async (playerID: number, teamID: number) => {
