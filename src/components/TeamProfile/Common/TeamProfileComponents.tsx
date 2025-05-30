@@ -646,48 +646,48 @@ export const TeamBowlResults = ({
   );
 };
 
-export const TeamJerseys = ({
-  league,
-  team,
-  data,
-  teamColors,
-  backgroundColor,
-  borderColor,
-  headerColor,
-  darkerBackgroundColor,
-  textColorClass
-}: TeamProfileComponentsProps) => {
+// export const TeamJerseys = ({
+//   league,
+//   team,
+//   data,
+//   teamColors,
+//   backgroundColor,
+//   borderColor,
+//   headerColor,
+//   darkerBackgroundColor,
+//   textColorClass
+// }: TeamProfileComponentsProps) => {
 
-  const [playerID, setPlayerID] = useState<number | null>(null);
+//   const [playerID, setPlayerID] = useState<number | null>(null);
 
-  useEffect(() => {
-    const playerIds = data ? Object.keys(data) : [];
-    if (playerIds.length > 0) {
-      const randomId = Number(playerIds[Math.floor(Math.random() * playerIds.length)]);
-      setPlayerID(randomId);
-    } else {
-      setPlayerID(10);
-    }
-  }, [team]);
+//   useEffect(() => {
+//     const playerIds = data ? Object.keys(data) : [];
+//     if (playerIds.length > 0) {
+//       const randomId = Number(playerIds[Math.floor(Math.random() * playerIds.length)]);
+//       setPlayerID(randomId);
+//     } else {
+//       setPlayerID(10);
+//     }
+//   }, [team]);
  
-  return (
-    <TeamProfileCards
-      team={team}
-      header="Team Jerseys"
-      classes={`${textColorClass} w-full h-[10em]`}
-      backgroundColor={backgroundColor}
-      headerColor={headerColor}
-      borderColor={borderColor}
-      darkerBackgroundColor={darkerBackgroundColor}
-      textColorClass={textColorClass}
-    >
-      <div className="flex">
-        <div className="">
-        {playerID !== null && (
-          <PlayerPicture playerID={playerID} league={league} team={team} />
-        )}
-        </div>
-      </div>
-    </TeamProfileCards>
-  );
-};
+//   return (
+//     <TeamProfileCards
+//       team={team}
+//       header="Team Jerseys"
+//       classes={`${textColorClass} w-full h-[10em]`}
+//       backgroundColor={backgroundColor}
+//       headerColor={headerColor}
+//       borderColor={borderColor}
+//       darkerBackgroundColor={darkerBackgroundColor}
+//       textColorClass={textColorClass}
+//     >
+//       <div className="flex h-full">
+//         <div className="">
+//         {playerID !== null && (
+//           <PlayerPicture playerID={playerID} league={league} team={team} />
+//         )}
+//         </div>
+//       </div>
+//     </TeamProfileCards>
+//   );
+// };

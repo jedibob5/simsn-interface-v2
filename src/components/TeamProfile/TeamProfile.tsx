@@ -33,7 +33,7 @@ import { darkenColor } from "../../_utility/getDarkerColor";
 import { useParams } from "react-router-dom";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
-import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet, TeamBowlResults, TeamJerseys } from "./Common/TeamProfileComponents";
+import { TeamRivalry, TeamPlayerCareerStats, TeamSeasonHistory, TeamTrophyCabinet, TeamBowlResults } from "./Common/TeamProfileComponents";
 import { LoadSpinner } from "../../_design/LoadSpinner";
 import { getLogo } from "../../_utility/getLogo";
 import { Logo } from "../../_design/Logo";
@@ -328,7 +328,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                 textColorClass={textColorClass}
               />
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
               <TeamJerseys
                 league={league}
                 team={selectedTeam}
@@ -340,7 +340,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
                 darkerBackgroundColor={darkerBackgroundColor}
                 textColorClass={textColorClass}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       )}
