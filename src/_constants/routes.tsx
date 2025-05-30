@@ -6,7 +6,7 @@ export default {
   REGISTER: "/register",
   HELP: "/help",
   AVAILABLE_TEAMS: "/availableteams",
-  CFB_TEAM: "/cfb/team/:teamId?",
+  CFB_TEAM: "/cfb/roster/:teamId?",
   NFL_TEAM: "/nfl/team/:teamId?",
   CBB_TEAM: "/cbb/team/:teamId?",
   NBA_TEAM: "/nba/team/:teamId?",
@@ -44,5 +44,6 @@ export default {
   PHL_DRAFT_ROOM: "/phl/draft/",
   NFL_TRADEBLOCK: "/nfl/team/tradeblock",
   NBA_TRADEBLOCK: "/nba/team/tradeblock",
+  CFB_TEAMPROFILE: "/cfb/teamprofile/",
   NEWS: "/cfb/news",
 };

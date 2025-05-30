@@ -31,6 +31,7 @@ import {
   NFLExtensionOffer,
   FreeAgencyOffer,
   NFLWaiverOffer,
+  CollegeTeamProfileData as CFBTeamProfileData,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -38,6 +39,7 @@ import { fba_ws } from "../_constants/urls";
 import { SimFBA } from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
+import FBATeamHistoryService from "../_services/teamHistoryService";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -45,6 +47,7 @@ interface SimFBAContextProps {
   isLoading: boolean;
   isLoadingTwo: boolean;
   isLoadingThree: boolean;
+  isLoadingFour: boolean;
   cfbTeam: CollegeTeam | null;
   cfbTeams: CollegeTeam[];
   cfbTeamMap: Record<number, CollegeTeam> | null;
@@ -101,6 +104,7 @@ interface SimFBAContextProps {
   };
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
+  allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
 }
 
 // ✅ Initial Context State
@@ -109,6 +113,7 @@ const defaultContext: SimFBAContextProps = {
   isLoading: true,
   isLoadingTwo: true,
   isLoadingThree: true,
+  isLoadingFour: true,
   cfbTeam: null,
   cfbTeams: [],
   cfbTeamOptions: [],
@@ -161,6 +166,7 @@ const defaultContext: SimFBAContextProps = {
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
+  allCFBTeamHistory: {},
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -178,6 +184,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingTwo, setIsLoadingTwo] = useState<boolean>(true);
   const [isLoadingThree, setIsLoadingThree] = useState<boolean>(true);
+  const [isLoadingFour, setIsLoadingFour] = useState<boolean>(true);
   const [cfbTeam, setCFBTeam] = useState<CollegeTeam | null>(null);
   const [cfbTeams, setCFBTeams] = useState<CollegeTeam[]>([]);
   const [cfbTeamMap, setCFBTeamMap] = useState<Record<number, CollegeTeam>>({});
@@ -283,6 +290,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     number,
     NFLExtensionOffer
   > | null>({});
+  const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{ [key: number]: CFBTeamProfileData }>({});
 
   useEffect(() => {
     getBootstrapTeamData();
@@ -488,6 +496,14 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setProExtensionMap(res.ExtensionMap);
   };
 
+  const teamHistoryService = new FBATeamHistoryService();
+    const fetchAllHistory = async () => {
+      const response = await teamHistoryService.GetCFBTeamHistory();
+      setAllCFBTeamHistory(response);
+      setIsLoadingFour(false)
+    };
+    fetchAllHistory();
+
   const cutCFBPlayer = useCallback(
     async (playerID: number, teamID: number) => {
       const rosterMap = { ...cfbRosterMap };
@@ -613,6 +629,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         playerFaces,
         proContractMap,
         proExtensionMap,
+        allCFBTeamHistory,
+        isLoadingFour,
       }}
     >
       {children}

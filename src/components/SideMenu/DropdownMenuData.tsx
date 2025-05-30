@@ -32,8 +32,15 @@ export const useSideMenu = () => {
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const dropdowns: Record<string, DropdownItem[]> = {
     SimCFB: [
+        {
+        label: "Team Profile",
+        isRoute: true,
+        route: routes.CFB_TEAMPROFILE,
+        league: SimCFB,
+        toggle: () => toggleMenu(),
+      },
       {
-        label: "Team",
+        label: "Roster",
         isRoute: true,
         route: routes.CFB_TEAM,
         league: SimCFB,

@@ -20,6 +20,7 @@ import { RecruitingPage } from "../components/Recruiting/RecruitingPage";
 import { SchedulePage } from "../components/Schedule/SchedulePage";
 import { FreeAgencyPage } from "../components/FreeAgencyPage/FreeAgencyPage";
 import { StatsPage } from "../components/StatsPage/StatsPage";
+import { TeamProfilePage } from "../components/TeamProfile/TeamProfile";
 
 // Will Add More Pages here for authorized users (Logged in)
 export const AuthRoutes = [
@@ -299,6 +300,15 @@ export const AuthRoutes = [
     element={
       <AuthGuard>
         <StatsPage league={SimPHL} />
+      </AuthGuard>
+    }
+  />,
+   <Route
+    key="CFB TEAM PROFILE"
+    path={routes.CFB_TEAMPROFILE}
+    element={
+      <AuthGuard>
+        <TeamProfilePage league={SimCFB} />
       </AuthGuard>
     }
   />,

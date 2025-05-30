@@ -145,6 +145,9 @@ export const Preferences = "Preferences";
 export const Potentials = "Potentials";
 export const Contracts = "Contracts";
 export const Overview = "Overview";
+export const Details = "Details";
+export const Profile = "Profile";
+export const Roster = "Roster";
 export const Schedule = "Schedule";
 export const Standings = "Standings";
 export const Divisions = "Divisions";
@@ -534,3 +537,14 @@ export const PHLWeeks: { label: string; value: string }[] = Array.from(
 
 export const MAX_TEAM_INFO_COLUMNS = 4;
 export const MAX_TEAM_PHL_INFO_COLUMNS = 5;
+
+export const statsOptions = [
+  { label: "Passing", value: "Passing" },
+  { label: "Rushing", value: "Rushing" },
+  { label: "Receiving", value: "Receiving" },
+  { label: "Tackles", value: "Tackles" },
+  { label: "Sacks", value: "Sacks" },
+  { label: "Interceptions", value: "Interceptions" },
+] as const;
+
+export type StatsCategory = typeof statsOptions[number]["value"];

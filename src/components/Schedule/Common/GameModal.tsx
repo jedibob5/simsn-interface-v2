@@ -203,6 +203,10 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
       TotalTackles: (player.SoloTackles ?? 0) + (player.AssistedTackles ?? 0),
     }))
     .sort((a, b) => b.TotalTackles - a.TotalTackles);
+
+    obj.OLineStats = dataSet
+    .filter((x) => x.Pancakes && x.Pancakes > 0)
+    .sort((a, b) => b.Pancakes - a.Pancakes);
     
     obj.SpecialTeamStats = dataSet
       .filter((x) => ["P", "K"].includes(x.Position))
