@@ -15,6 +15,14 @@ export const BootstrapService = {
     );
   },
 
+  GetHCKBootstrapTeamData: async (): Promise<HockeyBootstrap> => {
+    return await GetCall<HockeyBootstrap>(`${hckUrl}bootstrap/teams/`);
+  },
+
+  GetFBABootstrapTeamData: async (): Promise<FBBootstrap> => {
+    return await GetCall<FBBootstrap>(`${fbaUrl}bootstrap/teams/`);
+  },
+
   // ✅ Get Football Bootstrap Data
   GetFBABootstrapData: async (
     collegeID: number,
@@ -43,6 +51,10 @@ export const BootstrapService = {
     return await GetCall<FBBootstrap>(
       `${fbaUrl}bootstrap/three/${collegeID}/${proID}`
     );
+  },
+
+  GetBBABootstrapTeamData: async (): Promise<BBBootstrap> => {
+    return await GetCall<BBBootstrap>(`${bbaUrl}bootstrap/teams/`);
   },
 
   // ✅ Get Basketball Bootstrap Data

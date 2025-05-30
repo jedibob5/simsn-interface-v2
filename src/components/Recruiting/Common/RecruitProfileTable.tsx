@@ -52,7 +52,7 @@ const getRecruitProfileColumns = (
     { header: "⭐", accessor: "Stars" },
     { header: "Country", accessor: "Country" },
     { header: "Region", accessor: "State" },
-    { header: "Overall", accessor: "OverallGrade" },
+    { header: "Ovr", accessor: "OverallGrade" },
   ];
   if (!isMobile && category === Attributes) {
     columns = columns.concat([
@@ -308,7 +308,7 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           </div>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{modValue.toFixed(4)}</span>
+          <span className={`text-sm`}>{modValue.toFixed(3)}</span>
         </TableCell>
         <TableCell>
           <span className={`text-sm`}>{item.TotalPoints}</span>

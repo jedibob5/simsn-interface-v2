@@ -206,3 +206,43 @@ export function updateLineupFieldWithClass<T extends Record<string, any>>(
     return updated;
   });
 }
+
+export const getHCKAIGameplanOptionsOptions = () => {
+  const shotPreferenceOptions = [
+    { label: "Close", value: "1" },
+    { label: "Balanced", value: "2" },
+    { label: "Long", value: "3" },
+  ];
+
+  const playerSortPreferenceOptions = [
+    { label: "Overall", value: "1" },
+    { label: "Close Shot", value: "2" },
+    { label: "Long Shot", value: "3" },
+    { label: "Agility", value: "4" },
+    { label: "Puck Handling", value: "5" },
+    { label: "Strength", value: "6" },
+    { label: "Body Check", value: "7" },
+    { label: "Stick Check", value: "8" },
+    { label: "Faceoff", value: "9" },
+    { label: "Passing", value: "10" },
+  ];
+
+  const goalieSortPreferenceOptions = [
+    { label: "Overall", value: "1" },
+    { label: "Goalkeeping", value: "2" },
+    { label: "Goalie Vision", value: "3" },
+  ];
+
+  const defensePreferenceOptions = [
+    { label: "Body Check", value: "1" },
+    { label: "Balanced", value: "2" },
+    { label: "Stick Check", value: "3" },
+  ];
+
+  return {
+    shotPreferenceOptions,
+    playerSortPreferenceOptions,
+    goalieSortPreferenceOptions,
+    defensePreferenceOptions,
+  };
+};
