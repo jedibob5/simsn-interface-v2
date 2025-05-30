@@ -768,19 +768,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                             : "none",
                           borderRadius: "8px",
                           transition: "all 0.2s ease",
-                          zIndex: 100000,
                         }),
                         menu: (provided) => ({
                           ...provided,
                           backgroundColor: "#1a202c",
                           borderRadius: "8px",
-                          zIndex: 100000,
                         }),
                         menuList: (provided) => ({
                           ...provided,
                           backgroundColor: "#1a202c",
                           padding: "0",
-                          zIndex: 100000,
                         }),
                         option: (provided, state) => ({
                           ...provided,
@@ -790,17 +787,14 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           color: "#ffffff",
                           padding: "10px",
                           cursor: "pointer",
-                          zIndex: 1000,
                         }),
                         singleValue: (provided) => ({
                           ...provided,
                           color: "#ffffff",
-                          zIndex: 1000,
                         }),
                         placeholder: (provided) => ({
                           ...provided,
                           color: "#ffffff",
-                          zIndex: 1000,
                         }),
                       }}
                     />
