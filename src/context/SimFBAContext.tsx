@@ -440,9 +440,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setProRosterMap(res.ProRosterMap);
     setPracticeSquadPlayers(res.PracticeSquadPlayers);
     setProInjuryReport(res.ProInjuryReport);
-    if (res.AllProGames && res.AllProGames.length > 0 && cfb_Timestamp) {
-      setAllProGames(res.AllProGames);
+    setAllProGames(res.AllProGames);
 
+    if (res.AllProGames.length > 0 && cfb_Timestamp) {
       const currentSeasonGames = res.AllProGames.filter(
         (x) => x.SeasonID === cfb_Timestamp.NFLSeasonID
       );
@@ -452,9 +452,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       );
       setProTeamsGames(teamGames);
     }
-    if (res.ProStandings && res.ProStandings.length > 0 && cfb_Timestamp) {
-      setAllProStandings(res.ProStandings);
+    setAllProStandings(res.ProStandings);
 
+    if (res.ProStandings.length > 0 && cfb_Timestamp) {
       const currentSeasonStandings = res.ProStandings.filter(
         (x) => x.SeasonID === cfb_Timestamp.NFLSeasonID
       );
