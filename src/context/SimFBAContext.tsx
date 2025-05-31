@@ -364,6 +364,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     await getSecondBootstrapData();
     await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
     await getThirdBootstrapData();
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    fetchAllHistory();
     isFetching.current = false;
   };
 
@@ -497,12 +499,11 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   };
 
   const teamHistoryService = new FBATeamHistoryService();
-    const fetchAllHistory = async () => {
-      const response = await teamHistoryService.GetCFBTeamHistory();
-      setAllCFBTeamHistory(response);
-      setIsLoadingFour(false)
-    };
-    fetchAllHistory();
+  const fetchAllHistory = async () => {
+    const response = await teamHistoryService.GetCFBTeamHistory();
+    setAllCFBTeamHistory(response);
+    setIsLoadingFour(false);
+  };
 
   const cutCFBPlayer = useCallback(
     async (playerID: number, teamID: number) => {

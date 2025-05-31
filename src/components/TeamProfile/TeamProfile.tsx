@@ -202,9 +202,10 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
             gap-2 md:gap-4 w-[95vw] max-w-[95vw] 
             md:max-w-full md:w-full 
             md:min-h-[40em] md:max-h-[95vh] 
-            h-full overflow-hidden"
-        >
-          <div className="hidden md:flex flex-col md:col-span-1 w-full items-center h-full gap-4">
+            h-full"
+        >        
+        {isDesktop && (
+          <div className="flex flex-col md:col-span-1 w-full items-center h-full gap-4">
             <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamSeasonHistory
                 league={league}
@@ -235,6 +236,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
           </div>
+        )}
           <div className="flex flex-col w-full md:min-w-[35em] h-full items-center md:col-span-1 gap-2 md:gap-2">
             <Border
               direction="col"
@@ -286,7 +288,8 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               </div>
             </div>
           </div>
-          <div className="flex md:hidden flex-col gap-2 md:col-span-1 w-full items-center h-full overflow-y-auto">
+        {!isDesktop && (
+          <div className="flex flex-col gap-2 md:col-span-1 w-full items-center h-full overflow-y-auto">
             <div className="w-full h-full max-h-full overflow-y-auto">
               <TeamSeasonHistory
                 league={league}
@@ -303,10 +306,10 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
             <div className="w-full h-full max-h-full overflow-y-auto">
-              <TeamTrophyCabinet
+              <TeamBowlResults
                 league={league}
                 team={selectedTeam}
-                data={teamTrophies}
+                data={bowlGames}
                 wins={totalWins}
                 losses={totalLosses}
                 backgroundColor={backgroundColor}
@@ -317,8 +320,9 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
               />
             </div>
           </div>
-          <div className="flex flex-col w-full md:col-span-1 items-center gap-2 md:gap-4 h-full max-h-full">
-            <div className="w-full h-full max-h-full overflow-y-auto">
+          )}
+          <div className="flex flex-col w-full md:col-span-1 items-center gap-2 md:gap-4 h-full">
+            <div className="w-full h-full max-h-[85vh] overflow-y-auto">
               <TeamPlayerCareerStats
                 league={league}
                 team={selectedTeam}
