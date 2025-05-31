@@ -202,7 +202,7 @@ const CFBTeamProfilePage = ({ league }: TeamProfilePageProps) => {
             gap-2 md:gap-4 w-[95vw] max-w-[95vw] 
             md:max-w-full md:w-full 
             md:min-h-[40em] md:max-h-[95vh] 
-            h-full overflow-hidden"
+            h-full"
         >        
         {isDesktop && (
           <div className="flex flex-col md:col-span-1 w-full items-center h-full gap-4">
