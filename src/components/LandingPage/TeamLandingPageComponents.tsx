@@ -103,11 +103,11 @@ export const GamesBar = ({
 
     let revealResult = false;
     if (league === SimCHL || league === SimPHL) {
-      revealResult = RevealHCKResults(item, ts);
+      revealResult = RevealHCKResults(item, ts, false);
     } else if (league === SimCBB || league === SimNBA) {
       revealResult = RevealBBAResults(item, ts, GetBKCurrentWeek(league, ts));
     } else {
-      revealResult = RevealResults(item, ts, league);
+      revealResult = RevealResults(item, ts, league, false);
     }
 
     if (revealResult) {
@@ -146,12 +146,13 @@ export const GamesBar = ({
             </Text>
           </div>
           <Text variant="xs" classes="pt-1 border-t">
-            Week {item.Week}{item.GameDay}
+            Week {item.Week}
+            {item.GameDay}
           </Text>
-        {item.TimeSlot && (
-          <Text variant="xs" classes="">
-            {item.TimeSlot.split(" ").slice(0, 2).join(" ")}
-          </Text>
+          {item.TimeSlot && (
+            <Text variant="xs" classes="">
+              {item.TimeSlot.split(" ").slice(0, 2).join(" ")}
+            </Text>
           )}
         </div>
       </div>
@@ -295,7 +296,7 @@ export const TeamMatchUp = ({
   let revealResult = false;
   if (matchUp.length > 0) {
     if (league === SimCFB || league === SimNFL) {
-      revealResult = RevealResults(matchUp[0], ts, league);
+      revealResult = RevealResults(matchUp[0], ts, league, false);
     } else if (league === SimCBB || league === SimNBA) {
       revealResult = RevealBBAResults(
         matchUp[0],
@@ -303,7 +304,7 @@ export const TeamMatchUp = ({
         GetBKCurrentWeek(league, ts)
       );
     } else if (league === SimCHL || league === SimPHL) {
-      revealResult = RevealHCKResults(matchUp[0], ts);
+      revealResult = RevealHCKResults(matchUp[0], ts, false);
     }
   }
   let resultColor = "";
@@ -660,7 +661,7 @@ export const TeamMailbox = ({
   borderColor,
   textColorClass,
   darkerBackgroundColor,
-  isLoadingTwo
+  isLoadingTwo,
 }: TeamMailboxProps) => {
   return (
     <SectionCards
@@ -1126,7 +1127,6 @@ export const TeamInjuries = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamInjuriesProps) => {
-
   return (
     <SectionCards
       team={team}
@@ -1148,20 +1148,27 @@ export const TeamInjuries = ({
         <>
           <div className="flex flex-col rounded-md p-2 overflow-x-auto">
             <div className="flex justify-center overflow-x-auto flex-wrap gap-2 pt-2">
-            {teamInjuries.map((injury: any, index: number) => (
-              <div key={index} className="flex flex-col p-2 w-[8em] h-[5em] max-h-[7em] sm:w-[12em] sm:h-[8em] border rounded-md bg-red-900 justify-center items-center">
-                <Medic textColorClass="text-red-500 rounded-xl bg-white" />
-                <Text variant="xs" classes={`${textColorClass} font-semibold`}>
-                  {injury.Position} {injury.FirstName} {injury.LastName}
-                </Text>
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {injury.InjuryType}
-                </Text>
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {injury.WeeksOfRecovery} {injury.WeeksOfRecovery === 1 ? "game" : "games"}
-                </Text>
-              </div>
-            ))}
+              {teamInjuries.map((injury: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col p-2 w-[8em] h-[5em] max-h-[7em] sm:w-[12em] sm:h-[8em] border rounded-md bg-red-900 justify-center items-center"
+                >
+                  <Medic textColorClass="text-red-500 rounded-xl bg-white" />
+                  <Text
+                    variant="xs"
+                    classes={`${textColorClass} font-semibold`}
+                  >
+                    {injury.Position} {injury.FirstName} {injury.LastName}
+                  </Text>
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {injury.InjuryType}
+                  </Text>
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {injury.WeeksOfRecovery}{" "}
+                    {injury.WeeksOfRecovery === 1 ? "game" : "games"}
+                  </Text>
+                </div>
+              ))}
             </div>
           </div>
         </>
