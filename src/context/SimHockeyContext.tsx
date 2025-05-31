@@ -795,7 +795,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   );
   const redshirtPlayer = useCallback(
     async (playerID: number, teamID: number) => {
-      const res = await PlayerService.CutCHLPlayer(playerID);
+      const res = await PlayerService.RedshirtCHLPlayer(playerID);
       const rosterMap = { ...chlRosterMap };
       const playerIDX = rosterMap[teamID].findIndex(
         (player) => player.ID === playerID
