@@ -103,7 +103,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
       <>
         <div className="flex flex-row mb-2 gap-x-1 justify-end w-full items-end">
-          {playerID > 0 && (
+          {playerID > 0 && player && (
             <>
               <Button
                 classes="h-full"
@@ -172,7 +172,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
             }}
           />
         </div>
-        {playerID > 0 && (
+        {playerID > 0 && player && (
           <div className="flex flex-col gap-y-2 flex-1">
             {zoneInputList.map((x) => (
               <Input
