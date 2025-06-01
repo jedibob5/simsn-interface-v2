@@ -60,3 +60,43 @@ export const ClickableTeamLabel: FC<ClickableTeamLabelProps> = ({
     </Text>
   );
 };
+
+interface ClickableGameLabelProps {
+  label: string;
+  textColorClass?: string;
+  openModal: () => void;
+  disable: boolean;
+  borderColor?: string;
+  variant?: TextVariant;
+}
+
+export const ClickableGameLabel: FC<ClickableGameLabelProps> = ({
+  label,
+  variant = "xs",
+  textColorClass = "",
+  openModal,
+  disable,
+  borderColor,
+}) => {
+  const open = () => {
+    if (disable) return;
+    openModal();
+  };
+  return (
+    <Text
+      variant={variant}
+      classes={`${textColorClass} font-semibold cursor-pointer hover:text-blue-500`}
+      className="pr-1"
+      style={{
+        textShadow: borderColor
+          ? `0.5px 0.5px 0 ${borderColor}, 
+                      -0.5px -0.5px 0 ${borderColor}, 
+                      0.5px -0.5px 0 ${borderColor}, 
+                      -0.5px 0.5px 0 ${borderColor}`
+          : "",
+      }}
+    >
+      <span onClick={open}>{label}</span>
+    </Text>
+  );
+};

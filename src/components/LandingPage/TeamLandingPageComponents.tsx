@@ -1,7 +1,7 @@
 import { getLogo } from "../../_utility/getLogo";
 import { Text } from "../../_design/Typography";
 import { Logo } from "../../_design/Logo";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import {
@@ -26,8 +26,10 @@ import { SimCFB, SimNFL } from "../../_constants/constants";
 import { useNavigate } from "react-router-dom";
 import routes from "../../_constants/routes";
 import { useDeepLink } from "../../context/DeepLinkContext";
-import { ClickableTeamLabel } from "../Common/Labels";
+import { ClickableGameLabel, ClickableTeamLabel } from "../Common/Labels";
 import { Medic } from "../../_design/Icons";
+import { useModal } from "../../_hooks/useModal";
+import { SchedulePageGameModal } from "../Schedule/Common/GameModal";
 
 interface GamesBarProps {
   games: any[];
@@ -103,11 +105,11 @@ export const GamesBar = ({
 
     let revealResult = false;
     if (league === SimCHL || league === SimPHL) {
-      revealResult = RevealHCKResults(item, ts);
+      revealResult = RevealHCKResults(item, ts, false);
     } else if (league === SimCBB || league === SimNBA) {
       revealResult = RevealBBAResults(item, ts, GetBKCurrentWeek(league, ts));
     } else {
-      revealResult = RevealResults(item, ts, league);
+      revealResult = RevealResults(item, ts, league, false);
     }
 
     if (revealResult) {
@@ -146,12 +148,13 @@ export const GamesBar = ({
             </Text>
           </div>
           <Text variant="xs" classes="pt-1 border-t">
-            Week {item.Week}{item.GameDay}
+            Week {item.Week}
+            {item.GameDay}
           </Text>
-        {item.TimeSlot && (
-          <Text variant="xs" classes="">
-            {item.TimeSlot.split(" ").slice(0, 2).join(" ")}
-          </Text>
+          {item.TimeSlot && (
+            <Text variant="xs" classes="">
+              {item.TimeSlot.split(" ").slice(0, 2).join(" ")}
+            </Text>
           )}
         </div>
       </div>
@@ -273,6 +276,7 @@ interface TeamMatchUpProps {
   textColorClass: string;
   darkerBackgroundColor: string;
   isLoadingTwo: boolean;
+  playerMap: any;
 }
 
 export const TeamMatchUp = ({
@@ -291,11 +295,15 @@ export const TeamMatchUp = ({
   textColorClass,
   darkerBackgroundColor,
   isLoadingTwo,
+  playerMap,
 }: TeamMatchUpProps) => {
+  console.log({ matchUp });
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+
   let revealResult = false;
   if (matchUp.length > 0) {
     if (league === SimCFB || league === SimNFL) {
-      revealResult = RevealResults(matchUp[0], ts, league);
+      revealResult = RevealResults(matchUp[0], ts, league, false);
     } else if (league === SimCBB || league === SimNBA) {
       revealResult = RevealBBAResults(
         matchUp[0],
@@ -303,7 +311,7 @@ export const TeamMatchUp = ({
         GetBKCurrentWeek(league, ts)
       );
     } else if (league === SimCHL || league === SimPHL) {
-      revealResult = RevealHCKResults(matchUp[0], ts);
+      revealResult = RevealHCKResults(matchUp[0], ts, false);
     }
   }
   let resultColor = "";
@@ -361,6 +369,8 @@ export const TeamMatchUp = ({
     }
   };
 
+  const gameModal = useModal();
+
   return (
     <SectionCards
       team={team}
@@ -372,6 +382,14 @@ export const TeamMatchUp = ({
       textColorClass={textColorClass}
       darkerBackgroundColor={darkerBackgroundColor}
     >
+      <SchedulePageGameModal
+        isOpen={gameModal.isModalOpen}
+        onClose={gameModal.handleCloseModal}
+        league={league}
+        game={{ ...matchUp[0], HomeTeamLogo: homeLogo, AwayTeamLogo: awayLogo }}
+        title={`${selectedGame?.HomeTeam} vs ${selectedGame?.AwayTeam}`}
+        playerMap={playerMap}
+      />
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
           <Text variant="small" classes={`${textColorClass}`}>
@@ -425,18 +443,17 @@ export const TeamMatchUp = ({
           </div>
           <div className="flex-col items-center">
             {revealResult && (
-              <Text
+              <ClickableGameLabel
                 variant="h6"
-                classes={`${resultColor} font-semibold`}
-                style={{
-                  textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                              -0.5px -0.5px 0 ${borderColor}, 
-                              0.5px -0.5px 0 ${borderColor}, 
-                              -0.5px 0.5px 0 ${borderColor}`,
+                textColorClass={resultColor}
+                disable={!revealResult}
+                openModal={() => {
+                  setSelectedGame(matchUp[0]);
+                  gameModal.handleOpenModal();
                 }}
-              >
-                {`${gameScore}`}
-              </Text>
+                label={gameScore}
+                borderColor={borderColor}
+              />
             )}
             <Text variant="small">{`Week ${week}`}</Text>
             <Text variant="small" classes="pb-2">
@@ -660,7 +677,7 @@ export const TeamMailbox = ({
   borderColor,
   textColorClass,
   darkerBackgroundColor,
-  isLoadingTwo
+  isLoadingTwo,
 }: TeamMailboxProps) => {
   return (
     <SectionCards
@@ -1126,7 +1143,6 @@ export const TeamInjuries = ({
   darkerBackgroundColor,
   isLoadingTwo,
 }: TeamInjuriesProps) => {
-
   return (
     <SectionCards
       team={team}
@@ -1148,20 +1164,27 @@ export const TeamInjuries = ({
         <>
           <div className="flex flex-col rounded-md p-2 overflow-x-auto">
             <div className="flex justify-center overflow-x-auto flex-wrap gap-2 pt-2">
-            {teamInjuries.map((injury: any, index: number) => (
-              <div key={index} className="flex flex-col p-2 w-[8em] h-[5em] max-h-[7em] sm:w-[12em] sm:h-[8em] border rounded-md bg-red-900 justify-center items-center">
-                <Medic textColorClass="text-red-500 rounded-xl bg-white" />
-                <Text variant="xs" classes={`${textColorClass} font-semibold`}>
-                  {injury.Position} {injury.FirstName} {injury.LastName}
-                </Text>
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {injury.InjuryType}
-                </Text>
-                <Text variant="xs" classes={`${textColorClass}`}>
-                  {injury.WeeksOfRecovery} {injury.WeeksOfRecovery === 1 ? "game" : "games"}
-                </Text>
-              </div>
-            ))}
+              {teamInjuries.map((injury: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col p-2 w-[8em] h-[5em] max-h-[7em] sm:w-[12em] sm:h-[8em] border rounded-md bg-red-900 justify-center items-center"
+                >
+                  <Medic textColorClass="text-red-500 rounded-xl bg-white" />
+                  <Text
+                    variant="xs"
+                    classes={`${textColorClass} font-semibold`}
+                  >
+                    {injury.Position} {injury.FirstName} {injury.LastName}
+                  </Text>
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {injury.InjuryType}
+                  </Text>
+                  <Text variant="xs" classes={`${textColorClass}`}>
+                    {injury.WeeksOfRecovery}{" "}
+                    {injury.WeeksOfRecovery === 1 ? "game" : "games"}
+                  </Text>
+                </div>
+              ))}
             </div>
           </div>
         </>

@@ -500,11 +500,15 @@ export const PHLRosterTable: FC<PHLRosterTableProps> = ({
               },
               {
                 value: "affiliate",
-                label: `Send to Affiliate Team - ${item.FirstName} ${item.LastName}`,
+                label: `${
+                  item.IsAffiliatePlayer ? `Return From` : `Send To`
+                } Affiliate Team - ${item.FirstName} ${item.LastName}`,
               },
               {
                 value: "tradeBlock",
-                label: `Trade Block - ${item.FirstName} ${item.LastName}`,
+                label: `${
+                  item.IsOnTradeBlock ? "Take Off" : "Place On"
+                } Trade Block - ${item.FirstName} ${item.LastName}`,
               },
             ]}
             onChange={(selectedOption: SingleValue<SelectOption>) => {
