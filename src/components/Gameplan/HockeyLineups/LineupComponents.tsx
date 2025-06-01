@@ -67,9 +67,6 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
   property,
   activatePlayer,
 }) => {
-  if (playerID === 0) {
-    return <></>;
-  }
   const player = rosterMap[playerID];
   const GetValue = useCallback(
     (opts: SingleValue<SelectOption>) => {
@@ -106,13 +103,17 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
       <>
         <div className="flex flex-row mb-2 gap-x-1 justify-end w-full items-end">
-          <Button
-            classes="h-full"
-            onClick={() => activatePlayer(player)}
-            disabled={!player}
-          >
-            <Info />
-          </Button>
+          {playerID > 0 && (
+            <>
+              <Button
+                classes="h-full"
+                onClick={() => activatePlayer(player)}
+                disabled={!player}
+              >
+                <Info />
+              </Button>
+            </>
+          )}
           <SelectDropdown
             value={selectedOption}
             onChange={GetValue}
@@ -171,7 +172,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
             }}
           />
         </div>
-        {player && (
+        {playerID > 0 && (
           <div className="flex flex-col gap-y-2 flex-1">
             {zoneInputList.map((x) => (
               <Input
