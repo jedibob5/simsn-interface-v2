@@ -8,7 +8,7 @@ import { SectionCards } from "../../../_design/SectionCards";
 import { InformationCircle } from "../../../_design/Icons";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
 import { processLeagueStandings } from "./SchedulePageHelper";
-import { ClickableTeamLabel } from "../../Common/Labels";
+import { ClickableGameLabel, ClickableTeamLabel } from "../../Common/Labels";
 import { useModal } from "../../../_hooks/useModal";
 import { SchedulePageGameModal } from "./GameModal";
 import { SimCFB, SimNFL } from "../../../_constants/constants";
@@ -158,18 +158,21 @@ export const TeamSchedule = ({
                   />
                 </div>
                 <div className="text-center col-span-1">
-                  <Text
-                    variant="xs"
-                    className={`font-semibold ${
+                  <ClickableGameLabel
+                    textColorClass={`${
                       game.userWin
                         ? "text-green-500"
                         : game.userLoss
                         ? "text-red-500"
                         : textColorClass
                     } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
-                  >
-                    {game.headerGameScore}
-                  </Text>
+                    disable={game.gameSCore === "TBC"}
+                    openModal={() => {
+                      setSelectedGame(game);
+                      gameModal.handleOpenModal();
+                    }}
+                    label={game.headerGameScore}
+                  />
                 </div>
                 <div className="flex text-center justify-center col-span-1">
                   <Button
@@ -341,18 +344,17 @@ export const WeeklySchedule = ({
                 />
               </div>
               <div className="text-center col-span-1">
-                <Text
-                  variant="xs"
-                  className={`font-semibold ${
-                    game.userWin
-                      ? "text-green-500"
-                      : game.userLoss
-                      ? "text-red-500"
-                      : textColorClass
-                  } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
-                >
-                  {game.headerGameScore}
-                </Text>
+                <ClickableGameLabel
+                  textColorClass={`${
+                    game.gameScore === "TBC" ? "opacity-50" : ""
+                  }`}
+                  disable={game.gameSCore === "TBC"}
+                  openModal={() => {
+                    setSelectedGame(game);
+                    gameModal.handleOpenModal();
+                  }}
+                  label={game.headerGameScore}
+                />
               </div>
               <div className="flex text-center justify-center col-span-1">
                 <Button

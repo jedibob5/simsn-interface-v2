@@ -1,7 +1,7 @@
 import { getLogo } from "../../_utility/getLogo";
 import { Text } from "../../_design/Typography";
 import { Logo } from "../../_design/Logo";
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import {
@@ -26,8 +26,10 @@ import { SimCFB, SimNFL } from "../../_constants/constants";
 import { useNavigate } from "react-router-dom";
 import routes from "../../_constants/routes";
 import { useDeepLink } from "../../context/DeepLinkContext";
-import { ClickableTeamLabel } from "../Common/Labels";
+import { ClickableGameLabel, ClickableTeamLabel } from "../Common/Labels";
 import { Medic } from "../../_design/Icons";
+import { useModal } from "../../_hooks/useModal";
+import { SchedulePageGameModal } from "../Schedule/Common/GameModal";
 
 interface GamesBarProps {
   games: any[];
@@ -274,6 +276,7 @@ interface TeamMatchUpProps {
   textColorClass: string;
   darkerBackgroundColor: string;
   isLoadingTwo: boolean;
+  playerMap: any;
 }
 
 export const TeamMatchUp = ({
@@ -292,7 +295,11 @@ export const TeamMatchUp = ({
   textColorClass,
   darkerBackgroundColor,
   isLoadingTwo,
+  playerMap,
 }: TeamMatchUpProps) => {
+  console.log({ matchUp });
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+
   let revealResult = false;
   if (matchUp.length > 0) {
     if (league === SimCFB || league === SimNFL) {
@@ -362,6 +369,8 @@ export const TeamMatchUp = ({
     }
   };
 
+  const gameModal = useModal();
+
   return (
     <SectionCards
       team={team}
@@ -373,6 +382,14 @@ export const TeamMatchUp = ({
       textColorClass={textColorClass}
       darkerBackgroundColor={darkerBackgroundColor}
     >
+      <SchedulePageGameModal
+        isOpen={gameModal.isModalOpen}
+        onClose={gameModal.handleCloseModal}
+        league={league}
+        game={{ ...matchUp[0], HomeTeamLogo: homeLogo, AwayTeamLogo: awayLogo }}
+        title={`${selectedGame?.HomeTeam} vs ${selectedGame?.AwayTeam}`}
+        playerMap={playerMap}
+      />
       {isLoadingTwo ? (
         <div className="flex justify-center items-center pb-2">
           <Text variant="small" classes={`${textColorClass}`}>
@@ -426,18 +443,17 @@ export const TeamMatchUp = ({
           </div>
           <div className="flex-col items-center">
             {revealResult && (
-              <Text
+              <ClickableGameLabel
                 variant="h6"
-                classes={`${resultColor} font-semibold`}
-                style={{
-                  textShadow: `0.5px 0.5px 0 ${borderColor}, 
-                              -0.5px -0.5px 0 ${borderColor}, 
-                              0.5px -0.5px 0 ${borderColor}, 
-                              -0.5px 0.5px 0 ${borderColor}`,
+                textColorClass={resultColor}
+                disable={!revealResult}
+                openModal={() => {
+                  setSelectedGame(matchUp[0]);
+                  gameModal.handleOpenModal();
                 }}
-              >
-                {`${gameScore}`}
-              </Text>
+                label={gameScore}
+                borderColor={borderColor}
+              />
             )}
             <Text variant="small">{`Week ${week}`}</Text>
             <Text variant="small" classes="pb-2">

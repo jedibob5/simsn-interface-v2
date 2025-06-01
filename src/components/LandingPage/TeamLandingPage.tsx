@@ -23,7 +23,7 @@ import {
   TeamStats,
   TeamNews,
   TeamQuickLinks,
-  TeamInjuries
+  TeamInjuries,
 } from "./TeamLandingPageComponents";
 import { isBrightColor } from "../../_utility/isBrightColor";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
@@ -37,6 +37,7 @@ import {
   SimPHL,
 } from "../../_constants/constants";
 import { useResponsive } from "../../_hooks/useMobile";
+import { useMemo } from "react";
 
 interface TeamLandingPageProps {
   team: any;
@@ -121,6 +122,66 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
   const headers = Titles.headersMapping[league as LeagueType];
   const { isMobile } = useResponsive();
 
+  const playerMap = useMemo(() => {
+    let rMap: Record<number, any[]> = {};
+    if (league === SimCFB && cfbRosterMap) {
+      rMap = cfbRosterMap;
+    } else if (league === SimNFL && proRosterMap) {
+      rMap = proRosterMap;
+    } else if (league === SimCBB && cbbRosterMap) {
+      rMap = cbbRosterMap;
+    } else if (league === SimNBA && nbaRosterMap) {
+      rMap = nbaRosterMap;
+    } else if (league === SimCHL && chlRosterMap) {
+      rMap = chlRosterMap;
+    } else if (league === SimPHL && phlRosterMap) {
+      rMap = phlRosterMap;
+    }
+
+    if (!rMap) return {};
+    const map: Record<
+      number,
+      Record<number, { FirstName: string; LastName: string; Position: string }>
+    > = {};
+
+    Object.entries(rMap).forEach(([teamId, roster]) => {
+      map[Number(teamId)] = roster.reduce(
+        (
+          acc: {
+            [x: string]: { FirstName: any; LastName: any; Position: any };
+          },
+          player: {
+            ID: string | number;
+            FirstName: any;
+            LastName: any;
+            Position: any;
+          }
+        ) => {
+          acc[player.ID] = {
+            FirstName: player.FirstName,
+            LastName: player.LastName,
+            Position: player.Position,
+          };
+          return acc;
+        },
+        {} as Record<
+          number,
+          { FirstName: string; LastName: string; Position: string }
+        >
+      );
+    });
+
+    return map;
+  }, [
+    league,
+    chlRosterMap,
+    phlRosterMap,
+    cfbRosterMap,
+    proRosterMap,
+    cbbRosterMap,
+    nbaRosterMap,
+  ]);
+
   let teamStandings: any[] = [],
     teamNotifications: any[] = [],
     teamMatchUp: any[] = [],
@@ -148,7 +209,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
-        teamInjuries
+        teamInjuries,
       } = getLandingCFBData(
         team,
         currentWeek,
@@ -179,7 +240,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
-        teamInjuries
+        teamInjuries,
       } = getLandingNFLData(
         team,
         currentWeek,
@@ -210,7 +271,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
-        teamInjuries
+        teamInjuries,
       } = getLandingCBBData(
         team,
         currentWeek,
@@ -241,7 +302,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
-        teamInjuries
+        teamInjuries,
       } = getLandingNBAData(
         team,
         currentWeek,
@@ -272,7 +333,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         teamStats,
         gameWeek,
-        teamInjuries
+        teamInjuries,
       } = getLandingCHLData(
         team,
         currentWeek,
@@ -304,7 +365,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
         teamNews,
         gameWeek,
         teamStats,
-        teamInjuries
+        teamInjuries,
       } = getLandingPHLData(
         team,
         currentWeek,
@@ -388,29 +449,30 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
                   isLoadingTwo={isLoadingTwo}
+                  playerMap={playerMap}
                 />
               </Border>
-            {isMobile && (
-              <Border
-                classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
-                styles={{
-                  backgroundColor: borderColor,
-                  borderColor: backgroundColor,
-                }}
-              >
-                <TeamInjuries
-                  team={team}
-                  league={league}
-                  teamInjuries={teamInjuries}
-                  backgroundColor={backgroundColor}
-                  headerColor={headerColor}
-                  borderColor={borderColor}
-                  textColorClass={textColorClass}
-                  darkerBackgroundColor={darkerBackgroundColor}
-                  isLoadingTwo={isLoadingTwo}
-                />
-              </Border>
-            )}
+              {isMobile && (
+                <Border
+                  classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
+                  styles={{
+                    backgroundColor: borderColor,
+                    borderColor: backgroundColor,
+                  }}
+                >
+                  <TeamInjuries
+                    team={team}
+                    league={league}
+                    teamInjuries={teamInjuries}
+                    backgroundColor={backgroundColor}
+                    headerColor={headerColor}
+                    borderColor={borderColor}
+                    textColorClass={textColorClass}
+                    darkerBackgroundColor={darkerBackgroundColor}
+                    isLoadingTwo={isLoadingTwo}
+                  />
+                </Border>
+              )}
               {isMobile && (
                 <Border
                   classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] w-full max-w-full md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[35em]"
@@ -490,7 +552,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                 />
               </Border>
             )}
-              {!isMobile && (
+            {!isMobile && (
               <Border
                 classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-[70%] md:w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
                 styles={{
@@ -510,7 +572,7 @@ export const TeamLandingPage = ({ team, league, ts }: TeamLandingPageProps) => {
                   isLoadingTwo={isLoadingTwo}
                 />
               </Border>
-              )}
+            )}
             <div className="flex flex-row md:flex-none md:flex-col w-full">
               <Border
                 classes="border-4 h-full md:h-auto py-[0px] px-[0px] w-full md:min-w-[18em] md:max-w-[30em] md:max-h-[40em]"
