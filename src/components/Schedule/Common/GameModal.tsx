@@ -814,6 +814,7 @@ export const HockeyGameModal = ({
       obj.ForwardsStats = dataSet
         .filter((x) => x.TimeOnIce && x.TimeOnIce > 0)
         .filter((x) => {
+          console.log({ playerMap });
           const playerDetails = playerMap[x.TeamID]?.[x.PlayerID];
           return (
             playerDetails?.Position === "F" || playerDetails?.Position === "C"
