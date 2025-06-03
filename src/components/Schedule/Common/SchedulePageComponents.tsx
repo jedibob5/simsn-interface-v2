@@ -165,8 +165,12 @@ export const TeamSchedule = ({
                         : game.userLoss
                         ? "text-red-500"
                         : textColorClass
-                    } ${game.gameScore === "TBC" ? "opacity-50" : ""}`}
-                    disable={game.gameSCore === "TBC"}
+                    } ${
+                      game.gameScore === "TBC"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disable={game.gameScore === "TBC"}
                     openModal={() => {
                       setSelectedGame(game);
                       gameModal.handleOpenModal();
