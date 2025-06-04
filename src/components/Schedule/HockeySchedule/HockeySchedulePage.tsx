@@ -112,7 +112,16 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
     const map: Record<
       number,
-      Record<number, { FirstName: string; LastName: string; Position: string }>
+      Record<
+        number,
+        {
+          FirstName: string;
+          LastName: string;
+          Position: string;
+          TeamID: number;
+          Team: string;
+        }
+      >
     > = {};
 
     Object.entries(chlRosterMap).forEach(([teamId, roster]) => {
@@ -121,9 +130,11 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           FirstName: player.FirstName,
           LastName: player.LastName,
           Position: player.Position,
+          TeamID: player.TeamID,
+          Team: player.Team,
         };
         return acc;
-      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string; TeamID: number; Team: string }>);
     });
 
     return map;
@@ -519,6 +530,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={view}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={chlTeamMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
@@ -538,6 +550,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={view}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={chlTeamMap}
                   week={selectedWeek}
                   league={league}
                   ts={ts}
@@ -621,7 +634,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
     const map: Record<
       number,
-      Record<number, { FirstName: string; LastName: string; Position: string }>
+      Record<
+        number,
+        {
+          FirstName: string;
+          LastName: string;
+          Position: string;
+          TeamID: number;
+          Team: string;
+        }
+      >
     > = {};
 
     Object.entries(phlRosterMap).forEach(([teamId, roster]) => {
@@ -630,9 +652,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           FirstName: player.FirstName,
           LastName: player.LastName,
           Position: player.Position,
+          TeamID: player.TeamID,
+          Team: player.Team,
         };
         return acc;
-      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string; TeamID: number; Team: string }>);
     });
 
     return map;
@@ -987,6 +1011,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={scheduleView}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={phlTeamMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
@@ -1009,6 +1034,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   league={league}
                   ts={ts}
                   playerMap={playerMap}
+                  teamMap={phlTeamMap}
                   processedSchedule={weeklyGames}
                   backgroundColor={backgroundColor}
                   headerColor={headerColor}
