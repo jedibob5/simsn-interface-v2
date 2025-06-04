@@ -41,6 +41,7 @@ import { NonFBAExportOptions } from "./hockeyScheduleHelper";
 import { useModal } from "../../../_hooks/useModal";
 import { SubmitPollModal } from "../Common/SubmitPollModal";
 import { CollegePollModal } from "../Common/CollegePollModal";
+import { getHCKWeekID } from "../../../_helper/statsPageHelper";
 
 interface SchedulePageProps {
   league: League;
@@ -64,6 +65,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     collegePolls,
     collegePollSubmission,
     submitCollegePoll,
+    ExportHockeySchedule,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
@@ -183,6 +185,15 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const submitPollModal = useModal();
   const collegePollModal = useModal();
+
+  const handleScheduleExport = async (opts: any) => {
+    const dto = {
+      SeasonID: selectedSeason,
+      WeekID: getHCKWeekID(selectedWeek, selectedSeason - 2024),
+      Timeslot: opts.value,
+    };
+    await ExportHockeySchedule(dto);
+  };
 
   return (
     <>
@@ -454,7 +465,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   <SelectDropdown
                     options={hckExportOptions}
                     placeholder="Select Timeslot..."
-                    // onChange={selectTeamOption}
+                    onChange={handleScheduleExport}
                     isDisabled={view === TeamGames}
                     styles={{
                       control: (provided, state) => ({
@@ -601,6 +612,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     allProStandings: allPHLStandings,
     allProGames: allPHLGames,
     isLoading,
+    ExportHockeySchedule,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
@@ -611,6 +623,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
   const [standingsView, setStandingsView] = useState(Conferences);
   const [resultsOverride, setResultsOverride] = useState<boolean>(false);
+  const hckExportOptions = useMemo(() => NonFBAExportOptions(), []);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -702,6 +715,15 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
     return processWeeklyGames(gamesForWeek, ts, league, resultsOverride);
   }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
+
+  const handleScheduleExport = async (opts: any) => {
+    const dto = {
+      SeasonID: selectedSeason,
+      WeekID: getHCKWeekID(selectedWeek, selectedSeason - 2024),
+      Timeslot: opts.value,
+    };
+    await ExportHockeySchedule(dto);
+  };
 
   return (
     <>
@@ -940,9 +962,9 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               <div className="flex flex-col items-center gap-2 justify-center">
                 <Text variant="body">Export Day of Week</Text>
                 <SelectDropdown
-                  options={phlTeamOptions}
+                  options={hckExportOptions}
                   placeholder="Select Timeslot..."
-                  onChange={selectTeamOption}
+                  onChange={handleScheduleExport}
                   styles={{
                     control: (provided, state) => ({
                       ...provided,

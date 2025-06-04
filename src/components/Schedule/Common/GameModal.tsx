@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect } from "react";
+import { FC, useMemo, useState, useEffect, useCallback } from "react";
 import {
   League,
   SimCHL,
@@ -40,6 +40,8 @@ import {
   HKGameModalGoalies,
   HKGameModalPBP,
 } from "./GameModalComponents";
+import { useSimHCKStore } from "../../../context/SimHockeyContext";
+import { Button } from "../../../_design/Buttons";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -739,6 +741,7 @@ export const HockeyGameModal = ({
   teamMap,
 }: GameModalProps) => {
   const scheduleService = new FBAScheduleService();
+  const { ExportPlayByPlay } = useSimHCKStore();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [homePlayers, setHomePlayers] = useState<CHLPlayerGameStats[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<CHLPlayerGameStats[]>([]);
@@ -936,8 +939,15 @@ export const HockeyGameModal = ({
     return list;
   }, [game, playerMap, viewableHomePlayers, viewableAwayPlayers]);
 
-  console.log({ threeStars });
-
+  const exportPlayByPlayResults = useCallback(async () => {
+    if (league === SimCHL || league === SimPHL) {
+      const dto = {
+        League: league,
+        GameID: game.ID,
+      };
+      await ExportPlayByPlay(dto);
+    }
+  }, []);
   return (
     <>
       {isLoading ? (
@@ -1093,14 +1103,21 @@ export const HockeyGameModal = ({
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-2 py-2">
-                  <ToggleSwitch
-                    onChange={(checked) => {
-                      setView(checked ? PBP : BoxScore);
-                      setIsChecked(checked);
-                    }}
-                    checked={isChecked}
-                  />
-                  <Text variant="small">Play By Play</Text>
+                  <div className="flex gap-x-2">
+                    <ToggleSwitch
+                      onChange={(checked) => {
+                        setView(checked ? PBP : BoxScore);
+                        setIsChecked(checked);
+                      }}
+                      checked={isChecked}
+                    />
+                    <Text variant="small">Play By Play</Text>
+                  </div>
+                  <div>
+                    <Button size="xs" onClick={exportPlayByPlayResults}>
+                      Export
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col items-center w-1/3">
