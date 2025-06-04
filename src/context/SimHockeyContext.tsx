@@ -626,6 +626,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setPortalPlayers(res.PortalPlayers);
       setRecruits(res.Recruits);
       setRecruitProfiles(res.RecruitProfiles);
+      setTeamProfileMap(res.TeamProfileMap);
     }
     if (phlid > 0) {
       setAllProGames(res.AllProGames);
@@ -637,13 +638,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setPHLGameplan(res.PHLGameplan);
       setPHLShootoutLineup(res.ProTeamShootoutLineup);
       setAllProStandings(res.ProStandings);
-      setTeamProfileMap(res.TeamProfileMap);
       setProRosterMap(res.ProRosterMap);
       setFreeAgentOffers(res.FreeAgentOffers);
       setWaiverOffers(res.WaiverWireOffers);
       setAffiliatePlayers(res.AffiliatePlayers);
       setProNotifications(res.ProNotifications);
-      setPlayerFaces(res.FaceData);
       setProContractMap(res.ContractMap);
       setProExtensionMap(res.ExtensionMap);
       setTopPHLGoals(res.TopPHLGoals);
@@ -653,6 +652,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setTradePreferencesMap(res.ProTradePreferenceMap);
       setPHLDraftPicks(res.DraftPicks);
     }
+    setPlayerFaces(res.FaceData);
 
     if (
       res.AllCollegeGames &&
