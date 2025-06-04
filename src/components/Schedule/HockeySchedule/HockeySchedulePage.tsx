@@ -297,7 +297,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "100%",
+                            width: "15rem",
                             maxWidth: "300px",
                             padding: "0.3rem",
                             boxShadow: state.isFocused
@@ -360,7 +360,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "100%",
+                            width: "15rem",
                             maxWidth: "300px",
                             padding: "0.3rem",
                             boxShadow: state.isFocused
@@ -419,7 +419,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "100%",
+                        width: "15rem",
                         maxWidth: "300px",
                         padding: "0.3rem",
                         boxShadow: state.isFocused
@@ -475,7 +475,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "100%",
+                        width: "15rem",
                         maxWidth: "300px",
                         padding: "0.3rem",
                         boxShadow: state.isFocused
