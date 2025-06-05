@@ -18,6 +18,7 @@ interface TeamScheduleProps {
   Abbr?: string;
   category?: string;
   playerMap?: any;
+  teamMap?: any;
   week: any;
   currentUser: any;
   league: League;
@@ -37,6 +38,7 @@ export const TeamSchedule = ({
   category,
   currentUser,
   playerMap,
+  teamMap,
   week,
   league,
   ts,
@@ -115,6 +117,7 @@ export const TeamSchedule = ({
               game={selectedGame}
               title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
               playerMap={playerMap}
+              teamMap={teamMap}
             />
             {processedSchedule.map((game, index) => (
               <div
@@ -210,6 +213,7 @@ export const WeeklySchedule = ({
   category,
   currentUser,
   playerMap,
+  teamMap,
   week,
   league,
   ts,
@@ -292,6 +296,7 @@ export const WeeklySchedule = ({
             game={selectedGame}
             title={`${selectedGame?.HomeTeamAbbr} vs ${selectedGame?.AwayTeamAbbr}`}
             playerMap={playerMap}
+            teamMap={teamMap}
           />
           {processedSchedule.map((game, index) => (
             <div

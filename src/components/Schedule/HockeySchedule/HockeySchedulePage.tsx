@@ -41,6 +41,7 @@ import { NonFBAExportOptions } from "./hockeyScheduleHelper";
 import { useModal } from "../../../_hooks/useModal";
 import { SubmitPollModal } from "../Common/SubmitPollModal";
 import { CollegePollModal } from "../Common/CollegePollModal";
+import { getHCKWeekID } from "../../../_helper/statsPageHelper";
 
 interface SchedulePageProps {
   league: League;
@@ -64,6 +65,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     collegePolls,
     collegePollSubmission,
     submitCollegePoll,
+    ExportHockeySchedule,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(chlTeam);
@@ -112,7 +114,16 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
     const map: Record<
       number,
-      Record<number, { FirstName: string; LastName: string; Position: string }>
+      Record<
+        number,
+        {
+          FirstName: string;
+          LastName: string;
+          Position: string;
+          TeamID: number;
+          Team: string;
+        }
+      >
     > = {};
 
     Object.entries(chlRosterMap).forEach(([teamId, roster]) => {
@@ -121,9 +132,11 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           FirstName: player.FirstName,
           LastName: player.LastName,
           Position: player.Position,
+          TeamID: player.TeamID,
+          Team: player.Team,
         };
         return acc;
-      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string; TeamID: number; Team: string }>);
     });
 
     return map;
@@ -172,6 +185,15 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const submitPollModal = useModal();
   const collegePollModal = useModal();
+
+  const handleScheduleExport = async (opts: any) => {
+    const dto = {
+      SeasonID: selectedSeason,
+      WeekID: getHCKWeekID(selectedWeek, selectedSeason - 2024),
+      Timeslot: opts.value,
+    };
+    await ExportHockeySchedule(dto);
+  };
 
   return (
     <>
@@ -275,7 +297,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "100%",
+                            width: "15rem",
                             maxWidth: "300px",
                             padding: "0.3rem",
                             boxShadow: state.isFocused
@@ -338,7 +360,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "100%",
+                            width: "15rem",
                             maxWidth: "300px",
                             padding: "0.3rem",
                             boxShadow: state.isFocused
@@ -397,7 +419,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "100%",
+                        width: "15rem",
                         maxWidth: "300px",
                         padding: "0.3rem",
                         boxShadow: state.isFocused
@@ -443,7 +465,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   <SelectDropdown
                     options={hckExportOptions}
                     placeholder="Select Timeslot..."
-                    // onChange={selectTeamOption}
+                    onChange={handleScheduleExport}
                     isDisabled={view === TeamGames}
                     styles={{
                       control: (provided, state) => ({
@@ -453,7 +475,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "100%",
+                        width: "15rem",
                         maxWidth: "300px",
                         padding: "0.3rem",
                         boxShadow: state.isFocused
@@ -519,6 +541,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={view}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={chlTeamMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
@@ -538,6 +561,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={view}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={chlTeamMap}
                   week={selectedWeek}
                   league={league}
                   ts={ts}
@@ -588,6 +612,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     allProStandings: allPHLStandings,
     allProGames: allPHLGames,
     isLoading,
+    ExportHockeySchedule,
   } = hkStore;
 
   const [selectedTeam, setSelectedTeam] = useState(phlTeam);
@@ -598,6 +623,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
   const [selectedSeason, setSelectedSeason] = useState(currentSeason ?? 2025);
   const [standingsView, setStandingsView] = useState(Conferences);
   const [resultsOverride, setResultsOverride] = useState<boolean>(false);
+  const hckExportOptions = useMemo(() => NonFBAExportOptions(), []);
 
   const teamColors = useTeamColors(
     selectedTeam?.ColorOne,
@@ -621,7 +647,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
     const map: Record<
       number,
-      Record<number, { FirstName: string; LastName: string; Position: string }>
+      Record<
+        number,
+        {
+          FirstName: string;
+          LastName: string;
+          Position: string;
+          TeamID: number;
+          Team: string;
+        }
+      >
     > = {};
 
     Object.entries(phlRosterMap).forEach(([teamId, roster]) => {
@@ -630,9 +665,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
           FirstName: player.FirstName,
           LastName: player.LastName,
           Position: player.Position,
+          TeamID: player.TeamID,
+          Team: player.Team,
         };
         return acc;
-      }, {} as Record<number, { FirstName: string; LastName: string; Position: string }>);
+      }, {} as Record<number, { FirstName: string; LastName: string; Position: string; TeamID: number; Team: string }>);
     });
 
     return map;
@@ -678,6 +715,15 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
     const gamesForWeek = groupedWeeklyGames[selectedWeek] || [];
     return processWeeklyGames(gamesForWeek, ts, league, resultsOverride);
   }, [groupedWeeklyGames, selectedWeek, ts, league, resultsOverride]);
+
+  const handleScheduleExport = async (opts: any) => {
+    const dto = {
+      SeasonID: selectedSeason,
+      WeekID: getHCKWeekID(selectedWeek, selectedSeason - 2024),
+      Timeslot: opts.value,
+    };
+    await ExportHockeySchedule(dto);
+  };
 
   return (
     <>
@@ -828,19 +874,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                             : "none",
                           borderRadius: "8px",
                           transition: "all 0.2s ease",
-                          zIndex: 100000,
                         }),
                         menu: (provided) => ({
                           ...provided,
                           backgroundColor: "#1a202c",
                           borderRadius: "8px",
-                          zIndex: 100000,
                         }),
                         menuList: (provided) => ({
                           ...provided,
                           backgroundColor: "#1a202c",
                           padding: "0",
-                          zIndex: 100000,
                         }),
                         option: (provided, state) => ({
                           ...provided,
@@ -850,17 +893,14 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           color: "#ffffff",
                           padding: "10px",
                           cursor: "pointer",
-                          zIndex: 1000,
                         }),
                         singleValue: (provided) => ({
                           ...provided,
                           color: "#ffffff",
-                          zIndex: 1000,
                         }),
                         placeholder: (provided) => ({
                           ...provided,
                           color: "#ffffff",
-                          zIndex: 1000,
                         }),
                       }}
                     />
@@ -888,19 +928,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
                       borderRadius: "8px",
                       transition: "all 0.2s ease",
-                      zIndex: 100000,
                     }),
                     menu: (provided) => ({
                       ...provided,
                       backgroundColor: "#1a202c",
                       borderRadius: "8px",
-                      zIndex: 100000,
                     }),
                     menuList: (provided) => ({
                       ...provided,
                       backgroundColor: "#1a202c",
                       padding: "0",
-                      zIndex: 100000,
                     }),
                     option: (provided, state) => ({
                       ...provided,
@@ -908,17 +945,14 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       color: "#ffffff",
                       padding: "10px",
                       cursor: "pointer",
-                      zIndex: 1000,
                     }),
                     singleValue: (provided) => ({
                       ...provided,
                       color: "#ffffff",
-                      zIndex: 1000,
                     }),
                     placeholder: (provided) => ({
                       ...provided,
                       color: "#ffffff",
-                      zIndex: 1000,
                     }),
                   }}
                 />
@@ -928,9 +962,9 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
               <div className="flex flex-col items-center gap-2 justify-center">
                 <Text variant="body">Export Day of Week</Text>
                 <SelectDropdown
-                  options={phlTeamOptions}
+                  options={hckExportOptions}
                   placeholder="Select Timeslot..."
-                  onChange={selectTeamOption}
+                  onChange={handleScheduleExport}
                   styles={{
                     control: (provided, state) => ({
                       ...provided,
@@ -943,19 +977,16 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
                       borderRadius: "8px",
                       transition: "all 0.2s ease",
-                      zIndex: 100000,
                     }),
                     menu: (provided) => ({
                       ...provided,
                       backgroundColor: "#1a202c",
                       borderRadius: "8px",
-                      zIndex: 100000,
                     }),
                     menuList: (provided) => ({
                       ...provided,
                       backgroundColor: "#1a202c",
                       padding: "0",
-                      zIndex: 100000,
                     }),
                     option: (provided, state) => ({
                       ...provided,
@@ -963,17 +994,14 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       color: "#ffffff",
                       padding: "10px",
                       cursor: "pointer",
-                      zIndex: 1000,
                     }),
                     singleValue: (provided) => ({
                       ...provided,
                       color: "#ffffff",
-                      zIndex: 1000,
                     }),
                     placeholder: (provided) => ({
                       ...provided,
                       color: "#ffffff",
-                      zIndex: 1000,
                     }),
                   }}
                 />
@@ -1005,6 +1033,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   category={scheduleView}
                   currentUser={currentUser}
                   playerMap={playerMap}
+                  teamMap={phlTeamMap}
                   week={currentWeek}
                   league={league}
                   ts={ts}
@@ -1026,6 +1055,8 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   week={selectedWeek}
                   league={league}
                   ts={ts}
+                  playerMap={playerMap}
+                  teamMap={phlTeamMap}
                   processedSchedule={weeklyGames}
                   backgroundColor={backgroundColor}
                   headerColor={headerColor}

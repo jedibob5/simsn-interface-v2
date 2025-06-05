@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect } from "react";
+import { FC, useMemo, useState, useEffect, useCallback } from "react";
 import {
   League,
   SimCHL,
@@ -40,6 +40,8 @@ import {
   HKGameModalGoalies,
   HKGameModalPBP,
 } from "./GameModalComponents";
+import { useSimHCKStore } from "../../../context/SimHockeyContext";
+import { Button } from "../../../_design/Buttons";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -48,6 +50,7 @@ export interface SchedulePageGameModalProps {
   playerMap?: any;
   game: any;
   title: string;
+  teamMap?: any;
 }
 
 export const SchedulePageGameModal: FC<SchedulePageGameModalProps> = ({
@@ -55,6 +58,7 @@ export const SchedulePageGameModal: FC<SchedulePageGameModalProps> = ({
   isOpen,
   onClose,
   playerMap,
+  teamMap,
   game,
   title,
 }) => {
@@ -82,6 +86,7 @@ export const SchedulePageGameModal: FC<SchedulePageGameModalProps> = ({
             league={league}
             isPro={isPro}
             playerMap={playerMap}
+            teamMap={teamMap}
           />
         )}
         {league === SimPHL && (
@@ -90,6 +95,7 @@ export const SchedulePageGameModal: FC<SchedulePageGameModalProps> = ({
             league={league}
             isPro={isPro}
             playerMap={playerMap}
+            teamMap={teamMap}
           />
         )}
         {league === SimCFB && (
@@ -108,6 +114,7 @@ export interface GameModalProps {
   playerMap?: any;
   game: any;
   isPro: boolean;
+  teamMap?: any;
 }
 
 export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
@@ -731,11 +738,14 @@ export const HockeyGameModal = ({
   game,
   isPro,
   playerMap,
+  teamMap,
 }: GameModalProps) => {
   const scheduleService = new FBAScheduleService();
+  const { ExportPlayByPlay } = useSimHCKStore();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [homePlayers, setHomePlayers] = useState<CHLPlayerGameStats[]>([]);
   const [awayPlayers, setAwayPlayers] = useState<CHLPlayerGameStats[]>([]);
+  const homeTeam = teamMap[game.HomeTeamID];
   const [viewableHomePlayers, setViewableHomePlayers] =
     useState<HockeyFilteredStats | null>(null);
   const [viewableAwayPlayers, setViewableAwayPlayers] =
@@ -759,6 +769,23 @@ export const HockeyGameModal = ({
       : "#ef4444";
   const shootoutScore = game.HomeTeamShootoutScore + game.AwayTeamShootoutScore;
   let isShootout = shootoutScore > 0 ? true : false;
+  const city = game.City.length === 0 ? homeTeam.City : game.City;
+  const state = game.State.length === 0 ? homeTeam.State : game.State;
+  const country = game.Country.length === 0 ? homeTeam.Country : game.Country;
+  const capacity = homeTeam ? homeTeam.ArenaCapacity : 0;
+  let gameType = "";
+  if (game.IsNeutralSite) {
+    gameType += "Neutral Site ";
+  }
+  if (game.IsConference) {
+    gameType += "Conference ";
+  }
+  if (game.IsPreseason) {
+    gameType += "Preseason ";
+  }
+  if (game.IsPlayoff) {
+    gameType += "Playoff ";
+  }
 
   useEffect(() => {
     if (!game || game.ID <= 0) return;
@@ -826,6 +853,7 @@ export const HockeyGameModal = ({
             FirstName: playerDetails?.FirstName ?? "Unknown",
             LastName: playerDetails?.LastName ?? "Unknown",
             Position: playerDetails?.Position ?? "Unknown",
+            Team: playerDetails?.Team ?? "Unknown",
           };
         })
         .sort((a, b) => b.TimeOnIce - a.TimeOnIce);
@@ -843,6 +871,7 @@ export const HockeyGameModal = ({
             FirstName: playerDetails?.FirstName ?? "Unknown",
             LastName: playerDetails?.LastName ?? "Unknown",
             Position: playerDetails?.Position ?? "Unknown",
+            Team: playerDetails?.Team ?? "Unknown",
           };
         })
         .sort((a, b) => b.TimeOnIce - a.TimeOnIce);
@@ -860,6 +889,7 @@ export const HockeyGameModal = ({
             FirstName: playerDetails?.FirstName ?? "Unknown",
             LastName: playerDetails?.LastName ?? "Unknown",
             Position: playerDetails?.Position ?? "Unknown",
+            Team: playerDetails?.Team ?? "Unknown",
           };
         })
         .sort((a, b) => b.TimeOnIce - a.TimeOnIce);
@@ -868,6 +898,56 @@ export const HockeyGameModal = ({
     return obj;
   };
 
+  const threeStars = useMemo(() => {
+    const list: any[] = [];
+    const starIDs = [game.StarOne, game.StarTwo, game.StarThree];
+
+    const findPlayerStats = (playerID: number) => {
+      let player = playerMap![game.HomeTeamID][playerID];
+      if (!player) {
+        player = playerMap![game.AwayTeamID][playerID];
+      }
+      if (!player) {
+        return null;
+      }
+      const isHome = player.TeamID === game.HomeTeamID;
+      const viewable = isHome ? viewableHomePlayers : viewableAwayPlayers;
+      if (!viewable) return null;
+
+      let statsList;
+      if (player.Position === "F" || player.Position === "C") {
+        statsList = viewable.ForwardsStats;
+      } else if (player.Position === "D") {
+        statsList = viewable.DefensemenStats;
+      } else if (player.Position === "G") {
+        statsList = viewable.GoalieStats;
+      } else {
+        return null;
+      }
+      return statsList.find((x) => x.PlayerID === playerID) || null;
+    };
+
+    for (const starID of starIDs) {
+      if (starID > 0) {
+        const stat = findPlayerStats(starID);
+        if (stat) {
+          list.push(stat);
+        }
+      }
+    }
+
+    return list;
+  }, [game, playerMap, viewableHomePlayers, viewableAwayPlayers]);
+
+  const exportPlayByPlayResults = useCallback(async () => {
+    if (league === SimCHL || league === SimPHL) {
+      const dto = {
+        League: league,
+        GameID: game.ID,
+      };
+      await ExportPlayByPlay(dto);
+    }
+  }, []);
   return (
     <>
       {isLoading ? (
@@ -1023,14 +1103,21 @@ export const HockeyGameModal = ({
                   </div>
                 </div>
                 <div className="flex justify-center items-center gap-2 py-2">
-                  <ToggleSwitch
-                    onChange={(checked) => {
-                      setView(checked ? PBP : BoxScore);
-                      setIsChecked(checked);
-                    }}
-                    checked={isChecked}
-                  />
-                  <Text variant="small">Play By Play</Text>
+                  <div className="flex gap-x-2">
+                    <ToggleSwitch
+                      onChange={(checked) => {
+                        setView(checked ? PBP : BoxScore);
+                        setIsChecked(checked);
+                      }}
+                      checked={isChecked}
+                    />
+                    <Text variant="small">Play By Play</Text>
+                  </div>
+                  <div>
+                    <Button size="xs" onClick={exportPlayByPlayResults}>
+                      Export
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col items-center w-1/3">
@@ -1066,6 +1153,141 @@ export const HockeyGameModal = ({
               {view === BoxScore && (
                 <div className="flex flex-col">
                   <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-4">
+                    <div className="flex flex-row items-center justify-start w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 w-full pb-2">
+                          <Text variant="body-small" classes="font-semibold">
+                            Game Info
+                          </Text>
+                        </div>
+                        <div
+                          className="grid rounded-lg border-t px-1"
+                          style={{ backgroundColor }}
+                        >
+                          <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
+                            <Text variant="xs" classes="col-span-3 text-left">
+                              Arena
+                            </Text>
+                            <Text variant="xs" classes="col-span-2">
+                              Attendance
+                            </Text>
+                            <Text variant="xs">Capacity</Text>
+                            <Text variant="xs" classes="col-span-2">
+                              City
+                            </Text>
+                            <Text variant="xs">State</Text>
+                            <Text variant="xs">Country</Text>
+                            <Text variant="xs" classes="col-span-2 text-left">
+                              Game Type
+                            </Text>
+                          </div>
+                          <div
+                            className="grid grid-cols-12 gap-2 text-sm border-b py-1"
+                            style={{
+                              backgroundColor: borderColor,
+                            }}
+                          >
+                            <Text variant="xs" classes="col-span-3 text-left">
+                              {game.Arena}
+                            </Text>
+                            <Text variant="xs" classes="col-span-2">
+                              {game.AttendanceCount}
+                            </Text>
+                            <Text variant="xs">{capacity}</Text>
+                            <Text variant="xs" classes="col-span-2">
+                              {city}
+                            </Text>
+                            <Text variant="xs">{state}</Text>
+                            <Text variant="xs">{country}</Text>
+                            <Text variant="xs" classes="col-span-2 text-left">
+                              {gameType}
+                            </Text>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-row items-center justify-start w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 w-full pb-2">
+                          <Text variant="body-small" classes="font-semibold">
+                            Three Stars
+                          </Text>
+                        </div>
+                        <div
+                          className="grid rounded-lg border-t px-1"
+                          style={{ backgroundColor }}
+                        >
+                          <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
+                            <Text variant="xs">Rank</Text>
+                            <Text variant="xs">Team</Text>
+                            <Text variant="xs" classes="col-span-2 text-left">
+                              Player
+                            </Text>
+                            <Text variant="xs">G</Text>
+                            <Text variant="xs">A</Text>
+                            <Text variant="xs">P</Text>
+                            <Text variant="xs">TOI</Text>
+                            <Text variant="xs">BLK</Text>
+                            <Text variant="xs">HITS</Text>
+                            <Text variant="xs">GS</Text>
+                            <Text variant="xs">GA</Text>
+                          </div>
+                          {threeStars.map((player, index) => {
+                            const goals = player.Goals ?? 0;
+                            const assists = player.Assists ?? 0;
+                            const points = player.Points ?? 0;
+                            const goalieSaves = player.Saves ?? 0;
+                            const goalsAgainst = player.GoalsAgainst ?? 0;
+                            const toiSeconds = player.TimeOnIce ?? 0;
+                            const blocks = player.ShotsBlocked ?? 0;
+                            const hits =
+                              (player.BodyChecks ?? 0) +
+                              (player.StickChecks ?? 0);
+                            const faceoff =
+                              player.FaceOffWinPercentage.toFixed(1);
+                            const minutes = Math.floor(toiSeconds / 60);
+                            const seconds = toiSeconds % 60;
+                            const toi = `${minutes}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
+
+                            return (
+                              <div
+                                key={index}
+                                className="grid grid-cols-12 gap-2 text-sm border-b py-1"
+                                style={{
+                                  backgroundColor:
+                                    index % 2 === 0
+                                      ? borderColor
+                                      : "transparent",
+                                }}
+                              >
+                                <Text variant="xs">{index + 1}</Text>
+                                <Text variant="xs">{player.Team ?? "N/A"}</Text>
+                                <Text
+                                  variant="xs"
+                                  classes="col-span-2 text-left"
+                                >
+                                  {player.Position ?? "N/A"}{" "}
+                                  {player.FirstName ?? ""}{" "}
+                                  {player.LastName ?? ""}
+                                </Text>
+                                <Text variant="xs">{goals}</Text>
+                                <Text variant="xs">{assists}</Text>
+                                <Text variant="xs">{points}</Text>
+                                <Text variant="xs">{toi}</Text>
+                                <Text variant="xs">{blocks}</Text>
+                                <Text variant="xs">{hits}</Text>
+                                <Text variant="xs">{goalieSaves}</Text>
+                                <Text variant="xs">{goalsAgainst}</Text>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-4">
                     <div className="flex flex-col items-center justify-start w-full">
                       <div className="flex flex-col p-2 sm:p-4 w-full">
                         <div className="flex gap-2 w-full pb-2">
@@ -1083,9 +1305,10 @@ export const HockeyGameModal = ({
                           style={{ backgroundColor }}
                         >
                           <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">
+                            <Text variant="xs" classes="col-span-2 text-left">
                               Player
                             </Text>
+                            <Text variant="xs">S</Text>
                             <Text variant="xs">G</Text>
                             <Text variant="xs">A</Text>
                             <Text variant="xs">P</Text>
@@ -1131,12 +1354,13 @@ export const HockeyGameModal = ({
                                 >
                                   <Text
                                     variant="xs"
-                                    classes="col-span-3 text-left"
+                                    classes="col-span-2 text-left"
                                   >
                                     {player.Position ?? "N/A"}{" "}
                                     {player.FirstName ?? ""}{" "}
                                     {player.LastName ?? ""}
                                   </Text>
+                                  <Text variant="xs">{shots}</Text>
                                   <Text variant="xs">{goals}</Text>
                                   <Text variant="xs">{assists}</Text>
                                   <Text variant="xs">{points}</Text>
@@ -1170,9 +1394,10 @@ export const HockeyGameModal = ({
                           style={{ backgroundColor }}
                         >
                           <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">
+                            <Text variant="xs" classes="col-span-2 text-left">
                               Player
                             </Text>
+                            <Text variant="xs">S</Text>
                             <Text variant="xs">G</Text>
                             <Text variant="xs">A</Text>
                             <Text variant="xs">P</Text>
@@ -1218,12 +1443,13 @@ export const HockeyGameModal = ({
                                 >
                                   <Text
                                     variant="xs"
-                                    classes="col-span-3 text-left"
+                                    classes="col-span-2 text-left"
                                   >
                                     {player.Position ?? "N/A"}{" "}
                                     {player.FirstName ?? ""}{" "}
                                     {player.LastName ?? ""}
                                   </Text>
+                                  <Text variant="xs">{shots}</Text>
                                   <Text variant="xs">{goals}</Text>
                                   <Text variant="xs">{assists}</Text>
                                   <Text variant="xs">{points}</Text>
@@ -1259,9 +1485,10 @@ export const HockeyGameModal = ({
                           style={{ backgroundColor }}
                         >
                           <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">
+                            <Text variant="xs" classes="col-span-2 text-left">
                               Player
                             </Text>
+                            <Text variant="xs">S</Text>
                             <Text variant="xs">G</Text>
                             <Text variant="xs">A</Text>
                             <Text variant="xs">P</Text>
@@ -1307,12 +1534,13 @@ export const HockeyGameModal = ({
                                 >
                                   <Text
                                     variant="xs"
-                                    classes="col-span-3 text-left w-full"
+                                    classes="col-span-2 text-left w-full"
                                   >
                                     {player.Position ?? "N/A"}{" "}
                                     {player.FirstName ?? ""}{" "}
                                     {player.LastName ?? ""}
                                   </Text>
+                                  <Text variant="xs">{shots}</Text>
                                   <Text variant="xs">{goals}</Text>
                                   <Text variant="xs">{assists}</Text>
                                   <Text variant="xs">{points}</Text>
@@ -1346,9 +1574,10 @@ export const HockeyGameModal = ({
                           style={{ backgroundColor }}
                         >
                           <div className="grid grid-cols-12 gap-2 font-semibold py-1 border-b">
-                            <Text variant="xs" classes="col-span-3 text-left">
+                            <Text variant="xs" classes="col-span-2 text-left">
                               Player
                             </Text>
+                            <Text variant="xs">S</Text>
                             <Text variant="xs">G</Text>
                             <Text variant="xs">A</Text>
                             <Text variant="xs">P</Text>
@@ -1394,12 +1623,13 @@ export const HockeyGameModal = ({
                                 >
                                   <Text
                                     variant="xs"
-                                    classes="col-span-3 text-left w-full"
+                                    classes="col-span-2 text-left w-full"
                                   >
                                     {player.Position ?? "N/A"}{" "}
                                     {player.FirstName ?? ""}{" "}
                                     {player.LastName ?? ""}
                                   </Text>
+                                  <Text variant="xs">{shots}</Text>
                                   <Text variant="xs">{goals}</Text>
                                   <Text variant="xs">{assists}</Text>
                                   <Text variant="xs">{points}</Text>

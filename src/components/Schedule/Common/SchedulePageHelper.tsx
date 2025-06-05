@@ -428,11 +428,7 @@ export const processSchedule = (
       weekCounter[game.Week] += 1;
 
       const suffix =
-        league === SimCHL
-          ? weekCounter[game.Week] === 1
-            ? "A"
-            : "B"
-          : weekCounter[game.Week] === 1
+        weekCounter[game.Week] === 1
           ? "A"
           : weekCounter[game.Week] === 2
           ? "B"

@@ -78,6 +78,7 @@ import { StatsService } from "../_services/statsService";
 import { GenerateNumberFromRange } from "../_helper/utilHelper";
 import { TradeService } from "../_services/tradeService";
 import { CollegePollService } from "../_services/collegePollService";
+import FBAScheduleService from "../_services/scheduleService";
 
 // ✅ Define the context props
 interface SimHCKContextProps {
@@ -165,8 +166,10 @@ interface SimHCKContextProps {
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   SearchHockeyStats: (dto: any) => Promise<void>;
   ExportHockeyStats: (dto: any) => Promise<void>;
+  ExportHockeySchedule: (dto: any) => Promise<void>;
   ExportHCKRoster: (teamID: number, isPro: boolean) => Promise<void>;
   ExportCHLRecruits: () => Promise<void>;
+  ExportPlayByPlay: (dto: any) => Promise<void>;
   proposeTrade: (dto: TradeProposal) => Promise<void>;
   acceptTrade: (dto: TradeProposal) => Promise<void>;
   rejectTrade: (dto: TradeProposal) => Promise<void>;
@@ -282,6 +285,8 @@ const defaultContext: SimHCKContextProps = {
   ExportHockeyStats: async () => {},
   ExportHCKRoster: async () => {},
   ExportCHLRecruits: async () => {},
+  ExportHockeySchedule: async () => {},
+  ExportPlayByPlay: async () => {},
   PlacePHLPlayerOnTradeBlock: async () => {},
   proposeTrade: async () => {},
   acceptTrade: async () => {},
@@ -324,6 +329,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const { currentUser } = useAuthStore();
   const { hck_Timestamp } = useWebSockets(hck_ws, SimHCK);
   const isFetching = useRef(false);
+  const scheduleService = new FBAScheduleService();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chlTeam, setCHLTeam] = useState<CollegeTeam | null>(null); // College Hockey
@@ -620,6 +626,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setPortalPlayers(res.PortalPlayers);
       setRecruits(res.Recruits);
       setRecruitProfiles(res.RecruitProfiles);
+      setTeamProfileMap(res.TeamProfileMap);
     }
     if (phlid > 0) {
       setAllProGames(res.AllProGames);
@@ -631,13 +638,11 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setPHLGameplan(res.PHLGameplan);
       setPHLShootoutLineup(res.ProTeamShootoutLineup);
       setAllProStandings(res.ProStandings);
-      setTeamProfileMap(res.TeamProfileMap);
       setProRosterMap(res.ProRosterMap);
       setFreeAgentOffers(res.FreeAgentOffers);
       setWaiverOffers(res.WaiverWireOffers);
       setAffiliatePlayers(res.AffiliatePlayers);
       setProNotifications(res.ProNotifications);
-      setPlayerFaces(res.FaceData);
       setProContractMap(res.ContractMap);
       setProExtensionMap(res.ExtensionMap);
       setTopPHLGoals(res.TopPHLGoals);
@@ -647,6 +652,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       setTradePreferencesMap(res.ProTradePreferenceMap);
       setPHLDraftPicks(res.DraftPicks);
     }
+    setPlayerFaces(res.FaceData);
 
     if (
       res.AllCollegeGames &&
@@ -1324,6 +1330,18 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const ExportHockeySchedule = useCallback(async (dto: any) => {
+    const res = await scheduleService.HCKTimeslotExport(dto);
+  }, []);
+
+  const ExportPlayByPlay = useCallback(async (dto: any) => {
+    if (dto.League === SimCHL) {
+      const res = await scheduleService.HCKExportCHLPlayByPlay(dto);
+    } else {
+      const res = await scheduleService.HCKExportPHLPlayByPlay(dto);
+    }
+  }, []);
+
   return (
     <SimHCKContext.Provider
       value={{
@@ -1403,6 +1421,8 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         toggleScholarship,
         scoutCrootAttribute,
         SaveRecruitingBoard,
+        ExportHockeySchedule,
+        ExportPlayByPlay,
         playerFaces,
         proContractMap,
         proExtensionMap,
