@@ -257,7 +257,7 @@ export const OfferModal: FC<OfferModalProps> = ({
             </ButtonGroup>
           </>
         }
-        maxWidth="max-w-[60vw]"
+        maxWidth="min-[1025px]:max-w-[60vw]"
       >
         <div className="grid grid-cols-[2fr__3fr] space-x-2 mb-2">
           <Border direction="col" classes="text-start p-3">
@@ -286,7 +286,7 @@ export const OfferModal: FC<OfferModalProps> = ({
               ))}
           </Border>
         </div>
-        <div className="grid grid-cols-6 space-x-2 mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-6 space-y-1 lg:space-y-0 space-x-2 mb-2">
           <div className="flex">
             {(offer instanceof PHLFreeAgencyOffer ||
               offer instanceof NFLFreeAgencyOffer) && (
@@ -432,8 +432,8 @@ export const OfferModal: FC<OfferModalProps> = ({
           </div>
         )}
         {league === SimPHL && offer instanceof PHLFreeAgencyOffer && (
-          <div className="grid grid-cols-6 space-x-2 mb-2">
-            <div className="flex flex-col">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 space-y-[0.5rem] md:space-y-2 lg:space-y-0 space-x-2 mb-2">
+            <div className="flex">
               <Input
                 type="number"
                 label="Y1 Salary"
