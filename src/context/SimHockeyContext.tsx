@@ -1327,6 +1327,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     const res = await CollegePollService.HCKSubmitPoll(dto);
     if (res) {
       setCollegePollSubmission(res);
+      enqueueSnackbar(`College Poll Submitted!`, {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     }
   }, []);
 
