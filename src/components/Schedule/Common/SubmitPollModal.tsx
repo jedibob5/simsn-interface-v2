@@ -222,6 +222,7 @@ export const SubmitHockeyPoll: FC<SubmitHockeyPollProps> = ({
       dto[`Rank${num}ID`] = Number(rank.value);
     }
     await submitPoll(dto as HockeyPollSubmission);
+    onClose();
   };
   return (
     <>
