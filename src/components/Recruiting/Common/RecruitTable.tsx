@@ -132,7 +132,9 @@ export const RecruitTable: FC<RecruitTableProps> = ({
           <TableCell>
             {attr.label === "Name" ? (
               <span
-                className={`cursor-pointer font-semibold`}
+                className={`cursor-pointer font-semibold ${
+                  item.IsCustomCroot ? "text-blue-400" : ""
+                }`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "#fcd53f";
                 }}

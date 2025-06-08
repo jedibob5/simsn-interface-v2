@@ -219,7 +219,9 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
         </TableCell>
         <TableCell>
           <span
-            className={`text-sm cursor-pointer font-semibold`}
+            className={`text-sm cursor-pointer font-semibold ${
+              croot.IsCustomCroot ? "text-blue-400" : ""
+            }`}
             onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
               (e.target as HTMLElement).style.color = "#fcd53f";
             }}

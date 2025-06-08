@@ -1098,6 +1098,13 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             {player.Weight} lbs
           </Text>
         </div>
+        {player.IsCustomCroot && (
+          <div className="flex flex-col pt-4">
+            <Text classes="font-semibold mb-1 whitespace-nowrap">
+              Custom Croot
+            </Text>
+          </div>
+        )}
       </div>
       <div className="flex flex-col px-1">
         <div className="flex flex-col pt-4">
@@ -1108,7 +1115,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             {player.Personality}
           </Text>
         </div>
-        <div className="flex flex-col pt-4 pb-4">
+        <div className="flex flex-col pt-4 pb-2">
           <Text variant="h6" classes="mb-1 whitespace-nowrap">
             Stars
           </Text>
@@ -1118,6 +1125,16 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
               : player.Stars}
           </Text>
         </div>
+        {player.IsCustomCroot && (
+          <div className="flex flex-col pt-4">
+            <Text classes="font-semibold mb-1 whitespace-nowrap">
+              Croot For
+            </Text>
+            <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+              {player.CustomCrootFor}
+            </Text>
+          </div>
+        )}
       </div>
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-2">
         <div className="grid grid-cols-4 gap-3">
