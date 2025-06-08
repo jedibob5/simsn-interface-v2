@@ -250,7 +250,7 @@ export const WeeklySchedule = ({
         <div className="grid">
           <div
             className={`grid ${
-              isFootball ? "grid-cols-7" : "grid-cols-5"
+              isFootball ? "grid-cols-9" : "grid-cols-7"
             } font-semibold border-b-2 pb-2`}
             style={{
               borderColor,
@@ -268,12 +268,12 @@ export const WeeklySchedule = ({
                 </Text>
               </div>
             )}
-            <div className="text-left col-span-1 pl-4">
+            <div className="text-left col-span-2 pl-4">
               <Text variant="xs" className={`${textColorClass}`}>
                 Home
               </Text>
             </div>
-            <div className="text-left col-span-1 pl-4">
+            <div className="text-left col-span-2 pl-4">
               <Text variant="xs" className={`${textColorClass}`}>
                 Away
               </Text>
@@ -298,92 +298,96 @@ export const WeeklySchedule = ({
             playerMap={playerMap}
             teamMap={teamMap}
           />
-          {processedSchedule.map((game, index) => (
-            <div
-              key={index}
-              className={`grid ${
-                isFootball ? "grid-cols-7" : "grid-cols-5"
-              } border-b border-b-[#34455d] items-center`}
-              style={{
-                backgroundColor:
-                  index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
-              }}
-            >
-              <div className="text-left col-span-1">
-                <Text variant="xs" className="font-semibold">
-                  {week}
-                  {game.GameDay}
-                </Text>
-              </div>
-              {isFootball && (
-                <div className="text-left col-span-2">
-                  <Text variant="xs" className="font-semibold opacity-70">
-                    {game.TimeSlot.split(" ").slice(0, 2).join(" ")}
+          {processedSchedule.map((game, index) => {
+            const homeTeam = teamMap[game.HomeTeamID];
+            const awayTeam = teamMap[game.AwayTeamID];
+            return (
+              <div
+                key={index}
+                className={`grid ${
+                  isFootball ? "grid-cols-9" : "grid-cols-7"
+                } border-b border-b-[#34455d] items-center`}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? darkerBackgroundColor : backgroundColor,
+                }}
+              >
+                <div className="text-left col-span-1">
+                  <Text variant="xs" className="font-semibold">
+                    {week}
+                    {game.GameDay}
                   </Text>
                 </div>
-              )}
-              <div className="flex items-center col-span-1 text-left">
-                <Logo
-                  variant="xs"
-                  classes="w-4 h-4"
-                  containerClass="flex-shrink-0 p-2"
-                  url={getLogo(league, game.HomeTeamID, currentUser?.isRetro)}
-                />
-                <ClickableTeamLabel
-                  textVariant="xs"
-                  label={game.HomeTeamAbbr}
-                  teamID={game.HomeTeamID}
-                  textColorClass={textColorClass}
-                  league={league}
-                />
+                {isFootball && (
+                  <div className="text-left col-span-2">
+                    <Text variant="xs" className="font-semibold opacity-70">
+                      {game.TimeSlot.split(" ").slice(0, 2).join(" ")}
+                    </Text>
+                  </div>
+                )}
+                <div className="flex items-center col-span-2 text-left">
+                  <Logo
+                    variant="xs"
+                    classes="w-4 h-4"
+                    containerClass="flex-shrink-0 p-2"
+                    url={getLogo(league, game.HomeTeamID, currentUser?.isRetro)}
+                  />
+                  <ClickableTeamLabel
+                    textVariant="xs"
+                    label={homeTeam.TeamName}
+                    teamID={game.HomeTeamID}
+                    textColorClass={textColorClass}
+                    league={league}
+                  />
+                </div>
+                <div className="flex items-center col-span-2 text-left">
+                  <Logo
+                    variant="xs"
+                    classes="w-4 h-4"
+                    containerClass="flex-shrink-0 p-2"
+                    url={getLogo(league, game.AwayTeamID, currentUser?.isRetro)}
+                  />
+                  <ClickableTeamLabel
+                    textVariant="xs"
+                    label={awayTeam.TeamName}
+                    teamID={game.AwayTeamID}
+                    textColorClass={textColorClass}
+                    league={league}
+                  />
+                </div>
+                <div className="text-center col-span-1">
+                  <ClickableGameLabel
+                    textColorClass={`${
+                      game.gameScore === "TBC" ? "opacity-50" : ""
+                    }`}
+                    disable={game.gameSCore === "TBC"}
+                    openModal={() => {
+                      setSelectedGame(game);
+                      gameModal.handleOpenModal();
+                    }}
+                    label={game.headerGameScore}
+                  />
+                </div>
+                <div className="flex text-center justify-center col-span-1">
+                  <Button
+                    size="sm"
+                    classes={`flex bg-transparent rounded-full size-10 items-center ${
+                      game.gameScore === "TBC"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={game.gameScore === "TBC"}
+                    onClick={() => {
+                      setSelectedGame(game);
+                      gameModal.handleOpenModal();
+                    }}
+                  >
+                    <InformationCircle />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center col-span-1 text-left">
-                <Logo
-                  variant="xs"
-                  classes="w-4 h-4"
-                  containerClass="flex-shrink-0 p-2"
-                  url={getLogo(league, game.AwayTeamID, currentUser?.isRetro)}
-                />
-                <ClickableTeamLabel
-                  textVariant="xs"
-                  label={game.AwayTeamAbbr}
-                  teamID={game.AwayTeamID}
-                  textColorClass={textColorClass}
-                  league={league}
-                />
-              </div>
-              <div className="text-center col-span-1">
-                <ClickableGameLabel
-                  textColorClass={`${
-                    game.gameScore === "TBC" ? "opacity-50" : ""
-                  }`}
-                  disable={game.gameSCore === "TBC"}
-                  openModal={() => {
-                    setSelectedGame(game);
-                    gameModal.handleOpenModal();
-                  }}
-                  label={game.headerGameScore}
-                />
-              </div>
-              <div className="flex text-center justify-center col-span-1">
-                <Button
-                  size="sm"
-                  classes={`flex bg-transparent rounded-full size-10 items-center ${
-                    game.gameScore === "TBC"
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                  disabled={game.gameScore === "TBC"}
-                  onClick={() => {
-                    setSelectedGame(game);
-                    gameModal.handleOpenModal();
-                  }}
-                >
-                  <InformationCircle />
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </SectionCards>
