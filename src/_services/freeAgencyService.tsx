@@ -1,4 +1,4 @@
-import { bbaUrl, hckUrl } from "../_constants/urls";
+import { fbaUrl, bbaUrl, hckUrl } from "../_constants/urls";
 import { PostCall } from "../_helper/fetchHelper";
 import {
   NBAContractOffer,
@@ -12,6 +12,12 @@ import {
   WaiverOffer,
   WaiverOfferDTO,
 } from "../models/hockeyModels";
+import {
+  FreeAgencyOffer as NFLFreeAgencyOffer,
+  FreeAgencyOfferDTO as NFLFreeAgencyOfferDTO,
+  NFLWaiverOffer,
+  NFLWaiverOffDTO
+} from "../models/footballModels"
 
 export const FreeAgencyService = {
   HCKSaveFreeAgencyOffer: async (
@@ -58,5 +64,29 @@ export const FreeAgencyService = {
     dto: NBAWaiverOfferDTO
   ): Promise<WaiverOffer> => {
     return await PostCall(`${bbaUrl}nba/waiverwire/cancel/offer`, dto);
+  },
+
+  FBASaveFreeAgencyOffer: async (
+    dto: NFLFreeAgencyOfferDTO
+  ): Promise<NFLFreeAgencyOffer> => {
+    return await PostCall(`${fbaUrl}nfl/freeagency/create/offer`, dto);
+  },
+
+  FBACancelFreeAgencyOffer: async (
+    dto: NFLFreeAgencyOfferDTO
+  ): Promise<NFLFreeAgencyOffer> => {
+    return await PostCall(`${fbaUrl}nfl/freeagency/cancel/offer`, dto);
+  },
+
+  FBASaveWaiverWireOffer: async (
+    dto: NFLWaiverOffDTO
+  ): Promise<NFLWaiverOffer> => {
+    return await PostCall(`${fbaUrl}nfl/waiverwire/create/offer`, dto);
+  },
+
+  FBACancelWaiverWireOffer: async (
+    dto: NFLWaiverOffDTO
+  ): Promise<NFLWaiverOffer> => {
+    return await PostCall(`${fbaUrl}nfl/waiverwire/cancel/offer`, dto);
   },
 };
