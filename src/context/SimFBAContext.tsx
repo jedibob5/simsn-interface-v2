@@ -9,6 +9,8 @@ import {
 } from "react";
 import { useAuthStore } from "./AuthContext";
 import { BootstrapService } from "../_services/bootstrapService";
+import { DepthChartService } from "../_services/depthChartService";
+import { GameplanService } from "../_services/gameplanService";
 import {
   CollegeGame,
   CollegePlayer,
@@ -99,6 +101,10 @@ interface SimFBAContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
+  saveCFBDepthChart: (dto: any) => Promise<void>;
+  saveNFLDepthChart: (dto: any) => Promise<void>;
+  saveCFBGameplan: (dto: any) => Promise<void>;
+  saveNFLGameplan: (dto: any) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -163,6 +169,10 @@ const defaultContext: SimFBAContextProps = {
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCFBRosterMap: () => {},
+  saveCFBDepthChart: async () => {},
+  saveNFLDepthChart: async () => {},
+  saveCFBGameplan: async () => {},
+  saveNFLGameplan: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -582,6 +592,38 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCFBRosterMap(newMap);
   };
 
+  const saveCFBDepthChart = async (dto: any) => {
+    await DepthChartService.SaveCFBDepthChart(dto);
+    enqueueSnackbar("Depth Chart saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const saveNFLDepthChart = async (dto: any) => {
+    await DepthChartService.SaveNFLDepthChart(dto);
+    enqueueSnackbar("Depth Chart saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const saveCFBGameplan = async (dto: any) => {
+    const res = await GameplanService.SaveCFBGameplan(dto);
+    enqueueSnackbar("Gameplan saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
+  const saveNFLGameplan = async (dto: any) => {
+    const res = await GameplanService.SaveNFLGameplan(dto);
+    enqueueSnackbar("Gameplan saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  };
+
   return (
     <SimFBAContext.Provider
       value={{
@@ -638,6 +680,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         promisePlayer,
         cutNFLPlayer,
         updateCFBRosterMap,
+        saveCFBDepthChart,
+        saveNFLDepthChart,
+        saveCFBGameplan,
+        saveNFLGameplan,
         playerFaces,
         proContractMap,
         proExtensionMap,

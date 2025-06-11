@@ -1,5 +1,5 @@
-import { bbaUrl, hckUrl } from "../_constants/urls";
-import { GetExportCall, PostCall } from "../_helper/fetchHelper";
+import { fbaUrl, bbaUrl, hckUrl } from "../_constants/urls";
+import { GetExportCall, PostCall, PUTCall } from "../_helper/fetchHelper";
 import {
   PlayerRecruitProfile as BBAPlayerRecruitProfile,
   UpdateRecruitingBoardDto as BBAUpdateRecruitingBoardDto,
@@ -9,6 +9,10 @@ import {
   UpdateRecruitingBoardDTO as HCKUpdateRecruitingBoardDTO,
   UpdateRecruitProfileDto as HCKUpdateRecruitProfileDto,
 } from "../models/hockeyModels";
+import {
+  RecruitPlayerProfile as FBARecruitPlayerProfile,
+  UpdateRecruitingBoardDTO as FBAUpdateRecruitingBoardDTO,
+} from "../models/footballModels";
 
 export const RecruitService = {
   HCKCreateRecruitProfile: async (
@@ -71,5 +75,35 @@ export const RecruitService = {
 
   ExportCHLRecruits: async () => {
     await GetExportCall(`${hckUrl}export/college/recruits/all`, "blob");
+  },
+
+  FBACreateRecruitProfile: async (
+    dto: any
+  ): Promise<FBARecruitPlayerProfile> => {
+    return await PostCall(`${fbaUrl}recruiting/addrecruit/`, dto);
+  },
+
+  FBAToggleScholarship: async (dto: any): Promise<FBARecruitPlayerProfile> => {
+    return await PostCall(`${fbaUrl}recruiting/toggleScholarship/`, dto);
+  },
+
+  FBARemovePlayerFromBoard: async (
+    dto: any
+  ): Promise<FBARecruitPlayerProfile> => {
+    return await PUTCall(`${fbaUrl}recruiting/removecrootfromboard/`, dto);
+  },
+
+  FBASaveRecruitingBoard: async (
+    dto: any
+  ): Promise<FBAUpdateRecruitingBoardDTO> => {
+    return await PostCall(`${fbaUrl}recruiting/savecrootboard/`, dto);
+  },
+
+  FBAToggleAIBehavior: async (dto: any): Promise<FBAUpdateRecruitingBoardDTO> => {
+    return await PostCall(`${fbaUrl}recruiting/save/ai/`, dto);
+  },
+
+  ExportCFBCroots: async () => {
+    await GetExportCall(`${fbaUrl}recruits/export/all/`, "blob");
   },
 };
