@@ -1100,14 +1100,14 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             {player.Weight} lbs
           </Text>
         </div>
-        <div className="flex flex-col pt-4">
+        {/* <div className="flex flex-col pt-4">
           <Text classes="font-semibold mb-1 whitespace-nowrap">
             Expectation
           </Text>
           <Text variant="xs" classes="whitespace-nowrap pt-0.5">
             {tendency}
           </Text>
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-col px-1">
         <div className="flex flex-col pt-4">
