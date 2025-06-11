@@ -47,6 +47,7 @@ import {
   NBAPlayer,
 } from "../../models/basketballModels";
 import { useSimBBAStore } from "../../context/SimBBAContext";
+import { GetRecruitingTendency } from "../../_utility/getRecruitingTendency";
 
 interface PlayerInfoModalBodyProps {
   league: League;
@@ -1032,6 +1033,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
   const team = chlTeamMap[player.TeamID];
   const teamLogo = getLogo(SimCHL, player.TeamID, currentUser?.isRetro);
   const heightObj = HeightToFeetAndInches(player.Height);
+  const tendency = GetRecruitingTendency(player.RecruitModifier);
 
   return (
     <div className="w-full grid grid-cols-4 gap-2 overflow-y-auto">
@@ -1098,13 +1100,14 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             {player.Weight} lbs
           </Text>
         </div>
-        {player.IsCustomCroot && (
-          <div className="flex flex-col pt-4">
-            <Text classes="font-semibold mb-1 whitespace-nowrap">
-              Custom Croot
-            </Text>
-          </div>
-        )}
+        <div className="flex flex-col pt-4">
+          <Text classes="font-semibold mb-1 whitespace-nowrap">
+            Expectation
+          </Text>
+          <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+            {tendency}
+          </Text>
+        </div>
       </div>
       <div className="flex flex-col px-1">
         <div className="flex flex-col pt-4">
@@ -1127,9 +1130,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
         </div>
         {player.IsCustomCroot && (
           <div className="flex flex-col pt-4">
-            <Text classes="font-semibold mb-1 whitespace-nowrap">
-              Croot For
-            </Text>
+            <Text classes="font-semibold mb-1 whitespace-nowrap">Croot By</Text>
             <Text variant="xs" classes="whitespace-nowrap pt-0.5">
               {player.CustomCrootFor}
             </Text>

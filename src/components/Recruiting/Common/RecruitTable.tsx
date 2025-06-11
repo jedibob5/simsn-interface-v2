@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import {
   AddRecruitType,
   Attributes,
@@ -17,6 +17,8 @@ import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { ActionLock, Info, Plus } from "../../../_design/Icons";
 import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
+import { getLogo } from "../../../_utility/getLogo";
+import { Logo } from "../../../_design/Logo";
 
 const getRecruitingColumns = (
   league: League,
@@ -122,6 +124,30 @@ export const RecruitTable: FC<RecruitTableProps> = ({
   ) => {
     const selection = getCHLCrootAttributes(item, isMobile, category!);
     const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
+
+    const leadingTeams = useMemo(() => {
+      if (item.LeadingTeams === null || item.LeadingTeams.length === 0) {
+        return "None";
+      }
+
+      const competingTeams = item.LeadingTeams.filter(
+        (x, idx) => x.Odds > 0 && idx <= 3
+      );
+
+      if (competingTeams.length === 0) {
+        return "None";
+      }
+      const competingIDs = competingTeams.map((x) => x.TeamID);
+      return competingIDs.map((x) => {
+        const logo = getLogo(SimCHL, x, false);
+        return (
+          <>
+            <Logo url={logo} variant="tiny" />
+          </>
+        );
+      });
+    }, [item]);
+
     return (
       <div
         key={item.ID}
@@ -129,10 +155,10 @@ export const RecruitTable: FC<RecruitTableProps> = ({
         style={{ backgroundColor }}
       >
         {selection.map((attr, idx) => (
-          <TableCell>
+          <TableCell key={attr.label}>
             {attr.label === "Name" ? (
               <span
-                className={`cursor-pointer font-semibold ${
+                className={`text-xs cursor-pointer font-semibold ${
                   item.IsCustomCroot ? "text-blue-400" : ""
                 }`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
@@ -143,17 +169,19 @@ export const RecruitTable: FC<RecruitTableProps> = ({
                 }}
                 onClick={() => openModal(RecruitInfoType, item)}
               >
-                <Text variant="small">{attr.value}</Text>
+                {attr.value}
               </span>
             ) : (
-              <span className="text-sm">{attr.value}</span>
+              <span className="text-xs">{attr.value}</span>
             )}
           </TableCell>
         ))}
         <TableCell>
           {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
         </TableCell>
-        <TableCell>None</TableCell>
+        <TableCell>
+          <div className="flex flex-row gap-x-1">{leadingTeams}</div>
+        </TableCell>
         <TableCell>
           <ButtonGroup classes="flex-nowrap">
             <Button
