@@ -114,6 +114,203 @@ const getRecruitProfileColumns = (
   return columns;
 };
 
+interface CHLProfileRowProps {
+  profile: HockeyCrootProfile;
+  croot: HockeyCroot;
+  isMobile: boolean;
+  category: string;
+  ChangeInput: (id: number, name: string, points: number) => void;
+  openModal: (action: ModalAction, player: HockeyCroot) => void;
+  setAttribute: (attr: string) => void;
+  backgroundColor: string;
+}
+
+export const CHLProfileRow: FC<CHLProfileRowProps> = ({
+  profile,
+  croot,
+  isMobile,
+  category,
+  ChangeInput,
+  openModal,
+  setAttribute,
+  backgroundColor,
+}) => {
+  // 1) Build attribute lists once
+  let attrList = getAdditionalHockeyCrootAttributes(croot);
+  if (category === Potentials)
+    attrList = getAdditionalHockeyAttributeGrades(croot);
+  const prefList = getAdditionalCrootPreferenceAttributes(croot);
+
+  // 2) Scholarship button state
+  const toggleVariant =
+    profile.Scholarship && !profile.ScholarshipRevoked
+      ? "success"
+      : !profile.Scholarship && profile.ScholarshipRevoked
+      ? "danger"
+      : "secondary";
+
+  // 3) Compute modifier
+  let modValue = profile.CurrentWeeksPoints * profile.Modifier;
+  if (profile.IsHomeState) modValue *= 1.25;
+  else if (profile.IsPipelineState) modValue *= 1.15;
+
+  // 4) Change handler
+  const onPointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = Math.max(0, Math.min(20, Number(e.target.value)));
+    ChangeInput(profile.ID, e.target.name, val);
+  };
+
+  // 5) Leading teams (memo)
+  const leadingTeams = useMemo(() => {
+    if (!croot.LeadingTeams?.length) return "None";
+    const tops = croot.LeadingTeams.filter((x) => x.Odds > 0).slice(0, 4);
+    if (!tops.length) return "None";
+    return tops.map((x) => (
+      <Logo
+        key={x.TeamID}
+        url={getLogo(SimCHL, x.TeamID, false)}
+        variant="tiny"
+      />
+    ));
+  }, [croot.LeadingTeams]);
+
+  // 6) Buttons
+  const toggleScholarship = () => {
+    setAttribute(profile.Scholarship ? ScholarshipRevoked : ScholarshipOffered);
+    openModal(ToggleScholarshipType, croot);
+  };
+  const scoutAttribute = (attr: string) => {
+    setAttribute(attr);
+    openModal(ScoutAttributeType, croot);
+  };
+
+  return (
+    <div
+      className="table-row border-b dark:border-gray-700 text-left"
+      style={{ backgroundColor }}
+    >
+      <TableCell>
+        <span className={`text-xs`}>{croot.ID}</span>
+      </TableCell>{" "}
+      <TableCell>
+        <span
+          className={`text-xs cursor-pointer font-semibold ${
+            croot.IsCustomCroot ? "text-blue-400" : ""
+          }`}
+          onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = "#fcd53f";
+          }}
+          onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+            (e.target as HTMLElement).style.color = "";
+          }}
+          onClick={() => openModal(RecruitInfoType, croot)}
+        >
+          {croot.FirstName} {croot.LastName}
+        </span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{croot.Position}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{croot.Archetype}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{croot.Stars}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{annotateCountry(croot.Country)}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{annotateRegion(croot.State)}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{croot.OverallGrade}</span>
+      </TableCell>
+      {category === Attributes && (
+        <>
+          {attrList.map((attr) => (
+            <TableCell>
+              <span className={`text-xs`}>{attr.value}</span>
+            </TableCell>
+          ))}
+        </>
+      )}
+      {category === Potentials && (
+        <>
+          {attrList.map((attr) => (
+            <TableCell>
+              {profile[attr.label] ? (
+                <span className={`text-sm`}>{attr.value}</span>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="xs"
+                  onClick={() => scoutAttribute(attr.label)}
+                >
+                  ?
+                </Button>
+              )}
+            </TableCell>
+          ))}
+        </>
+      )}
+      {category === Preferences && (
+        <>
+          {prefList.map((attr, idx) => (
+            <TableCell key={idx}>
+              <span className="text-sm">{attr.value}</span>
+            </TableCell>
+          ))}
+        </>
+      )}
+      <TableCell>
+        <span className={`text-xs`}>{croot.RecruitingStatus}</span>
+      </TableCell>
+      <TableCell>
+        <div className="flex flex-row gap-x-2 text-xs">{leadingTeams}</div>
+      </TableCell>
+      <TableCell>
+        <div className="w-[1rem]">
+          <Input
+            type="number"
+            key={profile.ID}
+            label=""
+            name="CurrentWeeksPoints"
+            value={profile.CurrentWeeksPoints as number}
+            classes="text-xs"
+            onChange={onPointsChange}
+          />
+        </div>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{modValue.toFixed(3)}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{profile.TotalPoints}</span>
+      </TableCell>
+      <TableCell>
+        <ButtonGroup classes="flex-nowrap">
+          <Button
+            variant={toggleVariant as ButtonColor}
+            size="xs"
+            onClick={toggleScholarship}
+            disabled={profile.ScholarshipRevoked}
+          >
+            {profile.ScholarshipRevoked ? <SadFace /> : <Scholarship />}
+          </Button>
+          <Button
+            variant="danger"
+            size="xs"
+            onClick={() => openModal(RemoveRecruitType, croot)}
+          >
+            <TrashCan />
+          </Button>
+        </ButtonGroup>
+      </TableCell>
+    </div>
+  );
+};
+
 interface RecruitProfileTableProps {
   colorOne?: string;
   colorTwo?: string;
@@ -159,213 +356,26 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
     backgroundColor: string
   ) => <></>;
 
-  const CHLRowRenderer = (
-    item: HockeyCrootProfile,
-    index: number,
-    backgroundColor: string
-  ) => {
-    const croot = recruitMap[item.RecruitID] as HockeyCroot;
-    const signedTeam = teamMap[croot.TeamID];
-    let attrList = getAdditionalHockeyCrootAttributes(croot);
-    if (category === Potentials) {
-      attrList = getAdditionalHockeyAttributeGrades(croot);
-    }
-    const prefList = getAdditionalCrootPreferenceAttributes(croot);
-    let toggleVariant = "secondary";
-    if (item.Scholarship && !item.ScholarshipRevoked) {
-      toggleVariant = "success";
-    } else if (!item.Scholarship && item.ScholarshipRevoked) {
-      toggleVariant = "danger";
-    }
-
-    let modValue = item.CurrentWeeksPoints * item.Modifier;
-    if (item.IsHomeState) {
-      modValue = modValue * 1.25;
-    } else if (item.IsPipelineState) {
-      modValue = modValue * 1.15;
-    }
-
-    const ChangeCurrentWeekPointsInput = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const { name, value } = event.target;
-      let numericValue = Number(value);
-      if (numericValue < 0) return;
-      if (numericValue > 20) {
-        numericValue = 20;
-      }
-      ChangeInput(item.ID, name, numericValue);
-    };
-
-    const toggleScholarship = () => {
-      if (item.Scholarship) {
-        setAttribute(ScholarshipRevoked);
-      } else {
-        setAttribute(ScholarshipOffered);
-      }
-      openModal(ToggleScholarshipType, croot);
-    };
-
-    const scoutAttribute = (attr: string) => {
-      setAttribute(attr);
-      openModal(ScoutAttributeType, croot);
-    };
-
-    const leadingTeams = useMemo(() => {
-      if (croot.LeadingTeams === null || croot.LeadingTeams.length === 0) {
-        return "None";
-      }
-
-      const competingTeams = croot.LeadingTeams.filter((x, idx) => x.Odds > 0);
-      const topTeams = competingTeams.filter((x, idx) => idx <= 3);
-
-      if (topTeams.length === 0) {
-        return "None";
-      }
-      const competingIDs = topTeams.map((x) => x.TeamID);
-      return competingIDs.map((x) => {
-        const logo = getLogo(SimCHL, x, false);
-        return (
-          <>
-            <Logo url={logo} variant="tiny" />
-          </>
-        );
-      });
-    }, [croot]);
-
-    return (
-      <div
-        key={item.ID}
-        className="table-row border-b dark:border-gray-700 text-left"
-        style={{ backgroundColor }}
-      >
-        <TableCell>
-          <span className={`text-xs`}>{croot.ID}</span>
-        </TableCell>
-        <TableCell>
-          <span
-            className={`text-xs cursor-pointer font-semibold ${
-              croot.IsCustomCroot ? "text-blue-400" : ""
-            }`}
-            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "#fcd53f";
-            }}
-            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-              (e.target as HTMLElement).style.color = "";
-            }}
-            onClick={() => openModal(RecruitInfoType, croot)}
-          >
-            {croot.FirstName} {croot.LastName}
-          </span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{croot.Position}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{croot.Archetype}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{croot.Stars}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{annotateCountry(croot.Country)}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{annotateRegion(croot.State)}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-xs`}>{croot.OverallGrade}</span>
-        </TableCell>
-        {category === Attributes && (
-          <>
-            {attrList.map((attr) => (
-              <TableCell>
-                <span className={`text-xs`}>{attr.value}</span>
-              </TableCell>
-            ))}
-          </>
-        )}
-        {category === Potentials && (
-          <>
-            {attrList.map((attr) => (
-              <TableCell>
-                {item[attr.label] ? (
-                  <span className={`text-sm`}>{attr.value}</span>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    size="xs"
-                    onClick={() => scoutAttribute(attr.label)}
-                  >
-                    ?
-                  </Button>
-                )}
-              </TableCell>
-            ))}
-          </>
-        )}
-        {category === Preferences && (
-          <>
-            {prefList.map((attr, idx) => (
-              <TableCell key={idx}>
-                <span className="text-sm">{attr.value}</span>
-              </TableCell>
-            ))}
-          </>
-        )}
-        <TableCell>
-          <span className={`text-xs`}>{croot.RecruitingStatus}</span>
-        </TableCell>
-        <TableCell>
-          <div className="flex flex-row gap-x-2 text-xs">{leadingTeams}</div>
-        </TableCell>
-        <TableCell>
-          <div className="w-[1rem]">
-            <Input
-              type="number"
-              key={item.ID}
-              label=""
-              name="CurrentWeeksPoints"
-              value={item.CurrentWeeksPoints as number}
-              classes="text-sm"
-              onChange={ChangeCurrentWeekPointsInput}
-            />
-          </div>
-        </TableCell>
-        <TableCell>
-          <span className={`text-sm`}>{modValue.toFixed(3)}</span>
-        </TableCell>
-        <TableCell>
-          <span className={`text-sm`}>{item.TotalPoints}</span>
-        </TableCell>
-        <TableCell>
-          <ButtonGroup classes="flex-nowrap">
-            <Button
-              variant={toggleVariant as ButtonColor}
-              size="xs"
-              onClick={toggleScholarship}
-              disabled={item.ScholarshipRevoked}
-            >
-              {item.ScholarshipRevoked ? <SadFace /> : <Scholarship />}
-            </Button>
-            <Button
-              variant="danger"
-              size="xs"
-              onClick={() => openModal(RemoveRecruitType, croot)}
-            >
-              <TrashCan />
-            </Button>
-          </ButtonGroup>
-        </TableCell>
-      </div>
-    );
-  };
-
   const rowRenderer = (
     league: League
   ): ((item: any, index: number, backgroundColor: string) => ReactNode) => {
     if (league === SimCHL) {
-      return CHLRowRenderer;
+      return (profile: HockeyCrootProfile, idx: number, bg: string) => {
+        const croot = recruitMap[profile.RecruitID] as HockeyCroot;
+        return (
+          <CHLProfileRow
+            profile={profile}
+            key={profile.ID}
+            croot={croot}
+            isMobile={isMobile}
+            backgroundColor={bg}
+            category={category}
+            ChangeInput={ChangeInput}
+            openModal={openModal}
+            setAttribute={setAttribute}
+          />
+        );
+      };
     }
     return CFBRowRenderer;
   };
