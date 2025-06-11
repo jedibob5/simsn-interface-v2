@@ -77,6 +77,100 @@ const getRecruitingColumns = (
   return columns;
 };
 
+interface CHLRowProps {
+  item: HockeyCroot;
+  index: number;
+  backgroundColor: string;
+  openModal: (type: ModalAction, player: any) => void;
+  recruitOnBoardMap: Record<number, boolean>;
+  isMobile: boolean;
+  category: string;
+}
+
+const CHLRow: React.FC<CHLRowProps> = ({
+  item,
+  index,
+  openModal,
+  backgroundColor,
+  recruitOnBoardMap,
+  isMobile,
+  category,
+}) => {
+  const selection = getCHLCrootAttributes(item, isMobile, category!);
+  const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
+
+  const leadingTeams = useMemo(() => {
+    if (item.LeadingTeams === null || item.LeadingTeams.length === 0) {
+      return "None";
+    }
+
+    const competingTeams = item.LeadingTeams.filter((x, idx) => x.Odds > 0);
+    const topTeams = competingTeams.filter((x, idx) => idx <= 3);
+
+    if (topTeams.length === 0) {
+      return "None";
+    }
+    const competingIDs = topTeams.map((x) => x.TeamID);
+    return competingIDs.map((x) => {
+      const logo = getLogo(SimCHL, x, false);
+      return (
+        <div key={x}>
+          <Logo url={logo} variant="tiny" />
+        </div>
+      );
+    });
+  }, [item]);
+
+  return (
+    <div
+      key={item.ID}
+      className="table-row border-b dark:border-gray-700 text-left"
+      style={{ backgroundColor }}
+    >
+      {selection.map((attr, idx) => (
+        <TableCell key={attr.label}>
+          {attr.label === "Name" ? (
+            <span
+              className={`text-xs cursor-pointer font-semibold ${
+                item.IsCustomCroot ? "text-blue-400" : ""
+              }`}
+              onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                (e.target as HTMLElement).style.color = "#fcd53f";
+              }}
+              onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                (e.target as HTMLElement).style.color = "";
+              }}
+              onClick={() => openModal(RecruitInfoType, item)}
+            >
+              {attr.value}
+            </span>
+          ) : (
+            <span className="text-xs">{attr.value}</span>
+          )}
+        </TableCell>
+      ))}
+      <TableCell classes="text-xs">
+        {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
+      </TableCell>
+      <TableCell>
+        <div className="flex flex-row gap-x-1 text-xs">{leadingTeams}</div>
+      </TableCell>
+      <TableCell>
+        <ButtonGroup classes="flex-nowrap">
+          <Button
+            variant={actionVariant}
+            size="xs"
+            onClick={() => openModal(AddRecruitType, item as HockeyCroot)}
+            disabled={recruitOnBoardMap[item.ID]}
+          >
+            {recruitOnBoardMap[item.ID] ? <ActionLock /> : <Plus />}
+          </Button>
+        </ButtonGroup>
+      </TableCell>
+    </div>
+  );
+};
+
 interface RecruitTableProps {
   croots: HockeyCroot[] | FootballCroot[] | BasketballCroot[];
   colorOne?: string;
@@ -117,91 +211,22 @@ export const RecruitTable: FC<RecruitTableProps> = ({
     backgroundColor: string
   ) => <></>;
 
-  const CHLRowRenderer = (
-    item: HockeyCroot,
-    index: number,
-    backgroundColor: string
-  ) => {
-    const selection = getCHLCrootAttributes(item, isMobile, category!);
-    const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
-
-    const leadingTeams = useMemo(() => {
-      if (item.LeadingTeams === null || item.LeadingTeams.length === 0) {
-        return "None";
-      }
-
-      const competingTeams = item.LeadingTeams.filter((x, idx) => x.Odds > 0);
-      const topTeams = competingTeams.filter((x, idx) => idx <= 3);
-
-      if (topTeams.length === 0) {
-        return "None";
-      }
-      const competingIDs = topTeams.map((x) => x.TeamID);
-      return competingIDs.map((x) => {
-        const logo = getLogo(SimCHL, x, false);
-        return (
-          <>
-            <Logo url={logo} variant="tiny" />
-          </>
-        );
-      });
-    }, [item]);
-
-    return (
-      <div
-        key={item.ID}
-        className="table-row border-b dark:border-gray-700 text-left"
-        style={{ backgroundColor }}
-      >
-        {selection.map((attr, idx) => (
-          <TableCell key={attr.label}>
-            {attr.label === "Name" ? (
-              <span
-                className={`text-xs cursor-pointer font-semibold ${
-                  item.IsCustomCroot ? "text-blue-400" : ""
-                }`}
-                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
-                  (e.target as HTMLElement).style.color = "#fcd53f";
-                }}
-                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
-                  (e.target as HTMLElement).style.color = "";
-                }}
-                onClick={() => openModal(RecruitInfoType, item)}
-              >
-                {attr.value}
-              </span>
-            ) : (
-              <span className="text-xs">{attr.value}</span>
-            )}
-          </TableCell>
-        ))}
-        <TableCell classes="text-xs">
-          {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
-        </TableCell>
-        <TableCell>
-          <div className="flex flex-row gap-x-1 text-xs">{leadingTeams}</div>
-        </TableCell>
-        <TableCell>
-          <ButtonGroup classes="flex-nowrap">
-            <Button
-              variant={actionVariant}
-              size="xs"
-              onClick={() => openModal(AddRecruitType, item as HockeyCroot)}
-              disabled={recruitOnBoardMap[item.ID]}
-            >
-              {recruitOnBoardMap[item.ID] ? <ActionLock /> : <Plus />}
-            </Button>
-          </ButtonGroup>
-        </TableCell>
-      </div>
-    );
-  };
-
   const rowRenderer = (
     league: League
   ): ((item: any, index: number, backgroundColor: string) => ReactNode) => {
     if (league === SimCHL) {
-      return CHLRowRenderer;
+      return (item, index, bg) => (
+        <CHLRow
+          key={item.ID}
+          item={item as HockeyCroot}
+          index={index}
+          backgroundColor={bg}
+          openModal={openModal}
+          isMobile={isMobile}
+          category={category}
+          recruitOnBoardMap={recruitOnBoardMap}
+        />
+      );
     }
     return CFBRowRenderer;
   };
