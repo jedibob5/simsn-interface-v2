@@ -216,14 +216,13 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
         return "None";
       }
 
-      const competingTeams = croot.LeadingTeams.filter(
-        (x, idx) => x.Odds > 0 && idx <= 3
-      );
+      const competingTeams = croot.LeadingTeams.filter((x, idx) => x.Odds > 0);
+      const topTeams = competingTeams.filter((x, idx) => idx <= 3);
 
-      if (competingTeams.length === 0) {
+      if (topTeams.length === 0) {
         return "None";
       }
-      const competingIDs = competingTeams.map((x) => x.TeamID);
+      const competingIDs = topTeams.map((x) => x.TeamID);
       return competingIDs.map((x) => {
         const logo = getLogo(SimCHL, x, false);
         return (
@@ -315,10 +314,10 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           </>
         )}
         <TableCell>
-          <span className={`text-sm`}>{croot.RecruitingStatus}</span>
+          <span className={`text-xs`}>{croot.RecruitingStatus}</span>
         </TableCell>
         <TableCell>
-          <div className="flex flex-row gap-x-2">{leadingTeams}</div>
+          <div className="flex flex-row gap-x-2 text-xs">{leadingTeams}</div>
         </TableCell>
         <TableCell>
           <div className="w-[1rem]">

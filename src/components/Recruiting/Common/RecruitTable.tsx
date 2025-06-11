@@ -130,14 +130,13 @@ export const RecruitTable: FC<RecruitTableProps> = ({
         return "None";
       }
 
-      const competingTeams = item.LeadingTeams.filter(
-        (x, idx) => x.Odds > 0 && idx <= 3
-      );
+      const competingTeams = item.LeadingTeams.filter((x, idx) => x.Odds > 0);
+      const topTeams = competingTeams.filter((x, idx) => idx <= 3);
 
-      if (competingTeams.length === 0) {
+      if (topTeams.length === 0) {
         return "None";
       }
-      const competingIDs = competingTeams.map((x) => x.TeamID);
+      const competingIDs = topTeams.map((x) => x.TeamID);
       return competingIDs.map((x) => {
         const logo = getLogo(SimCHL, x, false);
         return (
@@ -176,11 +175,11 @@ export const RecruitTable: FC<RecruitTableProps> = ({
             )}
           </TableCell>
         ))}
-        <TableCell>
+        <TableCell classes="text-xs">
           {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
         </TableCell>
         <TableCell>
-          <div className="flex flex-row gap-x-1">{leadingTeams}</div>
+          <div className="flex flex-row gap-x-1 text-xs">{leadingTeams}</div>
         </TableCell>
         <TableCell>
           <ButtonGroup classes="flex-nowrap">
