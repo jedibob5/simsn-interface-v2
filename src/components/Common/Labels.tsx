@@ -8,6 +8,7 @@ interface TeamLabelProps {
   backgroundColor?: string;
   borderColor?: string;
   headerTextColorClass?: string;
+  variant?: TextVariant;
 }
 
 export const TeamLabel: FC<TeamLabelProps> = ({
@@ -15,6 +16,7 @@ export const TeamLabel: FC<TeamLabelProps> = ({
   backgroundColor,
   borderColor,
   headerTextColorClass,
+  variant = "h4",
 }) => {
   return (
     <div
@@ -25,7 +27,7 @@ export const TeamLabel: FC<TeamLabelProps> = ({
       }}
     >
       <Text
-        variant="h4"
+        variant={variant}
         className={`font-semibold rounded-md py-1 ${headerTextColorClass}`}
       >
         {team}

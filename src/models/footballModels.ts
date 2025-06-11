@@ -602,9 +602,11 @@ export class NFLGameplan {
   PassQuick: number;
   PassShort: number;
   PassLong: number;
+  PassDeep: number;
   PassScreen: number;
   PassPAShort: number;
   PassPALong: number;
+  PassPADeep: number;
   LeftVsRight: number;
   ChoiceOutside: number;
   ChoiceInside: number;
@@ -742,9 +744,11 @@ export class NFLGameplan {
     this.PassQuick = source["PassQuick"];
     this.PassShort = source["PassShort"];
     this.PassLong = source["PassLong"];
+    this.PassDeep = source["PassDeep"];
     this.PassScreen = source["PassScreen"];
     this.PassPAShort = source["PassPAShort"];
     this.PassPALong = source["PassPALong"];
+    this.PassPADeep = source["PassPADeep"];
     this.LeftVsRight = source["LeftVsRight"];
     this.ChoiceOutside = source["ChoiceOutside"];
     this.ChoiceInside = source["ChoiceInside"];
@@ -835,7 +839,6 @@ export class NFLGameplan {
   }
 }
 export class NFLExtensionOffer {
-  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -859,6 +862,7 @@ export class NFLExtensionOffer {
   TotalSalary: number;
   ContractValue: number;
   BonusPercentage: number;
+  AAV: number;
   Rejections: number;
   IsAccepted: boolean;
   IsActive: boolean;
@@ -889,6 +893,7 @@ export class NFLExtensionOffer {
     this.TotalSalary = source["TotalSalary"];
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
+    this.AAV = source["AAV"];
     this.Rejections = source["Rejections"];
     this.IsAccepted = source["IsAccepted"];
     this.IsActive = source["IsActive"];
@@ -939,7 +944,6 @@ export class NFLWaiverOffer {
   }
 }
 export class FreeAgencyOffer {
-  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -962,6 +966,7 @@ export class FreeAgencyOffer {
   TotalSalary: number;
   ContractValue: number;
   BonusPercentage: number;
+  AAV: number;
   IsActive: boolean;
 
   constructor(source: any = {}) {
@@ -988,14 +993,8 @@ export class FreeAgencyOffer {
     this.TotalSalary = source["TotalSalary"];
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
+    this.AAV = source["AAV"];
     this.IsActive = source["IsActive"];
-  }
-
-  updateField(name: string, value: number): FreeAgencyOffer {
-    const copy = new FreeAgencyOffer();
-    Object.assign(copy, this);
-    (copy as any)[name] = value;
-    return copy;
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1440,6 +1439,7 @@ export class NFLPlayer {
   NegotiationRound: number;
   SigningRound: number;
   MinimumValue: number;
+  AAV: number;
   DraftedTeamID: number;
   DraftedTeam: string;
   DraftedRound: number;
@@ -1536,6 +1536,7 @@ export class NFLPlayer {
     this.NegotiationRound = source["NegotiationRound"];
     this.SigningRound = source["SigningRound"];
     this.MinimumValue = source["MinimumValue"];
+    this.AAV = source["AAV"];
     this.DraftedTeamID = source["DraftedTeamID"];
     this.DraftedTeam = source["DraftedTeam"];
     this.DraftedRound = source["DraftedRound"];
@@ -2320,7 +2321,9 @@ export class NFLTeam {
   OverallGrade: string;
   OffenseGrade: string;
   DefenseGrade: string;
+  SpecialTeamsGrade: string;
   PenaltyMarks: number;
+  JerseyType: number;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -2370,7 +2373,9 @@ export class NFLTeam {
     this.OverallGrade = source["OverallGrade"];
     this.OffenseGrade = source["OffenseGrade"];
     this.DefenseGrade = source["DefenseGrade"];
+    this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
+    this.JerseyType = source["JerseyType"];
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];
@@ -2470,6 +2475,7 @@ export class CollegeGame {
   NextGameHOA: string;
   HomePreviousBye: boolean;
   AwayPreviousBye: boolean;
+  ConferenceID: number;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -2523,6 +2529,7 @@ export class CollegeGame {
     this.NextGameHOA = source["NextGameHOA"];
     this.HomePreviousBye = source["HomePreviousBye"];
     this.AwayPreviousBye = source["AwayPreviousBye"];
+    this.ConferenceID = source["ConferenceID"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3629,9 +3636,11 @@ export class CollegeGameplan {
   PassQuick: number;
   PassShort: number;
   PassLong: number;
+  PassDeep: number;
   PassScreen: number;
   PassPAShort: number;
   PassPALong: number;
+  PassPADeep: number;
   LeftVsRight: number;
   ChoiceOutside: number;
   ChoiceInside: number;
@@ -3769,9 +3778,11 @@ export class CollegeGameplan {
     this.PassQuick = source["PassQuick"];
     this.PassShort = source["PassShort"];
     this.PassLong = source["PassLong"];
+    this.PassDeep = source["PassDeep"];
     this.PassScreen = source["PassScreen"];
     this.PassPAShort = source["PassPAShort"];
     this.PassPALong = source["PassPALong"];
+    this.PassPADeep = source["PassPADeep"];
     this.LeftVsRight = source["LeftVsRight"];
     this.ChoiceOutside = source["ChoiceOutside"];
     this.ChoiceInside = source["ChoiceInside"];
@@ -5077,7 +5088,9 @@ export class CollegeTeam {
   OverallGrade: string;
   OffenseGrade: string;
   DefenseGrade: string;
+  SpecialTeamsGrade: string;
   PenaltyMarks: number;
+  JerseyType: number;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -5124,7 +5137,9 @@ export class CollegeTeam {
     this.OverallGrade = source["OverallGrade"];
     this.OffenseGrade = source["OffenseGrade"];
     this.DefenseGrade = source["DefenseGrade"];
+    this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
+    this.JerseyType = source["JerseyType"];
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];
@@ -5224,6 +5239,7 @@ export class BootstrapData {
   FaceData: { [key: number]: FaceDataResponse };
   ContractMap: { [key: number]: NFLContract };
   ExtensionMap: { [key: number]: NFLExtensionOffer };
+  RecruitProfiles: RecruitPlayerProfile[];
 
   constructor(source: any = {}) {
     if (typeof source === "string") source = JSON.parse(source);
@@ -5236,6 +5252,11 @@ export class BootstrapData {
       this.convertValues(source["CollegeStandings"], CollegeStandings) || [];
     this.CollegeRosterMap = source["CollegeRosterMap"] || null;
     this.Recruits = this.convertValues(source["Recruits"], Croot) || [];
+    this.RecruitProfiles = this.convertValues(
+      source["RecruitProfiles"],
+      RecruitPlayerProfile
+    );
+
     this.TeamProfileMap =
       this.convertValues(
         source["TeamProfileMap"],
@@ -5518,7 +5539,9 @@ export class BaseTeam {
   OverallGrade: string;
   OffenseGrade: string;
   DefenseGrade: string;
+  SpecialTeamsGrade: string;
   PenaltyMarks: number;
+  JerseyType: number;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -5542,7 +5565,9 @@ export class BaseTeam {
     this.OverallGrade = source["OverallGrade"];
     this.OffenseGrade = source["OffenseGrade"];
     this.DefenseGrade = source["DefenseGrade"];
+    this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
+    this.JerseyType = source["JerseyType"];
   }
 }
 
@@ -6277,6 +6302,7 @@ export class FreeAgencyOfferDTO {
   Y4Bonus: number;
   Y5BaseSalary: number;
   Y5Bonus: number;
+  AAV: number;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -6295,6 +6321,7 @@ export class FreeAgencyOfferDTO {
     this.Y4Bonus = source["Y4Bonus"];
     this.Y5BaseSalary = source["Y5BaseSalary"];
     this.Y5Bonus = source["Y5Bonus"];
+    this.AAV = source["AAV"];
   }
 }
 export class NFLWaiverOffDTO {
@@ -7861,6 +7888,7 @@ export class NFLRetiredPlayer {
   NegotiationRound: number;
   SigningRound: number;
   MinimumValue: number;
+  AAV: number;
   DraftedTeamID: number;
   DraftedTeam: string;
   DraftedRound: number;
@@ -7957,6 +7985,7 @@ export class NFLRetiredPlayer {
     this.NegotiationRound = source["NegotiationRound"];
     this.SigningRound = source["SigningRound"];
     this.MinimumValue = source["MinimumValue"];
+    this.AAV = source["AAV"];
     this.DraftedTeamID = source["DraftedTeamID"];
     this.DraftedTeam = source["DraftedTeam"];
     this.DraftedRound = source["DraftedRound"];
@@ -9060,10 +9089,7 @@ export class CollegeTeamProfileData {
       CollegePlayer,
       true
     );
-    this.CollegeGames = this.convertValues(
-      source["CollegeGames"],
-      CollegeGame
-    );
+    this.CollegeGames = this.convertValues(source["CollegeGames"], CollegeGame);
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

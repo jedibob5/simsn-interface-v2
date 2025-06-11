@@ -84,16 +84,17 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
           <TeamLabel
             team={teamLabel}
+            variant="h5"
             backgroundColor={teamColors.One}
             borderColor={teamColors.One}
             headerTextColorClass={headerTextColorClass}
           />
-          <Text variant="body-small">Recruiter: {TeamProfile?.Recruiter}</Text>
-          <Text variant="body-small">State: {Team?.State}</Text>
-          <Text variant="body-small">
+          <Text variant="xs">Recruiter: {TeamProfile?.Recruiter}</Text>
+          <Text variant="xs">State: {Team?.State}</Text>
+          <Text variant="xs">
             Scholarships: {TeamProfile?.ScholarshipsAvailable}
           </Text>
-          <Text variant="body-small">
+          <Text variant="xs">
             Spots Remaining:{" "}
             {TeamProfile!.RecruitClassSize - TeamProfile!.TotalCommitments}
           </Text>
@@ -101,38 +102,34 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
         <div className="flex flex-col gap-x-2 flex-wrap w-full text-start">
           <TeamLabel
             team="Recruiting Needs"
+            variant="h5"
             backgroundColor={teamColors.One}
             borderColor={teamColors.One}
             headerTextColorClass={headerTextColorClass}
           />
-          <Text variant="body-small">Rank: {classRank}</Text>
-          <Text variant="body-small">Five Stars: {TeamProfile?.FiveStars}</Text>
-          <Text variant="body-small">Four Stars: {TeamProfile?.FourStars}</Text>
-          <Text variant="body-small">
-            Three Stars: {TeamProfile?.ThreeStars}
-          </Text>
+          <Text variant="xs">Rank: {classRank}</Text>
+          <Text variant="xs">Five Stars: {TeamProfile?.FiveStars}</Text>
+          <Text variant="xs">Four Stars: {TeamProfile?.FourStars}</Text>
+          <Text variant="xs">Three Stars: {TeamProfile?.ThreeStars}</Text>
         </div>
         {league === SimCHL && (
           <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
             <TeamLabel
               team="Team Values"
+              variant="h5"
               backgroundColor={teamColors.One}
               borderColor={teamColors.One}
               headerTextColorClass={headerTextColorClass}
             />
-            <Text variant="body-small">
-              Program Development: {programDevelopment}
-            </Text>
-            <Text variant="body-small">
-              Professional Development: {profDev}
-            </Text>
-            <Text variant="body-small">Traditions: {trad}</Text>
-            <Text variant="body-small">Facilities: {fac}</Text>
-            <Text variant="body-small">Atmosphere: {atm}</Text>
-            <Text variant="body-small">Academics: {aca}</Text>
-            <Text variant="body-small">Conf. Prestige: {conf}</Text>
-            <Text variant="body-small">Coach Rating: {coach}</Text>
-            <Text variant="body-small">Season Momentum: {season}</Text>
+            <Text variant="xs">Program Development: {programDevelopment}</Text>
+            <Text variant="xs">Professional Development: {profDev}</Text>
+            <Text variant="xs">Traditions: {trad}</Text>
+            <Text variant="xs">Facilities: {fac}</Text>
+            <Text variant="xs">Atmosphere: {atm}</Text>
+            <Text variant="xs">Academics: {aca}</Text>
+            <Text variant="xs">Conf. Prestige: {conf}</Text>
+            <Text variant="xs">Coach Rating: {coach}</Text>
+            <Text variant="xs">Season Momentum: {season}</Text>
           </div>
         )}
       </Border>

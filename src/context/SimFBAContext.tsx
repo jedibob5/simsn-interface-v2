@@ -34,6 +34,7 @@ import {
   FreeAgencyOffer,
   NFLWaiverOffer,
   CollegeTeamProfileData as CFBTeamProfileData,
+  RecruitPlayerProfile,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -59,6 +60,7 @@ interface SimFBAContextProps {
   cfbStandingsMap: Record<number, CollegeStandings> | null;
   cfbRosterMap: Record<number, CollegePlayer[]> | null;
   recruits: Croot[];
+  recruitProfiles: RecruitPlayerProfile[];
   teamProfileMap: Record<number, RecruitingTeamProfile> | null;
   portalPlayers: CollegePlayer[];
   collegeInjuryReport: CollegePlayer[];
@@ -130,6 +132,7 @@ const defaultContext: SimFBAContextProps = {
   cfbStandingsMap: {},
   cfbRosterMap: {},
   recruits: [],
+  recruitProfiles: [],
   teamProfileMap: {},
   portalPlayers: [],
   collegeInjuryReport: [],
@@ -223,6 +226,9 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     CollegePlayer[]
   > | null>({});
   const [recruits, setRecruits] = useState<Croot[]>([]);
+  const [recruitProfiles, setRecruitProfiles] = useState<
+    RecruitPlayerProfile[]
+  >([]);
   const [teamProfileMap, setTeamProfileMap] = useState<Record<
     number,
     RecruitingTeamProfile
@@ -505,6 +511,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     if (cfbID > 0) {
       setRecruits(res.Recruits);
       setCFBDepthchartMap(res.CollegeDepthChartMap);
+      setRecruitProfiles(res.RecruitProfiles);
     }
 
     if (nflID > 0) {
@@ -638,6 +645,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         cfbStandingsMap,
         cfbRosterMap,
         recruits,
+        recruitProfiles,
         teamProfileMap,
         portalPlayers,
         collegeInjuryReport,

@@ -1,4 +1,4 @@
-import { Dispatch, FC, ReactNode, SetStateAction } from "react";
+import { Dispatch, FC, ReactNode, SetStateAction, useMemo } from "react";
 import {
   Croot as HockeyCroot,
   RecruitPlayerProfile as HockeyCrootProfile,
@@ -37,6 +37,8 @@ import {
   annotateCountry,
   annotateRegion,
 } from "../../../_helper/StateAbbreviationHelper";
+import { getLogo } from "../../../_utility/getLogo";
+import { Logo } from "../../../_design/Logo";
 
 const getRecruitProfileColumns = (
   league: League,
@@ -208,6 +210,29 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
       setAttribute(attr);
       openModal(ScoutAttributeType, croot);
     };
+
+    const leadingTeams = useMemo(() => {
+      if (croot.LeadingTeams === null || croot.LeadingTeams.length === 0) {
+        return "None";
+      }
+
+      const competingTeams = croot.LeadingTeams.filter((x, idx) => x.Odds > 0);
+      const topTeams = competingTeams.filter((x, idx) => idx <= 3);
+
+      if (topTeams.length === 0) {
+        return "None";
+      }
+      const competingIDs = topTeams.map((x) => x.TeamID);
+      return competingIDs.map((x) => {
+        const logo = getLogo(SimCHL, x, false);
+        return (
+          <>
+            <Logo url={logo} variant="tiny" />
+          </>
+        );
+      });
+    }, [croot]);
+
     return (
       <div
         key={item.ID}
@@ -215,11 +240,11 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
         style={{ backgroundColor }}
       >
         <TableCell>
-          <span className={`text-sm`}>{croot.ID}</span>
+          <span className={`text-xs`}>{croot.ID}</span>
         </TableCell>
         <TableCell>
           <span
-            className={`text-sm cursor-pointer font-semibold ${
+            className={`text-xs cursor-pointer font-semibold ${
               croot.IsCustomCroot ? "text-blue-400" : ""
             }`}
             onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
@@ -234,28 +259,28 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           </span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.Position}</span>
+          <span className={`text-xs`}>{croot.Position}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.Archetype}</span>
+          <span className={`text-xs`}>{croot.Archetype}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.Stars}</span>
+          <span className={`text-xs`}>{croot.Stars}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{annotateCountry(croot.Country)}</span>
+          <span className={`text-xs`}>{annotateCountry(croot.Country)}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{annotateRegion(croot.State)}</span>
+          <span className={`text-xs`}>{annotateRegion(croot.State)}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>{croot.OverallGrade}</span>
+          <span className={`text-xs`}>{croot.OverallGrade}</span>
         </TableCell>
         {category === Attributes && (
           <>
             {attrList.map((attr) => (
               <TableCell>
-                <span className={`text-sm`}>{attr.value}</span>
+                <span className={`text-xs`}>{attr.value}</span>
               </TableCell>
             ))}
           </>
@@ -289,12 +314,10 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
           </>
         )}
         <TableCell>
-          <span className={`text-sm`}>{croot.RecruitingStatus}</span>
+          <span className={`text-xs`}>{croot.RecruitingStatus}</span>
         </TableCell>
         <TableCell>
-          <span className={`text-sm`}>
-            {croot.LeadingTeams && croot.LeadingTeams.length}
-          </span>
+          <div className="flex flex-row gap-x-2 text-xs">{leadingTeams}</div>
         </TableCell>
         <TableCell>
           <div className="w-[1rem]">

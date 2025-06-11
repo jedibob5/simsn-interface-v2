@@ -271,7 +271,7 @@ export const CHLRecruiting = () => {
                   <Button
                     type="button"
                     variant={
-                      teamProfile!.SpentPoints < 50 ? "primary" : "warning"
+                      teamProfile!.SpentPoints <= 50 ? "primary" : "warning"
                     }
                     size="sm"
                     onClick={SaveRecruitingBoard}

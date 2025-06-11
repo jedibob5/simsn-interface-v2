@@ -1063,6 +1063,10 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     };
 
     await RecruitService.HCKSaveRecruitingBoard(dto);
+    enqueueSnackbar("Recruiting Board Saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
   }, [teamProfileMap, recruitProfiles, chlTeam]);
 
   const SaveAIRecruitingSettings = useCallback(
@@ -1074,7 +1078,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
           autoHideDuration: 3000,
         });
         setTeamProfileMap((prevTeamProfiles) => {
-          let currentProfile = prevTeamProfiles[chlTeam!.ID];
+          let currentProfile = prevTeamProfiles[dto.TeamID];
           if (!currentProfile) return prevTeamProfiles;
           return {
             ...prevTeamProfiles,
