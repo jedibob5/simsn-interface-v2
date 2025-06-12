@@ -266,6 +266,7 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
                   isLoadingTwo={isLoading}
+                  teamMap={cfbTeamMap}
                 />
               )}
               {view === WeeklyGames && (
@@ -284,6 +285,7 @@ export const CFBSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
                   isLoadingTwo={isLoading}
+                  teamMap={cfbTeamMap}
                 />
               )}
             </div>
@@ -539,6 +541,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
                   isLoadingTwo={isLoading}
+                  teamMap={nflTeamMap}
                 />
               )}
               {scheduleView === WeeklyGames && (
@@ -557,6 +560,7 @@ export const NFLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   textColorClass={textColorClass}
                   darkerBackgroundColor={darkerBackgroundColor}
                   isLoadingTwo={isLoading}
+                  teamMap={nflTeamMap}
                 />
               )}
             </div>
