@@ -55,18 +55,11 @@ export const useSideMenu = () => {
         toggle: () => toggleMenu(),
       },
       {
-        label: "Recruiting Overview",
+        label: "Recruiting",
         isRoute: true,
         route: routes.CFB_RECRUITING,
         league: SimCFB,
         click: () => navigate(routes.CFB_RECRUITING),
-        toggle: () => toggleMenu(),
-      },
-      {
-        label: "Recruiting Board",
-        isRoute: true,
-        route: routes.CFB_RECRUITING,
-        league: SimCFB,
         toggle: () => toggleMenu(),
       },
       {

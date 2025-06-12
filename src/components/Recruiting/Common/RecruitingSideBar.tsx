@@ -67,6 +67,10 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
     case SimCBB:
       break;
     case SimCFB:
+      const cfbtp = TeamProfile as FootballTeamProfile;
+      const cfbt = Team as FootballTeam;
+      teamLabel = cfbt.TeamName;
+      classRank = cfbtp.RecruitingClassRank;
       break;
     default:
       break;

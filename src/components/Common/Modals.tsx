@@ -16,6 +16,7 @@ import {
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
+  Croot as CFBCroot,
   NFLPlayer as NFLPlayer,
 } from "../../models/footballModels";
 import { Text } from "../../_design/Typography";
@@ -1017,6 +1018,9 @@ export const RecruitInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   if (league === SimCHL) {
     return <CHLCrootInfoModalBody player={player as CHLCroot} />;
   }
+  if (league === SimCFB) {
+    return <CFBCrootInfoModalBody player={player as CFBCroot} />
+  }
 
   return <>Unsupported League.</>;
 };
@@ -1303,6 +1307,126 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             </>
           )}
         </div>
+      </div>
+    </div>
+  );
+};
+
+interface CFBCrootInfoModalBodyProps {
+  player: CFBCroot;
+}
+
+export const CFBCrootInfoModalBody: FC<CFBCrootInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { cfbTeamMap } = useSimFBAStore();
+  const team = cfbTeamMap![player.TeamID];
+  const teamLogo = getLogo(SimCFB, player.TeamID, currentUser?.isRetro);
+  const heightObj = HeightToFeetAndInches(player.Height);
+  const tendency = GetRecruitingTendency(player.RecruitModifier);
+
+  return (
+    <div className="w-full grid grid-cols-4 gap-2 overflow-y-auto">
+      <div className="flex flex-col items-center px-1">
+        <div
+          className={`flex my-1 items-center justify-center 
+                         px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`}
+          style={{ backgroundColor: "white" }}
+        >
+          <PlayerPicture playerID={player.ID} league={SimCFB} team={team} />
+        </div>
+        {team && player.IsSigned && (
+          <Logo
+            url={teamLogo}
+            label={team.TeamAbbr}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
+        )}
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            State
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.State}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Height
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {heightObj.feet}'{heightObj.inches}"
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Overall
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.OverallGrade}
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Youth
+          </Text>
+          <Text variant="body-small" classes="">
+            {player.HighSchool && player.HighSchool.trim() !== ""
+              ? player.HighSchool
+              : "Unknown"}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Weight
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.Weight} lbs
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4">
+          <Text classes="font-semibold mb-1 whitespace-nowrap">
+            Expectation
+          </Text>
+          <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+            {tendency}
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col px-1">
+        <div className="flex flex-col pt-4">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Personality
+          </Text>
+          <Text variant="body-small" classes="whitespace-nowrap">
+            {player.Personality}
+          </Text>
+        </div>
+        <div className="flex flex-col pt-4 pb-2">
+          <Text variant="h6" classes="mb-1 whitespace-nowrap">
+            Stars
+          </Text>
+          <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+            {player.Stars > 0
+              ? Array(player.Stars).fill("⭐").join("")
+              : player.Stars}
+          </Text>
+        </div>
+        {player.IsCustomCroot && (
+          <div className="flex flex-col pt-4">
+            <Text classes="font-semibold mb-1 whitespace-nowrap">Croot By</Text>
+            <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+              {player.CustomCrootFor}
+            </Text>
+          </div>
+        )}
       </div>
     </div>
   );

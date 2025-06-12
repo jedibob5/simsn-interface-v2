@@ -6,6 +6,7 @@ import { useSimFBAStore } from "../../context/SimFBAContext";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { PageContainer } from "../../_design/Container";
 import { CHLRecruiting } from "./CHLRecruiting/CHLRecruiting";
+import { CFBRecruiting } from "./CFBRecruiting/CFBRecruiting";
 
 interface RecruitingPageProps {
   league: League;
@@ -34,14 +35,14 @@ export const RecruitingPage: FC<RecruitingPageProps> = ({ league }) => {
       return false;
     }
     return true;
-  }, [chlTeam, selectedLeague]);
+  }, [chlTeam,cfbTeam, selectedLeague]);
 
   return (
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Recruiting">
         {selectedLeague === SimCHL && chlTeam && <CHLRecruiting />}
         {selectedLeague === SimCBB && cbbTeam && <></>}
-        {selectedLeague === SimCFB && cfbTeam && <></>}
+        {selectedLeague === SimCFB && cfbTeam && <CFBRecruiting/>}
       </PageContainer>
     </>
   );

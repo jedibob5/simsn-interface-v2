@@ -315,7 +315,7 @@ interface RecruitProfileTableProps {
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
-  recruitProfiles?: HockeyCrootProfile[];
+  recruitProfiles?: HockeyCrootProfile[] | FootballCrootProfile[];
   recruitMap: any;
   teamMap: any;
   team: any;
