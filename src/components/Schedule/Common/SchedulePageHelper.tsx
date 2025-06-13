@@ -344,7 +344,7 @@ export const processSchedule = (
   resultsOverride: boolean
 ) => {
   let weekCounter: { [key: number]: number } = {};
-  return schedule.map((game) => {
+  return schedule.sort((a,b) => a.Week - b.Week).map((game) => {
     let revealResult = false;
     if (league === SimCHL || league === SimPHL) {
       revealResult = RevealHCKResults(game, ts, resultsOverride);
@@ -422,19 +422,7 @@ export const processSchedule = (
 
     let weekLabel = `${game.Week}`;
     if (league === SimCHL || league === SimPHL) {
-      if (!weekCounter[game.Week]) {
-        weekCounter[game.Week] = 0;
-      }
-      weekCounter[game.Week] += 1;
-
-      const suffix =
-        weekCounter[game.Week] === 1
-          ? "A"
-          : weekCounter[game.Week] === 2
-          ? "B"
-          : "C";
-
-      weekLabel += suffix;
+      weekLabel += game.GameDay;
     }
 
     return {

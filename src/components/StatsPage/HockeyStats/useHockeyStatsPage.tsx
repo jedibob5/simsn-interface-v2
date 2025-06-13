@@ -193,24 +193,26 @@ export const useHockeyStats = () => {
 
   // Search Logic
   const Search = async () => {
+    const selectedGameType =  gameType === REGULAR_SEASON ? "2" : "1";
     const dto = {
       League: selectedLeague,
       ViewType: statsView,
       WeekID: selectedWeek,
       SeasonID: selectedSeason,
-      GameType: "REGULAR",
+      GameType: selectedGameType,
     };
 
     return await SearchHockeyStats(dto);
   };
 
   const Export = async () => {
+    const selectedGameType =  gameType === REGULAR_SEASON ? "2" : "1";
     const dto = {
       League: selectedLeague,
       ViewType: statsView,
       WeekID: selectedWeek,
       SeasonID: selectedSeason,
-      GameType: "REGULAR",
+      GameType: selectedGameType,
     };
     return await ExportHockeyStats(dto);
   };
