@@ -173,7 +173,15 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const processedSchedule = useMemo(
     () =>
-      processSchedule(teamSchedule, selectedTeam, ts, league, resultsOverride),
+      processSchedule(teamSchedule, selectedTeam, ts, league, resultsOverride).sort((a,b) => {
+        if (a.Week !== b.Week) {
+          return a.Week < b.Week;
+        }
+        if (a.GameDay && b.GameDay) {
+          return a.GameDay.localeCompare(b.GameDay);
+        }
+        return true;
+      }),
     [teamSchedule, selectedTeam, ts, league, resultsOverride]
   );
 
