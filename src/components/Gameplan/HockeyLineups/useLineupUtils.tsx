@@ -227,7 +227,7 @@ export const useCHLLineupUtils = (
         const defenseValue =
           Number(lineup[`${zone}BodyCheck`] || 0) +
           Number(lineup[`${zone}StickCheck`] || 0);
-        checkAgainstLimits(defenseValue, `${zone} Defense Allocations`, 0, 30);
+        checkAgainstLimits(defenseValue, `${zone} Defense Allocations`, 0, 20);
         if (lineup[`${zone}Agility`]) {
           checkAgainstLimits(
             lineup[`${zone}Agility`],
@@ -273,7 +273,7 @@ export const useCHLLineupUtils = (
             lineup[`${zone}BodyCheck`],
             `${zone} Body Check Allocation`,
             0,
-            25
+            15
           );
         }
         if (lineup[`${zone}StickCheck`]) {
@@ -281,7 +281,7 @@ export const useCHLLineupUtils = (
             lineup[`${zone}StickCheck`],
             `${zone} Stick Check Allocation`,
             0,
-            25
+            15
           );
         }
       });
@@ -556,7 +556,7 @@ export const usePHLLineupUtils = (
             lineup[`${zone}BodyCheck`],
             `${zone} Body Check Allocation`,
             0,
-            20
+            15
           );
         }
         if (lineup[`${zone}StickCheck`]) {
@@ -564,7 +564,7 @@ export const usePHLLineupUtils = (
             lineup[`${zone}StickCheck`],
             `${zone} Stick Check Allocation`,
             0,
-            20
+            15
           );
         }
       });
