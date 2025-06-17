@@ -86,8 +86,6 @@ export const CFBRecruiting = () => {
   const lockMessage = useLoadMessage(CFBRecruitLockedMessages, 5000);
   const recruitsExport = async () => {};
 
-  console.log({ teamProfile });
-
   return (
     <>
       {modalPlayer && (
@@ -100,6 +98,7 @@ export const CFBRecruiting = () => {
           league={SimCFB}
           modalAction={modalAction}
           player={modalPlayer}
+          attribute={attribute}
           addPlayerToBoard={addRecruitToBoard}
           removePlayerFromBoard={removeRecruitFromBoard}
           toggleScholarship={toggleScholarship}
@@ -319,6 +318,7 @@ export const CFBRecruiting = () => {
                   isMobile={isMobile}
                   recruitOnBoardMap={recruitOnBoardMap}
                   currentPage={currentPage}
+                  teamProfile={teamProfile!!}
                 />
                 <div className="flex flex-row justify-center py-2">
                   <ButtonGroup>
@@ -366,6 +366,7 @@ export const CFBRecruiting = () => {
                   ChangeInput={updatePointsOnRecruit}
                   openModal={openModal}
                   setAttribute={setAttribute}
+                  teamProfile={teamProfile!!}
                 />
               </Border>
             </>

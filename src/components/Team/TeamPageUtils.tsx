@@ -606,13 +606,15 @@ export const getCFBCrootAttributes = (
     { label: "Stars", value: player.Stars },
     { label: "Ht", value: `${heightObj.feet}' ${heightObj.inches}"` },
     { label: "Wt (lbs)", value: player.Weight },
+    { label: "City", value: player.City },
+    { label: "HS", value: player.HighSchool },
     { label: "St", value: annotateRegion(player.State) },
     { label: "Ovr", value: player.OverallGrade },
     { label: "Pot", value: player.PotentialGrade },
     { label: "AF1", value: player.AffinityOne },
     { label: "AF2", value: player.AffinityTwo },
   ];
-   return list;
+  return list;
 };
 
 const archetypeAcronyms: { [key: string]: string } = {

@@ -40,12 +40,16 @@ import {
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { fba_ws } from "../_constants/urls";
-import { SimFBA } from "../_constants/constants";
+import { CloseToHome, SimFBA } from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
 import FBATeamHistoryService from "../_services/teamHistoryService";
 import { RecruitService } from "../_services/recruitService";
 import { GenerateNumberFromRange } from "../_helper/utilHelper";
+import {
+  ValidateAffinity,
+  ValidateCloseToHome,
+} from "../_helper/recruitingHelper";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -648,15 +652,26 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const addRecruitToBoard = async (dto: any) => {
     // Validate Affinities
+    const affinityOneValid =
+      dto.PlayerRecruit.AffinityOne === CloseToHome
+        ? ValidateCloseToHome(dto.PlayerRecruit, cfbTeam?.TeamAbbr)
+        : ValidateAffinity(dto.PlayerRecruit, teamProfileMap![cfbTeam!.ID]);
+
+    const affinityTwoValid =
+      dto.PlayerRecruit.AffinityOne === CloseToHome
+        ? ValidateCloseToHome(dto.PlayerRecruit, cfbTeam?.TeamAbbr)
+        : ValidateAffinity(dto.PlayerRecruit, teamProfileMap![cfbTeam!.ID]);
 
     // Add RES
     const apiDTO = {
       ...dto,
       SeasonID: cfb_Timestamp?.CollegeSeasonID,
-      Team: cfbTeam,
+      Team: cfbTeam?.TeamAbbr,
       Recruiter: cfbTeam?.Coach,
       RES: teamProfileMap![cfbTeam!.ID].RecruitingEfficiencyScore,
       ProfileID: cfbTeam?.ID,
+      AffinityOneEligible: affinityOneValid,
+      AffinityTwoEligible: affinityTwoValid,
     };
     const profile = await RecruitService.FBACreateRecruitProfile(apiDTO);
     if (profile) {
@@ -669,7 +684,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   };
 
   const removeRecruitFromBoard = async (dto: any) => {
-    const profile = await RecruitService.HCKRemoveCrootFromBoard(dto);
+    const profile = await RecruitService.FBARemovePlayerFromBoard(dto);
     if (profile) {
       setRecruitProfiles((profiles) =>
         [...profiles].filter((p) => p.RecruitID != dto.RecruitID)
@@ -679,6 +694,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const toggleScholarship = async (dto: any) => {
     const profile = await RecruitService.FBAToggleScholarship(dto);
+    console.log({ profile, dto });
     if (profile) {
       setRecruitProfiles((profiles) =>
         [...profiles].map((p) =>

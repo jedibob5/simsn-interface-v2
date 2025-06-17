@@ -605,4 +605,16 @@ export const statsOptions = [
   { label: "Interceptions", value: "Interceptions" },
 ] as const;
 
-export type StatsCategory = typeof statsOptions[number]["value"];
+export type StatsCategory = (typeof statsOptions)[number]["value"];
+export const CloseToHome = "Close to Home";
+export const Academics = "Academics";
+export const Service = "Service";
+export const Religion = "Religion";
+export const LargeCrowds = "Large Crowds";
+export const SmallSchool = "Small School";
+export const Frontrunner = "Frontrunner";
+export const SmallTown = "Small Town";
+export const BigCity = "Big City";
+export const RisingStars = "Rising Stars";
+export const MediaSpotlight = "Media Spotlight";
+export const NoAffinity = "";

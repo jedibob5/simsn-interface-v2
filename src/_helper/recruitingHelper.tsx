@@ -6,6 +6,39 @@ import {
 } from "../models/footballModels";
 import RegionMatcher from "../_matchers/regionMatcher.json";
 import StateMatcher from "../_matchers/stateMatcher.json";
+import { FormationMap } from "../_utility/getFormationMap";
+import {
+  Academics,
+  BigCity,
+  LargeCrowds,
+  MediaSpotlight,
+  Religion,
+  RisingStars,
+  Service,
+  SmallSchool,
+  SmallTown,
+} from "../_constants/constants";
+
+type RegionMap = {
+  [state: string]: { [city: string]: string };
+};
+
+const RegionMatcherMap: RegionMap = RegionMatcher;
+
+type StateMap = {
+  [regionState: string]: string[];
+};
+
+const StateMatcherMap: StateMap = StateMatcher;
+
+type FormationScheme = {
+  SchemeFits: string[];
+  BadFits: string[];
+};
+
+type FormationMapType = {
+  [scheme: string]: FormationScheme;
+};
 
 export const useFilteredHockeyRecruits = ({
   recruits,
@@ -169,27 +202,163 @@ export const getAffinityList = (teamProfile: RecruitingTeamProfile) => {
   return list;
 };
 
-export const ValidateCloseToHome = (
-  croot: { State: string | number; City: string | number },
-  abbr: any
-) => {
-  let crootState = croot.State;
+export const ValidateCloseToHome = (croot: any, abbr: any) => {
+  let crootState = String(croot.State);
 
   if (crootState === "TX" || crootState === "CA" || crootState === "FL") {
-    let regionalState = RegionMatcher[croot.State];
+    const regionalState = RegionMatcherMap[croot.State];
     if (regionalState && !regionalState[croot.City]) {
       // Short term fix if a city isn't on the map
       crootState = `${croot.State}(S)`;
     } else {
-      crootState = RegionMatcher[croot.State][croot.City];
+      crootState = regionalState[croot.City];
     }
   }
 
-  const closeToHomeSchools = StateMatcher[crootState];
-
+  const closeToHomeSchools = StateMatcherMap[crootState];
+  if (croot.ID === 96167) {
+    console.log({ closeToHomeSchools });
+  }
   if (closeToHomeSchools.length <= 0) {
     return false;
   }
 
   return closeToHomeSchools.includes(abbr);
+};
+
+export const ValidateAffinity = (
+  affinity: string,
+  teamProfile: RecruitingTeamProfile
+) => {
+  if (affinity === Academics && teamProfile.AcademicsAffinity) {
+    return true;
+  }
+  if (affinity === Service && teamProfile.ServiceAffinity) {
+    return true;
+  }
+  if (affinity === Religion && teamProfile.ReligionAffinity) {
+    return true;
+  }
+  if (affinity === LargeCrowds && teamProfile.LargeCrowdsAffinity) {
+    return true;
+  }
+  if (affinity === SmallSchool && teamProfile.SmallSchoolAffinity) {
+    return true;
+  }
+  if (affinity === SmallTown && teamProfile.SmallTownAffinity) {
+    return true;
+  }
+  if (affinity === BigCity && teamProfile.BigCityAffinity) {
+    return true;
+  }
+  if (affinity === RisingStars && teamProfile.RisingStarsAffinity) {
+    return true;
+  }
+  if (affinity === MediaSpotlight && teamProfile.MediaSpotlightAffinity) {
+    return true;
+  }
+
+  return false;
+};
+
+export const getOffensiveSchemesList = () => {
+  return [
+    { label: "Power Run", value: "Power Run" },
+    { label: "Vertical", value: "Vertical" },
+    { label: "West Coast", value: "West Coast" },
+    { label: "I Option", value: "I Option" },
+    { label: "Run and Shoot", value: "Run and Shoot" },
+    { label: "Air Raid", value: "Air Raid" },
+    { label: "Pistol", value: "Pistol" },
+    { label: "Spread Option", value: "Spread Option" },
+    { label: "Wing-T", value: "Wing-T" },
+    { label: "Double Wing", value: "Double Wing" },
+    { label: "Wishbone", value: "Wishbone" },
+    { label: "Flexbone", value: "Flexbone" },
+  ];
+};
+
+export const getDefensiveSchemesList = () => {
+  return [
+    { label: "Old School", value: "Old School" },
+    { label: "2-Gap", value: "2-Gap" },
+    {
+      label: "4-Man Front Spread Stopper",
+      value: "4-Man Front Spread Stopper",
+    },
+    {
+      label: "3-Man Front Spread Stopper",
+      value: "3-Man Front Spread Stopper",
+    },
+    { label: "Speed", value: "Speed" },
+    { label: "Multiple", value: "Multiple" },
+  ];
+};
+
+export const isGoodFit = (
+  offensiveScheme: string,
+  defensiveScheme: string,
+  pos: string,
+  arch: string
+) => {
+  if (offensiveScheme.length === 0 || defensiveScheme.length === 0) {
+    return false;
+  }
+  let scheme = offensiveScheme;
+  if (
+    pos === "DT" ||
+    pos === "DE" ||
+    pos === "ILB" ||
+    pos === "OLB" ||
+    pos === "CB" ||
+    pos === "FS" ||
+    pos === "SS"
+  ) {
+    scheme = defensiveScheme;
+  }
+
+  const formationMap: FormationMapType = FormationMap;
+
+  const schemeMap = formationMap[scheme];
+  const { SchemeFits } = schemeMap;
+  const label = `${arch} ${pos}`;
+  const idx = SchemeFits.findIndex((x) => x === label);
+  if (idx > -1) {
+    return true;
+  }
+  return false;
+};
+
+export const isBadFit = (
+  offensiveScheme: string,
+  defensiveScheme: string,
+  pos: string,
+  arch: string
+) => {
+  if (offensiveScheme.length === 0 || defensiveScheme.length === 0) {
+    return false;
+  }
+  let scheme = offensiveScheme;
+  if (
+    pos === "DT" ||
+    pos === "DE" ||
+    pos === "ILB" ||
+    pos === "OLB" ||
+    pos === "CB" ||
+    pos === "FS" ||
+    pos === "SS"
+  ) {
+    scheme = defensiveScheme;
+  }
+
+  const formationMap: FormationMapType = FormationMap;
+
+  const schemeMap = formationMap[scheme];
+  const { BadFits } = schemeMap;
+  const label = `${arch} ${pos}`;
+  const idx = BadFits.findIndex((x: string) => x === label);
+  if (idx > -1) {
+    return true;
+  }
+  return false;
 };

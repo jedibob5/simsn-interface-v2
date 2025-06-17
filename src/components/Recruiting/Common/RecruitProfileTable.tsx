@@ -6,6 +6,7 @@ import {
 import {
   Attributes,
   ButtonColor,
+  CloseToHome,
   League,
   ModalAction,
   Potentials,
@@ -23,6 +24,7 @@ import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import {
   Croot as FootballCroot,
   RecruitPlayerProfile as FootballCrootProfile,
+  RecruitingTeamProfile,
 } from "../../../models/footballModels";
 import { Table, TableCell } from "../../../_design/Table";
 import {
@@ -44,6 +46,12 @@ import {
 } from "../../../_helper/StateAbbreviationHelper";
 import { getLogo } from "../../../_utility/getLogo";
 import { Logo } from "../../../_design/Logo";
+import {
+  isBadFit,
+  isGoodFit,
+  ValidateAffinity,
+  ValidateCloseToHome,
+} from "../../../_helper/recruitingHelper";
 
 const getRecruitProfileColumns = (
   league: League,
@@ -125,9 +133,13 @@ const getRecruitProfileColumns = (
       { header: "Pos", accessor: "Position" },
       { header: "Arch", accessor: "Archetype" },
       { header: "⭐", accessor: "Stars" },
+      { header: "City", accessor: "City" },
+      { header: "HS", accessor: "HighSchool" },
       { header: "State", accessor: "State" },
       { header: "Ovr", accessor: "OverallGrade" },
       { header: "Pot", accessor: "PotentialGrade" },
+      { header: "AF1", accessor: "AffinityOne" },
+      { header: "AF2", accessor: "AffinityTwo" },
       { header: "Status", accessor: "RecruitingStatus" },
       { header: "Leaders", accessor: "lead" },
       { header: "Add Points", accessor: "CurrentWeeksPoints" },
@@ -340,6 +352,7 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
 
 interface CFBProfileRowProps {
   profile: FootballCrootProfile;
+  teamProfile: RecruitingTeamProfile;
   croot: FootballCroot;
   isMobile: boolean;
   category: string;
@@ -351,6 +364,7 @@ interface CFBProfileRowProps {
 
 export const CFBProfileRow: FC<CFBProfileRowProps> = ({
   profile,
+  teamProfile,
   croot,
   isMobile,
   category,
@@ -399,9 +413,55 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
 
   // 6) Buttons
   const toggleScholarship = () => {
-    setAttribute(profile.Scholarship ? ScholarshipRevoked : ScholarshipOffered);
+    setAttribute(
+      profile.Scholarship && !profile.ScholarshipRevoked
+        ? ScholarshipRevoked
+        : ScholarshipOffered
+    );
     openModal(ToggleScholarshipType, croot);
   };
+
+  const isCrootGoodFit = useMemo(() => {
+    return isGoodFit(
+      teamProfile.OffensiveScheme,
+      teamProfile.DefensiveScheme,
+      croot.Position,
+      croot.Archetype
+    );
+  }, [teamProfile]);
+
+  const isCrootBadFit = useMemo(() => {
+    return isBadFit(
+      teamProfile.OffensiveScheme,
+      teamProfile.DefensiveScheme,
+      croot.Position,
+      croot.Archetype
+    );
+  }, [teamProfile]);
+
+  const nameColor = useMemo(() => {
+    if (croot.IsCustomCroot) {
+      return "text-blue-400";
+    } else if (isCrootGoodFit) {
+      return "text-green-400";
+    } else if (isCrootBadFit) {
+      return "text-red-400";
+    }
+  }, [croot, isCrootGoodFit, isCrootBadFit]);
+
+  const affinityOneValid = useMemo(() => {
+    if (croot.AffinityOne === CloseToHome) {
+      return ValidateCloseToHome(croot, teamProfile.TeamAbbreviation);
+    }
+    return ValidateAffinity(croot.AffinityOne, teamProfile);
+  }, [croot, teamProfile]);
+
+  const affinityTwoValid = useMemo(() => {
+    if (croot.AffinityTwo === CloseToHome) {
+      return ValidateCloseToHome(croot, teamProfile.TeamAbbreviation);
+    }
+    return ValidateAffinity(croot.AffinityTwo, teamProfile);
+  }, [croot, teamProfile]);
 
   return (
     <div
@@ -413,9 +473,7 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
       </TableCell>{" "}
       <TableCell>
         <span
-          className={`text-xs cursor-pointer font-semibold ${
-            croot.IsCustomCroot ? "text-blue-400" : ""
-          }`}
+          className={`text-xs cursor-pointer font-semibold ${nameColor}`}
           onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
             (e.target as HTMLElement).style.color = "#fcd53f";
           }}
@@ -437,6 +495,12 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
         <span className={`text-xs`}>{croot.Stars}</span>
       </TableCell>
       <TableCell>
+        <span className={`text-xs`}>{croot.City}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs`}>{croot.HighSchool}</span>
+      </TableCell>
+      <TableCell>
         <span className={`text-xs`}>{annotateRegion(croot.State)}</span>
       </TableCell>
       <TableCell>
@@ -444,6 +508,16 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
       </TableCell>
       <TableCell>
         <span className={`text-xs`}>{croot.PotentialGrade}</span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs ${affinityOneValid ? "text-blue-400" : ""}`}>
+          {croot.AffinityOne}
+        </span>
+      </TableCell>
+      <TableCell>
+        <span className={`text-xs ${affinityTwoValid ? "text-blue-400" : ""}`}>
+          {croot.AffinityTwo}
+        </span>
       </TableCell>
       <TableCell>
         <span className={`text-xs`}>{croot.RecruitingStatus}</span>
@@ -502,6 +576,7 @@ interface RecruitProfileTableProps {
     | HockeyCrootProfile[]
     | FootballCrootProfile[]
     | BasketballCrootProfile[];
+  teamProfile?: any;
   recruitMap: any;
   teamMap: any;
   team: any;
@@ -524,6 +599,7 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
   recruitMap,
   teamMap,
   team,
+  teamProfile,
   league,
   category,
   isMobile = false,
@@ -563,6 +639,7 @@ export const RecruitProfileTable: FC<RecruitProfileTableProps> = ({
         const croot = recruitMap[profile.RecruitID] as FootballCroot;
         return (
           <CFBProfileRow
+            teamProfile={teamProfile}
             profile={profile}
             key={profile.ID}
             croot={croot}

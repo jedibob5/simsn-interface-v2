@@ -2,6 +2,7 @@ import { FC, ReactNode, useMemo } from "react";
 import {
   AddRecruitType,
   Attributes,
+  CloseToHome,
   League,
   ModalAction,
   Preferences,
@@ -11,7 +12,10 @@ import {
 } from "../../../_constants/constants";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
-import { Croot as FootballCroot } from "../../../models/footballModels";
+import {
+  Croot as FootballCroot,
+  RecruitingTeamProfile,
+} from "../../../models/footballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
 import {
   getCFBCrootAttributes,
@@ -23,6 +27,12 @@ import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
 import { getLogo } from "../../../_utility/getLogo";
 import { Logo } from "../../../_design/Logo";
+import {
+  isBadFit,
+  isGoodFit,
+  ValidateAffinity,
+  ValidateCloseToHome,
+} from "../../../_helper/recruitingHelper";
 
 const getRecruitingColumns = (
   league: League,
@@ -38,6 +48,8 @@ const getRecruitingColumns = (
       { header: "⭐", accessor: "Stars" },
       { header: "Ht", accessor: "Height" },
       { header: "Wt", accessor: "Weight" },
+      { header: "City", accessor: "City" },
+      { header: "HS", accessor: "HighSchool" },
       { header: "State", accessor: "State" },
       { header: "Ovr", accessor: "OverallGrade" },
       { header: "Pot", accessor: "PotentialGrade" },
@@ -221,6 +233,7 @@ interface CFBRowProps {
   recruitOnBoardMap: Record<number, boolean>;
   isMobile: boolean;
   category: string;
+  teamProfile: RecruitingTeamProfile;
 }
 
 const CFBRow: React.FC<CFBRowProps> = ({
@@ -231,6 +244,7 @@ const CFBRow: React.FC<CFBRowProps> = ({
   recruitOnBoardMap,
   isMobile,
   category,
+  teamProfile,
 }) => {
   const selection = getCFBCrootAttributes(item, isMobile, category!);
   const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
@@ -267,6 +281,48 @@ const CFBRow: React.FC<CFBRowProps> = ({
     return <Logo url={winningURL} variant="small" />;
   }, [item]);
 
+  const isCrootGoodFit = useMemo(() => {
+    return isGoodFit(
+      teamProfile.OffensiveScheme,
+      teamProfile.DefensiveScheme,
+      item.Position,
+      item.Archetype
+    );
+  }, [teamProfile]);
+
+  const isCrootBadFit = useMemo(() => {
+    return isBadFit(
+      teamProfile.OffensiveScheme,
+      teamProfile.DefensiveScheme,
+      item.Position,
+      item.Archetype
+    );
+  }, [teamProfile]);
+
+  const nameColor = useMemo(() => {
+    if (item.IsCustomCroot) {
+      return "text-blue-400";
+    } else if (isCrootGoodFit) {
+      return "text-green-400";
+    } else if (isCrootBadFit) {
+      return "text-red-400";
+    }
+  }, [item, isCrootGoodFit, isCrootBadFit]);
+
+  const affinityOneValid = useMemo(() => {
+    if (item.AffinityOne === CloseToHome) {
+      return ValidateCloseToHome(item, teamProfile.TeamAbbreviation);
+    }
+    return ValidateAffinity(item.AffinityOne, teamProfile);
+  }, [item, teamProfile]);
+
+  const affinityTwoValid = useMemo(() => {
+    if (item.AffinityTwo === CloseToHome) {
+      return ValidateCloseToHome(item, teamProfile.TeamAbbreviation);
+    }
+    return ValidateAffinity(item.AffinityTwo, teamProfile);
+  }, [item, teamProfile]);
+
   return (
     <div
       key={item.ID}
@@ -277,9 +333,7 @@ const CFBRow: React.FC<CFBRowProps> = ({
         <TableCell key={attr.label}>
           {attr.label === "Name" ? (
             <span
-              className={`text-xs cursor-pointer font-semibold ${
-                item.IsCustomCroot ? "text-blue-400" : ""
-              }`}
+              className={`text-xs cursor-pointer font-semibold ${nameColor}`}
               onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
                 (e.target as HTMLElement).style.color = "#fcd53f";
               }}
@@ -287,6 +341,18 @@ const CFBRow: React.FC<CFBRowProps> = ({
                 (e.target as HTMLElement).style.color = "";
               }}
               onClick={() => openModal(RecruitInfoType, item)}
+            >
+              {attr.value}
+            </span>
+          ) : attr.label === "AF1" ? (
+            <span
+              className={`text-xs ${affinityOneValid ? "text-blue-400" : ""}`}
+            >
+              {attr.value}
+            </span>
+          ) : attr.label === "AF2" ? (
+            <span
+              className={`text-xs ${affinityTwoValid ? "text-blue-400" : ""}`}
             >
               {attr.value}
             </span>
@@ -339,6 +405,7 @@ interface RecruitTableProps {
   isMobile?: boolean;
   recruitOnBoardMap: Record<number, boolean>;
   currentPage: number;
+  teamProfile?: any;
 }
 
 export const RecruitTable: FC<RecruitTableProps> = ({
@@ -352,6 +419,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
   isMobile = false,
   recruitOnBoardMap,
   currentPage,
+  teamProfile,
 }) => {
   const backgroundColor = colorOne;
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
@@ -390,6 +458,7 @@ export const RecruitTable: FC<RecruitTableProps> = ({
           openModal={openModal}
           isMobile={isMobile}
           category={category}
+          teamProfile={teamProfile}
           recruitOnBoardMap={recruitOnBoardMap}
         />
       );
