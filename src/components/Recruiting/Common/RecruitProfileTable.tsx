@@ -201,6 +201,9 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
   // 5) Leading teams (memo)
   const leadingTeams = useMemo(() => {
     if (!croot.LeadingTeams?.length) return "None";
+    if (croot.IsSigned) {
+      return <Logo url={getLogo(SimCHL, croot.TeamID, false)} variant="tiny" />;
+    }
     const tops = croot.LeadingTeams.filter((x) => x.Odds > 0).slice(0, 4);
     if (!tops.length) return "None";
     return tops.map((x) => (
@@ -210,7 +213,7 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
         variant="tiny"
       />
     ));
-  }, [croot.LeadingTeams]);
+  }, [croot]);
 
   // 6) Buttons
   const toggleScholarship = () => {
@@ -400,6 +403,9 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
   // 5) Leading teams (memo)
   const leadingTeams = useMemo(() => {
     if (!croot.LeadingTeams?.length) return "None";
+    if (croot.IsSigned) {
+      return <Logo url={getLogo(SimCFB, croot.TeamID, false)} variant="tiny" />;
+    }
     const tops = croot.LeadingTeams.filter((x) => x.Odds > 0).slice(0, 4);
     if (!tops.length) return "None";
     return tops.map((x) => (
@@ -470,7 +476,7 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
     >
       <TableCell>
         <span className={`text-xs`}>{croot.ID}</span>
-      </TableCell>{" "}
+      </TableCell>
       <TableCell>
         <span
           className={`text-xs cursor-pointer font-semibold ${nameColor}`}
@@ -534,7 +540,7 @@ export const CFBProfileRow: FC<CFBProfileRowProps> = ({
             name="CurrentWeeksPoints"
             value={profile.CurrentWeeksPoints as number}
             classes="text-xs"
-            disabled={profile.IsLocked || profile.IsSigned}
+            disabled={profile.IsLocked}
             onChange={onPointsChange}
           />
         </div>

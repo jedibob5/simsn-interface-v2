@@ -39,6 +39,9 @@ export const useCFBRecruiting = () => {
   const [regions, setRegions] = useState<string[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
+  const [selectedClassView, setSelectedClassView] = useState<number>(
+    cfbTeam!.ID
+  );
   const [conferences, setConferences] = useState<any[]>([]);
   const [attribute, setAttribute] = useState<string>("");
   const [modalPlayer, setModalPlayer] = useState<
@@ -96,6 +99,10 @@ export const useCFBRecruiting = () => {
     statuses,
     stars,
   });
+
+  const filteredClass = useMemo(() => {
+    return recruits.filter((croot) => croot.TeamID === selectedClassView);
+  }, [recruits, selectedClassView]);
 
   const pageSize = 100;
 
@@ -175,6 +182,11 @@ export const useCFBRecruiting = () => {
     setSelectedTeams(() => opts);
   };
 
+  const SelectClass = (options: any) => {
+    const opts = Number(options.value);
+    setSelectedClassView(() => opts);
+  };
+
   const openModal = (
     action: ModalAction,
     player: HockeyCroot | FootballCroot | BasketballCroot
@@ -217,5 +229,7 @@ export const useCFBRecruiting = () => {
     setAttribute,
     recruitingLocked,
     sortedCrootProfiles,
+    filteredClass,
+    SelectClass,
   };
 };
