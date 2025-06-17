@@ -13,7 +13,10 @@ import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 import { Croot as FootballCroot } from "../../../models/footballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
-import { getCFBCrootAttributes, getCHLCrootAttributes } from "../../Team/TeamPageUtils";
+import {
+  getCFBCrootAttributes,
+  getCHLCrootAttributes,
+} from "../../Team/TeamPageUtils";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { ActionLock, Info, Plus } from "../../../_design/Icons";
 import { Table, TableCell } from "../../../_design/Table";
@@ -27,76 +30,76 @@ const getRecruitingColumns = (
   isMobile: boolean
 ) => {
   if (league === SimCFB) {
-     let columns: { header: string; accessor: string }[] = [
-    { header: "ID", accessor: "" },
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: "Arch.", accessor: "Archetype" },
-    { header: "⭐", accessor: "Stars" },
-    { header: "Ht", accessor: "Height" },
-    { header: "Wt", accessor: "Weight" },
-    { header: "State", accessor: "State" },
-    { header: "Ovr", accessor: "OverallGrade" },
-    { header: "Pot", accessor: "PotentialGrade" },
-    { header: "AF1", accessor: "AffinityOne" },
-    { header: "AF2", accessor: "AffinityTwo" },
-    { header: "Status", accessor: "RecruitingStatus" },
-    { header: "Leaders", accessor: "lead" },
-    { header: "Actions", accessor: "actions" }
-  ];
+    let columns: { header: string; accessor: string }[] = [
+      { header: "ID", accessor: "" },
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: "Arch.", accessor: "Archetype" },
+      { header: "⭐", accessor: "Stars" },
+      { header: "Ht", accessor: "Height" },
+      { header: "Wt", accessor: "Weight" },
+      { header: "State", accessor: "State" },
+      { header: "Ovr", accessor: "OverallGrade" },
+      { header: "Pot", accessor: "PotentialGrade" },
+      { header: "AF1", accessor: "AffinityOne" },
+      { header: "AF2", accessor: "AffinityTwo" },
+      { header: "Status", accessor: "RecruitingStatus" },
+      { header: "Leaders", accessor: "lead" },
+      { header: "Actions", accessor: "actions" },
+    ];
 
-  return columns;
+    return columns;
   }
 
   if (league === SimCHL) {
- let columns: { header: string; accessor: string }[] = [
-    { header: "ID", accessor: "" },
-    { header: "Name", accessor: "LastName" },
-    { header: "Pos", accessor: "Position" },
-    { header: "Arch.", accessor: "Archetype" },
-    { header: "⭐", accessor: "Stars" },
-    { header: "Ht", accessor: "Height" },
-    { header: "Wt", accessor: "Weight" },
-    { header: "Country", accessor: "Country" },
-    { header: "Region", accessor: "State" },
-    { header: "Ovr", accessor: "OverallGrade" },
-  ];
+    let columns: { header: string; accessor: string }[] = [
+      { header: "ID", accessor: "" },
+      { header: "Name", accessor: "LastName" },
+      { header: "Pos", accessor: "Position" },
+      { header: "Arch.", accessor: "Archetype" },
+      { header: "⭐", accessor: "Stars" },
+      { header: "Ht", accessor: "Height" },
+      { header: "Wt", accessor: "Weight" },
+      { header: "Country", accessor: "Country" },
+      { header: "Region", accessor: "State" },
+      { header: "Ovr", accessor: "OverallGrade" },
+    ];
 
-  if (!isMobile && category === Attributes) {
-    columns = columns.concat([
-      { header: "Agi", accessor: "Agility" },
-      { header: "FO", accessor: "Faceoffs" },
-      { header: "LSA", accessor: "LongShotAccuracy" },
-      { header: "LSP", accessor: "LongShotPower" },
-      { header: "CSA", accessor: "CloseShotAccuracy" },
-      { header: "CSP", accessor: "CloseShotPower" },
-      { header: "Pass", accessor: "Passing" },
-      { header: "PH", accessor: "PuckHandling" },
-      { header: "Str", accessor: "Strength" },
-      { header: "BChk", accessor: "BodyChecking" },
-      { header: "SChk", accessor: "StickChecking" },
-      { header: "SB", accessor: "ShotBlocking" },
-      { header: "GK", accessor: "Goalkeeping" },
-      { header: "GV", accessor: "GoalieVision" },
-    ]);
-  } else if (!isMobile && category === Preferences) {
-    columns = columns.concat([
-      { header: "Program", accessor: "ProgramPref" },
-      { header: "Prof. Dev.", accessor: "ProfDevPref" },
-      { header: "Trad.", accessor: "TraditionsPref" },
-      { header: "Fac.", accessor: "FacilitiesPref" },
-      { header: "Atm.", accessor: "AtmospherePref" },
-      { header: "Aca.", accessor: "AcademicsPref" },
-      { header: "Conf.", accessor: "ConferencePref" },
-      { header: "Coach", accessor: "CoachPref" },
-      { header: "Season", accessor: "SeasonMomentumPref" },
-    ]);
-  }
-  columns.push({ header: "Status", accessor: "RecruitingStatus" });
-  columns.push({ header: "Leaders", accessor: "lead" });
-  columns.push({ header: "Actions", accessor: "actions" });
+    if (!isMobile && category === Attributes) {
+      columns = columns.concat([
+        { header: "Agi", accessor: "Agility" },
+        { header: "FO", accessor: "Faceoffs" },
+        { header: "LSA", accessor: "LongShotAccuracy" },
+        { header: "LSP", accessor: "LongShotPower" },
+        { header: "CSA", accessor: "CloseShotAccuracy" },
+        { header: "CSP", accessor: "CloseShotPower" },
+        { header: "Pass", accessor: "Passing" },
+        { header: "PH", accessor: "PuckHandling" },
+        { header: "Str", accessor: "Strength" },
+        { header: "BChk", accessor: "BodyChecking" },
+        { header: "SChk", accessor: "StickChecking" },
+        { header: "SB", accessor: "ShotBlocking" },
+        { header: "GK", accessor: "Goalkeeping" },
+        { header: "GV", accessor: "GoalieVision" },
+      ]);
+    } else if (!isMobile && category === Preferences) {
+      columns = columns.concat([
+        { header: "Program", accessor: "ProgramPref" },
+        { header: "Prof. Dev.", accessor: "ProfDevPref" },
+        { header: "Trad.", accessor: "TraditionsPref" },
+        { header: "Fac.", accessor: "FacilitiesPref" },
+        { header: "Atm.", accessor: "AtmospherePref" },
+        { header: "Aca.", accessor: "AcademicsPref" },
+        { header: "Conf.", accessor: "ConferencePref" },
+        { header: "Coach", accessor: "CoachPref" },
+        { header: "Season", accessor: "SeasonMomentumPref" },
+      ]);
+    }
+    columns.push({ header: "Status", accessor: "RecruitingStatus" });
+    columns.push({ header: "Leaders", accessor: "lead" });
+    columns.push({ header: "Actions", accessor: "actions" });
 
-  return columns;
+    return columns;
   }
 
   return [];
@@ -146,12 +149,12 @@ const CHLRow: React.FC<CHLRowProps> = ({
     });
   }, [item]);
 
-    const winningLogo = useMemo(() => {
+  const winningLogo = useMemo(() => {
     if (!item.IsSigned) {
-      return '';
+      return "";
     }
-    const   winningURL = getLogo(SimCHL, item.TeamID, false);
-    return <Logo url={winningURL} variant="small" />
+    const winningURL = getLogo(SimCHL, item.TeamID, false);
+    return <Logo url={winningURL} variant="small" />;
   }, [item]);
 
   return (
@@ -186,7 +189,9 @@ const CHLRow: React.FC<CHLRowProps> = ({
         {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
       </TableCell>
       <TableCell>
-        <div className="flex flex-row gap-x-1 text-xs">{item.IsSigned ? winningLogo : leadingTeams}</div>
+        <div className="flex flex-row gap-x-1 text-xs">
+          {item.IsSigned ? winningLogo : leadingTeams}
+        </div>
       </TableCell>
       <TableCell>
         <ButtonGroup classes="flex-nowrap">
@@ -196,7 +201,11 @@ const CHLRow: React.FC<CHLRowProps> = ({
             onClick={() => openModal(AddRecruitType, item as HockeyCroot)}
             disabled={recruitOnBoardMap[item.ID] || item.IsSigned}
           >
-            {recruitOnBoardMap[item.ID] || item.IsSigned ? <ActionLock /> : <Plus />}
+            {recruitOnBoardMap[item.ID] || item.IsSigned ? (
+              <ActionLock />
+            ) : (
+              <Plus />
+            )}
           </Button>
         </ButtonGroup>
       </TableCell>
@@ -226,6 +235,8 @@ const CFBRow: React.FC<CFBRowProps> = ({
   const selection = getCFBCrootAttributes(item, isMobile, category!);
   const actionVariant = !recruitOnBoardMap[item.ID] ? "success" : "secondary";
 
+  // Adjust name text color based on whether player is a good or bad fit, or if custom.
+
   const leadingTeams = useMemo(() => {
     if (item.LeadingTeams === null || item.LeadingTeams.length === 0) {
       return "None";
@@ -248,17 +259,13 @@ const CFBRow: React.FC<CFBRowProps> = ({
     });
   }, [item]);
 
-
   const winningLogo = useMemo(() => {
     if (!item.IsSigned) {
-      return '';
+      return "";
     }
-    const   winningURL = getLogo(SimCFB, item.TeamID, false);
-    return <Logo url={winningURL} variant="small" />
+    const winningURL = getLogo(SimCFB, item.TeamID, false);
+    return <Logo url={winningURL} variant="small" />;
   }, [item]);
-      
-    
-    
 
   return (
     <div
@@ -292,7 +299,9 @@ const CFBRow: React.FC<CFBRowProps> = ({
         {item.RecruitingStatus === "" ? "None" : item.RecruitingStatus}
       </TableCell>
       <TableCell>
-        <div className="flex flex-row gap-x-1 text-xs">{item.IsSigned ? winningLogo : leadingTeams}</div>
+        <div className="flex flex-row gap-x-1 text-xs">
+          {item.IsSigned ? winningLogo : leadingTeams}
+        </div>
       </TableCell>
       <TableCell>
         <ButtonGroup classes="flex-nowrap">
@@ -302,7 +311,11 @@ const CFBRow: React.FC<CFBRowProps> = ({
             onClick={() => openModal(AddRecruitType, item as FootballCroot)}
             disabled={recruitOnBoardMap[item.ID] || item.IsSigned}
           >
-            {recruitOnBoardMap[item.ID] || item.IsSigned ? <ActionLock /> : <Plus />}
+            {recruitOnBoardMap[item.ID] || item.IsSigned ? (
+              <ActionLock />
+            ) : (
+              <Plus />
+            )}
           </Button>
         </ButtonGroup>
       </TableCell>

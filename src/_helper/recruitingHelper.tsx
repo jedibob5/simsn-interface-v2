@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 import { Croot, Recruit } from "../models/hockeyModels";
-import { Croot as FootballCroot } from "../models/footballModels";
+import {
+  Croot as FootballCroot,
+  RecruitingTeamProfile,
+} from "../models/footballModels";
+import RegionMatcher from "../_matchers/regionMatcher.json";
+import StateMatcher from "../_matchers/stateMatcher.json";
 
 export const useFilteredHockeyRecruits = ({
   recruits,
@@ -127,4 +132,64 @@ export const useFilteredFootballRecruits = ({
     // depend on the raw list plus the Sets
     [recruits, positionSet, archSet, regionSet, starsSet, statusSet]
   );
+};
+
+export const getAffinityList = (teamProfile: RecruitingTeamProfile) => {
+  const list = [];
+  if (teamProfile.AcademicsAffinity) {
+    list.push("Academics");
+  }
+  if (teamProfile.FrontrunnerAffinity) {
+    list.push("Frontrunner");
+  }
+  if (teamProfile.LargeCrowdsAffinity) {
+    list.push("Large Crowds");
+  }
+  if (teamProfile.ReligionAffinity) {
+    list.push("Religious School");
+  }
+  if (teamProfile.ServiceAffinity) {
+    list.push("Service Academy");
+  }
+  if (teamProfile.SmallSchoolAffinity) {
+    list.push("Small School");
+  }
+  if (teamProfile.SmallTownAffinity) {
+    list.push("Small Town College");
+  }
+  if (teamProfile.BigCityAffinity) {
+    list.push("Big City School");
+  }
+  if (teamProfile.MediaSpotlightAffinity) {
+    list.push("Media Spotlight");
+  }
+  if (teamProfile.RisingStarsAffinity) {
+    list.push("Rising Stars");
+  }
+  return list;
+};
+
+export const ValidateCloseToHome = (
+  croot: { State: string | number; City: string | number },
+  abbr: any
+) => {
+  let crootState = croot.State;
+
+  if (crootState === "TX" || crootState === "CA" || crootState === "FL") {
+    let regionalState = RegionMatcher[croot.State];
+    if (regionalState && !regionalState[croot.City]) {
+      // Short term fix if a city isn't on the map
+      crootState = `${croot.State}(S)`;
+    } else {
+      crootState = RegionMatcher[croot.State][croot.City];
+    }
+  }
+
+  const closeToHomeSchools = StateMatcher[crootState];
+
+  if (closeToHomeSchools.length <= 0) {
+    return false;
+  }
+
+  return closeToHomeSchools.includes(abbr);
 };

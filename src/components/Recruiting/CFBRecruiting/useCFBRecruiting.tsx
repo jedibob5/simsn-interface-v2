@@ -9,7 +9,10 @@ import {
   RecruitingCategory,
   USARegionOptions,
 } from "../../../_constants/constants";
-import { Croot as FootballCroot, RecruitingTeamProfile } from "../../../models/footballModels";
+import {
+  Croot as FootballCroot,
+  RecruitingTeamProfile,
+} from "../../../models/footballModels";
 import { Croot as BasketballCroot } from "../../../models/basketballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
 import { useFilteredFootballRecruits } from "../../../_helper/recruitingHelper";
@@ -50,7 +53,7 @@ export const useCFBRecruiting = () => {
     return false;
   }, [cfb_Timestamp]);
 
-    const recruitOnBoardMap = useMemo(() => {
+  const recruitOnBoardMap = useMemo(() => {
     const boardMap: Record<number, boolean> = {};
     recruitProfiles.forEach((profile) => {
       boardMap[profile.RecruitID] = true;
@@ -58,18 +61,26 @@ export const useCFBRecruiting = () => {
     return boardMap;
   }, [recruitProfiles]);
 
-    const regionOptions = useMemo(() => {
-      return USARegionOptions;
-    }, [country]);
+  const sortedCrootProfiles = useMemo(() => {
+    return recruitProfiles.sort((a, b) => {
+      const aVal = a.IsSigned || a.IsLocked ? 1 : 0;
+      const bVal = b.IsSigned || b.IsLocked ? 1 : 0;
+      return aVal - bVal;
+    });
+  }, [recruitProfiles]);
 
-    const teamProfile = useMemo(() => {
+  const regionOptions = useMemo(() => {
+    return USARegionOptions;
+  }, [country]);
+
+  const teamProfile = useMemo(() => {
     if (cfbTeam && teamProfileMap) {
       return teamProfileMap[Number(cfbTeam.ID)];
     }
     return null;
   }, [cfbTeam, teamProfileMap]);
 
-    const recruitMap = useMemo(() => {
+  const recruitMap = useMemo(() => {
     const rMap: any = {};
     for (let i = 0; i < recruits.length; i++) {
       rMap[recruits[i].ID] = recruits[i];
@@ -78,15 +89,15 @@ export const useCFBRecruiting = () => {
   }, [recruits]);
 
   const filteredRecruits = useFilteredFootballRecruits({
-      recruits,
-      positions,
-      archetype,
-      regions,
-      statuses,
-      stars,
-    });
+    recruits,
+    positions,
+    archetype,
+    regions,
+    statuses,
+    stars,
+  });
 
-    const pageSize = 100;
+  const pageSize = 100;
 
   const teamRankList = useMemo(() => {
     const teamsList = [...cfbTeams];
@@ -95,7 +106,7 @@ export const useCFBRecruiting = () => {
       profileList.push(teamProfileMap![team.ID]);
     });
     return profileList
-      .sort((a, b) => a.CompositeScore - b.CompositeScore)
+      .sort((a, b) => b.CompositeScore - a.CompositeScore)
       .filter((team) => {
         if (conferences.length === 0 && selectedTeams.length === 0) {
           return true;
@@ -164,7 +175,7 @@ export const useCFBRecruiting = () => {
     setSelectedTeams(() => opts);
   };
 
-    const openModal = (
+  const openModal = (
     action: ModalAction,
     player: HockeyCroot | FootballCroot | BasketballCroot
   ) => {
@@ -173,7 +184,7 @@ export const useCFBRecruiting = () => {
     setModalPlayer(player);
   };
 
-    return {
+  return {
     teamProfile,
     recruitMap,
     recruitingCategory,
@@ -205,5 +216,6 @@ export const useCFBRecruiting = () => {
     attribute,
     setAttribute,
     recruitingLocked,
+    sortedCrootProfiles,
   };
 };

@@ -18,7 +18,7 @@ interface RecruitAISettingsProps {
   onClose: () => void;
   league: League;
   teamProfile: HockeyTeamProfile | FootballTeamProfile | null;
-  SaveSettings: (dto: HockeyUpdateBoardDto) => Promise<void>;
+  SaveSettings: (dto: any) => Promise<void>;
 }
 
 export const RecruitingAISettingsModal: FC<RecruitAISettingsProps> = ({

@@ -22,6 +22,7 @@ import {
 } from "../../../_constants/constants";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { TeamLabel } from "../../Common/Labels";
+import { getAffinityList } from "../../../_helper/recruitingHelper";
 
 interface RecruitingSideBarProps {
   TeamProfile: BasketballTeamProfile | HockeyTeamProfile | FootballTeamProfile;
@@ -48,6 +49,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
   let conf = 0;
   let coach = 0;
   let season = 0;
+  let affinities: any[] = [];
   switch (league) {
     case SimCHL:
       const tp = TeamProfile as HockeyTeamProfile;
@@ -71,6 +73,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
       const cfbt = Team as FootballTeam;
       teamLabel = cfbt.TeamName;
       classRank = cfbtp.RecruitingClassRank;
+      affinities = getAffinityList(cfbtp);
       break;
     default:
       break;
@@ -85,7 +88,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
           backgroundColor: navyBlueColor,
         }}
       >
-        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-4">
+        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mb-2">
           <TeamLabel
             team={teamLabel}
             variant="h5"
@@ -103,7 +106,21 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
             {TeamProfile!.RecruitClassSize - TeamProfile!.TotalCommitments}
           </Text>
         </div>
-        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start">
+        {league === SimCFB && (
+          <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
+            <TeamLabel
+              team="Affinities"
+              variant="h5"
+              backgroundColor={teamColors.One}
+              borderColor={teamColors.One}
+              headerTextColorClass={headerTextColorClass}
+            />
+            {affinities.map((x) => (
+              <Text variant="xs">{x}</Text>
+            ))}
+          </div>
+        )}
+        <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">
           <TeamLabel
             team="Recruiting Needs"
             variant="h5"

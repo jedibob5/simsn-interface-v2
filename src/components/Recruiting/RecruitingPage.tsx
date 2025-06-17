@@ -15,7 +15,7 @@ interface RecruitingPageProps {
 export const RecruitingPage: FC<RecruitingPageProps> = ({ league }) => {
   const { selectedLeague, setSelectedLeague } = useLeagueStore();
   const { chlTeam } = useSimHCKStore();
-  const { cfbTeam } = useSimFBAStore();
+  const { cfbTeam, recruits } = useSimFBAStore();
   const { cbbTeam } = useSimBBAStore();
 
   useEffect(() => {
@@ -31,18 +31,18 @@ export const RecruitingPage: FC<RecruitingPageProps> = ({ league }) => {
     if (selectedLeague === SimCBB && cbbTeam) {
       return false;
     }
-    if (selectedLeague === SimCFB && cfbTeam) {
+    if (selectedLeague === SimCFB && cfbTeam && recruits) {
       return false;
     }
     return true;
-  }, [chlTeam,cfbTeam, selectedLeague]);
+  }, [chlTeam, cfbTeam, recruits, selectedLeague]);
 
   return (
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Recruiting">
         {selectedLeague === SimCHL && chlTeam && <CHLRecruiting />}
         {selectedLeague === SimCBB && cbbTeam && <></>}
-        {selectedLeague === SimCFB && cfbTeam && <CFBRecruiting/>}
+        {selectedLeague === SimCFB && cfbTeam && <CFBRecruiting />}
       </PageContainer>
     </>
   );

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { League, SimCHL } from "../../../_constants/constants";
+import { League, SimCFB, SimCHL } from "../../../_constants/constants";
 import { RecruitingTeamProfile as HockeyTeamProfile } from "../../../models/hockeyModels";
 import { getTextColorBasedOnBg } from "../../../_utility/getBorderClass";
 import { RecruitingTeamProfile as FootballTeamProfile } from "../../../models/footballModels";
@@ -8,7 +8,6 @@ import { getLogo } from "../../../_utility/getLogo";
 import { Logo } from "../../../_design/Logo";
 
 const getRankingsColumns = (league: League, isMobile: boolean) => {
-  if (league != SimCHL) return [];
   let columns: { header: string; accessor: string }[] = [
     { header: "Rank", accessor: "RecruitClassRank" },
     { header: "Team", accessor: "TeamName" },
@@ -56,7 +55,68 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
     item: FootballTeamProfile,
     index: number,
     backgroundColor: string
-  ) => <></>;
+  ) => {
+    const cfbTeam = teamMap[item.ID];
+    const logo = getLogo(SimCFB, item.ID, false);
+    return (
+      <div
+        key={item.ID}
+        className="table-row border-b dark:border-gray-700 text-left"
+        style={{ backgroundColor }}
+      >
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>{index + 1}</span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap items-center space-x-2">
+          <div className="flex items-center space-x-2">
+            <Logo url={logo} variant="xs" containerClass="p-4" />
+            <span className={`text-sm ${textColorClass}`}>
+              {cfbTeam.TeamName}
+            </span>
+          </div>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {cfbTeam.Conference}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.TotalCommitments}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>{item.FiveStars}</span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>{item.FourStars}</span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>{item.ThreeStars}</span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.CompositeScore.toFixed(3)}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.ESPNScore.toFixed(3)}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.RivalsScore.toFixed(3)}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.Rank247Score.toFixed(3)}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   const CHLRowRenderer = (
     item: HockeyTeamProfile,
@@ -103,20 +163,22 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
         </div>
         <div className="table-cell px-2 py-1 whitespace-nowrap">
           <span className={`text-sm ${textColorClass}`}>
-            {item.CompositeScore}
-          </span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
-          <span className={`text-sm ${textColorClass}`}>{item.ESPNScore}</span>
-        </div>
-        <div className="table-cell px-2 py-1 whitespace-nowrap">
-          <span className={`text-sm ${textColorClass}`}>
-            {item.RivalsScore}
+            {item.CompositeScore.toFixed(3)}
           </span>
         </div>
         <div className="table-cell px-2 py-1 whitespace-nowrap">
           <span className={`text-sm ${textColorClass}`}>
-            {item.Rank247Score}
+            {item.ESPNScore.toFixed(3)}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.RivalsScore.toFixed(3)}
+          </span>
+        </div>
+        <div className="table-cell px-2 py-1 whitespace-nowrap">
+          <span className={`text-sm ${textColorClass}`}>
+            {item.Rank247Score.toFixed(3)}
           </span>
         </div>
       </div>
@@ -133,9 +195,9 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
   return (
     <Table
       columns={columns}
-      data={teamProfiles as HockeyTeamProfile[]}
+      data={teamProfiles!!}
       team={team}
-      rowRenderer={rowRenderer(SimCHL)}
+      rowRenderer={rowRenderer(league)}
     />
   );
 };
