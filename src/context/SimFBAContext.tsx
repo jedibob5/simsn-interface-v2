@@ -35,14 +35,21 @@ import {
   NFLWaiverOffer,
   CollegeTeamProfileData as CFBTeamProfileData,
   RecruitPlayerProfile,
+  UpdateRecruitingBoardDTO,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { fba_ws } from "../_constants/urls";
-import { SimFBA } from "../_constants/constants";
+import { CloseToHome, SimFBA } from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
 import FBATeamHistoryService from "../_services/teamHistoryService";
+import { RecruitService } from "../_services/recruitService";
+import { GenerateNumberFromRange } from "../_helper/utilHelper";
+import {
+  ValidateAffinity,
+  ValidateCloseToHome,
+} from "../_helper/recruitingHelper";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -107,6 +114,13 @@ interface SimFBAContextProps {
   saveNFLDepthChart: (dto: any) => Promise<void>;
   saveCFBGameplan: (dto: any) => Promise<void>;
   saveNFLGameplan: (dto: any) => Promise<void>;
+  addRecruitToBoard: (dto: any) => Promise<void>;
+  removeRecruitFromBoard: (dto: any) => Promise<void>;
+  toggleScholarship: (dto: any) => Promise<void>;
+  updatePointsOnRecruit: (id: number, name: string, points: number) => void;
+  SaveRecruitingBoard: () => Promise<void>;
+  SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
+  ExportCFBRecruits: () => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -176,6 +190,13 @@ const defaultContext: SimFBAContextProps = {
   saveNFLDepthChart: async () => {},
   saveCFBGameplan: async () => {},
   saveNFLGameplan: async () => {},
+  addRecruitToBoard: async () => {},
+  removeRecruitFromBoard: async () => {},
+  toggleScholarship: async () => {},
+  updatePointsOnRecruit: () => {},
+  SaveRecruitingBoard: async () => {},
+  SaveAIRecruitingSettings: async () => {},
+  ExportCFBRecruits: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -631,6 +652,158 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     });
   };
 
+  const addRecruitToBoard = async (dto: any) => {
+    // Validate Affinities
+    const affinityOneValid =
+      dto.PlayerRecruit.AffinityOne === CloseToHome
+        ? ValidateCloseToHome(dto.PlayerRecruit, cfbTeam?.TeamAbbr)
+        : ValidateAffinity(dto.PlayerRecruit, teamProfileMap![cfbTeam!.ID]);
+
+    const affinityTwoValid =
+      dto.PlayerRecruit.AffinityOne === CloseToHome
+        ? ValidateCloseToHome(dto.PlayerRecruit, cfbTeam?.TeamAbbr)
+        : ValidateAffinity(dto.PlayerRecruit, teamProfileMap![cfbTeam!.ID]);
+
+    // Add RES
+    const apiDTO = {
+      ...dto,
+      SeasonID: cfb_Timestamp?.CollegeSeasonID,
+      Team: cfbTeam?.TeamAbbr,
+      Recruiter: cfbTeam?.Coach,
+      RES: teamProfileMap![cfbTeam!.ID].RecruitingEfficiencyScore,
+      ProfileID: cfbTeam?.ID,
+      AffinityOneEligible: affinityOneValid,
+      AffinityTwoEligible: affinityTwoValid,
+    };
+    const profile = await RecruitService.FBACreateRecruitProfile(apiDTO);
+    if (profile) {
+      const newProfile = new RecruitPlayerProfile({
+        ...profile,
+        ID: GenerateNumberFromRange(500000, 1000000),
+      });
+      setRecruitProfiles((profiles) => [...profiles, newProfile]);
+    }
+  };
+
+  const removeRecruitFromBoard = async (dto: any) => {
+    const profile = await RecruitService.FBARemovePlayerFromBoard(dto);
+    if (profile) {
+      setRecruitProfiles((profiles) =>
+        [...profiles].filter((p) => p.RecruitID != dto.RecruitID)
+      );
+    }
+  };
+
+  const toggleScholarship = async (dto: any) => {
+    const profile = await RecruitService.FBAToggleScholarship(dto);
+    console.log({ profile, dto });
+    if (profile) {
+      setRecruitProfiles((profiles) =>
+        [...profiles].map((p) =>
+          p.RecruitID === profile.RecruitID
+            ? new RecruitPlayerProfile({
+                ...p,
+                Scholarship: profile.Scholarship,
+                ScholarshipRevoked: profile.ScholarshipRevoked,
+              })
+            : p
+        )
+      );
+      setTeamProfileMap((prev) => {
+        const currentProfile = prev![profile.ProfileID];
+        if (!currentProfile) return prev;
+
+        const adjustment = profile.Scholarship
+          ? -1
+          : profile.ScholarshipRevoked
+          ? 1
+          : 0;
+        return {
+          ...prev,
+          [profile.ProfileID]: new RecruitingTeamProfile({
+            ...currentProfile,
+            ScholarshipsAvailable:
+              currentProfile.ScholarshipsAvailable + adjustment,
+          }),
+        };
+      });
+    }
+  };
+
+  const updatePointsOnRecruit = (id: number, name: string, points: number) => {
+    setRecruitProfiles((prevProfiles) => {
+      // Update the profiles and get the new profiles array.
+      const updatedProfiles = prevProfiles.map((profile) =>
+        profile.ID === id && profile.ID > 0
+          ? new RecruitPlayerProfile({ ...profile, [name]: points })
+          : profile
+      );
+
+      // Calculate the total points from the updated profiles.
+      const totalPoints = updatedProfiles.reduce(
+        (sum, profile) => sum + (profile.CurrentWeeksPoints || 0),
+        0
+      );
+
+      // Update the recruiting team profile based on the updated points.
+      setTeamProfileMap((prevTeamProfiles) => {
+        const currentProfile = prevTeamProfiles![cfbTeam!.ID];
+        if (!currentProfile) return prevTeamProfiles;
+        return {
+          ...prevTeamProfiles,
+          [cfbTeam!.ID]: new RecruitingTeamProfile({
+            ...currentProfile,
+            SpentPoints: totalPoints,
+          }),
+        };
+      });
+
+      return updatedProfiles;
+    });
+  };
+
+  const SaveRecruitingBoard = useCallback(async () => {
+    const dto = {
+      Profile: teamProfileMap![cfbTeam!.ID],
+      Recruits: recruitProfiles,
+      TeamID: cfbTeam!.ID,
+    };
+
+    await RecruitService.FBASaveRecruitingBoard(dto);
+    enqueueSnackbar("Recruiting Board Saved!", {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
+  }, [teamProfileMap, recruitProfiles, cfbTeam]);
+
+  const SaveAIRecruitingSettings = useCallback(
+    async (dto: UpdateRecruitingBoardDTO) => {
+      const res = await RecruitService.FBAToggleAIBehavior(dto);
+      if (res) {
+        enqueueSnackbar("AI Recruiting Settings Saved!", {
+          variant: "success",
+          autoHideDuration: 3000,
+        });
+        setTeamProfileMap((prevTeamProfiles) => {
+          let currentProfile = prevTeamProfiles![dto.TeamID];
+          if (!currentProfile) return prevTeamProfiles;
+          return {
+            ...prevTeamProfiles,
+            [cfbTeam!.ID]: new RecruitingTeamProfile({
+              ...currentProfile,
+              ...dto.Profile,
+            }),
+          };
+        });
+      }
+    },
+    [cfbTeamMap]
+  );
+
+  const ExportCFBRecruits = useCallback(async () => {
+    await RecruitService.ExportCFBCroots();
+  }, []);
+
   return (
     <SimFBAContext.Provider
       value={{
@@ -692,6 +865,13 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         saveNFLDepthChart,
         saveCFBGameplan,
         saveNFLGameplan,
+        addRecruitToBoard,
+        removeRecruitFromBoard,
+        toggleScholarship,
+        updatePointsOnRecruit,
+        SaveRecruitingBoard,
+        SaveAIRecruitingSettings,
+        ExportCFBRecruits,
         playerFaces,
         proContractMap,
         proExtensionMap,

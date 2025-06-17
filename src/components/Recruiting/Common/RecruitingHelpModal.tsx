@@ -3,13 +3,14 @@ import {
   Help1,
   League,
   ModalAction,
+  SimCFB,
   SimCHL,
 } from "../../../_constants/constants";
 import { Modal } from "../../../_design/Modal";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
 import { usePagination } from "../../../_hooks/usePagination";
-import { CHLRecruitingHelpContent } from "../../../_constants/helpContent";
+import { CFBRecruitingHelpContent, CHLRecruitingHelpContent } from "../../../_constants/helpContent";
 
 export interface HelpModalProps {
   isOpen: boolean;
@@ -27,6 +28,9 @@ export const RecruitingHelpModal: FC<HelpModalProps> = ({
   const helpContent = useMemo(() => {
     if (league === SimCHL) {
       return CHLRecruitingHelpContent;
+    }
+    if (league === SimCFB) {
+      return CFBRecruitingHelpContent;
     }
     return [];
   }, [league]);

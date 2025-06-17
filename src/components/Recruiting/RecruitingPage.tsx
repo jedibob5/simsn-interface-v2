@@ -6,6 +6,7 @@ import { useSimFBAStore } from "../../context/SimFBAContext";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { PageContainer } from "../../_design/Container";
 import { CHLRecruiting } from "./CHLRecruiting/CHLRecruiting";
+import { CFBRecruiting } from "./CFBRecruiting/CFBRecruiting";
 
 interface RecruitingPageProps {
   league: League;
@@ -14,7 +15,7 @@ interface RecruitingPageProps {
 export const RecruitingPage: FC<RecruitingPageProps> = ({ league }) => {
   const { selectedLeague, setSelectedLeague } = useLeagueStore();
   const { chlTeam } = useSimHCKStore();
-  const { cfbTeam } = useSimFBAStore();
+  const { cfbTeam, recruits } = useSimFBAStore();
   const { cbbTeam } = useSimBBAStore();
 
   useEffect(() => {
@@ -30,18 +31,18 @@ export const RecruitingPage: FC<RecruitingPageProps> = ({ league }) => {
     if (selectedLeague === SimCBB && cbbTeam) {
       return false;
     }
-    if (selectedLeague === SimCFB && cfbTeam) {
+    if (selectedLeague === SimCFB && cfbTeam && recruits) {
       return false;
     }
     return true;
-  }, [chlTeam, selectedLeague]);
+  }, [chlTeam, cfbTeam, recruits, selectedLeague]);
 
   return (
     <>
       <PageContainer direction="col" isLoading={isLoading} title="Recruiting">
         {selectedLeague === SimCHL && chlTeam && <CHLRecruiting />}
         {selectedLeague === SimCBB && cbbTeam && <></>}
-        {selectedLeague === SimCFB && cfbTeam && <></>}
+        {selectedLeague === SimCFB && cfbTeam && <CFBRecruiting />}
       </PageContainer>
     </>
   );

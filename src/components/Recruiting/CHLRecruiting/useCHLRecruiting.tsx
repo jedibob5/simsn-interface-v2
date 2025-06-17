@@ -121,7 +121,7 @@ export const useCHLRecruiting = () => {
       profileList.push(teamProfileMap[team.ID]);
     });
     return profileList
-      .sort((a, b) => a.CompositeScore - b.CompositeScore)
+      .sort((a, b) => b.CompositeScore - a.CompositeScore)
       .filter((team) => {
         if (conferences.length === 0 && selectedTeams.length === 0) {
           return true;

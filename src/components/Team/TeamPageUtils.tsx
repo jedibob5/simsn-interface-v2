@@ -19,11 +19,12 @@ import {
   CollegePlayer as CHLPlayer,
   ProfessionalPlayer as PHLPlayer,
   ProContract as PHLContract,
-  Croot,
+  Croot as HockeyCroot,
   DraftPick,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
+  Croot,
   NFLContract,
   NFLPlayer,
 } from "../../models/footballModels";
@@ -263,7 +264,7 @@ export const getPHLTradeBlockAttributes = (
 };
 
 export const getCHLCrootAttributes = (
-  player: Croot,
+  player: HockeyCroot,
   isMobile: boolean,
   category: string
 ) => {
@@ -290,7 +291,7 @@ export const getCHLCrootAttributes = (
   return list;
 };
 
-export const getAdditionalHockeyAttributeGrades = (player: Croot) => {
+export const getAdditionalHockeyAttributeGrades = (player: HockeyCroot) => {
   return [
     { label: "Agility", value: player.AgilityGrade },
     { label: "Faceoffs", value: player.FaceoffsGrade },
@@ -479,7 +480,7 @@ export const getAdditionalPotentialAttributes = (
   ];
 };
 
-export const getAdditionalHockeyCrootAttributes = (player: Croot) => {
+export const getAdditionalHockeyCrootAttributes = (player: HockeyCroot) => {
   return [
     { label: "Agi", value: getHockeyLetterGrade(player.Agility, 1) },
     { label: "FO", value: getHockeyLetterGrade(player.Faceoffs, 1) },
@@ -528,7 +529,7 @@ export const getAdditionalHockeyCrootAttributes = (player: Croot) => {
   ];
 };
 
-export const getAdditionalCrootPotentialAttributes = (player: Croot) => {
+export const getAdditionalCrootPotentialAttributes = (player: HockeyCroot) => {
   return [
     { label: "Agi", value: player.AgilityGrade },
     { label: "FO", value: player.FaceoffsGrade },
@@ -577,7 +578,7 @@ export const getAdditionalCrootPotentialAttributes = (player: Croot) => {
   ];
 };
 
-export const getAdditionalCrootPreferenceAttributes = (player: Croot) => {
+export const getAdditionalCrootPreferenceAttributes = (player: HockeyCroot) => {
   return [
     { label: "ProgramPref", value: player.ProgramPref },
     { label: "ProfDevPref", value: player.ProfDevPref },
@@ -590,6 +591,32 @@ export const getAdditionalCrootPreferenceAttributes = (player: Croot) => {
     { label: "SeasonMomentumPref", value: player.SeasonMomentumPref },
   ];
 };
+
+export const getCFBCrootAttributes = (
+  player: Croot,
+  isMobile: boolean,
+  category: string
+) => {
+  const heightObj = HeightToFeetAndInches(player.Height);
+  let list = [
+    { label: "ID", value: player.ID },
+    { label: "Name", value: `${player.FirstName} ${player.LastName}` },
+    { label: "Pos", value: player.Position },
+    { label: "Arch", value: player.Archetype },
+    { label: "Stars", value: player.Stars },
+    { label: "Ht", value: `${heightObj.feet}' ${heightObj.inches}"` },
+    { label: "Wt (lbs)", value: player.Weight },
+    { label: "City", value: player.City },
+    { label: "HS", value: player.HighSchool },
+    { label: "St", value: annotateRegion(player.State) },
+    { label: "Ovr", value: player.OverallGrade },
+    { label: "Pot", value: player.PotentialGrade },
+    { label: "AF1", value: player.AffinityOne },
+    { label: "AF2", value: player.AffinityTwo },
+  ];
+  return list;
+};
+
 const archetypeAcronyms: { [key: string]: string } = {
   Pocket: "PKT",
   Scrambler: "SCR",
