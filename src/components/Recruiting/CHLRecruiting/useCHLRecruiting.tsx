@@ -49,6 +49,9 @@ export const useCHLRecruiting = () => {
   const [regions, setRegions] = useState<string[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
+  const [selectedClassView, setSelectedClassView] = useState<number>(
+    chlTeam!.ID
+  );
   const [conferences, setConferences] = useState<any[]>([]);
   const [attribute, setAttribute] = useState<string>("");
   const [modalPlayer, setModalPlayer] = useState<
@@ -111,6 +114,10 @@ export const useCHLRecruiting = () => {
     statuses,
     stars,
   });
+
+  const filteredClass = useMemo(() => {
+    return recruits.filter((croot) => croot.TeamID === selectedClassView);
+  }, [recruits, selectedClassView]);
 
   const pageSize = 100;
 
@@ -197,6 +204,11 @@ export const useCHLRecruiting = () => {
     setSelectedTeams(() => opts);
   };
 
+  const SelectClass = (options: any) => {
+    const opts = Number(options.value);
+    setSelectedClassView(() => opts);
+  };
+
   const openModal = (
     action: ModalAction,
     player: HockeyCroot | FootballCroot | BasketballCroot
@@ -239,5 +251,7 @@ export const useCHLRecruiting = () => {
     attribute,
     setAttribute,
     recruitingLocked,
+    filteredClass,
+    SelectClass,
   };
 };

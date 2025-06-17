@@ -362,3 +362,14 @@ export const isBadFit = (
   }
   return false;
 };
+
+export const getDisplayStatus = (odds: number) => {
+  if (odds > 45) {
+    return "Strong Favorite";
+  } else if (odds > 24) {
+    return "In Contention";
+  } else if (odds > 11) {
+    return "Just Outside";
+  }
+  return "Unlikely";
+};

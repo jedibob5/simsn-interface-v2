@@ -4,6 +4,7 @@ import {
   Help1,
   navyBlueColor,
   Overview,
+  RecruitingClassView,
   RecruitingRankings,
   RecruitingTeamBoard,
   SimCFB,
@@ -22,6 +23,7 @@ import { useSimFBAStore } from "../../../context/SimFBAContext";
 import { ActionModal } from "../../Common/ActionModal";
 import { RecruitingAISettingsModal } from "../Common/RecruitingAISettingsModal";
 import { CategoryDropdown } from "../Common/RecruitingCategoryDropdown";
+import { RecruitingClassTable } from "../Common/RecruitingClassTable";
 import { RecruitingHelpModal } from "../Common/RecruitingHelpModal";
 import { RecruitingSideBar } from "../Common/RecruitingSideBar";
 import { RecruitProfileTable } from "../Common/RecruitProfileTable";
@@ -75,6 +77,8 @@ export const CFBRecruiting = () => {
     attribute,
     setAttribute,
     recruitingLocked,
+    filteredClass,
+    SelectClass,
   } = useCFBRecruiting();
   const { isMobile } = useResponsive();
   const teamColors = useTeamColors(
@@ -172,6 +176,17 @@ export const CFBRecruiting = () => {
                   onClick={() => setRecruitingCategory(RecruitingRankings)}
                 >
                   Rankings
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    recruitingCategory === RecruitingClassView
+                      ? "success"
+                      : "secondary"
+                  }
+                  onClick={() => setRecruitingCategory(RecruitingClassView)}
+                >
+                  Class
                 </Button>
               </ButtonGroup>
             </Border>
@@ -415,6 +430,48 @@ export const CFBRecruiting = () => {
                   colorThree={teamColors.Three}
                   teamProfiles={teamRankList}
                   teamMap={cfbTeamMap}
+                  team={cfbTeam}
+                  league={SimCFB}
+                  isMobile={isMobile}
+                />
+              </Border>
+            </>
+          )}
+          {!recruitingLocked && recruitingCategory === RecruitingClassView && (
+            <>
+              <Border
+                direction="row"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
+                styles={{
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
+                }}
+              >
+                <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
+                  <CategoryDropdown
+                    label="Team"
+                    options={cfbTeamOptions}
+                    change={SelectClass}
+                    isMobile={isMobile}
+                    isMulti={false}
+                  />
+                </div>
+              </Border>
+              <Border
+                direction="col"
+                classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 max-h-[50vh] overflow-y-auto"
+                styles={{
+                  borderColor: teamColors.One,
+                  backgroundColor: navyBlueColor,
+                }}
+              >
+                <RecruitingClassTable
+                  colorOne={teamColors.One}
+                  colorTwo={teamColors.Two}
+                  colorThree={teamColors.Three}
+                  crootingClass={filteredClass}
+                  openModal={openModal}
+                  teamMap={cfbTeamMap!!}
                   team={cfbTeam}
                   league={SimCFB}
                   isMobile={isMobile}

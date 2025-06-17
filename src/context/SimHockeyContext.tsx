@@ -345,12 +345,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [allCHLStandings, setAllCHLStandings] = useState<CollegeStandings[]>(
     []
   );
-  const [currentCHLStandings, setCurrentCHLStandings] = useState<
-    CollegeStandings[]
-  >([]);
-  const [chlStandingsMap, setCHLStandingsMap] = useState<
-    Record<number, CollegeStandings>
-  >({});
   const [chlRosterMap, setCHLRosterMap] = useState<
     Record<number, CollegePlayer[]>
   >({});
@@ -400,12 +394,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const [allProStandings, setAllProStandings] = useState<
     ProfessionalStandings[]
   >([]);
-  const [currentProStandings, setCurrentProStandings] = useState<
-    ProfessionalStandings[]
-  >([]);
-  const [proStandingsMap, setProStandingsMap] = useState<
-    Record<number, ProfessionalStandings>
-  >({});
   const [proRosterMap, setProRosterMap] = useState<
     Record<number, ProfessionalPlayer[]>
   >({});
@@ -597,6 +585,30 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
     }
   }, [currentUser]);
 
+  const currentCHLStandings = useMemo(() => {
+    return allCHLStandings.filter(
+      (x) => x.SeasonID === hck_Timestamp?.SeasonID
+    );
+  }, [allCHLStandings, hck_Timestamp?.SeasonID]);
+
+  const chlStandingsMap = useMemo(() => {
+    return Object.fromEntries(
+      currentCHLStandings.map((standing) => [standing.TeamID, standing])
+    );
+  }, [currentCHLStandings, hck_Timestamp?.SeasonID]);
+
+  const currentProStandings = useMemo(() => {
+    return allCHLStandings.filter(
+      (x) => x.SeasonID === hck_Timestamp?.SeasonID
+    );
+  }, [allProStandings, hck_Timestamp?.SeasonID]);
+
+  const proStandingsMap = useMemo(() => {
+    return Object.fromEntries(
+      currentProStandings.map((standing) => [standing.TeamID, standing])
+    );
+  }, [currentProStandings, hck_Timestamp?.SeasonID]);
+
   const getBootstrapData = async () => {
     let chlid = 0;
     let phlid = 0;
@@ -668,20 +680,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
       );
       setCollegeTeamsGames(teamGames);
     }
-    if (
-      res.CollegeStandings &&
-      res.CollegeStandings.length > 0 &&
-      hck_Timestamp
-    ) {
-      const currentSeasonStandings = res.CollegeStandings.filter(
-        (x) => x.SeasonID === hck_Timestamp.SeasonID
-      );
-      const collegeStandingsMap = Object.fromEntries(
-        currentSeasonStandings.map((standing) => [standing.TeamID, standing])
-      );
-      setCurrentCHLStandings(currentSeasonStandings);
-      setCHLStandingsMap(collegeStandingsMap);
-    }
 
     if (res.AllProGames && res.AllProGames.length > 0 && hck_Timestamp) {
       const currentSeasonGames = res.AllProGames.filter(
@@ -692,16 +690,6 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         (x) => x.HomeTeamID === chlid || x.AwayTeamID === chlid
       );
       setProTeamsGames(teamGames);
-    }
-    if (res.ProStandings && res.ProStandings.length > 0 && hck_Timestamp) {
-      const currentSeasonStandings = res.ProStandings.filter(
-        (x) => x.SeasonID === hck_Timestamp.SeasonID
-      );
-      const proStandingsMap = Object.fromEntries(
-        currentSeasonStandings.map((standing) => [standing.TeamID, standing])
-      );
-      setCurrentProStandings(currentSeasonStandings);
-      setProStandingsMap(proStandingsMap);
     }
     setIsLoading(false);
     isFetching.current = false;

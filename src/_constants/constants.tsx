@@ -109,10 +109,12 @@ export type Zone =
 export const RecruitingOverview = "Overview";
 export const RecruitingTeamBoard = "Team Board";
 export const RecruitingRankings = "RecruitingRankings";
+export const RecruitingClassView = "ClassView";
 export type RecruitingCategory =
   | typeof RecruitingOverview
   | typeof RecruitingTeamBoard
-  | typeof RecruitingRankings;
+  | typeof RecruitingRankings
+  | typeof RecruitingClassView;
 export const WEEK_VIEW = "WEEK";
 export const SEASON_VIEW = "SEASON";
 export type StatsView = typeof WEEK_VIEW | typeof SEASON_VIEW;
