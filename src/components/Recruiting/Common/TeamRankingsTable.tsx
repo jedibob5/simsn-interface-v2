@@ -193,7 +193,7 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
     return CFBRowRenderer;
   };
   return (
-    <div className={`${league === SimCFB ? "xl:min-w-[70vw]" : ""}`}>
+    <div className="xl:min-w-[70vw]">
       <Table
         columns={columns}
         data={teamProfiles!!}
