@@ -191,7 +191,6 @@ export const RecruitingClassTable: FC<RecruitingClassTableProps> = ({
         <TableCell>
           <span className={`text-sm ${textColorClass}`}>{item.Position}</span>
         </TableCell>
-
         <TableCell>
           <span className={`text-sm ${textColorClass}`}>{item.Archetype}</span>
         </TableCell>
