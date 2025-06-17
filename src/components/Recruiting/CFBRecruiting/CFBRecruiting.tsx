@@ -42,6 +42,7 @@ export const CFBRecruiting = () => {
     updatePointsOnRecruit,
     SaveRecruitingBoard,
     SaveAIRecruitingSettings,
+    ExportCFBRecruits,
   } = fbStore;
   const {
     teamProfile,
@@ -84,7 +85,9 @@ export const CFBRecruiting = () => {
   const helpModal = useModal();
   const aiSettingsModal = useModal();
   const lockMessage = useLoadMessage(CFBRecruitLockedMessages, 5000);
-  const recruitsExport = async () => {};
+  const recruitsExport = async () => {
+    await ExportCFBRecruits();
+  };
 
   return (
     <>

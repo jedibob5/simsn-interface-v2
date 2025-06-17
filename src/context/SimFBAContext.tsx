@@ -120,6 +120,7 @@ interface SimFBAContextProps {
   updatePointsOnRecruit: (id: number, name: string, points: number) => void;
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
+  ExportCFBRecruits: () => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
@@ -195,6 +196,7 @@ const defaultContext: SimFBAContextProps = {
   updatePointsOnRecruit: () => {},
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
+  ExportCFBRecruits: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
@@ -798,6 +800,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     [cfbTeamMap]
   );
 
+  const ExportCFBRecruits = useCallback(async () => {
+    await RecruitService.ExportCFBCroots();
+  }, []);
+
   return (
     <SimFBAContext.Provider
       value={{
@@ -865,6 +871,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         updatePointsOnRecruit,
         SaveRecruitingBoard,
         SaveAIRecruitingSettings,
+        ExportCFBRecruits,
         playerFaces,
         proContractMap,
         proExtensionMap,
