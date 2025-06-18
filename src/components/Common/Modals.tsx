@@ -1145,61 +1145,67 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
           </div>
         </div>
       </div>
-      <div className="w-full border-t-[0.1em] justify-center mb-2">
-        <Text variant="h6">Leading Teams</Text>
-      </div>
-      <div className={`w-full grid grid-cols-${hasSigned ? "4" : "3"} mb-1`}>
-        <Text variant="body-small" classes="font-semibold">
-          Team
-        </Text>
-        <Text variant="body-small" classes="font-semibold">
-          Scholarship
-        </Text>
-        <Text variant="body-small" classes="font-semibold">
-          {hasSigned ? "Results" : "Prediction"}
-        </Text>
-        {hasSigned && (
-          <Text variant="body-small" classes="font-semibold">
-            Odds
-          </Text>
-        )}
-      </div>
-      <div
-        className={`w-full grid grid-cols-${
-          hasSigned ? "4" : "3"
-        } gap-y-2 mb-2`}
-      >
-        {player.LeadingTeams.map((contender) => {
-          const logo = getLogo(SimCHL, contender.TeamID, false);
-          const team = chlTeamMap[contender.TeamID];
-          const fullOdds = Math.round(contender.Odds * 100);
-          const displayStatus = getDisplayStatus(fullOdds);
-          return (
-            <>
-              <div className="flex flex-row justify-start px-2">
-                <Logo url={logo} variant="tiny" />{" "}
-                <span className="ms-4 font-semibold text-xs">
-                  {team.TeamName}
-                </span>
-              </div>
+      {player.LeadingTeams && (
+        <>
+          <div className="w-full border-t-[0.1em] justify-center mb-2">
+            <Text variant="h6">Leading Teams</Text>
+          </div>
+          <div
+            className={`w-full grid grid-cols-${hasSigned ? "4" : "3"} mb-1`}
+          >
+            <Text variant="body-small" classes="font-semibold">
+              Team
+            </Text>
+            <Text variant="body-small" classes="font-semibold">
+              Scholarship
+            </Text>
+            <Text variant="body-small" classes="font-semibold">
+              {hasSigned ? "Results" : "Prediction"}
+            </Text>
+            {hasSigned && (
+              <Text variant="body-small" classes="font-semibold">
+                Odds
+              </Text>
+            )}
+          </div>
+          <div
+            className={`w-full grid grid-cols-${
+              hasSigned ? "4" : "3"
+            } gap-y-2 mb-2`}
+          >
+            {player.LeadingTeams.map((contender) => {
+              const logo = getLogo(SimCHL, contender.TeamID, false);
+              const team = chlTeamMap[contender.TeamID];
+              const fullOdds = Math.round(contender.Odds * 100);
+              const displayStatus = getDisplayStatus(fullOdds);
+              return (
+                <>
+                  <div className="flex flex-row justify-start px-2">
+                    <Logo url={logo} variant="tiny" />{" "}
+                    <span className="ms-4 font-semibold text-xs">
+                      {team.TeamName}
+                    </span>
+                  </div>
 
-              <Text variant="xs" classes="font-semibold">
-                {contender.HasScholarship ? "Yes" : "No"}
-              </Text>
-              <Text variant="xs" classes="font-semibold">
-                {contender.TeamID === player.TeamID
-                  ? "Committed!"
-                  : displayStatus}
-              </Text>
-              {hasSigned && (
-                <Text variant="xs" classes="font-semibold">
-                  {fullOdds}%
-                </Text>
-              )}
-            </>
-          );
-        })}
-      </div>
+                  <Text variant="xs" classes="font-semibold">
+                    {contender.HasScholarship ? "Yes" : "No"}
+                  </Text>
+                  <Text variant="xs" classes="font-semibold">
+                    {contender.TeamID === player.TeamID
+                      ? "Committed!"
+                      : displayStatus}
+                  </Text>
+                  {hasSigned && (
+                    <Text variant="xs" classes="font-semibold">
+                      {fullOdds}%
+                    </Text>
+                  )}
+                </>
+              );
+            })}
+          </div>
+        </>
+      )}
       <div className="w-full border-t-[0.1em]">
         <div className="flex flex-wrap col-span-4 gap-3 pt-2">
           <div className="grid grid-cols-4 gap-3">
@@ -1518,52 +1524,63 @@ export const CFBCrootInfoModalBody: FC<CFBCrootInfoModalBodyProps> = ({
           </div>
         </div>
       </div>
-      <div className="w-full mt-2 justify-center border-t-[0.1em]">
-        <Text variant="h6">Leading Teams</Text>
-      </div>
-      <div className={`w-full grid grid-cols-${hasSigned ? "4" : "3"}`}>
-        <Text variant="body" classes="font-semibold">
-          Team
-        </Text>
-        <Text variant="body" classes="font-semibold">
-          Scholarship
-        </Text>
-        <Text variant="body" classes="font-semibold">
-          {hasSigned ? "Results" : "Prediction"}
-        </Text>
-        {hasSigned && (
-          <Text variant="body" classes="font-semibold">
-            Odds
-          </Text>
-        )}
-      </div>
-      <div className={`w-full grid grid-cols-${hasSigned ? "4" : "3"} gap-y-2`}>
-        {player.LeadingTeams.map((team) => {
-          const logo = getLogo(SimCFB, team.TeamID, false);
-          const fullOdds = Math.round(team.Odds * 100);
-          const displayStatus = getDisplayStatus(fullOdds);
-          return (
-            <>
-              <div className="flex flex-row justify-center">
-                <Logo url={logo} variant="tiny" />{" "}
-                <span className="ms-4 font-semibold">{team.TeamAbbr}</span>
-              </div>
+      {player.LeadingTeams && (
+        <>
+          <div className="w-full mt-2 justify-center border-t-[0.1em]">
+            <Text variant="h6">Leading Teams</Text>
+          </div>
+          <div className={`w-full grid grid-cols-${hasSigned ? "4" : "3"}`}>
+            <Text variant="body" classes="font-semibold">
+              Team
+            </Text>
+            <Text variant="body" classes="font-semibold">
+              Scholarship
+            </Text>
+            <Text variant="body" classes="font-semibold">
+              {hasSigned ? "Results" : "Prediction"}
+            </Text>
+            {hasSigned && (
+              <Text variant="body" classes="font-semibold">
+                Odds
+              </Text>
+            )}
+          </div>
+          <div
+            className={`w-full grid grid-cols-${hasSigned ? "4" : "3"} gap-y-2`}
+          >
+            {player.LeadingTeams &&
+              player.LeadingTeams.map((team) => {
+                const logo = getLogo(SimCFB, team.TeamID, false);
+                const fullOdds = Math.round(team.Odds * 100);
+                const displayStatus = getDisplayStatus(fullOdds);
+                return (
+                  <>
+                    <div className="flex flex-row justify-center">
+                      <Logo url={logo} variant="tiny" />{" "}
+                      <span className="ms-4 font-semibold">
+                        {team.TeamAbbr}
+                      </span>
+                    </div>
 
-              <Text variant="body-small" classes="font-semibold">
-                {team.HasScholarship ? "Yes" : "No"}
-              </Text>
-              <Text variant="body-small" classes="font-semibold">
-                {team.TeamID === player.TeamID ? "Committed!" : displayStatus}
-              </Text>
-              {hasSigned && (
-                <Text variant="body-small" classes="font-semibold">
-                  {fullOdds}%
-                </Text>
-              )}
-            </>
-          );
-        })}
-      </div>
+                    <Text variant="body-small" classes="font-semibold">
+                      {team.HasScholarship ? "Yes" : "No"}
+                    </Text>
+                    <Text variant="body-small" classes="font-semibold">
+                      {team.TeamID === player.TeamID
+                        ? "Committed!"
+                        : displayStatus}
+                    </Text>
+                    {hasSigned && (
+                      <Text variant="body-small" classes="font-semibold">
+                        {fullOdds}%
+                      </Text>
+                    )}
+                  </>
+                );
+              })}
+          </div>
+        </>
+      )}
     </div>
   );
 };
