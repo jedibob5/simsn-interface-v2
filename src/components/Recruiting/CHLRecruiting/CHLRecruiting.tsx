@@ -437,7 +437,7 @@ export const CHLRecruiting = () => {
                   backgroundColor: navyBlueColor,
                 }}
               >
-                <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
+                <div className="flex flex-row flex-nowrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                   <CategoryDropdown
                     label="Conferences"
                     options={chlConferenceOptions}
