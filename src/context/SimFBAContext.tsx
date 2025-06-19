@@ -36,11 +36,24 @@ import {
   CollegeTeamProfileData as CFBTeamProfileData,
   RecruitPlayerProfile,
   UpdateRecruitingBoardDTO,
+  CollegePlayerStats,
+  CollegePlayerSeasonStats,
+  CollegeTeamStats,
+  CollegeTeamSeasonStats,
+  NFLPlayerStats,
+  NFLPlayerSeasonStats,
+  NFLTeamStats,
+  NFLTeamSeasonStats,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { fba_ws } from "../_constants/urls";
-import { CloseToHome, SimFBA } from "../_constants/constants";
+import {
+  CloseToHome,
+  SEASON_VIEW,
+  SimCFB,
+  SimFBA,
+} from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
 import FBATeamHistoryService from "../_services/teamHistoryService";
@@ -50,6 +63,7 @@ import {
   ValidateAffinity,
   ValidateCloseToHome,
 } from "../_helper/recruitingHelper";
+import { StatsService } from "../_services/statsService";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -121,12 +135,22 @@ interface SimFBAContextProps {
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   ExportCFBRecruits: () => Promise<void>;
+  SearchFootballStats: (dto: any) => Promise<void>;
+  ExportFootballStats: (dto: any) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
   allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
+  cfbPlayerGameStatsMap: Record<number, CollegePlayerStats[]>;
+  cfbPlayerSeasonStatsMap: Record<number, CollegePlayerSeasonStats[]>;
+  cfbTeamGameStatsMap: Record<number, CollegeTeamStats[]>;
+  cfbTeamSeasonStatsMap: Record<number, CollegeTeamSeasonStats[]>;
+  nflPlayerGameStatsMap: Record<number, NFLPlayerStats[]>;
+  nflPlayerSeasonStatsMap: Record<number, NFLPlayerSeasonStats[]>;
+  nflTeamGameStatsMap: Record<number, NFLTeamStats[]>;
+  nflTeamSeasonStatsMap: Record<number, NFLTeamSeasonStats[]>;
 }
 
 // ✅ Initial Context State
@@ -197,10 +221,20 @@ const defaultContext: SimFBAContextProps = {
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
   ExportCFBRecruits: async () => {},
+  SearchFootballStats: async () => {},
+  ExportFootballStats: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
   allCFBTeamHistory: {},
+  cfbPlayerGameStatsMap: {},
+  cfbPlayerSeasonStatsMap: {},
+  cfbTeamGameStatsMap: {},
+  cfbTeamSeasonStatsMap: {},
+  nflPlayerGameStatsMap: {},
+  nflPlayerSeasonStatsMap: {},
+  nflTeamGameStatsMap: {},
+  nflTeamSeasonStatsMap: {},
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -330,6 +364,30 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
+  const [cfbPlayerGameStatsMap, setCfbPlayerGameStatsMap] = useState<
+    Record<number, CollegePlayerStats[]>
+  >({});
+  const [cfbPlayerSeasonStatsMap, setCfbPlayerSeasonStats] = useState<
+    Record<number, CollegePlayerSeasonStats[]>
+  >({});
+  const [cfbTeamGameStatsMap, setCfbTeamGameStats] = useState<
+    Record<number, CollegeTeamStats[]>
+  >([]);
+  const [cfbTeamSeasonStatsMap, setCfbTeamSeasonStats] = useState<
+    Record<number, CollegeTeamSeasonStats[]>
+  >([]);
+  const [nflPlayerGameStatsMap, setNflPlayerGameStats] = useState<
+    Record<number, NFLPlayerStats[]>
+  >([]);
+  const [nflPlayerSeasonStatsMap, setNflPlayerSeasonStats] = useState<
+    Record<number, NFLPlayerSeasonStats[]>
+  >([]);
+  const [nflTeamGameStatsMap, setNflTeamGameStats] = useState<
+    Record<number, NFLTeamStats[]>
+  >([]);
+  const [nflTeamSeasonStatsMap, setNflTeamSeasonStats] = useState<
+    Record<number, NFLTeamSeasonStats[]>
+  >([]);
 
   useEffect(() => {
     getBootstrapTeamData();
@@ -804,6 +862,73 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     await RecruitService.ExportCFBCroots();
   }, []);
 
+  const SearchFootballStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCFB) {
+      const res = await StatsService.FBACollegeStatsSearch(dto);
+      if (dto.ViewType === SEASON_VIEW) {
+        setCfbPlayerSeasonStats((prev) => {
+          return { ...prev, [dto.SeasonID]: res.CFBPlayerSeasonStats };
+        });
+        setCfbTeamSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.CFBTeamSeasonStats,
+          };
+        });
+      } else {
+        setCfbPlayerGameStatsMap((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.CFBPlayerGameStats,
+          };
+        });
+        setCfbTeamGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.CFBTeamGameStats,
+          };
+        });
+      }
+    } else {
+      const res = await StatsService.FBAProStatsSearch(dto);
+      if (dto.ViewType === SEASON_VIEW) {
+        setNflPlayerSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.NFLPlayerSeasonStats,
+          };
+        });
+        setNflTeamSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.NFLTeamSeasonStats,
+          };
+        });
+      } else {
+        setNflPlayerGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.NFLPlayerGameStats,
+          };
+        });
+        setNflTeamGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.NFLTeamGameStats,
+          };
+        });
+      }
+    }
+  }, []);
+
+  const ExportFootballStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCFB) {
+      const res = await StatsService.FBACollegeStatsExport(dto);
+    } else {
+      const res = await StatsService.FBAProStatsExport(dto);
+    }
+  }, []);
+
   return (
     <SimFBAContext.Provider
       value={{
@@ -877,6 +1002,16 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         proExtensionMap,
         allCFBTeamHistory,
         isLoadingFour,
+        cfbPlayerGameStatsMap,
+        cfbPlayerSeasonStatsMap,
+        cfbTeamGameStatsMap,
+        cfbTeamSeasonStatsMap,
+        nflPlayerGameStatsMap,
+        nflPlayerSeasonStatsMap,
+        nflTeamGameStatsMap,
+        nflTeamSeasonStatsMap,
+        SearchFootballStats,
+        ExportFootballStats,
       }}
     >
       {children}

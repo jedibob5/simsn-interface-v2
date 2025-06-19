@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import {
+  BASE_FBA_SEASON,
+  BASE_FBA_WEEKS_IN_SEASON,
   BASE_HCK_SEASON,
   BASE_HCK_WEEKS_IN_SEASON,
   GameDay,
@@ -22,8 +24,22 @@ import {
   ProfessionalPlayerSeasonStats,
   ProfessionalTeamGameStats,
   ProfessionalTeamSeasonStats,
-  CollegePlayerSeasonStats,
 } from "../models/hockeyModels";
+import {
+  CollegePlayer as CFBPlayer,
+  CollegeTeam as CFBTeam,
+  CollegePlayerSeasonStats as CFBPlayerSeasonStats,
+  CollegePlayerStats as CFBPlayerStats,
+  NFLPlayer,
+  NFLPlayerSeasonStats,
+  NFLPlayerStats,
+  NFLTeam,
+  NFLTeamSeasonStats,
+  NFLTeamStats,
+  Timestamp,
+  CollegeTeamStats,
+  CollegeTeamSeasonStats,
+} from "../models/footballModels";
 
 export const MakeCHLPlayerMapFromRosterMap = (
   chlTeams: CHLTeam[],
@@ -241,7 +257,212 @@ export const useFilteredHockeyStats = ({
   return filtered;
 };
 
-type SeasonStats = CollegePlayerSeasonStats | ProfessionalPlayerSeasonStats;
-export const isSeasonStats = (s: any): s is SeasonStats => {
+type HCKSeasonStats = CHLPlayerSeasonStats | ProfessionalPlayerSeasonStats;
+export const isSeasonStats = (s: any): s is HCKSeasonStats => {
+  return typeof s.StatType === "number" && typeof s.GamesPlayed === "number";
+};
+
+export const MakeFBASeasonsOptionList = (ts: Timestamp) => {
+  const seasonsList = [];
+  for (let i = 1; i <= ts.CollegeSeasonID; i++) {
+    const iterativeSeason = 2020 + i;
+    const seasonLabel = `${iterativeSeason}`;
+    const option = { label: seasonLabel, value: i.toString() };
+    seasonsList.push(option);
+  }
+  return seasonsList;
+};
+
+export const MakeFBAWeeksOptionList = (seasonID: number) => {
+  const weeksList = [];
+
+  for (let i = 1; i <= BASE_FBA_WEEKS_IN_SEASON; i++) {
+    const weekID = getFBAWeekID(i, seasonID);
+    const weekLabel = `Week ${i}`;
+    const option = { label: weekLabel, value: weekID.toString() };
+    weeksList.push(option);
+  }
+
+  return weeksList;
+};
+
+export const getFBAWeekID = (week: number, seasonID: number) => {
+  const season = seasonID + BASE_FBA_SEASON;
+  const diffSeason = season - 2000;
+  return diffSeason * 100 + week;
+};
+
+export const getFBADisplayWeek = (weekID: number, season: number) => {
+  const diffSeason = season - 2000;
+  const baseWeekDiff = diffSeason * 100;
+  return weekID - baseWeekDiff;
+};
+
+export const MakeCFBPlayerMapFromRosterMap = (
+  cfbTeams: CFBTeam[],
+  rosterMap: Record<number, CFBPlayer[]>
+): Record<number, CFBPlayer> => {
+  const playerMap: Record<number, CFBPlayer> = {};
+
+  for (let i = 0; i < cfbTeams.length; i++) {
+    const teamID = cfbTeams[i].ID;
+    const roster = rosterMap[teamID];
+    for (let j = 0; j < roster.length; j++) {
+      const player = roster[j];
+      playerMap[player.ID] = player;
+    }
+  }
+
+  const unsignedPlayers = rosterMap[0];
+  for (let i = 0; i < unsignedPlayers.length; i++) {
+    const player = unsignedPlayers[i];
+    playerMap[player.ID] = player;
+  }
+
+  return playerMap;
+};
+
+export const MakeNFLPlayerMapFromRosterMap = (
+  nflTeams: NFLTeam[],
+  rosterMap: Record<number, NFLPlayer[]>
+): Record<number, NFLPlayer> => {
+  const playerMap: Record<number, NFLPlayer> = {};
+
+  for (let i = 0; i < nflTeams.length; i++) {
+    const teamID = nflTeams[i].ID;
+    const roster = rosterMap[teamID];
+    for (let j = 0; j < roster.length; j++) {
+      const player = roster[j];
+      playerMap[player.ID] = player;
+    }
+  }
+
+  const unsignedPlayers = rosterMap[0];
+  for (let i = 0; i < unsignedPlayers.length; i++) {
+    const player = unsignedPlayers[i];
+    playerMap[player.ID] = player;
+  }
+
+  return playerMap;
+};
+
+export const GetFBACollegeStats = (
+  statsView: StatsView,
+  statsType: StatsType,
+  week: number,
+  season: number,
+  cfbPlayerGameStatsMap: Record<number, CFBPlayerStats[]>,
+  cfbPlayerSeasonStatsMap: Record<number, CFBPlayerSeasonStats[]>,
+  cfbTeamGameStatsMap: Record<number, CollegeTeamStats[]>,
+  cfbTeamSeasonStatsMap: Record<number, CollegeTeamSeasonStats[]>
+) => {
+  if (statsView === WEEK_VIEW) {
+    if (statsType === PLAYER_VIEW) {
+      const slateOfStats = cfbPlayerGameStatsMap[week] || [];
+      if (slateOfStats.length > 0) {
+        return slateOfStats;
+      }
+      return [];
+    }
+    const slateOfStats = cfbTeamGameStatsMap[week] || [];
+    if (slateOfStats.length > 0) {
+      return slateOfStats;
+    }
+    return [];
+  }
+  if (statsType === PLAYER_VIEW) {
+    return cfbPlayerSeasonStatsMap[season] || [];
+  }
+  return cfbTeamSeasonStatsMap[season] || [];
+};
+
+export const GetFBAProStats = (
+  statsView: StatsView,
+  statsType: StatsType,
+  week: number,
+  season: number,
+  nflPlayerGameStatsMap: Record<number, NFLPlayerStats[]>,
+  nflPlayerSeasonStatsMap: Record<number, NFLPlayerSeasonStats[]>,
+  nflTeamGameStatsMap: Record<number, NFLTeamStats[]>,
+  nflTeamSeasonStatsMap: Record<number, NFLTeamSeasonStats[]>
+) => {
+  if (statsView === WEEK_VIEW) {
+    if (statsType === PLAYER_VIEW) {
+      const slateOfStats = nflPlayerGameStatsMap[week] || [];
+      if (slateOfStats.length > 0) {
+        return slateOfStats;
+      }
+      return [];
+    }
+    const slateOfStats = nflTeamGameStatsMap[week] || [];
+    if (slateOfStats.length > 0) {
+      return slateOfStats;
+    }
+    return [];
+  }
+  if (statsType === PLAYER_VIEW) {
+    return nflPlayerSeasonStatsMap[season] || [];
+  }
+  return nflTeamSeasonStatsMap[season] || [];
+};
+
+export const useFilteredFootballStats = ({
+  selectedStats,
+  selectedTeams,
+  selectedConferences,
+  teamMap,
+  playerMap,
+  statsType,
+}: {
+  selectedStats: any[];
+  selectedTeams: string[];
+  selectedConferences: string[];
+  teamMap: Record<number, { ConferenceID: number }>;
+  playerMap: Record<number, { Position: string }>;
+  statsType: StatsType;
+}) => {
+  // 1) build Sets once per change
+  const teamSet = useMemo(() => new Set(selectedTeams), [selectedTeams]);
+  const confSet = useMemo(
+    () => new Set(selectedConferences),
+    [selectedConferences]
+  );
+
+  const filtered = useMemo(() => {
+    return selectedStats.filter((stat) => {
+      // 1) Team filter
+      if (teamSet.size > 0) {
+        const tid = stat.TeamID.toString();
+        if (!teamSet.has(tid)) {
+          return false;
+        }
+      }
+
+      // 2) Conference filter
+      if (confSet.size > 0) {
+        const confId = teamMap[stat.TeamID]?.ConferenceID?.toString() ?? "";
+        if (!confSet.has(confId)) {
+          return false;
+        }
+      }
+
+      // 3) Player‐view
+      if (statsType === PLAYER_VIEW) {
+        const player = playerMap[stat.PlayerID];
+        if (!player) return false;
+        // Maybe filter by stat type
+        // (pass, rush, receiving, defense, special teams, OLine)
+      }
+
+      // 4) If we get here, we've passed all active filters
+      return true;
+    });
+  }, [selectedStats, teamSet, confSet, teamMap, playerMap, statsType]);
+
+  return filtered;
+};
+
+type FBASeasonStats = CFBPlayerSeasonStats | NFLPlayerSeasonStats;
+export const isFBASeasonStats = (s: any): s is FBASeasonStats => {
   return typeof s.StatType === "number" && typeof s.GamesPlayed === "number";
 };
