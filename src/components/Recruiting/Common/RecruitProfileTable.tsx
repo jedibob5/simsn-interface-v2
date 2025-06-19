@@ -325,10 +325,10 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
         </div>
       </TableCell>
       <TableCell>
-        <span className={`text-xs`}>{modValue.toFixed(3)}</span>
+        <span className={`text-xs`}>{modValue.toFixed(2)}</span>
       </TableCell>
       <TableCell>
-        <span className={`text-xs`}>{profile.TotalPoints}</span>
+        <span className={`text-xs`}>{profile.TotalPoints.toFixed(2)}</span>
       </TableCell>
       <TableCell>
         <ButtonGroup classes="flex-nowrap">
