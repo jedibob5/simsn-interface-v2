@@ -173,9 +173,11 @@ export const GetNextGameDay = (
   let nextGameDay = "A";
   if (gamesARan) {
     nextGameDay = "B";
-  } else if (gamesBRan) {
+  }
+  if (gamesBRan) {
     nextGameDay = "C";
-  } else if (gamesCRan) {
+  }
+  if (gamesCRan) {
     nextGameDay = "D";
   }
 

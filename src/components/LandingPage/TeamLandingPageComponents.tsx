@@ -297,7 +297,6 @@ export const TeamMatchUp = ({
   isLoadingTwo,
   playerMap,
 }: TeamMatchUpProps) => {
-  console.log({ matchUp });
   const [selectedGame, setSelectedGame] = useState<any>(null);
 
   let revealResult = false;
