@@ -225,11 +225,7 @@ export const GetHockeyTeamStatsValues = (
   statsView: StatsView
 ) => {
   let values: any[] = [];
-  if (
-    statsView === SEASON_VIEW &&
-    (stats instanceof CollegeTeamSeasonStats ||
-      stats instanceof ProfessionalTeamSeasonStats)
-  ) {
+  if (statsView === SEASON_VIEW) {
     values = values.concat([{ label: "GP", value: stats.GamesPlayed }]);
   }
   values = values.concat([
