@@ -501,7 +501,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const proPlayerMap = useMemo(() => {
     const playerMap: Record<number, ProfessionalPlayer> = {};
 
-    if (proRosterMap) {
+    if (proRosterMap && phlTeams) {
       for (let i = 0; i < phlTeams.length; i++) {
         const team = phlTeams[i];
         const roster = proRosterMap[team.ID];
