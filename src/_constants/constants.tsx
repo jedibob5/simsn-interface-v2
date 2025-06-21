@@ -417,7 +417,7 @@ export const StarOptions = [
 export const StatusOptions = [
   { label: "Not Ready", value: "Not Ready" },
   { label: "Hearing Offers", value: "Hearing Offers" },
-  { label: "Narrowing Down Offers", value: "Narrowing Down Offers" },
+  { label: "Visiting Schools", value: "Visiting Schools" },
   { label: "Finalizing Decisions", value: "Finalizing Decisions" },
   { label: "Ready to Sign", value: "Ready to Sign" },
   { label: "Signed", value: "Signed" },
