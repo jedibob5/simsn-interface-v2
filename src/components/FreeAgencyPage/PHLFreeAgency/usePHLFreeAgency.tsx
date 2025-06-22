@@ -33,7 +33,7 @@ import { NBAPlayer } from "../../../models/basketballModels";
 import { usePagination } from "../../../_hooks/usePagination";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
-import { useFilteredFreeAgents } from "../../../_helper/freeAgencyHelper";
+import { useFilteredPHLFreeAgents } from "../../../_helper/freeAgencyHelper";
 
 export const usePHLFreeAgency = () => {
   const hkStore = useSimHCKStore();
@@ -192,7 +192,7 @@ export const usePHLFreeAgency = () => {
     return [];
   }, [country]);
 
-  const filteredFA = useFilteredFreeAgents({
+  const filteredFA = useFilteredPHLFreeAgents({
     freeAgents,
     waiverPlayers,
     affiliatePlayers,

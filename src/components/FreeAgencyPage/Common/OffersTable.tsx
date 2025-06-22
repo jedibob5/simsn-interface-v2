@@ -15,12 +15,14 @@ import { NBAContractOffer, NBAPlayer } from "../../../models/basketballModels";
 import {
   FreeAgencyOffer as NFLFreeAgencyOffer,
   NFLPlayer,
+  Timestamp as FBTimestamp,
+  NFLWaiverOffer,
 } from "../../../models/footballModels";
 import {
   FreeAgencyOffer as PHLFreeAgencyOffer,
   ProfessionalPlayer as PHLPlayer,
   WaiverOffer as PHLWaiverOffer,
-  Timestamp,
+  Timestamp as HCKTimestamp,
 } from "../../../models/hockeyModels";
 import { getPHLAttributes, getPHLContracts } from "../../Team/TeamPageUtils";
 import { getLogo } from "../../../_utility/getLogo";
@@ -48,13 +50,15 @@ interface OfferTableProps {
     | Record<number, NBAPlayer>;
   offersByPlayer:
     | Record<number, PHLWaiverOffer[]>
-    | Record<number, PHLFreeAgencyOffer[]>;
+    | Record<number, PHLFreeAgencyOffer[]>
+    | Record<number, NFLFreeAgencyOffer[]>
+    | Record<number, NFLWaiverOffer[]>;
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
   teamMap: any;
   team: any;
-  category: string;
+  category?: string;
   openModal: (
     action: ModalAction,
     player: PHLPlayer | NFLPlayer | NBAPlayer
@@ -65,7 +69,7 @@ interface OfferTableProps {
   ) => void;
   league: League;
   isMobile?: boolean;
-  ts: Timestamp;
+  ts: HCKTimestamp | FBTimestamp;
 }
 
 export const OfferTable: FC<OfferTableProps> = ({
