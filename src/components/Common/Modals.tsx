@@ -1169,7 +1169,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             )}
           </div>
           <div
-            className={`w-full grid grid-cols-${
+            className={`w-full max-h-[8rem] overflow-y-auto grid grid-cols-${
               hasSigned ? "4" : "3"
             } gap-y-2 mb-2`}
           >

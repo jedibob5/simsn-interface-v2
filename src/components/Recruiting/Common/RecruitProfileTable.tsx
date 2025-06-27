@@ -267,7 +267,7 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
       <TableCell>
         <span className={`text-xs`}>{croot.OverallGrade}</span>
       </TableCell>
-      {category === Attributes && (
+      {category === Attributes && !isMobile && (
         <>
           {attrList.map((attr) => (
             <TableCell>
