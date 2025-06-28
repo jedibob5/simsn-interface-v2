@@ -39,9 +39,13 @@ import {
   HKGameModalDefensemen,
   HKGameModalGoalies,
   HKGameModalPBP,
+  FBGameModalStrategy,
+  FBGameModalInfo,
+  FBGameModalWeather,
 } from "./GameModalComponents";
 import { useSimHCKStore } from "../../../context/SimHockeyContext";
 import { Button } from "../../../_design/Buttons";
+import { useSimFBAStore } from "../../../context/SimFBAContext";
 
 export interface SchedulePageGameModalProps {
   isOpen: boolean;
@@ -118,6 +122,8 @@ export interface GameModalProps {
 }
 
 export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
+  const fbStore = useSimFBAStore();
+  const { cfbTeamMap, proTeamMap } = fbStore;
   const scheduleService = new FBAScheduleService();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [homePlayers, setHomePlayers] = useState<PlayerStats[]>([]);
@@ -133,6 +139,13 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
       ReturnStats: [],
     }
   );
+
+  const homeTeam = useMemo(() => {
+    if (isPro) {
+      return proTeamMap![game.HomeTeamID];
+    }
+    return cfbTeamMap![game.HomeTeamID];
+  }, [isPro, game, cfbTeamMap, proTeamMap]);
 
   const [viewableAwayPlayers, setViewableAwayPlayers] = useState<FilteredStats>(
     {
@@ -172,7 +185,6 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
     } else {
       response = await scheduleService.GetCFBGameResultData(game.ID);
     }
-
     const filteredHomePlayerList = FilterStatsData(response.HomePlayers);
     const filteredAwayPlayerList = FilterStatsData(response.AwayPlayers);
 
@@ -450,6 +462,90 @@ export const FootballGameModal = ({ league, game, isPro }: GameModalProps) => {
             >
               {view === BoxScore && (
                 <div className="flex flex-col">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Text variant="body-small" classes="font-semibold">
+                            Game Info
+                          </Text>
+                        </div>
+                        <FBGameModalInfo
+                          data={viewableHomePlayers}
+                          league={league}
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor}
+                          game={game}
+                          homeTeam={homeTeam}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Text variant="body-small" classes="font-semibold">
+                            Weather
+                          </Text>
+                        </div>
+                        <FBGameModalWeather
+                          data={viewableHomePlayers}
+                          league={league}
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor}
+                          game={game}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo
+                            variant="tiny"
+                            classes="opacity-80"
+                            url={game.HomeTeamLogo}
+                          />
+                          <Text variant="body-small" classes="font-semibold">
+                            {game.HomeTeamName} Strategy
+                          </Text>
+                        </div>
+                        <FBGameModalStrategy
+                          data={viewableHomePlayers}
+                          league={league}
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor}
+                          score={score}
+                          isHome
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <div className="flex flex-col p-2 sm:p-4 w-full">
+                        <div className="flex gap-2 items-center w-full pb-2">
+                          <Logo
+                            variant="tiny"
+                            classes="opacity-80"
+                            url={game.AwayTeamLogo}
+                          />
+                          <Text variant="body-small" classes="font-semibold">
+                            {game.AwayTeamName} Strategy
+                          </Text>
+                        </div>
+                        <FBGameModalStrategy
+                          data={viewableHomePlayers}
+                          league={league}
+                          isPro={isPro}
+                          backgroundColor={backgroundColor}
+                          borderColor={borderColor}
+                          score={score}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
                     <div className="flex flex-col items-center justify-center w-full">
                       <div className="flex flex-col p-2 sm:p-4 w-full">

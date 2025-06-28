@@ -173,7 +173,13 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
 
   const processedSchedule = useMemo(
     () =>
-      processSchedule(teamSchedule, selectedTeam, ts, league, resultsOverride).sort((a,b) => {
+      processSchedule(
+        teamSchedule,
+        selectedTeam,
+        ts,
+        league,
+        resultsOverride
+      ).sort((a, b) => {
         if (a.Week !== b.Week) {
           return a.Week < b.Week;
         }
@@ -286,7 +292,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                   )}
                 </>
               )}
-              <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
+              <div className="flex items-center gap-2 justify-around sm:flex-col">
                 <div className="flex flex-col items-center gap-2 justify-center">
                   {view === TeamGames ? (
                     <>
@@ -305,9 +311,11 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "15rem",
-                            maxWidth: "300px",
+                            minWidth: isMobile ? "10rem" : "15rem",
+                            maxWidth: "100%",
                             padding: "0.3rem",
+                            fontSize: isMobile ? "0.9rem" : "1rem",
+                            flexGrow: 1,
                             boxShadow: state.isFocused
                               ? "0 0 0 1px #4A90E2"
                               : "none",
@@ -331,6 +339,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               : "#1a202c",
                             color: "#ffffff",
                             padding: "10px",
+                            fontSize: isMobile ? "0.9rem" : "1rem",
                             cursor: "pointer",
                           }),
                           singleValue: (provided) => ({
@@ -368,9 +377,11 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               ? "#4A90E2"
                               : "#4A5568",
                             color: "#ffffff",
-                            width: "15rem",
-                            maxWidth: "300px",
+                            minWidth: isMobile ? "10rem" : "15rem",
+                            maxWidth: "100%",
                             padding: "0.3rem",
+                            fontSize: isMobile ? "0.9rem" : "1rem",
+                            flexGrow: 1,
                             boxShadow: state.isFocused
                               ? "0 0 0 1px #4A90E2"
                               : "none",
@@ -394,6 +405,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                               : "#1a202c",
                             color: "#ffffff",
                             padding: "10px",
+                            fontSize: isMobile ? "0.9rem" : "1rem",
                             cursor: "pointer",
                           }),
                           singleValue: (provided) => ({
@@ -427,9 +439,11 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "15rem",
-                        maxWidth: "300px",
+                        minWidth: isMobile ? "10.5rem" : "15rem",
+                        maxWidth: "100%",
                         padding: "0.3rem",
+                        flexGrow: 1,
+                        fontSize: isMobile ? "0.9rem" : "1rem",
                         boxShadow: state.isFocused
                           ? "0 0 0 1px #4A90E2"
                           : "none",
@@ -453,6 +467,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         color: "#ffffff",
                         padding: "10px",
+                        fontSize: isMobile ? "0.9rem" : "1rem",
                         cursor: "pointer",
                       }),
                       singleValue: (provided) => ({
@@ -483,8 +498,10 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                         color: "#ffffff",
-                        width: "15rem",
-                        maxWidth: "300px",
+                        minWidth: isMobile ? "10.5rem" : "15rem",
+                        maxWidth: "100%",
+                        fontSize: isMobile ? "0.9rem" : "1rem",
+                        flexGrow: 1,
                         padding: "0.3rem",
                         boxShadow: state.isFocused
                           ? "0 0 0 1px #4A90E2"
@@ -509,6 +526,7 @@ export const CHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           : "#1a202c",
                         color: "#ffffff",
                         padding: "10px",
+                        fontSize: isMobile ? "0.9rem" : "1rem",
                         cursor: "pointer",
                       }),
                       singleValue: (provided) => ({
@@ -797,7 +815,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                 <Text variant="small">Divisions</Text>
               </div>
             )}
-            <div className="flex w-[95vw] items-center gap-2 justify-around sm:flex-col">
+            <div className="flex items-center gap-2 justify-around sm:flex-col">
               <div className="flex flex-col items-center gap-2 justify-center">
                 {scheduleView === TeamGames ? (
                   <>
@@ -814,9 +832,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                             : "#1a202c",
                           borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                           color: "#ffffff",
-                          width: "15rem",
-                          maxWidth: "300px",
+                          minWidth: isMobile ? "10rem" : "15rem",
+                          maxWidth: "100%",
                           padding: "0.3rem",
+                          fontSize: isMobile ? "0.9rem" : "1rem",
+                          flexGrow: 1,
                           boxShadow: state.isFocused
                             ? "0 0 0 1px #4A90E2"
                             : "none",
@@ -841,6 +861,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           color: "#ffffff",
                           padding: "10px",
                           cursor: "pointer",
+                          fontSize: isMobile ? "0.9rem" : "1rem",
                         }),
                         singleValue: (provided) => ({
                           ...provided,
@@ -874,9 +895,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                             : "#1a202c",
                           borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                           color: "#ffffff",
-                          width: "15rem",
-                          maxWidth: "300px",
+                          minWidth: isMobile ? "10rem" : "15rem",
+                          maxWidth: "100%",
                           padding: "0.3rem",
+                          fontSize: isMobile ? "0.9rem" : "1rem",
+                          flexGrow: 1,
                           boxShadow: state.isFocused
                             ? "0 0 0 1px #4A90E2"
                             : "none",
@@ -901,6 +924,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                           color: "#ffffff",
                           padding: "10px",
                           cursor: "pointer",
+                          fontSize: isMobile ? "0.9rem" : "1rem",
                         }),
                         singleValue: (provided) => ({
                           ...provided,
@@ -930,9 +954,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
                       borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                       color: "#ffffff",
-                      width: "15rem",
-                      maxWidth: "300px",
+                      minWidth: isMobile ? "10rem" : "15rem",
+                      maxWidth: "100%",
                       padding: "0.3rem",
+                      fontSize: isMobile ? "0.9rem" : "1rem",
+                      flexGrow: 1,
                       boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
                       borderRadius: "8px",
                       transition: "all 0.2s ease",
@@ -953,6 +979,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       color: "#ffffff",
                       padding: "10px",
                       cursor: "pointer",
+                      fontSize: isMobile ? "0.9rem" : "1rem",
                     }),
                     singleValue: (provided) => ({
                       ...provided,
@@ -979,9 +1006,11 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       backgroundColor: state.isFocused ? "#2d3748" : "#1a202c",
                       borderColor: state.isFocused ? "#4A90E2" : "#4A5568",
                       color: "#ffffff",
-                      width: "15rem",
-                      maxWidth: "300px",
+                      minWidth: isMobile ? "10rem" : "15rem",
+                      maxWidth: "100%",
                       padding: "0.3rem",
+                      fontSize: isMobile ? "0.9rem" : "1rem",
+                      flexGrow: 1,
                       boxShadow: state.isFocused ? "0 0 0 1px #4A90E2" : "none",
                       borderRadius: "8px",
                       transition: "all 0.2s ease",
@@ -1002,6 +1031,7 @@ export const PHLSchedulePage: FC<SchedulePageProps> = ({ league, ts }) => {
                       color: "#ffffff",
                       padding: "10px",
                       cursor: "pointer",
+                      fontSize: isMobile ? "0.9rem" : "1rem",
                     }),
                     singleValue: (provided) => ({
                       ...provided,
