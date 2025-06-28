@@ -642,7 +642,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   );
   const redshirtPlayer = useCallback(
     async (playerID: number, teamID: number) => {
-      const res = await PlayerService.CutCBBPlayer(playerID);
+      const res = await PlayerService.RedshirtCBBPlayer(playerID);
       const rosterMap = { ...cbbRosterMap };
       const playerIDX = rosterMap[teamID].findIndex(
         (player) => player.ID === playerID

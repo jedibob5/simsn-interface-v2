@@ -589,7 +589,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         );
         return;
       }
-      const res = await PlayerService.CutCFBPlayer(playerID);
+      const res = await PlayerService.RedshirtCFBPlayer(playerID);
       const playerIDX = rosterMap[teamID].findIndex(
         (player) => player.ID === playerID
       );
