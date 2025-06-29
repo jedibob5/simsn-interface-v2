@@ -798,8 +798,6 @@ export const HCKAIGameplanModal: FC<HCKAIGameplanModalProps> = ({
       gp[`DefenderSortPreference3`] = defenderSort3;
     }
 
-    console.log({ gp });
-
     onClose();
     await saveGameplan(gp);
   };

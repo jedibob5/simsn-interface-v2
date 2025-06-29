@@ -216,9 +216,6 @@ export const ValidateCloseToHome = (croot: any, abbr: any) => {
   }
 
   const closeToHomeSchools = StateMatcherMap[crootState];
-  if (croot.ID === 96167) {
-    console.log({ closeToHomeSchools });
-  }
   if (closeToHomeSchools.length <= 0) {
     return false;
   }

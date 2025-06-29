@@ -53,6 +53,9 @@ export const useNFLFreeAgency = () => {
 
   const waiverPlayerMap = useMemo(() => {
     const dict: Record<number, NFLPlayer> = {};
+    if (!waiverPlayers) {
+      return dict;
+    }
     for (let i = 0; i < waiverPlayers.length; i++) {
       dict[waiverPlayers[i].ID] = waiverPlayers[i];
     }

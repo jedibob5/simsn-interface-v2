@@ -745,7 +745,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const toggleScholarship = async (dto: any) => {
     const profile = await RecruitService.FBAToggleScholarship(dto);
-    console.log({ profile, dto });
     if (profile) {
       setRecruitProfiles((profiles) =>
         [...profiles].map((p) =>

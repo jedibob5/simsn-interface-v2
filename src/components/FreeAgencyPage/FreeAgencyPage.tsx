@@ -15,7 +15,7 @@ interface FreeAgencyPageProps {
 export const FreeAgencyPage: FC<FreeAgencyPageProps> = ({ league }) => {
   const { selectedLeague, setSelectedLeague } = useLeagueStore();
   const { phlTeam } = useSimHCKStore();
-  const { nflTeam } = useSimFBAStore();
+  const { nflTeam, isLoadingThree } = useSimFBAStore();
   const { nbaTeam } = useSimBBAStore();
 
   useEffect(() => {
@@ -31,11 +31,11 @@ export const FreeAgencyPage: FC<FreeAgencyPageProps> = ({ league }) => {
     if (selectedLeague === SimNBA && nbaTeam) {
       return false;
     }
-    if (selectedLeague === SimNFL && nflTeam) {
+    if (selectedLeague === SimNFL && nflTeam && !isLoadingThree) {
       return false;
     }
     return true;
-  }, [phlTeam, selectedLeague]);
+  }, [phlTeam, nflTeam, isLoadingThree, selectedLeague]);
 
   return (
     <>

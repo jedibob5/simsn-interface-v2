@@ -944,6 +944,7 @@ export class NFLWaiverOffer {
   }
 }
 export class FreeAgencyOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -995,6 +996,13 @@ export class FreeAgencyOffer {
     this.BonusPercentage = source["BonusPercentage"];
     this.AAV = source["AAV"];
     this.IsActive = source["IsActive"];
+  }
+
+  updateField(name: string, value: number): FreeAgencyOffer {
+    const copy = new FreeAgencyOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
