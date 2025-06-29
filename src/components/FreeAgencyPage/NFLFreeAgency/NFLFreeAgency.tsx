@@ -59,7 +59,6 @@ export const NFLFreeAgency = () => {
     country,
     regionOptions,
     filteredFA,
-    pagedFreeAgents,
     freeAgentMap,
     waiverPlayerMap,
     teamFreeAgentOffers,
@@ -228,7 +227,7 @@ export const NFLFreeAgency = () => {
               }}
             >
               <FreeAgentTable
-                players={pagedFreeAgents}
+                players={filteredFA}
                 currentPage={currentPage}
                 offersByPlayer={offerMapByPlayerType}
                 teamOfferMap={teamOfferMap}

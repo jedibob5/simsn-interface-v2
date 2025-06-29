@@ -127,7 +127,10 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       ]);
     }
 
-    columns.push({ header: "Min. Value", accessor: "minimum value" });
+    columns.push({ header: "Min. Value", accessor: "MinimumValue" });
+    if (league === SimNFL) {
+      columns.push({ header: "AAV", accessor: "AAV" });
+    }
     columns.push({ header: "Interest", accessor: "LeadingTeams" });
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
@@ -149,14 +152,19 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       value: number;
       letter: string;
     }[];
+
     const offers = offersByPlayer[item.ID];
-    let offerIds = [];
+    let offerIds: number[] = [];
     let logos: string[] = [];
     if (offers) {
       offerIds = offers && offers.map((x) => x.TeamID);
       logos = offers && offerIds.map((id) => getLogo(SimNFL, id, false));
     }
     const actionVariant = !teamOfferMap[item.ID] ? "success" : "secondary";
+    let previousLogo = "";
+    if (item.PreviousTeamID > 0) {
+      previousLogo = getLogo(SimNFL, item.PreviousTeamID, false);
+    }
 
     return (
       <div
@@ -178,7 +186,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
           >
             {attr.label === "Name" ? (
               <span
-                className={`cursor-pointer font-semibold`}
+                className={`cursor-pointer font-semibold text-left`}
                 onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
                   (e.target as HTMLElement).style.color = "#fcd53f";
                 }}
@@ -192,14 +200,26 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
             ) : attr.label === "Sta" || attr.label === "Inj" ? (
               <Text variant="small">{attr.letter}</Text>
             ) : (
-              <Text variant="small">{attr.value}</Text>
+              <Text variant="small" classes="text-left">
+                {attr.value}
+              </Text>
             )}
           </TableCell>
         ))}
-        <TableCell>{item.MinimumValue}</TableCell>
+        <TableCell>{item.PotentialGrade}</TableCell>
+        <TableCell>
+          {item.PreviousTeamID > 0 ? (
+            <Logo url={previousLogo} variant="tiny" />
+          ) : (
+            "None"
+          )}
+        </TableCell>
+        <TableCell>{item.FreeAgency}</TableCell>
+        <TableCell>{item.MinimumValue.toFixed(2)}</TableCell>
+        <TableCell>{item.AAV.toFixed(2)}</TableCell>
         <TableCell classes="w-[5em] min-[430px]:w-[10em]">
           <div className="flex flex-row">
-            {!offers || (offers.length === 0 && "None")}
+            {(!offers || offers.length === 0) && "None"}
             {logos.length > 0 &&
               logos.map((url) => (
                 <Logo url={url} variant="tiny" containerClass="px-1 py-2" />

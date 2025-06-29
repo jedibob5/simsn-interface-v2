@@ -33,6 +33,8 @@ export const useNFLFreeAgency = () => {
     proRosterMap,
     practiceSquadPlayers,
     proPlayerMap,
+    freeAgents,
+    waiverPlayers,
   } = fbStore;
 
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
@@ -48,17 +50,6 @@ export const useNFLFreeAgency = () => {
   const [archetype, setArchetype] = useState<string[]>([]);
   const [regions, setRegions] = useState<string[]>([]);
   const pageSize = 100;
-
-  const freeAgents = useMemo(() => {
-    if (!proRosterMap) return [];
-    console.log({ proRosterMap });
-    return proRosterMap[0].filter((player) => player.IsFreeAgent);
-  }, [proRosterMap]);
-
-  const waiverPlayers = useMemo(() => {
-    if (!proRosterMap) return [];
-    return proRosterMap[0].filter((player) => player.IsWaived);
-  }, [proRosterMap]);
 
   const waiverPlayerMap = useMemo(() => {
     const dict: Record<number, NFLPlayer> = {};
@@ -184,11 +175,6 @@ export const useNFLFreeAgency = () => {
     goToNextPage,
   } = usePagination(filteredFA.length, pageSize);
 
-  const pagedFreeAgents = useMemo(() => {
-    const start = currentPage * pageSize;
-    return filteredFA.slice(start, start + pageSize);
-  }, [filteredFA, currentPage, pageSize]);
-
   const SelectPositionOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setPositions(options);
@@ -255,7 +241,6 @@ export const useNFLFreeAgency = () => {
     country,
     regionOptions,
     filteredFA,
-    pagedFreeAgents,
     freeAgentMap: proPlayerMap,
     waiverPlayerMap,
     teamFreeAgentOffers,

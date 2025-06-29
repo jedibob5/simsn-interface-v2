@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   League,
   SimCHL,
@@ -850,15 +850,20 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
     player,
     player.ShowLetterGrade
   );
-  const rawValue = Array.from(
-    { length: contract.ContractLength },
-    (_, index) =>
-      (contract[`Y${index + 1}BaseSalary`] || 0) +
-      (contract[`Y${index + 1}Bonus`] || 0)
-  ).reduce((sum, salary) => sum + salary, 0);
-  const currentYearValue = (
-    (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0)
-  ).toFixed(2);
+  const rawValue = useMemo(() => {
+    if (!contract) return 0;
+    return Array.from(
+      { length: contract.ContractLength },
+      (_, index) =>
+        (contract[`Y${index + 1}BaseSalary`] || 0) +
+        (contract[`Y${index + 1}Bonus`] || 0)
+    ).reduce((sum, salary) => sum + salary, 0);
+  }, [contract]);
+  const currentYearValue = useMemo(() => {
+    if (!contract) return 0;
+    return (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0).toFixed(2);
+  }, [contract]);
+
   const totalValue = `${rawValue.toFixed(2)}`;
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
@@ -961,38 +966,42 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           </>
         )}
       </div>
-      <div className="flex flex-col">
-        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-          Contract
-        </Text>
-        <Text variant="small" classes="whitespace-nowrap">
-          {contract.ContractLength} years
-        </Text>
-      </div>
-      <div className="flex flex-col">
-        <Text variant="body" classes="mb-1  font-semibold">
-          Total Value
-        </Text>
-        <Text variant="small" classes="whitespace-nowrap">
-          {`${totalValue}M`}
-        </Text>
-      </div>
-      <div className="flex flex-col">
-        <Text variant="body" classes="mb-1 font-semibold">
-          Current Year
-        </Text>
-        <Text variant="small" classes="whitespace-nowrap">
-          {`${currentYearValue}M`}
-        </Text>
-      </div>
-      <div className="flex flex-col">
-        <Text variant="body" classes="mb-1 font-semibold">
-          Bonus (p.a)
-        </Text>
-        <Text variant="small" classes="whitespace-nowrap">
-          {`${contract.Y1Bonus.toFixed(2)}M`}
-        </Text>
-      </div>
+      {contract && (
+        <>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+              Contract
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {contract.ContractLength} years
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1  font-semibold">
+              Total Value
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${totalValue}M`}
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 font-semibold">
+              Current Year
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${currentYearValue}M`}
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 font-semibold">
+              Bonus (p.a)
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${contract.Y1Bonus.toFixed(2)}M`}
+            </Text>
+          </div>
+        </>
+      )}
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
         <div className="grid w-full grid-cols-4 gap-3">
           {priorityAttributes.map((attr, idx) => (
