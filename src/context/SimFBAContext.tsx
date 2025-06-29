@@ -483,7 +483,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setProNotifications(res.ProNotifications);
     }
 
-    setPlayerFaces(res.FaceData);
     setIsLoading(false);
   };
 
@@ -593,6 +592,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setWaiverPlayers(res.WaiverPlayers);
     }
 
+    setPlayerFaces(res.FaceData);
     setIsLoadingThree(false);
   };
 
@@ -638,7 +638,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         );
         return;
       }
-      const res = await PlayerService.CutCFBPlayer(playerID);
+      const res = await PlayerService.RedshirtCFBPlayer(playerID);
       const playerIDX = rosterMap[teamID].findIndex(
         (player) => player.ID === playerID
       );
