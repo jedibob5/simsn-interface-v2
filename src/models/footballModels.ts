@@ -5241,6 +5241,9 @@ export class BootstrapData {
   ProRosterMap: { [key: number]: NFLPlayer[] } | null;
   CapsheetMap: { [key: number]: NFLCapsheet } | null;
   PracticeSquadPlayers: NFLPlayer[];
+  FreeAgents: NFLPlayer[];
+  WaiverPlayers: NFLPlayer[];
+
   ProInjuryReport: NFLPlayer[];
   FreeAgentOffers: FreeAgencyOffer[];
   WaiverWireOffers: NFLWaiverOffer[];
@@ -5314,6 +5317,8 @@ export class BootstrapData {
       source["PracticeSquadPlayers"],
       NFLPlayer
     );
+    this.FreeAgents = this.convertValues(source["FreeAgents"], NFLPlayer);
+    this.WaiverPlayers = this.convertValues(source["WaiverPlayers"], NFLPlayer);
     this.FreeAgentOffers = this.convertValues(
       source["FreeAgentOffers"],
       FreeAgencyOffer

@@ -99,6 +99,8 @@ interface SimFBAContextProps {
   capsheetMap: Record<number, NFLCapsheet> | null;
   proInjuryReport: NFLPlayer[];
   practiceSquadPlayers: NFLPlayer[];
+  freeAgents: NFLPlayer[];
+  waiverPlayers: NFLPlayer[];
   proNews: NewsLog[];
   allProGames: NFLGame[];
   currentProSeasonGames: NFLGame[];
@@ -191,6 +193,8 @@ const defaultContext: SimFBAContextProps = {
   topNFLPassers: [],
   topNFLRushers: [],
   topNFLReceivers: [],
+  freeAgents: [],
+  waiverPlayers: [],
   cutCFBPlayer: async () => {},
   cutNFLPlayer: async () => {},
   redshirtPlayer: async () => {},
@@ -345,6 +349,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
+  const [freeAgents, setFreeAgents] = useState<NFLPlayer[]>([]);
+  const [waiverPlayers, setWaiverPlayers] = useState<NFLPlayer[]>([]);
 
   const proPlayerMap = useMemo(() => {
     const playerMap: Record<number, NFLPlayer> = {};
@@ -583,6 +589,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setNFLDepthchartMap(res.NFLDepthChartMap);
       setProContractMap(res.ContractMap);
       setProExtensionMap(res.ExtensionMap);
+      setFreeAgents(res.FreeAgents);
+      setWaiverPlayers(res.WaiverPlayers);
     }
 
     setIsLoadingThree(false);
@@ -991,6 +999,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         allCFBTeamHistory,
         isLoadingFour,
         proPlayerMap,
+        freeAgents,
+        waiverPlayers,
       }}
     >
       {children}
