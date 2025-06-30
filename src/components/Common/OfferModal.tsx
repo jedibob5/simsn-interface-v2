@@ -42,6 +42,7 @@ import {
   GeneratePHLFAErrorList,
   GetNFLAAVValue,
   GetNFLContractValue,
+  getNFLSalaryData,
   getPHLSalaryData,
 } from "../../_helper/offerHelper";
 
@@ -251,7 +252,9 @@ export const OfferModal: FC<OfferModalProps> = ({
   const playerAAV = useMemo(() => {
     if (league === SimNFL) {
       let nflPlayer = player as NFLPlayer;
-      return nflPlayer.AAV.toFixed(2);
+      if (nflPlayer.ID > 0) {
+        return nflPlayer.AAV.toFixed(2);
+      }
     }
     return 0;
   }, [league, player]);
@@ -334,6 +337,23 @@ export const OfferModal: FC<OfferModalProps> = ({
         ...offer,
         PlayerID: player.ID,
         TeamID: capsheet.ID,
+      });
+      await confirmOffer(dto);
+    }
+    if (league === SimNFL) {
+      const { totalComp, ContractLength } = getNFLSalaryData(
+        offer as NFLFreeAgencyOffer
+      );
+      if (totalComp === 0 && ContractLength === 0) {
+        onClose();
+        return;
+      }
+
+      const dto = new FreeAgencyOfferDTO({
+        ...offer,
+        NFLPlayerID: player.ID,
+        TeamID: capsheet.ID,
+        AAV: offer.AAV,
       });
       await confirmOffer(dto);
     }
