@@ -349,6 +349,17 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
                   variant="small"
                   classes="mb-1 whitespace-nowrap font-semibold"
                 >
+                  Strength
+                </Text>
+                <Text variant="small">
+                  {getHockeyLetterGrade(player.Strength, player.Year)}
+                </Text>
+              </div>
+              <div className="flex flex-col px-1 gap-1">
+                <Text
+                  variant="small"
+                  classes="mb-1 whitespace-nowrap font-semibold"
+                >
                   Goalkeeping
                 </Text>
                 <Text variant="small">
