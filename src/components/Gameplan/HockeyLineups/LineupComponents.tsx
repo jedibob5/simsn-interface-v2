@@ -189,7 +189,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
                 />
               ))}
             {property === "GoalieID" && (
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-2 gap-y-2">
                 <Text variant="small">Agility</Text>
                 <Text variant="small" classes="font-semibold">
                   {league === SimCHL
@@ -214,8 +214,13 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
                     ? getHockeyLetterGrade(player.Goalkeeping, player.Year)
                     : player.Goalkeeping}
                 </Text>
-                <Text variant="small">Current Stamina</Text>
-                <Text variant="small" classes="font-semibold">
+                <Text variant="small" classes="border-t-[0.1em] pt-2">
+                  Current Stamina
+                </Text>
+                <Text
+                  variant="small"
+                  classes="font-semibold border-t-[0.1em] pt-2"
+                >
                   {player.GoalieStamina}
                 </Text>
                 <Text variant="small">Max Stamina</Text>
