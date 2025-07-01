@@ -8,6 +8,7 @@ import {
   ModalAction,
   OfferAction,
   Preferences,
+  SimNFL,
   SimPHL,
   Values,
 } from "../../../_constants/constants";
@@ -24,7 +25,11 @@ import {
   WaiverOffer as PHLWaiverOffer,
   Timestamp as HCKTimestamp,
 } from "../../../models/hockeyModels";
-import { getPHLAttributes, getPHLContracts } from "../../Team/TeamPageUtils";
+import {
+  getNFLAttributes,
+  getPHLAttributes,
+  getPHLContracts,
+} from "../../Team/TeamPageUtils";
 import { getLogo } from "../../../_utility/getLogo";
 import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
@@ -142,7 +147,13 @@ export const OfferTable: FC<OfferTableProps> = ({
       ]);
     }
 
-    columns.push({ header: "Min. Value", accessor: "minimum value" });
+    if (league === SimNFL) {
+      columns.push({ header: "Pot.", accessor: "PotentialGrade" });
+    }
+    columns.push({ header: "Min. Value", accessor: "MinimumValue" });
+    if (league === SimNFL) {
+      columns.push({ header: "AAV", accessor: "AAV" });
+    }
     columns.push({ header: "Interest", accessor: "LeadingTeams" });
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
@@ -152,7 +163,109 @@ export const OfferTable: FC<OfferTableProps> = ({
     item: NFLFreeAgencyOffer,
     index: number,
     backgroundColor: string
-  ) => <></>;
+  ) => {
+    const player = playerMap[item.NFLPlayerID] as NFLPlayer;
+    console.log({ player, item, playerMap });
+    const offers = offersByPlayer[item.NFLPlayerID];
+    let offerIds = [];
+    let logos: string[] = [];
+    if (offers) {
+      offerIds = offers && offers.map((x) => x.TeamID);
+      logos = offers && offerIds.map((id) => getLogo(SimNFL, id, false));
+    }
+    let winningLogo = "FA";
+    let teamID = player.TeamID;
+    if (teamID > 0) {
+      winningLogo = getLogo(SimNFL, teamID, false);
+    }
+
+    const attributes = getNFLAttributes(
+      player,
+      !isDesktop,
+      category!,
+      player.ShowLetterGrade,
+      item
+    );
+
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        <TableCell classes="w-[5em] min-[430px]:w-[4em]">
+          <div className="flex flex-row">
+            {player && player.TeamID > 0 ? (
+              <Logo url={winningLogo} variant="tiny" containerClass="p-2" />
+            ) : (
+              <div className="ml-2">
+                <QuestionMark />
+              </div>
+            )}
+          </div>
+        </TableCell>
+        {attributes.map((attr, idx) => (
+          <TableCell
+            key={idx}
+            classes={`min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+          text-wrap sm:max-w-full text-left`}
+          >
+            {attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, player)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : attr.label === "Sta" || attr.label === "Inj" ? (
+              <Text variant="small">{attr.value}</Text>
+            ) : (
+              <Text variant="small">{attr.value}</Text>
+            )}
+          </TableCell>
+        ))}
+        <TableCell>{player.PotentialGrade}</TableCell>
+        <TableCell>{player.MinimumValue.toFixed(2)}</TableCell>
+        <TableCell>{player.AAV.toFixed(2)}</TableCell>
+        <TableCell classes="w-[5em] min-[430px]:w-[10em]">
+          <div className="flex flex-row">
+            {!offers || (offers.length === 0 && "None")}
+            {logos.length > 0 &&
+              logos.map((url) => (
+                <Logo url={url} variant="tiny" containerClass="p-2" />
+              ))}
+          </div>
+        </TableCell>
+        <TableCell classes="w-[5.5em] min-[430px]:w-[6em] sm:w-[7rem]">
+          <ButtonGroup direction="row" classes="">
+            <Button
+              variant="success"
+              size="xs"
+              disabled={ts.IsFreeAgencyLocked || item.IsRejected}
+              onClick={() =>
+                handleOfferModal(FreeAgentOffer, player as NFLPlayer)
+              }
+            >
+              <CurrencyDollar />
+            </Button>
+            <Button
+              variant="danger"
+              size="xs"
+              onClick={() => openModal(CancelOffer, player as NFLPlayer)}
+            >
+              <CrossCircle />
+            </Button>
+          </ButtonGroup>
+        </TableCell>
+      </div>
+    );
+  };
 
   const NBARowRenderer = (
     item: NBAContractOffer,

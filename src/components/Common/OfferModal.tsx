@@ -14,7 +14,7 @@ import {
   WaiverOffer as PHLWaiverOffer,
   Timestamp as HCKTimestamp,
   ProCapsheet,
-  FreeAgencyOfferDTO,
+  FreeAgencyOfferDTO as PHLFreeAgencyOfferDTO,
 } from "../../models/hockeyModels";
 import {
   FreeAgencyOffer as NFLFreeAgencyOffer,
@@ -23,6 +23,7 @@ import {
   Timestamp as FBTimestamp,
   NFLCapsheet,
   Timestamp,
+  FreeAgencyOfferDTO,
 } from "../../models/footballModels";
 import {
   NBAContractOffer,
@@ -324,7 +325,7 @@ export const OfferModal: FC<OfferModalProps> = ({
     [league]
   );
 
-  const Confirm = async () => {
+  const Confirm = useCallback(async () => {
     if (league === SimPHL) {
       const { totalComp, ContractLength } = getPHLSalaryData(
         offer as PHLFreeAgencyOffer
@@ -333,7 +334,7 @@ export const OfferModal: FC<OfferModalProps> = ({
         onClose();
         return;
       }
-      const dto = new FreeAgencyOfferDTO({
+      const dto = new PHLFreeAgencyOfferDTO({
         ...offer,
         PlayerID: player.ID,
         TeamID: capsheet.ID,
@@ -355,11 +356,12 @@ export const OfferModal: FC<OfferModalProps> = ({
         TeamID: capsheet.ID,
         AAV: offer.AAV,
       });
+      console.log({ dto });
       await confirmOffer(dto);
     }
 
     onClose();
-  };
+  }, [offer, player, capsheet, league]);
 
   return (
     <>

@@ -75,6 +75,7 @@ export const usePHLFreeAgency = () => {
     for (let i = 0; i < waiverPlayers.length; i++) {
       dict[waiverPlayers[i].ID] = waiverPlayers[i];
     }
+    return dict;
   }, [waiverPlayers]);
 
   const teamFreeAgentOffers = useMemo(() => {

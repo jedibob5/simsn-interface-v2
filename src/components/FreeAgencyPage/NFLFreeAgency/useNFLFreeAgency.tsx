@@ -51,6 +51,17 @@ export const useNFLFreeAgency = () => {
   const [regions, setRegions] = useState<string[]>([]);
   const pageSize = 100;
 
+  const freeAgentMap = useMemo(() => {
+    const dict: Record<number, NFLPlayer> = {};
+    if (!freeAgents) {
+      return dict;
+    }
+    for (let i = 0; i < freeAgents.length; i++) {
+      dict[freeAgents[i].ID] = freeAgents[i];
+    }
+    return dict;
+  }, [freeAgents]);
+
   const waiverPlayerMap = useMemo(() => {
     const dict: Record<number, NFLPlayer> = {};
     if (!waiverPlayers) {
@@ -59,6 +70,7 @@ export const useNFLFreeAgency = () => {
     for (let i = 0; i < waiverPlayers.length; i++) {
       dict[waiverPlayers[i].ID] = waiverPlayers[i];
     }
+    return dict;
   }, [waiverPlayers]);
 
   const teamFreeAgentOffers = useMemo(() => {
@@ -244,7 +256,7 @@ export const useNFLFreeAgency = () => {
     country,
     regionOptions,
     filteredFA,
-    freeAgentMap: proPlayerMap,
+    freeAgentMap,
     waiverPlayerMap,
     teamFreeAgentOffers,
     teamWaiverOffers,

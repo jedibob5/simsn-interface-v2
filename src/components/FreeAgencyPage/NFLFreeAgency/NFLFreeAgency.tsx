@@ -183,40 +183,42 @@ export const NFLFreeAgency = () => {
               )}
             </Border>
           </div>
-          <Border
-            direction="row"
-            classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
-            styles={{
-              borderColor: teamColors.One,
-              backgroundColor: navyBlueColor,
-            }}
-          >
-            <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
-              <CategoryDropdown
-                label="Positions"
-                options={FootballPositionOptions}
-                change={SelectPositionOptions}
-                isMulti={true}
-                isMobile={isMobile}
-              />
-              <CategoryDropdown
-                label="Archetype"
-                options={FootballArchetypeOptions}
-                change={SelectArchetypeOptions}
-                isMulti={true}
-                isMobile={isMobile}
-              />
-              {regionOptions.length > 0 && (
+          {freeAgencyCategory !== Contracts && (
+            <Border
+              direction="row"
+              classes="w-full max-[1024px]:px-2 max-[1024px]:pb-4 p-4 items-center justify-center"
+              styles={{
+                borderColor: teamColors.One,
+                backgroundColor: navyBlueColor,
+              }}
+            >
+              <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                 <CategoryDropdown
-                  label="Region"
-                  options={regionOptions}
-                  change={SelectRegionOptions}
+                  label="Positions"
+                  options={FootballPositionOptions}
+                  change={SelectPositionOptions}
                   isMulti={true}
                   isMobile={isMobile}
                 />
-              )}
-            </div>
-          </Border>
+                <CategoryDropdown
+                  label="Archetype"
+                  options={FootballArchetypeOptions}
+                  change={SelectArchetypeOptions}
+                  isMulti={true}
+                  isMobile={isMobile}
+                />
+                {regionOptions.length > 0 && (
+                  <CategoryDropdown
+                    label="Region"
+                    options={regionOptions}
+                    change={SelectRegionOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
+                )}
+              </div>
+            </Border>
+          )}
           {freeAgencyCategory === Overview && (
             <Border
               direction="col"
