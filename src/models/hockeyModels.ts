@@ -31,6 +31,7 @@ export class BasePlayer {
   Discipline: number;
   Aggression: number;
   Stamina: number;
+  GoalieStamina: number;
   InjuryRating: number;
   DisciplineDeviation: number;
   InjuryDeviation: number;
@@ -116,6 +117,7 @@ export class BasePlayer {
     this.Discipline = source["Discipline"];
     this.Aggression = source["Aggression"];
     this.Stamina = source["Stamina"];
+    this.GoalieStamina = source["GoalieStamina"];
     this.InjuryRating = source["InjuryRating"];
     this.DisciplineDeviation = source["DisciplineDeviation"];
     this.InjuryDeviation = source["InjuryDeviation"];
@@ -357,6 +359,7 @@ export class CollegePlayer {
   Discipline: number;
   Aggression: number;
   Stamina: number;
+  GoalieStamina: number;
   InjuryRating: number;
   DisciplineDeviation: number;
   InjuryDeviation: number;
@@ -480,6 +483,7 @@ export class CollegePlayer {
     this.Discipline = source["Discipline"];
     this.Aggression = source["Aggression"];
     this.Stamina = source["Stamina"];
+    this.GoalieStamina = source["GoalieStamina"];
     this.InjuryRating = source["InjuryRating"];
     this.DisciplineDeviation = source["DisciplineDeviation"];
     this.InjuryDeviation = source["InjuryDeviation"];
@@ -1151,6 +1155,7 @@ export class ProfessionalPlayer {
   Discipline: number;
   Aggression: number;
   Stamina: number;
+  GoalieStamina: number;
   InjuryRating: number;
   DisciplineDeviation: number;
   InjuryDeviation: number;
@@ -1286,6 +1291,7 @@ export class ProfessionalPlayer {
     this.Discipline = source["Discipline"];
     this.Aggression = source["Aggression"];
     this.Stamina = source["Stamina"];
+    this.GoalieStamina = source["GoalieStamina"];
     this.InjuryRating = source["InjuryRating"];
     this.DisciplineDeviation = source["DisciplineDeviation"];
     this.InjuryDeviation = source["InjuryDeviation"];

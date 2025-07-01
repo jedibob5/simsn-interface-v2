@@ -466,6 +466,7 @@ export const CHLLineupPage = () => {
                           ChangePlayerInput={ChangePlayerInput}
                           property="GoalieID"
                           activatePlayer={activatePlayerModal}
+                          league={SimCHL}
                         />
                       </>
                     )}
