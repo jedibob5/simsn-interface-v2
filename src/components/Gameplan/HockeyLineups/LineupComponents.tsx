@@ -102,6 +102,16 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
     return optionList.find((opt) => Number(opt.value) === playerID) || null;
   }, [optionList, playerID]);
 
+  const staminaTextColor = useMemo(() => {
+    if (player.GoalieStamina < 30) {
+      return "text-red-400";
+    }
+    if (player.GoalieStamina > 75) {
+      return "text-green-400";
+    }
+    return "";
+  }, [player]);
+
   return (
     <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
       <>
@@ -219,7 +229,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
                 </Text>
                 <Text
                   variant="small"
-                  classes="font-semibold border-t-[0.1em] pt-2"
+                  classes={`font-semibold border-t-[0.1em] pt-2 ${staminaTextColor}`}
                 >
                   {player.GoalieStamina}
                 </Text>
