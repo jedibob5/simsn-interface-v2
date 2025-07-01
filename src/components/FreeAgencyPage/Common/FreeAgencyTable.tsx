@@ -4,7 +4,11 @@ import {
   ProfessionalPlayer as PHLPlayer,
   WaiverOffer as PHLWaiverOffer,
 } from "../../../models/hockeyModels";
-import { NFLPlayer } from "../../../models/footballModels";
+import {
+  FreeAgencyOffer,
+  NFLPlayer,
+  NFLWaiverOffer,
+} from "../../../models/footballModels";
 import { NBAPlayer } from "../../../models/basketballModels";
 import {
   Attributes,
@@ -14,11 +18,12 @@ import {
   ModalAction,
   OfferAction,
   Preferences,
+  SimNFL,
   SimPHL,
 } from "../../../_constants/constants";
 import { Table, TableCell } from "../../../_design/Table";
 import { Text } from "../../../_design/Typography";
-import { getPHLAttributes } from "../../Team/TeamPageUtils";
+import { getNFLAttributes, getPHLAttributes } from "../../Team/TeamPageUtils";
 import { Button } from "../../../_design/Buttons";
 import { ActionLock, Plus } from "../../../_design/Icons";
 import { getLogo } from "../../../_utility/getLogo";
@@ -34,16 +39,20 @@ interface FreeAgentTableProps {
   players: PHLPlayer[] | NFLPlayer[] | NBAPlayer[];
   offersByPlayer:
     | Record<number, PHLWaiverOffer[]>
-    | Record<number, PHLFreeAgencyOffer[]>;
+    | Record<number, PHLFreeAgencyOffer[]>
+    | Record<number, FreeAgencyOffer[]>
+    | Record<number, NFLWaiverOffer[]>;
   teamOfferMap:
     | Record<number, PHLWaiverOffer>
-    | Record<number, PHLFreeAgencyOffer>;
+    | Record<number, PHLFreeAgencyOffer>
+    | Record<number, FreeAgencyOffer>
+    | Record<number, NFLWaiverOffer>;
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
   teamMap: any;
   team: any;
-  category: string;
+  category?: string;
   openModal: (
     action: ModalAction,
     player: PHLPlayer | NFLPlayer | NBAPlayer
@@ -81,7 +90,15 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       { header: "Ovr", accessor: "Overall" },
     ];
 
-    if (isDesktop && category === Attributes) {
+    if (league === SimNFL) {
+      columns = columns.concat([
+        { header: "Pot", accessor: "PotentialGrade" },
+        { header: "Prev", accessor: "PreviousTeamID" },
+        { header: "Bias", accessor: "FreeAgencyBias" },
+      ]);
+    }
+
+    if (league === SimPHL && isDesktop && category === Attributes) {
       columns = columns.concat([
         { header: "Agi", accessor: "Agility" },
         { header: "FO", accessor: "Faceoffs" },
@@ -102,7 +119,7 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       ]);
     }
 
-    if (isDesktop && category === Preferences) {
+    if (league === SimPHL && isDesktop && category === Preferences) {
       columns = columns.concat([
         { header: "Market", accessor: "MarketPreference" },
         { header: "Competitive", accessor: "CompetitivePreference" },
@@ -110,7 +127,10 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
       ]);
     }
 
-    columns.push({ header: "Min. Value", accessor: "minimum value" });
+    columns.push({ header: "Min. Value", accessor: "MinimumValue" });
+    if (league === SimNFL) {
+      columns.push({ header: "AAV", accessor: "AAV" });
+    }
     columns.push({ header: "Interest", accessor: "LeadingTeams" });
     columns.push({ header: "Actions", accessor: "actions" });
     return columns;
@@ -120,7 +140,105 @@ export const FreeAgentTable: FC<FreeAgentTableProps> = ({
     item: NFLPlayer,
     index: number,
     backgroundColor: string
-  ) => <></>;
+  ) => {
+    const attributes = getNFLAttributes(
+      item,
+      !isDesktop,
+      category!,
+      item.ShowLetterGrade,
+      null
+    ) as {
+      label: string;
+      value: number;
+      letter: string;
+    }[];
+
+    const offers = offersByPlayer[item.ID];
+    let offerIds: number[] = [];
+    let logos: string[] = [];
+    if (offers) {
+      offerIds = offers && offers.map((x) => x.TeamID);
+      logos = offers && offerIds.map((id) => getLogo(SimNFL, id, false));
+    }
+    const actionVariant = !teamOfferMap[item.ID] ? "success" : "secondary";
+    let previousLogo = "";
+    if (item.PreviousTeamID > 0) {
+      previousLogo = getLogo(SimNFL, item.PreviousTeamID, false);
+    }
+
+    return (
+      <div
+        key={item.ID}
+        className={`table-row border-b dark:border-gray-700 text-left`}
+        style={{ backgroundColor }}
+      >
+        {attributes.map((attr, idx) => (
+          <TableCell
+            key={idx}
+            classes={`min-[360px]:max-w-[6em] min-[380px]:max-w-[8em] min-[430px]:max-w-[10em] 
+        text-wrap sm:max-w-full ${
+          category === Attributes && idx === 6
+            ? "text-left"
+            : idx !== 0
+            ? "text-center"
+            : ""
+        }`}
+          >
+            {attr.label === "Name" ? (
+              <span
+                className={`cursor-pointer font-semibold text-left`}
+                onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "#fcd53f";
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                  (e.target as HTMLElement).style.color = "";
+                }}
+                onClick={() => openModal(InfoType, item)}
+              >
+                <Text variant="small">{attr.value}</Text>
+              </span>
+            ) : attr.label === "Sta" || attr.label === "Inj" ? (
+              <Text variant="small">{attr.letter}</Text>
+            ) : (
+              <Text variant="small" classes="text-left">
+                {attr.value}
+              </Text>
+            )}
+          </TableCell>
+        ))}
+        <TableCell>{item.PotentialGrade}</TableCell>
+        <TableCell>
+          {item.PreviousTeamID > 0 ? (
+            <Logo url={previousLogo} variant="tiny" />
+          ) : (
+            "None"
+          )}
+        </TableCell>
+        <TableCell>{item.FreeAgency}</TableCell>
+        <TableCell>{item.MinimumValue.toFixed(2)}</TableCell>
+        <TableCell>{item.AAV.toFixed(2)}</TableCell>
+        <TableCell classes="w-[5em] min-[430px]:w-[10em]">
+          <div className="flex flex-row">
+            {(!offers || offers.length === 0) && "None"}
+            {logos.length > 0 &&
+              logos.map((url) => (
+                <Logo url={url} variant="tiny" containerClass="px-1 py-2" />
+              ))}
+          </div>
+        </TableCell>
+        <TableCell classes="w-[5em] min-[430px]:w-[6em] sm:w-[6SSSem]">
+          <Button
+            variant={actionVariant}
+            size="xs"
+            onClick={() => handleOfferModal(FreeAgentOffer, item as NFLPlayer)}
+            disabled={!!teamOfferMap[item.ID]}
+          >
+            {teamOfferMap[item.ID] ? <ActionLock /> : <Plus />}
+          </Button>
+        </TableCell>
+      </div>
+    );
+  };
 
   const PHLRowRenderer = (
     item: PHLPlayer,
