@@ -86,7 +86,7 @@ const getRecruitProfileColumns = (
         { header: "GK", accessor: "Goalkeeping" },
         { header: "GV", accessor: "GoalieVision" },
       ]);
-    } else if (!isMobile && category === Potentials) {
+    } else if (category === Potentials) {
       columns = columns.concat([
         { header: "Agi", accessor: "AgilityGrade" },
         { header: "FO", accessor: "FaceoffsGrade" },

@@ -18,6 +18,7 @@ import {
   CollegeStandings,
   CollegeTeam,
   NFLPlayerResponse,
+  NFLRequest,
   NFLStandings,
   NFLTeam,
 } from "../models/footballModels";
@@ -148,6 +149,14 @@ export const TeamService = {
 
   RemoveUserFromPHLTeam: async (request: ProTeamRequest) => {
     return await PostCall(`${hckUrl}phl/teams/remove/user`, request);
+  },
+
+  RemoveUserFromCFBTeam: async (teamID: number) => {
+    return await GetCall(`${fbaUrl}cfb/teams/remove/${teamID}`);
+  },
+
+  RemoveUserFromNFLTeam: async (request: NFLRequest) => {
+    return await PostCall(`${hckUrl}nfl/teams/remove/user`, request);
   },
 
   RemoveUserFromCBBTeam: async (teamID: number) => {

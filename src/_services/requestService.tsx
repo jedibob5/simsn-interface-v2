@@ -76,7 +76,7 @@ export const RequestService = {
     return await GetCall(`${fbaUrl}nfl/requests/all/`);
   },
 
-  ApproveCFBRequest: async (payload: ApprovePayload): Promise<Response> => {
+  ApproveCFBRequest: async (payload: CFBTeamRequest): Promise<Response> => {
     return await fetch(`${fbaUrl}requests/approve/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
@@ -84,15 +84,15 @@ export const RequestService = {
       },
       method: "PUT",
       body: JSON.stringify({
-        ID: payload.reqId,
-        TeamID: payload.teamId,
-        Username: payload.username,
+        ID: payload.ID,
+        TeamID: payload.TeamID,
+        Username: payload.Username,
         IsApproved: true,
       }),
     });
   },
 
-  ApproveNFLRequest: async (payload: ApprovePayload): Promise<NFLRequest> => {
+  ApproveNFLRequest: async (payload: any): Promise<NFLRequest> => {
     return await PostCall(`${fbaUrl}nfl/requests/approve/`, payload);
   },
 
@@ -141,7 +141,7 @@ export const RequestService = {
     return await PostCall(`${fbaUrl}nfl/requests/create/`, payload);
   },
 
-  RejectCFBRequest: async (payload: RejectPayload): Promise<Response> => {
+  RejectCFBRequest: async (payload: any): Promise<Response> => {
     return await fetch(`${fbaUrl}requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
@@ -152,7 +152,7 @@ export const RequestService = {
     });
   },
 
-  RejectNFLRequest: async (payload: RejectPayload): Promise<Response> => {
+  RejectNFLRequest: async (payload: any): Promise<Response> => {
     return await fetch(`${fbaUrl}nfl/requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
