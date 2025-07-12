@@ -128,7 +128,10 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
       selectedLeague as League
     );
     const model = res as FBARequestResponse;
-    setFBACFBRequests(model.CollegeRequests);
+    const filteredCFBRequests = model.CollegeRequests.filter(
+      (req) => req.TeamID > 0
+    );
+    setFBACFBRequests(filteredCFBRequests);
     setFBANFLRequests(model.ProRequests);
   };
   const getBasketballRequests = async () => {
@@ -263,7 +266,7 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
       );
       const payload = {
         username: request.Username,
-        cbb_id: request.TeamID,
+        teamId: request.TeamID,
       };
       addUserToCFBTeam(request.TeamID, request.Username);
       await updateUserByUsername(request.Username, payload);

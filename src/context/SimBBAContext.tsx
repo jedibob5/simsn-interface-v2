@@ -347,13 +347,16 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   const getBootstrapTeamData = async () => {
     const res = await BootstrapService.GetBBABootstrapTeamData();
     setCBBTeams(res.AllCollegeTeams);
-    setNBATeams(res.AllProTeams);
+    const sortedProTeams = res.AllProTeams.sort(
+      (a, b) => a.ConferenceID - b.ConferenceID
+    );
+    setNBATeams(sortedProTeams);
     if (res.AllCollegeTeams.length > 0) {
       const sortedCollegeTeams = res.AllCollegeTeams.sort((a, b) =>
         a.Team.localeCompare(b.Team)
       );
       const teamOptionsList = sortedCollegeTeams.map((team) => ({
-        label: team.Team,
+        label: `${team.Team} | ${team.Abbr}`,
         value: team.ID.toString(),
       }));
       const conferenceOptions = Array.from(
@@ -372,8 +375,9 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       setCBBTeamMap(collegeTeamMap);
     }
     if (res.AllProTeams.length > 0) {
-      const sortedNBATeams = res.AllProTeams.sort((a, b) =>
-        a.Team.localeCompare(b.Team)
+      const sortedNBATeams = sortedProTeams.sort(
+        (a, b) =>
+          a.Team.localeCompare(b.Team) && a.ConferenceID - b.ConferenceID
       );
       const nbaTeamOptions = sortedNBATeams.map((team) => ({
         label: team.Team,

@@ -402,7 +402,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         a.TeamName.localeCompare(b.TeamName)
       );
       const teamOptionsList = sortedCollegeTeams.map((team) => ({
-        label: team.TeamName,
+        label: `${team.TeamName} | ${team.TeamAbbr}`,
         value: team.ID.toString(),
       }));
       const conferenceOptions = Array.from(

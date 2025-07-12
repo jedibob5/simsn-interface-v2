@@ -141,24 +141,24 @@ export const RequestService = {
     return await PostCall(`${fbaUrl}nfl/requests/create/`, payload);
   },
 
-  RejectCFBRequest: async (payload: any): Promise<Response> => {
-    return await fetch(`${fbaUrl}requests/reject/`, {
+  RejectCFBRequest: async (payload: any): Promise<void> => {
+    await fetch(`${fbaUrl}requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
         "Content-Type": "application/json",
       },
-      method: "DELETE",
+      method: "POST",
       body: JSON.stringify(payload),
     });
   },
 
-  RejectNFLRequest: async (payload: any): Promise<Response> => {
-    return await fetch(`${fbaUrl}nfl/requests/reject/`, {
+  RejectNFLRequest: async (payload: any): Promise<void> => {
+    await fetch(`${fbaUrl}nfl/requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
         "Content-Type": "application/json",
       },
-      method: "DELETE",
+      method: "POST",
       body: JSON.stringify(payload),
     });
   },

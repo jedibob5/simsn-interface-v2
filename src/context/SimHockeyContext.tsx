@@ -537,7 +537,7 @@ export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
         a.TeamName.localeCompare(b.TeamName)
       );
       const chlTeamOptions = sortedCollegeTeams.map((team) => ({
-        label: team.TeamName,
+        label: `${team.TeamName} | ${team.Abbreviation}`,
         value: team.ID.toString(),
       }));
       const chlConferenceOptions = Array.from(
