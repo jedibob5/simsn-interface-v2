@@ -327,7 +327,7 @@ interface SimHCKProviderProps {
 export const SimHCKProvider: React.FC<SimHCKProviderProps> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
-  const { hck_Timestamp } = useWebSockets(hck_ws, SimHCK);
+  const { hck_Timestamp, setHCK_Timestamp } = useWebSockets(hck_ws, SimHCK);
   const isFetching = useRef(false);
   const scheduleService = new FBAScheduleService();
 

@@ -160,10 +160,6 @@ export const CHLRequestCard: React.FC<CHLRequestCardProps> = ({
   const { acceptCHLRequest, rejectCHLRequest } = useAdminPage();
   const accept = async () => {
     await acceptCHLRequest(request);
-    const payload = {
-      CHLTeamID: request.TeamID,
-    };
-    await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
     await rejectCHLRequest(request);
@@ -263,10 +259,6 @@ export const CBBRequestCard: React.FC<CBBRequestCardProps> = ({
   const { acceptCBBRequest, rejectCBBRequest } = useAdminPage();
   const accept = async () => {
     await acceptCBBRequest(request);
-    const payload = {
-      cbb_id: request.TeamID,
-    };
-    await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
     await rejectCBBRequest(request);
@@ -314,10 +306,6 @@ export const NBARequestCard: React.FC<NBARequestCardProps> = ({
   const { acceptNBARequest, rejectNBARequest } = useAdminPage();
   const accept = async () => {
     await acceptNBARequest(request);
-    const payload = {
-      NBATeamID: request.NBATeamID,
-    };
-    await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
     await rejectNBARequest(request);
@@ -370,10 +358,6 @@ export const CFBRequestCard: React.FC<CFBRequestCardProps> = ({
   const { acceptCFBRequest, rejectCFBRequest } = useAdminPage();
   const accept = async () => {
     await acceptCFBRequest(request);
-    const payload = {
-      cbb_id: request.TeamID,
-    };
-    await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
     await rejectCFBRequest(request);
@@ -421,10 +405,6 @@ export const NFLRequestCard: React.FC<NFLRequestCardProps> = ({
   const { acceptNFLRequest, rejectNFLRequest } = useAdminPage();
   const accept = async () => {
     await acceptNFLRequest(request);
-    const payload = {
-      NFLTeamID: request.NFLTeamID,
-    };
-    await updateUserByUsername(request.Username, payload);
   };
   const reject = async () => {
     await rejectNFLRequest(request);

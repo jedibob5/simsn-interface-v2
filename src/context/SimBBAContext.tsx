@@ -227,7 +227,7 @@ interface SimBBAProviderProps {
 
 export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   const { currentUser } = useAuthStore();
-  const { cbb_Timestamp } = useWebSockets(bba_ws, SimBBA);
+  const { cbb_Timestamp, setCBB_Timestamp } = useWebSockets(bba_ws, SimBBA);
   const isFetching = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingTwo, setIsLoadingTwo] = useState<boolean>(true);

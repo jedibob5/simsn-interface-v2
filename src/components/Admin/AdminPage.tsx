@@ -86,7 +86,7 @@ export const AdminPage = () => {
                 isSelected={selectedLeague === SimNBA}
                 variant="basketball"
                 classes="w-[8rem]"
-                onClick={() => setSelectedLeague(SimNBA)}
+                onClick={() => setSelectedLeague(SimCBB)}
               >
                 {SimCBB}
               </PillButton>
@@ -143,7 +143,7 @@ export const AdminPage = () => {
                 <Text variant="body-small" className="text-start">
                   Refresh
                 </Text>
-                <Button>
+                <Button onClick={RefreshRequests}>
                   <Refresh />
                 </Button>
               </div>

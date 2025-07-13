@@ -109,8 +109,8 @@ export const RequestService = {
   CreateCFBTeamRequest: async (
     team: CFBTeam,
     username: string
-  ): Promise<CFBTeamRequest> => {
-    return await PostCall(`${fbaUrl}requests/create/`, {
+  ): Promise<void> => {
+    await PostCall(`${fbaUrl}requests/create/`, {
       TeamID: team.ID,
       Username: username,
       IsApproved: false,
@@ -160,16 +160,6 @@ export const RequestService = {
       },
       method: "POST",
       body: JSON.stringify(payload),
-    });
-  },
-
-  RemoveUserFromCFBTeamRequest: async (teamID: number): Promise<Response> => {
-    return await fetch(`${fbaUrl}requests/remove/${teamID}`, {
-      headers: {
-        authorization: localStorage.getItem("token") || "",
-        "Content-Type": "application/json",
-      },
-      method: "PUT",
     });
   },
 

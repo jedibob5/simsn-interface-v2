@@ -242,7 +242,7 @@ interface SimFBAProviderProps {
 export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
-  const { cfb_Timestamp } = useWebSockets(fba_ws, SimFBA);
+  const { cfb_Timestamp, setCFB_Timestamp } = useWebSockets(fba_ws, SimFBA);
   const isFetching = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingTwo, setIsLoadingTwo] = useState<boolean>(true);

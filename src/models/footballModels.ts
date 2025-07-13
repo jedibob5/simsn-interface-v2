@@ -968,7 +968,9 @@ export class FreeAgencyOffer {
   ContractValue: number;
   BonusPercentage: number;
   AAV: number;
+  Syncs: number;
   IsActive: boolean;
+  IsRejected: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -995,14 +997,9 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.AAV = source["AAV"];
+    this.Syncs = source["Syncs"];
     this.IsActive = source["IsActive"];
-  }
-
-  updateField(name: string, value: number): FreeAgencyOffer {
-    const copy = new FreeAgencyOffer();
-    Object.assign(copy, this);
-    (copy as any)[name] = value;
-    return copy;
+    this.IsRejected = source["IsRejected"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2332,6 +2329,7 @@ export class NFLTeam {
   SpecialTeamsGrade: string;
   PenaltyMarks: number;
   JerseyType: number;
+  LastLogin: Time;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -2384,6 +2382,7 @@ export class NFLTeam {
     this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
     this.JerseyType = source["JerseyType"];
+    this.LastLogin = this.convertValues(source["LastLogin"], Time);
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];
@@ -5119,6 +5118,7 @@ export class CollegeTeam {
   SpecialTeamsGrade: string;
   PenaltyMarks: number;
   JerseyType: number;
+  LastLogin: Time;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -5168,6 +5168,7 @@ export class CollegeTeam {
     this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
     this.JerseyType = source["JerseyType"];
+    this.LastLogin = this.convertValues(source["LastLogin"], Time);
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];

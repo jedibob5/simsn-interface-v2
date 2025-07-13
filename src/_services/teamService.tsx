@@ -7,6 +7,7 @@ import {
 } from "../_constants/constants";
 import { bbaUrl, fbaUrl, hckUrl } from "../_constants/urls";
 import {
+  GetActionCall,
   GetCall,
   GetExportCall,
   GetLeagueAbbr,
@@ -152,11 +153,11 @@ export const TeamService = {
   },
 
   RemoveUserFromCFBTeam: async (teamID: number) => {
-    return await GetCall(`${fbaUrl}cfb/teams/remove/${teamID}`);
+    await GetActionCall(`${fbaUrl}requests/remove/${teamID}`);
   },
 
   RemoveUserFromNFLTeam: async (request: NFLRequest) => {
-    return await PostCall(`${hckUrl}nfl/teams/remove/user`, request);
+    return await PostCall(`${hckUrl}nfl/requests/remove/user`, request);
   },
 
   RemoveUserFromCBBTeam: async (teamID: number) => {

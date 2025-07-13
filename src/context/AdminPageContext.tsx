@@ -312,7 +312,7 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
   const rejectNFLRequest = useCallback(
     async (request: NFLRequest) => {
       const res = await RequestService.RejectNFLRequest(request);
-      setHCKPHLRequests((prevRequests) =>
+      setFBANFLRequests((prevRequests) =>
         prevRequests.filter((req) => req.ID !== request.ID)
       );
     },
