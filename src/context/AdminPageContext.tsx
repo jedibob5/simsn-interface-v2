@@ -136,9 +136,13 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
   };
   const getBasketballRequests = async () => {
     const res = await RequestService.GetCBBTeamRequests();
-    setBBACBBRequests(res);
+    if (res) {
+      setBBACBBRequests(res);
+    }
     const nbaRes = await RequestService.GetNBATeamRequests();
-    setBBANBARequests(nbaRes);
+    if (nbaRes) {
+      setBBANBARequests(nbaRes);
+    }
   };
 
   const acceptCHLRequest = useCallback(

@@ -525,7 +525,11 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setAllProStandings(res.ProStandings);
     }
 
-    if (res.AllCollegeGames.length > 0 && cfb_Timestamp) {
+    if (
+      res.AllCollegeGames &&
+      res.AllCollegeGames.length > 0 &&
+      cfb_Timestamp
+    ) {
       const currentSeasonGames = res.AllCollegeGames.filter(
         (x) => x.SeasonID === cfb_Timestamp.CollegeSeasonID
       );

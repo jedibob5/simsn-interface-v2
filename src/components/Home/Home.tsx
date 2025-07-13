@@ -49,58 +49,64 @@ export const Home = () => {
   const teamName =
     selectedTeam && GetTeamLabel(selectedLeague as League, selectedTeam);
 
-  const isLoadingData = useMemo(() => {
-    if (selectedLeague === SimCFB && cfbTeam) {
-      return false;
+  const teamByLeague = (league: League) => {
+    switch (league) {
+      case SimCFB:
+        return cfbTeam;
+      case SimNFL:
+        return nflTeam;
+      case SimCBB:
+        return cbbTeam;
+      case SimNBA:
+        return nbaTeam;
+      case SimCHL:
+        return chlTeam;
+      case SimPHL:
+        return phlTeam;
+      default:
+        return null;
     }
-    if (selectedLeague === SimNFL && nflTeam) {
-      return false;
-    }
-    if (selectedLeague === SimCBB && cbbTeam) {
-      return false;
-    }
-    if (selectedLeague === SimNBA && nbaTeam) {
-      return false;
-    }
-    if (selectedLeague === SimCHL && chlTeam) {
-      return false;
-    }
-    if (selectedLeague === SimPHL && phlTeam) {
-      return false;
-    }
-    return true;
-  }, [selectedLeague, cfbTeam, nflTeam, cbbTeam, nbaTeam]);
+  };
+
+  const isLoadingData = !selectedTeam;
 
   useEffect(() => {
-    if (cfbTeam && !fbLoading) {
-      SetTeam(SimCFB, cfbTeam);
-      return;
-    } else if (nflTeam && !fbLoading) {
-      SetTeam(SimNFL, nflTeam);
-      return;
-    } else if (cbbTeam && !fbLoading) {
-      SetTeam(SimCBB, cbbTeam);
-      return;
-    } else if (nbaTeam && !fbLoading) {
-      SetTeam(SimNBA, nbaTeam);
-      return;
-    } else if (chlTeam && !fbLoading) {
-      SetTeam(SimCHL, chlTeam);
-      return;
-    } else if (phlTeam && !fbLoading) {
-      SetTeam(SimPHL, phlTeam);
-      return;
+    // only run once all stores are done loading
+    if (fbLoading || bkLoading || hkLoading) return;
+
+    // 1) Try the user's DefaultLeague
+    const defaultLeague = currentUser?.DefaultLeague as League | undefined;
+    if (defaultLeague) {
+      const defaultTeam = teamByLeague(defaultLeague);
+      if (defaultTeam) {
+        setSelectedLeague(defaultLeague);
+        setSelectedTeam(defaultTeam);
+        return;
+      }
+    }
+
+    // 2) Fallback priority: CFB → NFL → CBB → NBA → CHL → PHL
+    const priority: League[] = [SimCFB, SimNFL, SimCBB, SimNBA, SimCHL, SimPHL];
+    for (let league of priority) {
+      const team = teamByLeague(league);
+      if (team) {
+        setSelectedLeague(league);
+        setSelectedTeam(team);
+        break;
+      }
     }
   }, [
-    cfbTeam,
-    cbbTeam,
-    nflTeam,
-    nbaTeam,
-    chlTeam,
-    phlTeam,
     fbLoading,
     bkLoading,
     hkLoading,
+    cfbTeam,
+    nflTeam,
+    cbbTeam,
+    nbaTeam,
+    chlTeam,
+    phlTeam,
+    currentUser?.DefaultLeague,
+    setSelectedLeague,
   ]);
 
   const SetTeam = (league: League, team: any) => {
@@ -120,7 +126,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimCFB}
                 onClick={() => SetTeam(SimCFB, cfbTeam)}
               >
-                <img src={`${simLogos.SimCFB}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimCFB}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {cfbTeam.TeamName}
               </PillButton>
             )}
@@ -131,7 +140,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimNFL}
                 onClick={() => SetTeam(SimNFL, nflTeam)}
               >
-                <img src={`${simLogos.SimNFL}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimNFL}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {nflTeam.Mascot}
               </PillButton>
             )}
@@ -142,7 +154,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimCBB}
                 onClick={() => SetTeam(SimCBB, cbbTeam)}
               >
-                <img src={`${simLogos.SimCBB}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimCBB}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {cbbTeam.Team}
               </PillButton>
             )}
@@ -153,7 +168,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimNBA}
                 onClick={() => SetTeam(SimNBA, nbaTeam)}
               >
-                <img src={`${simLogos.SimNBA}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimNBA}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {nbaTeam.Nickname}
               </PillButton>
             )}
@@ -164,7 +182,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimCHL}
                 onClick={() => SetTeam(SimCHL, chlTeam)}
               >
-                <img src={`${simLogos.SimCHL}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimCHL}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {chlTeam.TeamName}
               </PillButton>
             )}
@@ -175,7 +196,10 @@ export const Home = () => {
                 isSelected={selectedLeague === SimPHL}
                 onClick={() => SetTeam(SimPHL, phlTeam)}
               >
-                <img src={`${simLogos.SimPHL}`} className="hidden md:block w-[4em] h-auto" />
+                <img
+                  src={`${simLogos.SimPHL}`}
+                  className="hidden md:block w-[4em] h-auto"
+                />
                 {phlTeam.Mascot}
               </PillButton>
             )}
