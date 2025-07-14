@@ -56,7 +56,7 @@ export const CHLRecruiting = () => {
     teamProfile,
     recruitMap,
     recruitingCategory,
-    setRecruitingCategory,
+    updateRecruitingCategory,
     isModalOpen,
     handleCloseModal,
     regionOptions,
@@ -153,7 +153,7 @@ export const CHLRecruiting = () => {
                   variant={
                     recruitingCategory === Overview ? "success" : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(Overview)}
+                  onClick={() => updateRecruitingCategory(Overview)}
                 >
                   Overview
                 </Button>
@@ -164,7 +164,7 @@ export const CHLRecruiting = () => {
                       ? "success"
                       : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(RecruitingTeamBoard)}
+                  onClick={() => updateRecruitingCategory(RecruitingTeamBoard)}
                 >
                   Board
                 </Button>
@@ -175,7 +175,7 @@ export const CHLRecruiting = () => {
                       ? "success"
                       : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(RecruitingRankings)}
+                  onClick={() => updateRecruitingCategory(RecruitingRankings)}
                 >
                   Rankings
                 </Button>
@@ -186,7 +186,7 @@ export const CHLRecruiting = () => {
                       ? "success"
                       : "secondary"
                   }
-                  onClick={() => setRecruitingCategory(RecruitingClassView)}
+                  onClick={() => updateRecruitingCategory(RecruitingClassView)}
                 >
                   Class
                 </Button>

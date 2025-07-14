@@ -55,5 +55,12 @@ export const useWebSockets = (url: string, sport: string) => {
     };
   }, [isLoading, currentUser]);
 
-  return { cfb_Timestamp, cbb_Timestamp, hck_Timestamp };
+  return {
+    cfb_Timestamp,
+    cbb_Timestamp,
+    hck_Timestamp,
+    setCFB_Timestamp,
+    setCBB_Timestamp,
+    setHCK_Timestamp,
+  };
 };

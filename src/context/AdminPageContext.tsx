@@ -34,6 +34,8 @@ import { useLeagueStore } from "./LeagueContext";
 import { RequestService } from "../_services/requestService";
 import { updateUserByUsername } from "../firebase/firestoreHelper";
 import { useSimHCKStore } from "./SimHockeyContext";
+import { useSimFBAStore } from "./SimFBAContext";
+import { useSimBBAStore } from "./SimBBAContext";
 
 interface AdminPageContextType {
   hckCHLRequests: CollegeTeamRequest[];
@@ -48,10 +50,10 @@ interface AdminPageContextType {
   rejectCBBRequest: (request: CBBRequest) => Promise<void>;
   acceptNBARequest: (request: NBARequest) => Promise<void>;
   rejectNBARequest: (request: NBARequest) => Promise<void>;
-  // acceptCFBRequest: (request: CFBRequest) => Promise<void>;
-  // rejectCFBRequest: (request: CFBRequest) => Promise<void>;
-  // acceptNFLRequest: (request: NFLRequest) => Promise<void>;
-  // rejectNFLRequest: (request: NFLRequest) => Promise<void>;
+  acceptCFBRequest: (request: CFBRequest) => Promise<void>;
+  rejectCFBRequest: (request: CFBRequest) => Promise<void>;
+  acceptNFLRequest: (request: NFLRequest) => Promise<void>;
+  rejectNFLRequest: (request: NFLRequest) => Promise<void>;
   fbaCFBRequests: CFBRequest[];
   fbaNFLRequests: NFLRequest[];
   bbaCBBRequests: CBBRequest[];
@@ -88,6 +90,8 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
   const [bbaNBARequests, setBBANBARequests] = useState<NBARequest[]>([]);
 
   const { addUserToCHLTeam, addUserToPHLTeam } = useSimHCKStore();
+  const { addUserToCFBTeam, addUserToNFLTeam } = useSimFBAStore();
+  const { addUserToCBBTeam, addUserToNBATeam } = useSimBBAStore();
 
   useEffect(() => {
     if (
@@ -124,14 +128,21 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
       selectedLeague as League
     );
     const model = res as FBARequestResponse;
-    setFBACFBRequests(model.CollegeRequests);
+    const filteredCFBRequests = model.CollegeRequests.filter(
+      (req) => req.TeamID > 0
+    );
+    setFBACFBRequests(filteredCFBRequests);
     setFBANFLRequests(model.ProRequests);
   };
   const getBasketballRequests = async () => {
     const res = await RequestService.GetCBBTeamRequests();
-    setBBACBBRequests(res);
+    if (res) {
+      setBBACBBRequests(res);
+    }
     const nbaRes = await RequestService.GetNBATeamRequests();
-    setBBANBARequests(nbaRes);
+    if (nbaRes) {
+      setBBANBARequests(nbaRes);
+    }
   };
 
   const acceptCHLRequest = useCallback(
@@ -199,10 +210,10 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
         username: request.Username,
         cbb_id: request.TeamID,
       };
-      addUserToCHLTeam(request.TeamID, request.Username);
+      addUserToCBBTeam(request.TeamID, request.Username);
       await updateUserByUsername(request.Username, payload);
     },
-    [hckCHLRequests]
+    [bbaCBBRequests]
   );
 
   const rejectCBBRequest = useCallback(
@@ -212,13 +223,13 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
         prevRequests.filter((req) => req.ID !== request.ID)
       );
     },
-    [hckCHLRequests]
+    [bbaCBBRequests]
   );
 
   const acceptNBARequest = useCallback(
     async (request: NBARequest) => {
       const res = await RequestService.ApproveNBARequest(request);
-      setHCKPHLRequests((prevRequests) =>
+      setBBANBARequests((prevRequests) =>
         prevRequests.filter((req) => req.ID !== request.ID)
       );
       let role = "Owner";
@@ -234,20 +245,82 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
         NBATeamID: request.NBATeamID,
         NBARole: role,
       };
-      // add(request.TeamID, request.Username, request.Role);
+      addUserToNBATeam(request.NBATeamID, request.Username, role);
       await updateUserByUsername(request.Username, payload);
     },
-    [hckPHLRequests]
+    [bbaNBARequests]
   );
 
   const rejectNBARequest = useCallback(
     async (request: NBARequest) => {
       const res = await RequestService.RejectNBARequest(request);
-      setHCKPHLRequests((prevRequests) =>
+      setBBANBARequests((prevRequests) =>
         prevRequests.filter((req) => req.ID !== request.ID)
       );
     },
-    [hckPHLRequests]
+    [bbaNBARequests]
+  );
+
+  const acceptCFBRequest = useCallback(
+    async (request: CFBRequest) => {
+      const res = await RequestService.ApproveCFBRequest(request);
+
+      setFBACFBRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+      const payload = {
+        username: request.Username,
+        teamId: request.TeamID,
+      };
+      addUserToCFBTeam(request.TeamID, request.Username);
+      await updateUserByUsername(request.Username, payload);
+    },
+    [fbaCFBRequests]
+  );
+
+  const rejectCFBRequest = useCallback(
+    async (request: CFBRequest) => {
+      const res = await RequestService.RejectCFBRequest(request);
+      setFBACFBRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+    },
+    [fbaCFBRequests]
+  );
+
+  const acceptNFLRequest = useCallback(
+    async (request: NFLRequest) => {
+      const res = await RequestService.ApproveNFLRequest(request);
+      setFBANFLRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+      let role = "Owner";
+      if (request.IsManager) {
+        role = "GM";
+      } else if (request.IsCoach) {
+        role = "Coach";
+      } else if (request.IsAssistant) {
+        role = "Assistant";
+      }
+      const payload = {
+        username: request.Username,
+        NFLTeamID: request.NFLTeamID,
+        NFLRole: role,
+      };
+      addUserToNFLTeam(request.NFLTeamID, request.Username, role);
+      await updateUserByUsername(request.Username, payload);
+    },
+    [fbaNFLRequests]
+  );
+
+  const rejectNFLRequest = useCallback(
+    async (request: NFLRequest) => {
+      const res = await RequestService.RejectNFLRequest(request);
+      setFBANFLRequests((prevRequests) =>
+        prevRequests.filter((req) => req.ID !== request.ID)
+      );
+    },
+    [fbaNFLRequests]
   );
 
   const RefreshRequests = useCallback(async () => {
@@ -278,6 +351,10 @@ export const AdminPageProvider: React.FC<AdminPageProviderProps> = ({
         rejectCBBRequest,
         acceptNBARequest,
         rejectNBARequest,
+        acceptCFBRequest,
+        rejectCFBRequest,
+        acceptNFLRequest,
+        rejectNFLRequest,
         fbaCFBRequests,
         fbaNFLRequests,
         selectedTab,

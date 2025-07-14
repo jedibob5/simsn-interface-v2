@@ -30,6 +30,7 @@ export const GetTeamLabel = (league: League, team: any): String => {
 };
 
 export const GetCurrentWeek = (league: League, ts: any) => {
+  if (!ts) return 0;
   if (league === SimCFB || league === SimNFL) {
     return GetFBCurrentWeek(league, ts as FBTimestamp);
   }

@@ -53,6 +53,12 @@ export const LeagueProvider = ({ children }: LeagueProviderProps) => {
     [selectedLeague, cfb_Timestamp, cbb_Timestamp, hck_Timestamp]
   );
 
+  const SetRunCron = () => {};
+
+  const SetRunGames = () => {};
+
+  const SetDraft = () => {};
+
   return (
     <LeagueContext.Provider value={{ selectedLeague, setSelectedLeague, ts }}>
       {children}

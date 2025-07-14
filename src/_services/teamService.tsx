@@ -7,6 +7,7 @@ import {
 } from "../_constants/constants";
 import { bbaUrl, fbaUrl, hckUrl } from "../_constants/urls";
 import {
+  GetActionCall,
   GetCall,
   GetExportCall,
   GetLeagueAbbr,
@@ -18,6 +19,7 @@ import {
   CollegeStandings,
   CollegeTeam,
   NFLPlayerResponse,
+  NFLRequest,
   NFLStandings,
   NFLTeam,
 } from "../models/footballModels";
@@ -150,12 +152,20 @@ export const TeamService = {
     return await PostCall(`${hckUrl}phl/teams/remove/user`, request);
   },
 
+  RemoveUserFromCFBTeam: async (teamID: number) => {
+    await GetActionCall(`${fbaUrl}requests/remove/${teamID}`);
+  },
+
+  RemoveUserFromNFLTeam: async (request: NFLRequest) => {
+    return await PostCall(`${fbaUrl}nfl/requests/remove/user`, request);
+  },
+
   RemoveUserFromCBBTeam: async (teamID: number) => {
     return await PUTCall(`${bbaUrl}team/removeUserFromTeam/${teamID}`, {});
   },
 
   RemoveUserFromNBATeam: async (teamID: number, request: NBARequest) => {
-    return await PUTCall(
+    return await PostCall(
       `${bbaUrl}team/nba/removeUserFromTeam/${teamID}`,
       request
     );
