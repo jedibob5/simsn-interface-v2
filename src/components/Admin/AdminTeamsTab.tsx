@@ -411,6 +411,7 @@ export const AdminNFLTeamCard: React.FC<AdminNFLTeamCardProps> = ({
     } else if (role === Scout) {
       userName = team.NFLAssistantName;
     }
+    dto.Username = userName;
     const payload = {
       NFLTeamID: 0,
       NFLRole: "",
@@ -606,6 +607,8 @@ export const AdminNBATeamCard: React.FC<AdminNBATeamCardProps> = ({
       NBATeamID: 0,
       NBARole: "",
     };
+    dto.Username = userName;
+
     await updateUserByUsername(userName, payload);
     handleCloseModal();
     return await removeUser(dto);

@@ -157,7 +157,7 @@ export const TeamService = {
   },
 
   RemoveUserFromNFLTeam: async (request: NFLRequest) => {
-    return await PostCall(`${hckUrl}nfl/requests/remove/user`, request);
+    return await PostCall(`${fbaUrl}nfl/requests/remove/user`, request);
   },
 
   RemoveUserFromCBBTeam: async (teamID: number) => {
@@ -165,7 +165,7 @@ export const TeamService = {
   },
 
   RemoveUserFromNBATeam: async (teamID: number, request: NBARequest) => {
-    return await PUTCall(
+    return await PostCall(
       `${bbaUrl}team/nba/removeUserFromTeam/${teamID}`,
       request
     );
