@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from "react";
 import { useAuthStore } from "./AuthContext";
 import { BootstrapService } from "../_services/bootstrapService";
@@ -22,11 +23,11 @@ import {
   NewsLog,
   NFLCapsheet,
   NFLDepthChart,
-  NFLGameplan,
   NFLGame,
   NFLPlayer,
   NFLStandings,
   NFLTeam,
+  NFLGameplan,
   Notification,
   RecruitingTeamProfile,
   Timestamp,
@@ -38,6 +39,9 @@ import {
   CollegeTeamProfileData as CFBTeamProfileData,
   RecruitPlayerProfile,
   UpdateRecruitingBoardDTO,
+  NFLWaiverOffDTO,
+  FreeAgencyOfferDTO,
+  NFLRequest,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -52,6 +56,8 @@ import {
   ValidateAffinity,
   ValidateCloseToHome,
 } from "../_helper/recruitingHelper";
+import { FreeAgencyService } from "../_services/freeAgencyService";
+import { TeamService } from "../_services/teamService";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -97,6 +103,8 @@ interface SimFBAContextProps {
   capsheetMap: Record<number, NFLCapsheet> | null;
   proInjuryReport: NFLPlayer[];
   practiceSquadPlayers: NFLPlayer[];
+  freeAgents: NFLPlayer[];
+  waiverPlayers: NFLPlayer[];
   proNews: NewsLog[];
   allProGames: NFLGame[];
   currentProSeasonGames: NFLGame[];
@@ -107,6 +115,10 @@ interface SimFBAContextProps {
   topNFLPassers: NFLPlayer[];
   topNFLRushers: NFLPlayer[];
   topNFLReceivers: NFLPlayer[];
+  removeUserfromCFBTeamCall: (teamID: number) => Promise<void>;
+  removeUserfromNFLTeamCall: (request: NFLRequest) => Promise<void>;
+  addUserToCFBTeam: (teamID: number, user: string) => void;
+  addUserToNFLTeam: (teamID: number, user: string, role: string) => void;
   cutCFBPlayer: (playerID: number, teamID: number) => Promise<void>;
   cutNFLPlayer: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
@@ -123,11 +135,16 @@ interface SimFBAContextProps {
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   ExportCFBRecruits: () => Promise<void>;
+  SaveFreeAgencyOffer: (dto: any) => Promise<void>;
+  CancelFreeAgencyOffer: (dto: any) => Promise<void>;
+  SaveWaiverWireOffer: (dto: any) => Promise<void>;
+  CancelWaiverWireOffer: (dto: any) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
+  proPlayerMap: Record<number, NFLPlayer>;
   allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
   collegeGameplan: CollegeGameplan | null;
   nflGameplan: NFLGameplan | null;
@@ -187,6 +204,12 @@ const defaultContext: SimFBAContextProps = {
   topNFLPassers: [],
   topNFLRushers: [],
   topNFLReceivers: [],
+  freeAgents: [],
+  waiverPlayers: [],
+  removeUserfromCFBTeamCall: async () => {},
+  removeUserfromNFLTeamCall: async () => {},
+  addUserToCFBTeam: async () => {},
+  addUserToNFLTeam: async () => {},
   cutCFBPlayer: async () => {},
   cutNFLPlayer: async () => {},
   redshirtPlayer: async () => {},
@@ -203,10 +226,15 @@ const defaultContext: SimFBAContextProps = {
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
   ExportCFBRecruits: async () => {},
+  SaveFreeAgencyOffer: async () => {},
+  CancelFreeAgencyOffer: async () => {},
+  SaveWaiverWireOffer: async () => {},
+  CancelWaiverWireOffer: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
   allCFBTeamHistory: {},
+  proPlayerMap: {},
   collegeGameplan: null,
   nflGameplan: null,
   collegeDepthChart: null,
@@ -223,7 +251,7 @@ interface SimFBAProviderProps {
 export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuthStore();
-  const { cfb_Timestamp } = useWebSockets(fba_ws, SimFBA);
+  const { cfb_Timestamp, setCFB_Timestamp } = useWebSockets(fba_ws, SimFBA);
   const isFetching = useRef(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingTwo, setIsLoadingTwo] = useState<boolean>(true);
@@ -344,6 +372,34 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [nflGameplan, setNFLGameplan] = useState<NFLGameplan | null>(null);
   const [collegeDepthChart, setCollegeDepthChart] = useState<CollegeTeamDepthChart | null>(null);
   const [nflDepthChart, setNFLDepthChart] = useState<NFLDepthChart | null>(null);
+  const [freeAgents, setFreeAgents] = useState<NFLPlayer[]>([]);
+  const [waiverPlayers, setWaiverPlayers] = useState<NFLPlayer[]>([]);
+
+  const proPlayerMap = useMemo(() => {
+    const playerMap: Record<number, NFLPlayer> = {};
+
+    if (proRosterMap && nflTeams) {
+      for (let i = 0; i < nflTeams.length; i++) {
+        const team = nflTeams[i];
+        const roster = proRosterMap[team.ID];
+        if (roster) {
+          for (let j = 0; j < roster.length; j++) {
+            const p = roster[j];
+            playerMap[p.ID] = p;
+          }
+        }
+      }
+      const freeAgents = proRosterMap[0];
+      if (freeAgents) {
+        for (let i = 0; i < freeAgents.length; i++) {
+          const p = freeAgents[i];
+          playerMap[p.ID] = p;
+        }
+      }
+    }
+
+    return playerMap;
+  }, [proRosterMap, nflTeams]);
 
   useEffect(() => {
     getBootstrapTeamData();
@@ -359,7 +415,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         a.TeamName.localeCompare(b.TeamName)
       );
       const teamOptionsList = sortedCollegeTeams.map((team) => ({
-        label: team.TeamName,
+        label: `${team.TeamName} | ${team.TeamAbbr}`,
         value: team.ID.toString(),
       }));
       const conferenceOptions = Array.from(
@@ -486,7 +542,11 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setAllProStandings(res.ProStandings);
     }
 
-    if (res.AllCollegeGames.length > 0 && cfb_Timestamp) {
+    if (
+      res.AllCollegeGames &&
+      res.AllCollegeGames.length > 0 &&
+      cfb_Timestamp
+    ) {
       const currentSeasonGames = res.AllCollegeGames.filter(
         (x) => x.SeasonID === cfb_Timestamp.CollegeSeasonID
       );
@@ -559,6 +619,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setNFLDepthchartMap(res.NFLDepthChartMap);
       setProContractMap(res.ContractMap);
       setProExtensionMap(res.ExtensionMap);
+      setFreeAgents(res.FreeAgents);
+      setWaiverPlayers(res.WaiverPlayers);
     }
 
     setPlayerFaces(res.FaceData);
@@ -732,7 +794,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const toggleScholarship = async (dto: any) => {
     const profile = await RecruitService.FBAToggleScholarship(dto);
-    console.log({ profile, dto });
     if (profile) {
       setRecruitProfiles((profiles) =>
         [...profiles].map((p) =>
@@ -840,6 +901,152 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     await RecruitService.ExportCFBCroots();
   }, []);
 
+  const SaveFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
+    const res = await FreeAgencyService.FBASaveFreeAgencyOffer(dto);
+    if (res) {
+      enqueueSnackbar("Free Agency Offer Created!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setFreeAgentOffers((prevOffers) => {
+        const offers = [...prevOffers];
+        const index = offers.findIndex((offer) => offer.ID === res.ID);
+        if (index > -1) {
+          offers[index] = new FreeAgencyOffer({ ...res });
+        } else {
+          offers.push(res);
+        }
+        return offers;
+      });
+    }
+  }, []);
+
+  const CancelFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
+    const res = await FreeAgencyService.FBACancelFreeAgencyOffer(dto);
+    if (res) {
+      enqueueSnackbar("Free Agency Offer Cancelled!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setFreeAgentOffers((prevOffers) => {
+        const offers = [...prevOffers].filter((offer) => offer.ID !== dto.ID);
+        return offers;
+      });
+    }
+  }, []);
+
+  const SaveWaiverWireOffer = useCallback(async (dto: NFLWaiverOffDTO) => {
+    const res = await FreeAgencyService.FBASaveWaiverWireOffer(dto);
+    if (res) {
+      enqueueSnackbar("Waiver Offer Created!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setWaiverOffers((prevOffers) => {
+        const offers = [...prevOffers];
+        const index = offers.findIndex((offer) => offer.ID === res.ID);
+        if (index > -1) {
+          offers[index] = new NFLWaiverOffer({ ...res });
+        } else {
+          offers.push(res);
+        }
+        return offers;
+      });
+    }
+  }, []);
+
+  const CancelWaiverWireOffer = useCallback(async (dto: NFLWaiverOffDTO) => {
+    const res = await FreeAgencyService.FBACancelWaiverWireOffer(dto);
+    if (res) {
+      enqueueSnackbar("Waiver Offer Cancelled!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      setWaiverOffers((prevOffers) => {
+        const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
+        return offers;
+      });
+    }
+  }, []);
+
+  const removeUserfromCFBTeamCall = useCallback(
+    async (teamID: number) => {
+      const res = await TeamService.RemoveUserFromCFBTeam(teamID);
+      const cfbTeamsList = [...cfbTeams];
+      const teamIDX = cfbTeamsList.findIndex((x) => x.ID === teamID);
+      if (teamIDX > -1) {
+        cfbTeamsList[teamIDX].Coach = "";
+      }
+      setCFBTeams(cfbTeamsList);
+    },
+    [cfbTeams]
+  );
+
+  const removeUserfromNFLTeamCall = useCallback(
+    async (request: NFLRequest) => {
+      const res = await TeamService.RemoveUserFromNFLTeam(request);
+      const nflTeamsList = [...nflTeams];
+      const teamIDX = nflTeamsList.findIndex((x) => x.ID === request.NFLTeamID);
+      if (request.IsOwner) {
+        nflTeamsList[teamIDX].NFLOwnerName = "";
+      } else if (request.IsCoach) {
+        nflTeamsList[teamIDX].Coach = "";
+      } else if (request.IsManager) {
+        nflTeamsList[teamIDX].NFLGMName = "";
+      } else if (request.IsAssistant) {
+        nflTeamsList[teamIDX].NFLAssistantName = "";
+      }
+      setNFLTeams(nflTeamsList);
+    },
+    [nflTeams]
+  );
+
+  const addUserToCFBTeam = useCallback(
+    (teamID: number, user: string) => {
+      const teams = [...cfbTeams];
+      const teamIDX = teams.findIndex((team) => team.ID === teamID);
+      if (teamID > -1) {
+        teams[teamIDX].Coach = user;
+        enqueueSnackbar(
+          `${user} has been added as the Head Coach for ${teams[teamIDX].TeamName} Organization`,
+          {
+            variant: "success",
+            autoHideDuration: 3000,
+          }
+        );
+      }
+      setCFBTeams(teams);
+    },
+    [cfbTeams]
+  );
+
+  const addUserToNFLTeam = useCallback(
+    (teamID: number, user: string, role: string) => {
+      const teams = [...nflTeams];
+      const teamIDX = teams.findIndex((team) => team.ID === teamID);
+      if (teamID > -1) {
+        if (role === "Owner") {
+          teams[teamIDX].NFLOwnerName = user;
+        } else if (role === "Coach") {
+          teams[teamIDX].Coach = user;
+        } else if (role === "GM") {
+          teams[teamIDX].NFLGMName = user;
+        } else if (role === "Assistant") {
+          teams[teamIDX].NFLAssistantName = user;
+        }
+        enqueueSnackbar(
+          `${user} has been added as a ${role} to the ${teams[teamIDX].Mascot} Organization`,
+          {
+            variant: "success",
+            autoHideDuration: 3000,
+          }
+        );
+      }
+      setNFLTeams(teams);
+    },
+    [nflTeams]
+  );
+
   return (
     <SimFBAContext.Provider
       value={{
@@ -908,11 +1115,22 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         SaveRecruitingBoard,
         SaveAIRecruitingSettings,
         ExportCFBRecruits,
+        SaveFreeAgencyOffer,
+        SaveWaiverWireOffer,
+        CancelFreeAgencyOffer,
+        CancelWaiverWireOffer,
+        addUserToCFBTeam,
+        addUserToNFLTeam,
+        removeUserfromCFBTeamCall,
+        removeUserfromNFLTeamCall,
         playerFaces,
         proContractMap,
         proExtensionMap,
         allCFBTeamHistory,
         isLoadingFour,
+        proPlayerMap,
+        freeAgents,
+        waiverPlayers,
         collegeGameplan,
         nflGameplan,
         collegeDepthChart,
