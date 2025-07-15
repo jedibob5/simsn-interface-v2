@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CollegePlayer, NFLPlayer } from '../../../../../models/footballModels';
-import { SimCFB, SimNFL } from '../../../../../_constants/constants';
+import { SimCFB, SimNFL, ManagementCard } from '../../../../../_constants/constants';
 import { Text } from '../../../../../_design/Typography';
 import { Modal } from '../../../../../_design/Modal';
 import { Button } from '../../../../../_design/Buttons';
@@ -136,7 +136,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
           const allAssignedPlayers = getAllAssignedPlayersForPosition(modalPosition, players, depthChart);
           
           return (
-            <div className="space-y-6">
+            <div className="space-y-2">
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <Text variant="h5" classes="text-white font-semibold">
@@ -208,6 +208,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                               player={assignedPlayer.playerData}
                               team={team}
                               league={league}
+                              depthChartManager={true}
                               size="sm"
                               classes="cursor-pointer hover:shadow-lg rounded-lg items-center justify-center"
                             />
@@ -261,6 +262,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                               team={team}
                               league={league}
                               position={getOverarchingPosition(modalPosition)}
+                              category={ManagementCard}
                               size="sm"
                               classes="cursor-pointer hover:shadow-lg"
                               onPlayerSelect={() => handleAvailablePlayerClick(player)}
@@ -270,6 +272,8 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                               player={player}
                               team={team}
                               league={league}
+                              category={ManagementCard}
+                              depthChartManager={true}
                               size="sm"
                               classes="cursor-pointer hover:shadow-lg"
                             />

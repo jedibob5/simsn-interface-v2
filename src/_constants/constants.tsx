@@ -112,6 +112,7 @@ export const DefendingZone = "Defending Zone";
 export const NeutralZone = "Neutral Zone";
 export const AttackingZone = "Attacking Zone";
 export const AttackingGoalZone = "Attacking Goal Zone";
+export const ManagementCard = "Management Card";
 export type Zone =
   | typeof DefendingGoalZone
   | typeof DefendingZone
@@ -500,6 +501,11 @@ export const Strength = "Strength";
 export const ThrowPower = "Throw Power";
 export const ThrowAccuracy = "Throw Accuracy";
 export const ShotgunRating = "Shotgun Rating";
+export const ShotgunRatingAcronyms = {
+  "Balanced": "BAL",
+  "Under Center": "UND",
+  "Shotgun": "GUN"
+} as const;
 export const Catching = "Catching";
 export const PassBlock = "Pass Block";
 export const RunBlock = "Run Block";

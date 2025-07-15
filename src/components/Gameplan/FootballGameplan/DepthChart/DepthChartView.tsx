@@ -261,7 +261,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
           isValid={validation.isValid}
           contextName="Depth Chart"
         />
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 3xl:grid-cols-3 gap-8">
         {isDesktop && (
           <div className="relative col-span-2">
             <div className="text-center pb-4">

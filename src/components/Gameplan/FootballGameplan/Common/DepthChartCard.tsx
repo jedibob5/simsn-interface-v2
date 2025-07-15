@@ -4,7 +4,7 @@ import { Border } from '../../../../_design/Borders';
 import PlayerPicture from '../../../../_utility/usePlayerFaces';
 import { useTeamColors } from '../../../../_hooks/useTeamColors';
 import { getTextColorBasedOnBg } from '../../../../_utility/getBorderClass';
-import { SimCFB, SimNFL } from '../../../../_constants/constants';
+import { SimCFB, SimNFL, ManagementCard } from '../../../../_constants/constants';
 import { getPlayerOverallRating } from '../Utils/GameplanPlayerUtils';
 import { 
   getSizeClasses, 
@@ -23,6 +23,8 @@ interface DepthChartCardProps {
   size?: 'sm' | 'md' | 'lg';
   showLetterGrade?: boolean;
   position?: string;
+  category?: string;
+  depthChartManager?: boolean;
 }
 
 export const DepthChartCard: React.FC<DepthChartCardProps> = ({
@@ -31,7 +33,9 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   league,
   classes = "",
   size = 'md',
-  showLetterGrade
+  showLetterGrade,
+  category,
+  depthChartManager,
 }) => {
   const teamColors = useTeamColors(team?.ColorOne, team?.ColorTwo, team?.ColorThree);
   const backgroundColor = teamColors.One;
@@ -64,7 +68,6 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
     );
   }
 
-
   return (
     <>
       <div
@@ -72,10 +75,11 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
           relative cursor-pointer select-none transition-all duration-200 
           ${classes?.includes('!w-full !h-full') ? 'w-full h-full' : `${sizeClasses} w-full h-full`}
           ${classes}
+          ${depthChartManager ? '' : ``}
         `}
       >
       <Border
-        classes="h-full p-1 relative overflow-hidden"
+        classes="h-full p-4 relative overflow-hidden"
         styles={{
           backgroundColor,
           borderColor,
@@ -86,7 +90,19 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
           className="absolute inset-0 opacity-10"
           style={generateBackgroundPattern(accentColor)}
         />
-
+      {category === ManagementCard && (
+        <div 
+          className="absolute top-0 left-0 px-1 py-0.5 rounded-bl-md z-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+        >
+          <Text 
+            variant={getTextSize(size)} 
+            classes={`font-bold`}
+          >
+            {player.Position}
+          </Text>
+        </div>
+      )}
         <div 
           className="absolute top-0 right-0 px-1 py-0.5 rounded-bl-md z-10"
           style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
@@ -99,8 +115,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
           </Text>
         </div>
         <div className="flex flex-col h-full justify-between relative z-10">
-          <div className={`bg-white ${pictureSize} mx-auto mt-1 rounded-full overflow-hidden border-2`} 
-               style={{ borderColor: accentColor }}>
+          <div className={`bg-white mx-auto mt-1 rounded-full overflow-hidden border-2 ${depthChartManager ? 'max-w-[2.5em] sm:max-w-[3em]' : `${pictureSize}`}`}>
             <PlayerPicture
               playerID={player?.PlayerID || player?.ID}
               team={team}

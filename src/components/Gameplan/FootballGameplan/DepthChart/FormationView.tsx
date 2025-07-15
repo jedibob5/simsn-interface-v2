@@ -31,7 +31,7 @@ const FormationView: React.FC<FormationViewProps> = ({
 }) => {
   
   const getOffenseFormation = () => (
-    <div className="relative w-full h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
+    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <div
@@ -42,7 +42,7 @@ const FormationView: React.FC<FormationViewProps> = ({
         ))}
       </div>
       <div className="absolute inset-0 grid grid-cols-14 grid-rows-12 gap-1 p-4">
-        <div className="col-start-1 col-span-2 row-start-2 flex justify-center">
+        <div className="col-start-1 col-span-3 row-start-2 flex justify-center">
           <PositionSlot
             position="WR"
             positionLevels={4} 
@@ -86,7 +86,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             openModal={openModal}
           />
         </div>
-        <div className="col-span-5 col-start-5 row-start-3 flex justify-center items-center gap-1">
+        <div className="col-span-8 col-start-3 row-start-3 flex justify-center items-center gap-1">
           <PositionSlot
             position="LT"
             positionLevels={1}

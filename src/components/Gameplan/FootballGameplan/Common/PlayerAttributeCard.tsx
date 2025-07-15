@@ -5,7 +5,7 @@ import { Border } from '../../../../_design/Borders';
 import PlayerPicture from '../../../../_utility/usePlayerFaces';
 import { useTeamColors } from '../../../../_hooks/useTeamColors';
 import { getTextColorBasedOnBg } from '../../../../_utility/getBorderClass';
-import { SimCFB, SimNFL } from '../../../../_constants/constants';
+import { SimCFB, SimNFL, ManagementCard, ShotgunRatingAcronyms } from '../../../../_constants/constants';
 import { setPriorityCFBAttributes, setPriorityNFLAttributes } from '../../../Team/TeamPageUtils';
 import { 
   getRatingColor, 
@@ -29,6 +29,7 @@ interface PlayerAttributeCardProps {
   size?: 'sm' | 'md' | 'lg';
   onPlayerSelect?: (player: CollegePlayer | NFLPlayer) => void;
   showLetterGrade?: boolean;
+  category?: string;
 }
 
 export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
@@ -39,7 +40,8 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
   classes = "",
   size = 'sm',
   onPlayerSelect,
-  showLetterGrade
+  showLetterGrade,
+  category
 }) => {
   const teamColors = useTeamColors(team?.ColorOne, team?.ColorTwo, team?.ColorThree);
   const backgroundColor = teamColors.One;
@@ -69,6 +71,14 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
     }
   };
 
+  const getAttributeDisplayValue = (attr: any): string => {
+    const value = attr.Letter || attr.Value;
+    if (attr.Name === 'Shotgun Rating' && value in ShotgunRatingAcronyms) {
+      return ShotgunRatingAcronyms[value as keyof typeof ShotgunRatingAcronyms];
+    }
+    return value;
+  };
+
   return (
     <div
       className={`
@@ -80,7 +90,7 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
       onClick={handleClick}
     >
       <Border
-        classes="h-full p-2 relative overflow-hidden"
+        classes="h-full p-1 relative overflow-hidden"
         styles={{
           backgroundColor,
           borderColor,
@@ -102,6 +112,7 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
             {overallRating}
           </Text>
         </div>
+      {category === ManagementCard && (
         <div 
           className="absolute top-1 left-1 px-1.5 py-0.5 rounded z-10"
           style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
@@ -113,21 +124,28 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
             {player.Position}
           </Text>
         </div>
+      )}
         <div className="flex flex-col h-full relative z-10">
-          <div className="flex items-center gap-1 mt-2 mb-1">
+          <div className="flex items-center mb-1">
             <div className="flex-1 min-w-0">
               <Text 
                 variant="xs" 
                 classes={`font-bold ${textColorClass} leading-tight truncate`}
               >
-                {player.FirstName} {player.LastName}
+                {player.FirstName}
+              </Text>
+              <Text 
+                variant="xs" 
+                classes={`font-bold ${textColorClass} leading-tight truncate`}
+              >
+                {player.LastName}
               </Text>
             </div>
           </div>
           <div className="flex-1">
-            <div className="grid grid-cols-3 gap-0.5 h-full">
+            <div className="grid grid-cols-5 h-full">
               {displayAttributes.map((attr, index) => (
-                <div key={index} className="flex flex-col items-center justify-center bg-black bg-opacity-20 rounded text-center p-0.5">
+                <div key={index} className="flex flex-col items-center justify-center bg-black bg-opacity-20 rounded text-center h-4/5 p-0.5">
                   <Text 
                     variant="xs" 
                     classes={`${textColorClass} opacity-80 leading-tight text-xs`}
@@ -140,7 +158,7 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
                     classes={`font-bold ${getAttributeColor(attr.Letter || attr.Value)} leading-tight text-xs`}
                     style={{ fontSize: '0.7rem' }}
                   >
-                    {attr.Letter || attr.Value}
+                    {getAttributeDisplayValue(attr)}
                   </Text>
                 </div>
               ))}
