@@ -1032,6 +1032,144 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   );
 };
 
+interface NFLDepthChartInfoModalBodyProps {
+  player: NFLPlayer;
+}
+
+export const NFLDepthChartInfoModalBody: FC<NFLDepthChartInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { proTeamMap: nflTeamMap, cfbTeamMap } = useSimFBAStore();
+  const team = nflTeamMap ? nflTeamMap[player.TeamID] : null;
+  const teamLogo = getLogo(SimNFL, player.TeamID, currentUser?.isRetro);
+  const cfbTeam = cfbTeamMap?.[player.CollegeID];
+  const heightObj = HeightToFeetAndInches(player.Height);
+  const priorityAttributes = setPriorityNFLAttributes(
+    player,
+    player.ShowLetterGrade
+  );
+
+  return (
+    <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
+      <div className="row-span-3 flex flex-col items-center">
+        <div className="flex items-center justify-center h-[6rem] w-[6rem] sm:h-[8rem] sm:w-[8rem] px-5 rounded-lg border-2 bg-white">
+          <PlayerPicture playerID={player.ID} league={SimNFL} team={team} />
+        </div>
+        {team && (
+          <Logo
+            url={teamLogo}
+            label={team.TeamAbbr}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
+        )}
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Hometown
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Hometown.length > 0 && `${player.Hometown}, ${player.State}`}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Experience
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {GetNFLYear(player.Experience)}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Age
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Age}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Height
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {heightObj.feet}'{heightObj.inches}"
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Weight
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Weight} lbs
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Personality
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Personality}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Overall
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.ShowLetterGrade
+            ? GetNFLOverall(player.Overall, player.ShowLetterGrade)
+            : player.Overall}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          College
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {cfbTeam?.TeamAbbr}
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Drafted
+        </Text>
+        {player.DraftedRound === 0 && player.DraftedPick === 0 ? (
+          <Text variant="small" classes="whitespace-nowrap">
+            UDFA
+          </Text>
+        ) : (
+          <>
+            <Text variant="small" classes="whitespace-nowrap">
+              Round {player.DraftedRound} - Pick {player.DraftedPick}
+            </Text>
+            <Text variant="xs" classes="whitespace-nowrap text-small">
+              by {player.DraftedTeam}
+            </Text>
+          </>
+        )}
+      </div>
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+        <div className="grid w-full grid-cols-4 gap-3">
+          {priorityAttributes.map((attr, idx) => (
+            <div key={idx} className="flex flex-col px-1 gap-1">
+              <Text
+                variant="small"
+                classes="mb-1 whitespace-nowrap font-semibold"
+              >
+                {attr.Name}
+              </Text>
+              <Text variant="small">{attr.Value}</Text>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const RecruitInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   player,
   league,

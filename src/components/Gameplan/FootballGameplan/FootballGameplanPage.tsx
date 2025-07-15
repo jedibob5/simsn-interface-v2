@@ -1,0 +1,319 @@
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { useSimFBAStore } from "../../../context/SimFBAContext";
+import { DepthChartService } from "../../../_services/depthChartService";
+import {
+  CollegeGameplan as CFBGameplan,
+  CollegePlayer as CFBPlayer,
+  CollegeTeamDepthChart as CFBDepthChart,
+  CollegeDepthChartPosition as CFBDepthChartPosition,
+  NFLGameplan,
+  NFLPlayer,
+  NFLDepthChart,
+  NFLDepthChartPosition
+} from "../../../models/footballModels";
+import { Border } from "../../../_design/Borders";
+import { Button, ButtonGroup } from "../../../_design/Buttons";
+import {
+  SimCFB,
+  SimNFL,
+  Gameplan,
+  DepthChart
+} from "../../../_constants/constants";
+import { Text } from "../../../_design/Typography";
+import { Input } from "../../../_design/Inputs";
+import { useTeamColors } from "../../../_hooks/useTeamColors";
+import { useResponsive } from "../../../_hooks/useMobile";
+import PlayerPicture from "../../../_utility/usePlayerFaces";
+import DepthChartCard from "./Common/DepthChartCard";
+import DepthChartView from "./DepthChart/DepthChartView";
+import GameplanView from "./Gameplan/GameplanView";
+import { GameplanData } from "./Gameplan/GameplanHelper";
+import { getTextColorBasedOnBg } from '../../../_utility/getBorderClass';
+import UnsavedChangesModal from "./Common/UnsavedChangesModal";
+
+export const CFBGameplanPage = () => {
+  const fbStore = useSimFBAStore();
+  const {
+    cfbTeam,
+    cfbDepthchartMap,
+    cfbRosterMap,
+    saveCFBDepthChart,
+    collegeGameplan: cfbGameplan,
+    collegeDepthChart: cfbDepthChart
+  } = fbStore;
+  const [category, setCategory] = useState(Gameplan);
+  const [pendingCategory, setPendingCategory] = useState<string | null>(null);
+  const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
+  const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
+  const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
+  console.log(cfbGameplan)
+  const teamPlayers = useMemo(() => {
+    if (cfbTeam && cfbRosterMap) {
+      return cfbRosterMap[cfbTeam.ID] || [];
+    }
+    return [];
+  }, [cfbRosterMap, cfbTeam]);
+
+  const [gameplanData, setGameplanData] = useState<CFBGameplan | null>(null);
+  const [depthChartData, setDepthChartData] = useState<any>(null);
+  const [isLoadingGameplan, setIsLoadingGameplan] = useState(false);
+
+  const handleDepthChartUpdate = useCallback((updatedDepthChart: CFBDepthChart) => {
+  }, []);
+
+  const handleGameplanUpdate = useCallback((updatedGameplan: GameplanData) => {
+  }, []);
+
+  const handleCategoryChange = useCallback((newCategory: string) => {
+    const currentHasUnsavedChanges = category === DepthChart ? depthChartHasUnsavedChanges : gameplanHasUnsavedChanges;
+    
+    if (currentHasUnsavedChanges && newCategory !== category) {
+      setPendingCategory(newCategory);
+      setIsUnsavedChangesModalOpen(true);
+    } else {
+      setCategory(newCategory);
+    }
+  }, [category, depthChartHasUnsavedChanges, gameplanHasUnsavedChanges]);
+
+  const handleConfirmCategoryChange = useCallback(() => {
+    if (pendingCategory) {
+      setCategory(pendingCategory);
+      setPendingCategory(null);
+    }
+    setIsUnsavedChangesModalOpen(false);
+  }, [pendingCategory]);
+
+  const handleCancelCategoryChange = useCallback(() => {
+    setPendingCategory(null);
+    setIsUnsavedChangesModalOpen(false);
+  }, []);
+
+  const borderColor = cfbTeam?.ColorOne;
+  const backgroundColor = "#1f2937";
+  const accentColor = cfbTeam?.ColorTwo;
+  const borderTextColor = getTextColorBasedOnBg(borderColor)
+  const backgroundTextColor = getTextColorBasedOnBg(backgroundColor)
+
+  return (
+    <div className="sm:container w-full sm:mx-auto sm:px-4 py-8">
+      <div className="text-center mb-8">
+        <div className="flex justify-center space-x-4 mb-6">
+          <ButtonGroup>
+            <Button
+              variant={category === Gameplan ? "primary" : "secondary"}
+              size="md"
+              onClick={() => handleCategoryChange(Gameplan)}
+            >
+              Gameplan
+            </Button>
+            <Button
+              variant={category === DepthChart ? "primary" : "secondary"}
+              size="md"
+              onClick={() => handleCategoryChange(DepthChart)}
+            >
+              Depth Chart
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+
+      <UnsavedChangesModal
+        isOpen={isUnsavedChangesModalOpen}
+        onClose={handleCancelCategoryChange}
+        onConfirm={handleConfirmCategoryChange}
+        currentView={category}
+        targetView={pendingCategory || ''}
+      />
+
+      {category === DepthChart ? (
+        <DepthChartView
+          players={teamPlayers}
+          depthChart={cfbDepthChart}
+          team={cfbTeam}
+          league={SimCFB}
+          onDepthChartUpdate={handleDepthChartUpdate}
+          backgroundColor={backgroundColor}
+          borderColor={borderColor}
+          accentColor={accentColor}
+          borderTextColor={borderTextColor}
+          backgroundTextColor={backgroundTextColor}
+          onHasUnsavedChangesChange={setDepthChartHasUnsavedChanges}
+        />
+      ) : isLoadingGameplan ? (
+        <div className="text-center">
+          <Text variant="h3" classes="text-white mb-4">
+            Loading Gameplan...
+          </Text>
+        </div>
+      ) : cfbGameplan ? (
+        <GameplanView
+          gameplan={cfbGameplan}
+          players={teamPlayers}
+          team={cfbTeam}
+          league={SimCFB}
+          onGameplanUpdate={handleGameplanUpdate}
+          backgroundColor={backgroundColor}
+          borderColor={borderColor}
+          accentColor={accentColor}
+          borderTextColor={borderTextColor}
+          backgroundTextColor={backgroundTextColor}
+          onHasUnsavedChangesChange={setGameplanHasUnsavedChanges}
+        />
+      ) : (
+        <div className="text-center">
+          <Text variant="h3" classes="text-white mb-4">
+            No Gameplan Found
+          </Text>
+          <Text variant="body" classes="text-gray-400">
+            Unable to load gameplan data for this team. Please try refreshing the page or contact support.
+          </Text>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const NFLGameplanPage = () => {
+  const { teamId } = useParams<{ teamId?: string }>();
+  const fbStore = useSimFBAStore();
+  const {
+    nflTeam,
+    proTeamMap: nflTeamMap,
+    proRosterMap: NFLRosterMap,
+    nflGameplan,
+    nflDepthChart
+  } = fbStore;
+  const [category, setCategory] = useState(Gameplan);
+  const [pendingCategory, setPendingCategory] = useState<string | null>(null);
+  const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
+  const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
+  const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
+
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    if (teamId && nflTeamMap) {
+      const id = Number(teamId);
+      return nflTeamMap[id];
+    }
+    return nflTeam;
+  });
+
+  const selectedTeamPlayers = useMemo(() => {
+    if (selectedTeam && NFLRosterMap) {
+      return NFLRosterMap[selectedTeam.ID] || [];
+    }
+    return [];
+  }, [NFLRosterMap, selectedTeam]);
+
+  const borderColor = selectedTeam?.ColorOne;
+  const backgroundColor = "#1f2937";
+  const accentColor = selectedTeam?.ColorTwo;
+  const borderTextColor = getTextColorBasedOnBg(borderColor)
+  const backgroundTextColor = getTextColorBasedOnBg(backgroundColor)
+
+  const handleDepthChartUpdate = useCallback((updatedDepthChart: NFLDepthChart) => {
+    console.log('NFL depth chart updated locally:', updatedDepthChart);
+  }, []);
+
+  const handleGameplanUpdate = useCallback((updatedGameplan: GameplanData) => {
+    console.log('NFL Gameplan updated:', updatedGameplan);
+  }, []);
+
+  const handleCategoryChange = useCallback((newCategory: string) => {
+    const currentHasUnsavedChanges = category === DepthChart ? depthChartHasUnsavedChanges : gameplanHasUnsavedChanges;
+    
+    if (currentHasUnsavedChanges && newCategory !== category) {
+      setPendingCategory(newCategory);
+      setIsUnsavedChangesModalOpen(true);
+    } else {
+      setCategory(newCategory);
+    }
+  }, [category, depthChartHasUnsavedChanges, gameplanHasUnsavedChanges]);
+
+  const handleConfirmCategoryChange = useCallback(() => {
+    if (pendingCategory) {
+      setCategory(pendingCategory);
+      setPendingCategory(null);
+    }
+    setIsUnsavedChangesModalOpen(false);
+  }, [pendingCategory]);
+
+  const handleCancelCategoryChange = useCallback(() => {
+    setPendingCategory(null);
+    setIsUnsavedChangesModalOpen(false);
+  }, []);
+
+  return (
+    <div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="flex justify-center space-x-4 mb-6">
+            <ButtonGroup>
+              <Button
+                variant={category === Gameplan ? "primary" : "secondary"}
+                size="md"
+                onClick={() => handleCategoryChange(Gameplan)}
+              >
+                Gameplan
+              </Button>
+              <Button
+                variant={category === DepthChart ? "primary" : "secondary"}
+                size="md"
+                onClick={() => handleCategoryChange(DepthChart)}
+              >
+                Depth Chart
+              </Button>
+            </ButtonGroup>
+          </div>
+        </div>
+        
+        <UnsavedChangesModal
+          isOpen={isUnsavedChangesModalOpen}
+          onClose={handleCancelCategoryChange}
+          onConfirm={handleConfirmCategoryChange}
+          currentView={category}
+          targetView={pendingCategory || ''}
+        />
+
+      {category === DepthChart ? (
+        <DepthChartView
+          players={selectedTeamPlayers}
+          depthChart={nflDepthChart}
+          team={selectedTeam}
+          league={SimNFL}
+          onDepthChartUpdate={handleDepthChartUpdate}
+          backgroundColor={backgroundColor}
+          borderColor={borderColor}
+          accentColor={accentColor}
+          borderTextColor={borderTextColor}
+          backgroundTextColor={backgroundTextColor}
+          onHasUnsavedChangesChange={setDepthChartHasUnsavedChanges}
+        />
+      ) : nflGameplan ? (
+        <GameplanView
+          gameplan={nflGameplan}
+          players={selectedTeamPlayers}
+          team={selectedTeam}
+          league={SimNFL}
+          onGameplanUpdate={handleGameplanUpdate}
+          backgroundColor={backgroundColor}
+          borderColor={borderColor}
+          accentColor={accentColor}
+          borderTextColor={borderTextColor}
+          backgroundTextColor={backgroundTextColor}
+          onHasUnsavedChangesChange={setGameplanHasUnsavedChanges}
+        />
+      ) : (
+        <div className="text-center">
+          <Text variant="h3" classes="text-white mb-4">
+            No Gameplan Found
+          </Text>
+          <Text variant="body" classes="text-gray-400">
+            Unable to load gameplan data for this team. Please try refreshing the page or contact support.
+          </Text>
+        </div>
+      )}
+      </div>
+    </div>
+  );
+};

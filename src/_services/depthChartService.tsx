@@ -11,4 +11,3 @@ export const DepthChartService = {
     await PostCall(`${fbaUrl}gameplan/nfl/updatedepthchart`, dto);
   },
 };
-

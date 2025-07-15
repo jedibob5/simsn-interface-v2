@@ -6,7 +6,6 @@ import {
   useEffect,
   useRef,
   useState,
-  useMemo,
 } from "react";
 import { useAuthStore } from "./AuthContext";
 import { BootstrapService } from "../_services/bootstrapService";
@@ -18,10 +17,12 @@ import {
   CollegeStandings,
   CollegeTeam,
   CollegeTeamDepthChart,
+  CollegeGameplan,
   Croot,
   NewsLog,
   NFLCapsheet,
   NFLDepthChart,
+  NFLGameplan,
   NFLGame,
   NFLPlayer,
   NFLStandings,
@@ -37,8 +38,6 @@ import {
   CollegeTeamProfileData as CFBTeamProfileData,
   RecruitPlayerProfile,
   UpdateRecruitingBoardDTO,
-  NFLWaiverOffDTO,
-  FreeAgencyOfferDTO,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -53,7 +52,6 @@ import {
   ValidateAffinity,
   ValidateCloseToHome,
 } from "../_helper/recruitingHelper";
-import { FreeAgencyService } from "../_services/freeAgencyService";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -99,8 +97,6 @@ interface SimFBAContextProps {
   capsheetMap: Record<number, NFLCapsheet> | null;
   proInjuryReport: NFLPlayer[];
   practiceSquadPlayers: NFLPlayer[];
-  freeAgents: NFLPlayer[];
-  waiverPlayers: NFLPlayer[];
   proNews: NewsLog[];
   allProGames: NFLGame[];
   currentProSeasonGames: NFLGame[];
@@ -127,18 +123,16 @@ interface SimFBAContextProps {
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   ExportCFBRecruits: () => Promise<void>;
-  SaveFreeAgencyOffer: (dto: any) => Promise<void>;
-  CancelFreeAgencyOffer: (dto: any) => Promise<void>;
-  SaveWaiverWireOffer: (dto: any) => Promise<void>;
-  CancelWaiverWireOffer: (dto: any) => Promise<void>;
   playerFaces: {
     [key: number]: FaceDataResponse;
   };
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
-  proPlayerMap: Record<number, NFLPlayer>;
-
   allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
+  collegeGameplan: CollegeGameplan | null;
+  nflGameplan: NFLGameplan | null;
+  collegeDepthChart: CollegeTeamDepthChart | null;
+  nflDepthChart: NFLDepthChart | null;
 }
 
 // ✅ Initial Context State
@@ -193,8 +187,6 @@ const defaultContext: SimFBAContextProps = {
   topNFLPassers: [],
   topNFLRushers: [],
   topNFLReceivers: [],
-  freeAgents: [],
-  waiverPlayers: [],
   cutCFBPlayer: async () => {},
   cutNFLPlayer: async () => {},
   redshirtPlayer: async () => {},
@@ -211,15 +203,14 @@ const defaultContext: SimFBAContextProps = {
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
   ExportCFBRecruits: async () => {},
-  SaveFreeAgencyOffer: async () => {},
-  CancelFreeAgencyOffer: async () => {},
-  SaveWaiverWireOffer: async () => {},
-  CancelWaiverWireOffer: async () => {},
   playerFaces: {},
   proContractMap: {},
   proExtensionMap: {},
   allCFBTeamHistory: {},
-  proPlayerMap: {},
+  collegeGameplan: null,
+  nflGameplan: null,
+  collegeDepthChart: null,
+  nflDepthChart: null,
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -349,34 +340,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
-  const [freeAgents, setFreeAgents] = useState<NFLPlayer[]>([]);
-  const [waiverPlayers, setWaiverPlayers] = useState<NFLPlayer[]>([]);
-
-  const proPlayerMap = useMemo(() => {
-    const playerMap: Record<number, NFLPlayer> = {};
-
-    if (proRosterMap && nflTeams) {
-      for (let i = 0; i < nflTeams.length; i++) {
-        const team = nflTeams[i];
-        const roster = proRosterMap[team.ID];
-        if (roster) {
-          for (let j = 0; j < roster.length; j++) {
-            const p = roster[j];
-            playerMap[p.ID] = p;
-          }
-        }
-      }
-      const freeAgents = proRosterMap[0];
-      if (freeAgents) {
-        for (let i = 0; i < freeAgents.length; i++) {
-          const p = freeAgents[i];
-          playerMap[p.ID] = p;
-        }
-      }
-    }
-
-    return playerMap;
-  }, [proRosterMap, nflTeams]);
+  const [collegeGameplan, setCollegeGameplan] = useState<CollegeGameplan | null>(null);
+  const [nflGameplan, setNFLGameplan] = useState<NFLGameplan | null>(null);
+  const [collegeDepthChart, setCollegeDepthChart] = useState<CollegeTeamDepthChart | null>(null);
+  const [nflDepthChart, setNFLDepthChart] = useState<NFLDepthChart | null>(null);
 
   useEffect(() => {
     getBootstrapTeamData();
@@ -476,6 +443,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setTopCFBReceivers(res.TopCFBReceivers);
       setCFBRosterMap(res.CollegeRosterMap);
       setPortalPlayers(res.PortalPlayers);
+      setCollegeGameplan(res.CollegeGameplan || null);
+      setNFLGameplan(res.NFLGameplan || null);
+      setCollegeDepthChart(res.CollegeDepthChart || null);
+      setNFLDepthChart(res.NFLDepthChart || null);
     }
 
     if (nflID > 0) {
@@ -588,8 +559,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setNFLDepthchartMap(res.NFLDepthChartMap);
       setProContractMap(res.ContractMap);
       setProExtensionMap(res.ExtensionMap);
-      setFreeAgents(res.FreeAgents);
-      setWaiverPlayers(res.WaiverPlayers);
     }
 
     setPlayerFaces(res.FaceData);
@@ -670,19 +639,37 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   };
 
   const saveCFBDepthChart = async (dto: any) => {
-    await DepthChartService.SaveCFBDepthChart(dto);
-    enqueueSnackbar("Depth Chart saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+    try {
+      await DepthChartService.SaveCFBDepthChart(dto);
+      enqueueSnackbar("Depth Chart saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      console.error("Error saving CFB depth chart:", error);
+      enqueueSnackbar("Failed to save depth chart. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      throw error; // Re-throw to allow component-level handling
+    }
   };
 
   const saveNFLDepthChart = async (dto: any) => {
-    await DepthChartService.SaveNFLDepthChart(dto);
-    enqueueSnackbar("Depth Chart saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+    try {
+      await DepthChartService.SaveNFLDepthChart(dto);
+      enqueueSnackbar("Depth Chart saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      console.error("Error saving NFL depth chart:", error);
+      enqueueSnackbar("Failed to save depth chart. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      throw error; // Re-throw to allow component-level handling
+    }
   };
 
   const saveCFBGameplan = async (dto: any) => {
@@ -745,6 +732,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
   const toggleScholarship = async (dto: any) => {
     const profile = await RecruitService.FBAToggleScholarship(dto);
+    console.log({ profile, dto });
     if (profile) {
       setRecruitProfiles((profiles) =>
         [...profiles].map((p) =>
@@ -852,74 +840,6 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     await RecruitService.ExportCFBCroots();
   }, []);
 
-  const SaveFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
-    const res = await FreeAgencyService.FBASaveFreeAgencyOffer(dto);
-    if (res) {
-      enqueueSnackbar("Free Agency Offer Created!", {
-        variant: "success",
-        autoHideDuration: 3000,
-      });
-      setFreeAgentOffers((prevOffers) => {
-        const offers = [...prevOffers];
-        const index = offers.findIndex((offer) => offer.ID === res.ID);
-        if (index > -1) {
-          offers[index] = new FreeAgencyOffer({ ...res });
-        } else {
-          offers.push(res);
-        }
-        return offers;
-      });
-    }
-  }, []);
-
-  const CancelFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
-    const res = await FreeAgencyService.FBACancelFreeAgencyOffer(dto);
-    if (res) {
-      enqueueSnackbar("Free Agency Offer Cancelled!", {
-        variant: "success",
-        autoHideDuration: 3000,
-      });
-      setFreeAgentOffers((prevOffers) => {
-        const offers = [...prevOffers].filter((offer) => offer.ID !== dto.ID);
-        return offers;
-      });
-    }
-  }, []);
-
-  const SaveWaiverWireOffer = useCallback(async (dto: NFLWaiverOffDTO) => {
-    const res = await FreeAgencyService.FBASaveWaiverWireOffer(dto);
-    if (res) {
-      enqueueSnackbar("Waiver Offer Created!", {
-        variant: "success",
-        autoHideDuration: 3000,
-      });
-      setWaiverOffers((prevOffers) => {
-        const offers = [...prevOffers];
-        const index = offers.findIndex((offer) => offer.ID === res.ID);
-        if (index > -1) {
-          offers[index] = new NFLWaiverOffer({ ...res });
-        } else {
-          offers.push(res);
-        }
-        return offers;
-      });
-    }
-  }, []);
-
-  const CancelWaiverWireOffer = useCallback(async (dto: NFLWaiverOffDTO) => {
-    const res = await FreeAgencyService.FBACancelWaiverWireOffer(dto);
-    if (res) {
-      enqueueSnackbar("Waiver Offer Cancelled!", {
-        variant: "success",
-        autoHideDuration: 3000,
-      });
-      setWaiverOffers((prevOffers) => {
-        const offers = [...prevOffers].filter((offer) => offer.ID !== res.ID);
-        return offers;
-      });
-    }
-  }, []);
-
   return (
     <SimFBAContext.Provider
       value={{
@@ -988,18 +908,15 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         SaveRecruitingBoard,
         SaveAIRecruitingSettings,
         ExportCFBRecruits,
-        SaveFreeAgencyOffer,
-        SaveWaiverWireOffer,
-        CancelFreeAgencyOffer,
-        CancelWaiverWireOffer,
         playerFaces,
         proContractMap,
         proExtensionMap,
         allCFBTeamHistory,
         isLoadingFour,
-        proPlayerMap,
-        freeAgents,
-        waiverPlayers,
+        collegeGameplan,
+        nflGameplan,
+        collegeDepthChart,
+        nflDepthChart
       }}
     >
       {children}

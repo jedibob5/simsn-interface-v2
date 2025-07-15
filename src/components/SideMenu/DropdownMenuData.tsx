@@ -32,7 +32,7 @@ export const useSideMenu = () => {
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const dropdowns: Record<string, DropdownItem[]> = {
     SimCFB: [
-      {
+        {
         label: "Team Profile",
         isRoute: true,
         route: routes.CFB_TEAMPROFILE,
@@ -52,6 +52,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.CFB_GAMEPLAN,
         league: SimCFB,
+        click: () => navigate(routes.CFB_GAMEPLAN),
         toggle: () => toggleMenu(),
       },
       {
@@ -97,17 +98,17 @@ export const useSideMenu = () => {
       {
         label: "Gameplan",
         isRoute: true,
-        route: "",
+        route: routes.NFL_GAMEPLAN,
         league: SimNFL,
+        click: () => navigate(routes.NFL_GAMEPLAN),
         toggle: () => toggleMenu(),
       },
       {
         label: "Free Agency",
         isRoute: true,
-        route: routes.NFL_FREE_AGENCY,
+        route: "",
         league: SimNFL,
         toggle: () => toggleMenu(),
-        click: () => navigate(routes.NFL_FREE_AGENCY),
       },
       {
         label: "Statistics",
