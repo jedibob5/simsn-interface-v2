@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { CollegePlayer as CFBPlayer, NFLPlayer } from '../../../../models/footballModels';
+import { CollegePlayer as CFBPlayer, NFLPlayer, CollegeDepthChartPosition, NFLDepthChartPosition } from '../../../../models/footballModels';
 import { SimCFB, SimNFL } from '../../../../_constants/constants';
 import { Text } from '../../../../_design/Typography';
 import { SelectDropdown } from '../../../../_design/Select';
@@ -10,7 +10,7 @@ import { SingleValue } from 'react-select';
 import FormationView from './FormationView';
 import DepthChartManager from './DepthChartManager';
 import { useDepthChartValidation } from './useDepthChartValidation';
-import { DepthChartService } from '../../../../_services/depthChartService';
+import { DepthChartService, UpdateDepthChartDTO, UpdateNFLDepthChartDTO } from '../../../../_services/depthChartService';
 import ValidationToast from '../Common/ValidationToast';
 import { CFBPlayerInfoModalBody, NFLDepthChartInfoModalBody } from '../../../Common/Modals';
 import { useModal } from '../../../../_hooks/useModal';
@@ -173,17 +173,22 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
           const player = players.find(p => 
             (p as any).PlayerID === dcPlayer.PlayerID || (p as any).ID === dcPlayer.PlayerID
           );
-          
-          return {
-            ID: dcPlayer.ID || 0,
-            DepthChartID: dcPlayer.DepthChartID || localDepthChart.ID,
-            PlayerID: dcPlayer.PlayerID,
-            Position: dcPlayer.Position,
-            PositionLevel: dcPlayer.PositionLevel,
-            FirstName: player?.FirstName || dcPlayer.FirstName || '',
-            LastName: player?.LastName || dcPlayer.LastName || '',
-            OriginalPosition: player?.Position || dcPlayer.OriginalPosition || dcPlayer.Position
+
+        const positionData = {
+          ...dcPlayer,
+          ID: dcPlayer.ID || 0,
+          DepthChartID: dcPlayer.DepthChartID || localDepthChart.ID,
+          PlayerID: dcPlayer.PlayerID,
+          Position: dcPlayer.Position,
+          PositionLevel: dcPlayer.PositionLevel,
+          FirstName: player?.FirstName || dcPlayer.FirstName || '',
+          LastName: player?.LastName || dcPlayer.LastName || '',
+          OriginalPosition: player?.Position || dcPlayer.OriginalPosition || dcPlayer.Position
           };
+          
+          if (league === SimCFB) {
+            return positionData;
+          }
         }) || []
       };
 

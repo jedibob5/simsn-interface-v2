@@ -1,5 +1,6 @@
 import { fbaUrl } from "../_constants/urls";
 import { PostCall, GetCall, PUTCall } from "../_helper/fetchHelper";
+import { CollegeDepthChartPosition, NFLDepthChartPosition } from './../models/footballModels';
 
 export const DepthChartService = {
 
@@ -11,3 +12,13 @@ export const DepthChartService = {
     await PostCall(`${fbaUrl}gameplan/nfl/updatedepthchart`, dto);
   },
 };
+
+export interface UpdateDepthChartDTO {
+  DepthChartID: number;
+  UpdatedPlayerPositions: CollegeDepthChartPosition[];
+}
+
+export interface UpdateNFLDepthChartDTO {
+  DepthChartID: number;
+  UpdatedPlayerPositions: NFLDepthChartPosition[];
+}

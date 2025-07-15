@@ -47,7 +47,7 @@ export const CFBGameplanPage = () => {
   const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
   const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
   const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
-  console.log(cfbGameplan)
+  
   const teamPlayers = useMemo(() => {
     if (cfbTeam && cfbRosterMap) {
       return cfbRosterMap[cfbTeam.ID] || [];
