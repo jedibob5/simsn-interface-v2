@@ -651,7 +651,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         variant: "error",
         autoHideDuration: 5000,
       });
-      throw error; // Re-throw to allow component-level handling
+      throw error;
     }
   };
 
@@ -668,7 +668,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         variant: "error",
         autoHideDuration: 5000,
       });
-      throw error; // Re-throw to allow component-level handling
+      throw error;
     }
   };
 

@@ -56,7 +56,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
   const [modalPlayer, setModalPlayer] = useState<CFBPlayer | NFLPlayer | null>(null);
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
   const { isDesktop } = useResponsive();
-
+console.log(depthChart)
   const validation = useDepthChartValidation({
     depthChart: localDepthChart,
     players,

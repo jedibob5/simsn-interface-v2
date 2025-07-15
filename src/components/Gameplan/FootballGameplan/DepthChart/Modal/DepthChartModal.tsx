@@ -179,8 +179,8 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                       onClick={() => {
                         if (swapTargetLevel === assignedPlayer.PositionLevel) {
                           setSwapTargetLevel(null);
-                        } else if (swapTargetLevel !== null && assignedPlayer.playerData) {
-                          handleSwapBetweenLevels(assignedPlayer.PositionLevel, swapTargetLevel);
+                        } else if (swapTargetLevel !== null) {
+                          handleSwapBetweenLevels(swapTargetLevel, assignedPlayer.PositionLevel);
                           setSwapTargetLevel(null);
                         } else {
                           handlePositionLevelClick(assignedPlayer.PositionLevel);
@@ -214,7 +214,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                             />
                           )
                         ) : (
-                          <div className="w-full h-24 bg-gray-700 bg-opacity-50 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center">
+                          <div className="w-full h-32 bg-gray-700 bg-opacity-50 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center">
                             <Text variant="small" classes="text-gray-400">
                               Empty
                             </Text>
