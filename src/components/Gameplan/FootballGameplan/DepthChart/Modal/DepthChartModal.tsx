@@ -187,7 +187,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                         }
                       }}
                     >
-                      <div className="relative">
+                      <div className="relative h-full">
                         {assignedPlayer.playerData ? (
                           showAttributes ? (
                             <PlayerAttributeCard
@@ -214,7 +214,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                             />
                           )
                         ) : (
-                          <div className="w-full h-32 bg-gray-700 bg-opacity-50 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center">
+                          <div className="w-full h-32 sm:h-full bg-gray-700 bg-opacity-50 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center">
                             <Text variant="small" classes="text-gray-400">
                               Empty
                             </Text>
