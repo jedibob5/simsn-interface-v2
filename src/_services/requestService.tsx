@@ -76,7 +76,7 @@ export const RequestService = {
     return await GetCall(`${fbaUrl}nfl/requests/all/`);
   },
 
-  ApproveCFBRequest: async (payload: ApprovePayload): Promise<Response> => {
+  ApproveCFBRequest: async (payload: CFBTeamRequest): Promise<Response> => {
     return await fetch(`${fbaUrl}requests/approve/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
@@ -84,15 +84,15 @@ export const RequestService = {
       },
       method: "PUT",
       body: JSON.stringify({
-        ID: payload.reqId,
-        TeamID: payload.teamId,
-        Username: payload.username,
+        ID: payload.ID,
+        TeamID: payload.TeamID,
+        Username: payload.Username,
         IsApproved: true,
       }),
     });
   },
 
-  ApproveNFLRequest: async (payload: ApprovePayload): Promise<NFLRequest> => {
+  ApproveNFLRequest: async (payload: any): Promise<NFLRequest> => {
     return await PostCall(`${fbaUrl}nfl/requests/approve/`, payload);
   },
 
@@ -109,8 +109,8 @@ export const RequestService = {
   CreateCFBTeamRequest: async (
     team: CFBTeam,
     username: string
-  ): Promise<CFBTeamRequest> => {
-    return await PostCall(`${fbaUrl}requests/create/`, {
+  ): Promise<void> => {
+    await PostCall(`${fbaUrl}requests/create/`, {
       TeamID: team.ID,
       Username: username,
       IsApproved: false,
@@ -141,35 +141,25 @@ export const RequestService = {
     return await PostCall(`${fbaUrl}nfl/requests/create/`, payload);
   },
 
-  RejectCFBRequest: async (payload: RejectPayload): Promise<Response> => {
-    return await fetch(`${fbaUrl}requests/reject/`, {
+  RejectCFBRequest: async (payload: any): Promise<void> => {
+    await fetch(`${fbaUrl}requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
         "Content-Type": "application/json",
       },
-      method: "DELETE",
+      method: "POST",
       body: JSON.stringify(payload),
     });
   },
 
-  RejectNFLRequest: async (payload: RejectPayload): Promise<Response> => {
-    return await fetch(`${fbaUrl}nfl/requests/reject/`, {
+  RejectNFLRequest: async (payload: any): Promise<void> => {
+    await fetch(`${fbaUrl}nfl/requests/reject/`, {
       headers: {
         authorization: localStorage.getItem("token") || "",
         "Content-Type": "application/json",
       },
-      method: "DELETE",
+      method: "POST",
       body: JSON.stringify(payload),
-    });
-  },
-
-  RemoveUserFromCFBTeamRequest: async (teamID: number): Promise<Response> => {
-    return await fetch(`${fbaUrl}requests/remove/${teamID}`, {
-      headers: {
-        authorization: localStorage.getItem("token") || "",
-        "Content-Type": "application/json",
-      },
-      method: "PUT",
     });
   },
 
