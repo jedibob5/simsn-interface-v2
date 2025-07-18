@@ -16,6 +16,7 @@ import {
 } from '../Constants/GameplanConstants';
 import { RunnerInput, TargetInput } from './GameplanInput';
 import { GameplanInputSmall } from './GameplanInput';
+import { GameplanSlider } from './GameplanSlider';
 import { GameplanValidationResult } from './useGameplanValidation';
 import { getCFBOverall } from '../../../../_utility/getLetterGrade';
 import { GetNFLOverall } from '../../../Team/TeamPageUtils';
@@ -257,82 +258,100 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
             })}
           </div>
         </div>
-        <div className="bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg p-2">
-          <Text variant="h5" classes="text-white font-semibold mb-4">
-            Running Distributions (0-10 weights)
-          </Text>
-          <div className="space-y-3">
-            <RunnerInput
-              name="RunnerDistributionQB"
-              label="QB"
-              value={gameplan.RunnerDistributionQB}
-              onChange={(e) => onChange('RunnerDistributionQB', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'QB', 1, league) : getGameplanPlayerInfo(players, 'QB', 1, league)}
+        <div className="flex flex-col gap-4">
+          <div className="bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg p-2 h-3/4">
+            <Text variant="h5" classes="text-white font-semibold mb-4">
+              Running Distributions (0-10 weights)
+            </Text>
+            <div className="space-y-3">
+              <RunnerInput
+                name="RunnerDistributionQB"
+                label="QB"
+                value={gameplan.RunnerDistributionQB}
+                onChange={(e) => onChange('RunnerDistributionQB', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'QB', 1, league) : getGameplanPlayerInfo(players, 'QB', 1, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionQB')}
+              />
+              <RunnerInput
+                name="RunnerDistributionRB1"
+                label="RB1"
+                value={gameplan.RunnerDistributionRB1}
+                onChange={(e) => onChange('RunnerDistributionRB1', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 1, league) : getGameplanPlayerInfo(players, 'RB', 1, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionRB1')}
+              />
+              <RunnerInput
+                name="RunnerDistributionRB2"
+                label="RB2"
+                value={gameplan.RunnerDistributionRB2}
+                onChange={(e) => onChange('RunnerDistributionRB2', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 2, league) : getGameplanPlayerInfo(players, 'RB', 2, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionRB2')}
+              />
+              <RunnerInput
+                name="RunnerDistributionRB3"
+                label="RB3"
+                value={gameplan.RunnerDistributionRB3}
+                onChange={(e) => onChange('RunnerDistributionRB3', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 3, league) : getGameplanPlayerInfo(players, 'RB', 3, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionRB3')}
+              />
+              <RunnerInput
+                name="RunnerDistributionFB1"
+                label="FB1"
+                value={gameplan.RunnerDistributionFB1}
+                onChange={(e) => onChange('RunnerDistributionFB1', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 1, league) : getGameplanPlayerInfo(players, 'FB', 1, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionFB1')}
+              />
+              <RunnerInput
+                name="RunnerDistributionFB2"
+                label="FB2"
+                value={gameplan.RunnerDistributionFB2}
+                onChange={(e) => onChange('RunnerDistributionFB2', parseInt(e.target.value) || 0)}
+                playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 2, league) : getGameplanPlayerInfo(players, 'FB', 2, league)}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionFB2')}
+              />
+              <TargetInput
+                name="RunnerDistributionWR"
+                label={gameplan.RunnerDistributionWRPosition || 'WR1'}
+                value={gameplan.RunnerDistributionWR}
+                onChange={(e) => onChange('RunnerDistributionWR', parseInt(e.target.value) || 0)}
+                playerInfo={(() => {
+                  const wrPosition = gameplan.RunnerDistributionWRPosition || 'WR1';
+                  const wrLevel = parseInt(wrPosition.slice(2)) || 1;
+                  return depthChart 
+                    ? getDepthChartPlayerInfo(depthChart, 'WR', wrLevel, league)
+                    : getGameplanPlayerInfo(players, 'WR', wrLevel, league);
+                })()}
+                targetDepth={gameplan.RunnerDistributionWRPosition || 'WR1'}
+                onTargetDepthChange={(position) => onChange('RunnerDistributionWRPosition', position)}
+                targetDepthOptions={['WR1', 'WR2', 'WR3', 'WR4', 'WR5']}
+                disabled={disabled || gameplan.DefaultOffense}
+                error={getFieldError(validation, 'RunnerDistributionWR')}
+              />
+            </div>
+          </div>
+          <div className="bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg p-4">
+            <Text variant="h5" classes="text-white font-semibold mb-4">
+              Primary HB Usage
+            </Text>
+            <GameplanSlider
+              name="PrimaryHB"
+              label="Primary HB"
+              value={gameplan.PrimaryHB}
+              onChange={(e) => onChange('PrimaryHB', parseInt(e.target.value) || 0)}
+              min={0}
+              max={100}
               disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionQB')}
-            />
-            <RunnerInput
-              name="RunnerDistributionRB1"
-              label="RB1"
-              value={gameplan.RunnerDistributionRB1}
-              onChange={(e) => onChange('RunnerDistributionRB1', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 1, league) : getGameplanPlayerInfo(players, 'RB', 1, league)}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionRB1')}
-            />
-            <RunnerInput
-              name="RunnerDistributionRB2"
-              label="RB2"
-              value={gameplan.RunnerDistributionRB2}
-              onChange={(e) => onChange('RunnerDistributionRB2', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 2, league) : getGameplanPlayerInfo(players, 'RB', 2, league)}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionRB2')}
-            />
-            <RunnerInput
-              name="RunnerDistributionRB3"
-              label="RB3"
-              value={gameplan.RunnerDistributionRB3}
-              onChange={(e) => onChange('RunnerDistributionRB3', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 3, league) : getGameplanPlayerInfo(players, 'RB', 3, league)}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionRB3')}
-            />
-            <RunnerInput
-              name="RunnerDistributionFB1"
-              label="FB1"
-              value={gameplan.RunnerDistributionFB1}
-              onChange={(e) => onChange('RunnerDistributionFB1', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 1, league) : getGameplanPlayerInfo(players, 'FB', 1, league)}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionFB1')}
-            />
-            <RunnerInput
-              name="RunnerDistributionFB2"
-              label="FB2"
-              value={gameplan.RunnerDistributionFB2}
-              onChange={(e) => onChange('RunnerDistributionFB2', parseInt(e.target.value) || 0)}
-              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 2, league) : getGameplanPlayerInfo(players, 'FB', 2, league)}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionFB2')}
-            />
-            <TargetInput
-              name="RunnerDistributionWR"
-              label={gameplan.RunnerDistributionWRPosition || 'WR1'}
-              value={gameplan.RunnerDistributionWR}
-              onChange={(e) => onChange('RunnerDistributionWR', parseInt(e.target.value) || 0)}
-              playerInfo={(() => {
-                const wrPosition = gameplan.RunnerDistributionWRPosition || 'WR1';
-                const wrLevel = parseInt(wrPosition.slice(2)) || 1;
-                return depthChart 
-                  ? getDepthChartPlayerInfo(depthChart, 'WR', wrLevel, league)
-                  : getGameplanPlayerInfo(players, 'WR', wrLevel, league);
-              })()}
-              targetDepth={gameplan.RunnerDistributionWRPosition || 'WR1'}
-              onTargetDepthChange={(position) => onChange('RunnerDistributionWRPosition', position)}
-              targetDepthOptions={['WR1', 'WR2', 'WR3', 'WR4', 'WR5']}
-              disabled={disabled || gameplan.DefaultOffense}
-              error={getFieldError(validation, 'RunnerDistributionWR')}
+              error={getFieldError(validation, 'PrimaryHB')}
+              valueLabel={`${gameplan.PrimaryHB}%`}
             />
           </div>
         </div>
@@ -374,6 +393,12 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               <Text variant="small" classes="text-gray-300">
                 Run, Option, Pass, and RPO type plays must accumulate to 100 in each category. 
                 If you have no weights in Option or RPO plays in your formations, you can leave those distributions as-is.
+              </Text>
+            </div>
+            <div>
+              <Text variant="body" classes="text-white font-semibold">Primary HB:</Text>
+              <Text variant="small" classes="text-gray-300">
+                Slider between 0 and 100 that controls how much time on the field your RB1 will have, in comparison to the second or third string.
               </Text>
             </div>
           </div>
