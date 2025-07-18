@@ -226,7 +226,7 @@ const GameplanView: React.FC<GameplanViewProps> = ({
         isValid={validation.isValid}
         contextName="Gameplan"
       />
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="xl:grid flex flex-col-reverse xl:grid-cols-3 gap-8">
         <div className="relative col-span-2">
           <div className="text-center pb-4">
             <Text variant="h3" classes="text-white font-bold">
