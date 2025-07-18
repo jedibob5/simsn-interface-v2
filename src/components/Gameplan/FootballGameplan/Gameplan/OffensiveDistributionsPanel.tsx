@@ -34,6 +34,7 @@ import {
   Player
  } from '../../../../_constants/constants';
 import { InformationCircle } from '../../../../_design/Icons';
+import { getPassTypeRanges } from '../Utils/GameplanCalculationUtils';
 
 export interface OffensiveDistributionsPanelProps {
   gameplan: GameplanData;
@@ -64,6 +65,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
 }) => {
   const { isModalOpen: isInfoModalOpen, handleOpenModal: openInfoModal, handleCloseModal: closeInfoModal } = useModal();
   const [viewMode, setViewMode] = useState<any>(Team);
+  const [passTypeInfoModal, setPassTypeInfoModal] = useState<string | null>(null);
   const runDistTotal = calculateRunDistributionTotal(gameplan);
   const passDistTotal = calculatePassDistributionTotal(gameplan);
   const optionDistTotal = calculateOptionDistributionTotal(gameplan);
@@ -116,20 +118,37 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
             {PassPlayLabels.map((label, index) => {
               const fieldName = `Pass${label}`;
               let displayLabel = label;
-              if (index === 4) displayLabel = 'Play Action Short';
-              else if (index === 5) displayLabel = 'Play Action Long';
+              let passType = label;
+              if (index === 4) {
+                displayLabel = 'Play Action Short';
+                passType = 'PlayActionShort';
+              } else if (index === 5) {
+                displayLabel = 'Play Action Long';
+                passType = 'PlayActionLong';
+              }
               
               return (
-                <GameplanInputSmall
-                  key={fieldName}
-                  name={fieldName}
-                  label={displayLabel}
-                  value={gameplan[fieldName as keyof GameplanData] as number}
-                  onChange={(e) => onChange(fieldName, parseInt(e.target.value) || 0)}
-                  disabled={disabled || gameplan.DefaultOffense}
-                  error={getFieldError(validation, fieldName)}
-                  size="xs"
-                />
+                <div key={fieldName} className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <GameplanInputSmall
+                      name={fieldName}
+                      label={displayLabel}
+                      value={gameplan[fieldName as keyof GameplanData] as number}
+                      onChange={(e) => onChange(fieldName, parseInt(e.target.value) || 0)}
+                      disabled={disabled || gameplan.DefaultOffense}
+                      error={getFieldError(validation, fieldName)}
+                      size="xs"
+                    />
+                  </div>
+                  <Button
+                    variant="secondaryOutline"
+                    size="sm"
+                    onClick={() => setPassTypeInfoModal(passType)}
+                    className="p-1 rounded-full min-w-0 h-6 w-6 flex items-center justify-center"
+                  >
+                    <InformationCircle />
+                  </Button>
+                </div>
               );
             })}
           </div>
@@ -403,6 +422,43 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
             </div>
           </div>
         </div>
+      </Modal>
+      
+      <Modal
+        isOpen={passTypeInfoModal !== null}
+        onClose={() => setPassTypeInfoModal(null)}
+        title={`${passTypeInfoModal} Pass Type Limits`}
+        maxWidth="max-w-2xl"
+      >
+        {passTypeInfoModal && (
+          <div className="space-y-4">
+            <Text variant="body" classes="text-gray-300">
+              Maximum values for {passTypeInfoModal} pass type by offensive scheme:
+            </Text>
+            <div className="space-y-3">
+              {getPassTypeRanges(passTypeInfoModal).map((range, index) => (
+                <div key={index} className="bg-gray-800 bg-opacity-50 border border-gray-600 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <Text variant="body" classes="text-white font-semibold">
+                      {range.scheme}
+                    </Text>
+                    <Text variant="body" classes="text-green-400 font-bold">
+                      Max: {range.max}
+                    </Text>
+                  </div>
+                  {range.note && (
+                    <Text variant="small" classes="text-yellow-400 italic">
+                      Note: {range.note}
+                    </Text>
+                  )}
+                </div>
+              ))}
+            </div>
+            <Text variant="small" classes="text-gray-400">
+              Your current scheme: <span className="text-white font-semibold">{gameplan.OffensiveScheme}</span>
+            </Text>
+          </div>
+        )}
       </Modal>
     </div>
   );

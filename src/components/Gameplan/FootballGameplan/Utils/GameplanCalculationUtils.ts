@@ -177,3 +177,62 @@ export const calculateAllDistributionTotals = (gameplan: GameplanData) => {
     totalPlayTypeWeight: memoized.totalPlayTypeWeight
   };
 };
+
+export const getPassTypeRanges = (passType: string): { scheme: string; max: number; note?: string }[] => {
+  const ranges = [];
+  
+  switch (passType) {
+    case 'Quick':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50 },
+        { scheme: 'Pro, Power Run, I Option', max: 45 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 50 },
+        { scheme: 'Spread Option, Pistol', max: 50 }
+      );
+      break;
+    case 'Short':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Play Action Short: max 50' },
+        { scheme: 'Pro, Power Run, I Option', max: 45 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 50 },
+        { scheme: 'Spread Option, Pistol', max: 50 }
+      );
+      break;
+    case 'Long':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Play Action Long: max 50' },
+        { scheme: 'Pro, Power Run, I Option', max: 45 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 50 },
+        { scheme: 'Spread Option, Pistol', max: 50 }
+      );
+      break;
+    case 'Screen':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 20 },
+        { scheme: 'Pro, Power Run, I Option', max: 20 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 20 },
+        { scheme: 'Spread Option, Pistol', max: 20 }
+      );
+      break;
+    case 'PlayActionShort':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Short: max 50' },
+        { scheme: 'Pro, Power Run, I Option', max: 20 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 30 },
+        { scheme: 'Spread Option, Pistol', max: 25 }
+      );
+      break;
+    case 'PlayActionLong':
+      ranges.push(
+        { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Long: max 50' },
+        { scheme: 'Pro, Power Run, I Option', max: 20 },
+        { scheme: 'Double Wing Option, Wing-T, Flexbone, Wishbone', max: 30 },
+        { scheme: 'Spread Option, Pistol', max: 25 }
+      );
+      break;
+    default:
+      break;
+  }
+  
+  return ranges;
+};
