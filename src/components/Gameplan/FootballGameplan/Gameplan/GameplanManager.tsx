@@ -133,6 +133,62 @@ export const GameplanManager: React.FC<GameplanManagerProps> = ({
 
   return (
     <div className={`space-y-6 ${className}`}>
+      <div className="flex gap-2 justify-center">
+        <div className={`border rounded-lg p-4 ${validationSummary.bgColor}`}>
+          <div className="flex flex-col items-center justify-between">
+            <div>
+              <Text variant="body" classes={`font-semibold ${validationSummary.color}`}>
+                Gameplan Status
+              </Text>
+              <Text variant="small" classes={validationSummary.color}>
+                {validationSummary.text}
+              </Text>
+            </div>
+            {(validation.errors.length > 0 || validation.warnings.length > 0) && (
+              <Button
+                variant="secondaryOutline"
+                size="xs"
+                onClick={openValidationModal}
+                className="flex items-center gap-2"
+              >
+                <InformationCircle />
+                Details
+              </Button>
+            )}
+          </div>
+        </div>
+        {canModify && (
+          <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
+            <div className="flex gap-2">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={onSave}
+                disabled={!isValid || isSaving || !hasUnsavedChanges}
+                className="w-full"
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
+              
+              <Button
+                variant="secondaryOutline"
+                size="md"
+                onClick={onReset}
+                disabled={isSaving || !hasUnsavedChanges}
+                className="w-full"
+              >
+                Reset
+              </Button>
+            </div>
+
+            {hasUnsavedChanges && (
+              <Text variant="xs" classes="text-yellow-400 mt-2 text-center">
+                You have unsaved changes
+              </Text>
+            )}
+          </div>
+        )}
+      </div>
       <div className="rounded-lg py-2 sm:p-2 border-2" style={{ borderColor, backgroundColor }}>
         <Text variant="h5" classes="text-white font-semibold mb-4">
           Gameplan Sections
@@ -212,62 +268,6 @@ export const GameplanManager: React.FC<GameplanManagerProps> = ({
             )}
           </div>
         </div>
-      </div>
-      <div className="flex gap-2 justify-center">
-        <div className={`border rounded-lg p-4 ${validationSummary.bgColor}`}>
-          <div className="flex flex-col items-center justify-between">
-            <div>
-              <Text variant="body" classes={`font-semibold ${validationSummary.color}`}>
-                Gameplan Status
-              </Text>
-              <Text variant="small" classes={validationSummary.color}>
-                {validationSummary.text}
-              </Text>
-            </div>
-            {(validation.errors.length > 0 || validation.warnings.length > 0) && (
-              <Button
-                variant="secondaryOutline"
-                size="xs"
-                onClick={openValidationModal}
-                className="flex items-center gap-2"
-              >
-                <InformationCircle />
-                Details
-              </Button>
-            )}
-          </div>
-        </div>
-        {canModify && (
-          <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
-            <div className="flex gap-2">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={onSave}
-                disabled={!isValid || isSaving || !hasUnsavedChanges}
-                className="w-full"
-              >
-                {isSaving ? 'Saving...' : 'Save'}
-              </Button>
-              
-              <Button
-                variant="secondaryOutline"
-                size="md"
-                onClick={onReset}
-                disabled={isSaving || !hasUnsavedChanges}
-                className="w-full"
-              >
-                Reset
-              </Button>
-            </div>
-
-            {hasUnsavedChanges && (
-              <Text variant="xs" classes="text-yellow-400 mt-2 text-center">
-                You have unsaved changes
-              </Text>
-            )}
-          </div>
-        )}
       </div>
       <Modal
         isOpen={isSchemeModalOpen}

@@ -242,8 +242,41 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
 
   return (
     <div className="space-y-6">
+      {canModify && (
+        <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
+          <div className="flex items-center gap-4 justify-center">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={onSave}
+              disabled={!isValid || isSaving || !hasUnsavedChanges}
+              className="min-w-32"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={onReset}
+              disabled={isSaving || !hasUnsavedChanges}
+              className="min-w-24"
+            >
+              Reset
+            </Button>
+            {hasUnsavedChanges && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-orange-400 rounded-full" />
+                <Text variant="small" classes="text-orange-400">
+                  Unsaved Changes
+                </Text>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
         <div className="space-y-4">
+          
           <div className="flex justify-center border-b pb-2" style={{ borderColor: accentColor }}>
             <ButtonGroup>
               <Button
@@ -294,43 +327,6 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
 
       {renderSelectedPosition()}
 
-      {canModify && (
-        <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
-          <div className="flex items-center gap-4 justify-center">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={onSave}
-              disabled={!isValid || isSaving || !hasUnsavedChanges}
-              className="min-w-32"
-            >
-              {isSaving ? 'Saving...' : 'Save Depth Chart'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={onReset}
-              disabled={isSaving || !hasUnsavedChanges}
-              className="min-w-24"
-            >
-              Reset
-            </Button>
-            {hasUnsavedChanges && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-orange-400 rounded-full" />
-                <Text variant="small" classes="text-orange-400">
-                  Unsaved Changes
-                </Text>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
-        <Text variant="small" classes="text-gray-300 text-center">
-          <strong>Click to Assign:</strong> Click on any position slot to select a player for that position.
-        </Text>
-      </div>
       <DepthChartModal
         isOpen={isModalOpen}
         onClose={() => {
