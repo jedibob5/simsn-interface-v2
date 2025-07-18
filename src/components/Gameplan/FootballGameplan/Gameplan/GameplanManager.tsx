@@ -161,11 +161,11 @@ export const GameplanManager: React.FC<GameplanManagerProps> = ({
           <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
             <div className="flex gap-2">
               <Button
-                variant="primary"
+                variant={!isValid ? "danger" : "primary"}
                 size="md"
                 onClick={onSave}
                 disabled={!isValid || isSaving || !hasUnsavedChanges}
-                className="w-full"
+                className={`w-full ${(!isValid || isSaving) ? 'cursor-not-allowed' : 'cursor-pointer'} ${(!isValid) ? 'bg-red-900 bg-opacity-50 border-red-500' : 'cursor-pointer'}`}
               >
                 {isSaving ? 'Saving...' : 'Save'}
               </Button>
@@ -175,7 +175,7 @@ export const GameplanManager: React.FC<GameplanManagerProps> = ({
                 size="md"
                 onClick={onReset}
                 disabled={isSaving || !hasUnsavedChanges}
-                className="w-full"
+                className={`w-full ${(isSaving || !hasUnsavedChanges) ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 Reset
               </Button>

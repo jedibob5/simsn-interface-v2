@@ -243,33 +243,44 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
   return (
     <div className="space-y-6">
       {canModify && (
-        <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
-          <div className="flex items-center gap-4 justify-center">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={onSave}
-              disabled={!isValid || isSaving || !hasUnsavedChanges}
-              className="min-w-32"
-            >
-              {isSaving ? 'Saving...' : 'Save'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={onReset}
-              disabled={isSaving || !hasUnsavedChanges}
-              className="min-w-24"
-            >
-              Reset
-            </Button>
-            {hasUnsavedChanges && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-orange-400 rounded-full" />
-                <Text variant="small" classes="text-orange-400">
-                  Unsaved Changes
+        <div className="flex gap-2 justify-center">
+          <div className={`border rounded-lg p-4 ${isValid ? 'bg-green-900 bg-opacity-50 border-green-500' : 'bg-red-900 bg-opacity-50 border-red-500'}`}>
+            <div className="flex flex-col items-center justify-between">
+              <div>
+                <Text variant="body" classes={`font-semibold ${isValid ? 'text-green-400' : 'text-red-400'}`}>
+                  Depth Chart Status
+                </Text>
+                <Text variant="small" classes={isValid ? 'text-green-400' : 'text-red-400'}>
+                  {isValid ? 'Valid depth chart' : 'Invalid depth chart'}
                 </Text>
               </div>
+            </div>
+          </div>
+          <div className="rounded-lg p-4 border-2" style={{ borderColor, backgroundColor }}>
+            <div className="flex gap-2">
+              <Button
+                variant={!isValid ? "danger" : "primary"}
+                size="md"
+                onClick={onSave}
+                disabled={!isValid || isSaving || !hasUnsavedChanges}
+                className={`w-full ${(!isValid || isSaving) ? 'cursor-not-allowed' : 'cursor-pointer'} ${(!isValid) ? 'bg-red-900 bg-opacity-50 border-red-500' : 'cursor-pointer'}`}
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={onReset}
+                disabled={isSaving || !hasUnsavedChanges}
+                className={`min-w-24 ${(isSaving || !hasUnsavedChanges) ? 'cursor-not-allowed' : ''}`}
+              >
+                Reset
+              </Button>
+            </div>
+            {hasUnsavedChanges && (
+              <Text variant="xs" classes="text-yellow-400 mt-2 text-center">
+                You have unsaved changes
+              </Text>
             )}
           </div>
         </div>
