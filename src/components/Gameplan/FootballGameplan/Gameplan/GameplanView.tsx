@@ -5,6 +5,7 @@ import { Text } from '../../../../_design/Typography';
 import { SelectDropdown } from '../../../../_design/Select';
 import { SelectOption } from '../../../../_hooks/useSelectStyles';
 import { useSimFBAStore } from '../../../../context/SimFBAContext';
+import { useAuthStore } from '../../../../context/AuthContext';
 import { Button } from '../../../../_design/Buttons';
 import { SingleValue } from 'react-select';
 import { GameplanData } from './GameplanHelper';
@@ -60,6 +61,7 @@ const GameplanView: React.FC<GameplanViewProps> = ({
   const [selectedTab, setSelectedTab] = useState<GameplanTab>(OffensiveFormations);
   const [isSaving, setIsSaving] = useState(false);
   const { cfbTeamOptions, nflTeamOptions, cfbTeamMap, proTeamMap, saveCFBGameplan, saveNFLGameplan } = useSimFBAStore();
+  const { currentUser } = useAuthStore();
   const validation = useGameplanValidation({
     gameplan: localGameplan,
     league,
@@ -104,31 +106,53 @@ const GameplanView: React.FC<GameplanViewProps> = ({
   }, []);
 
   const handleSaveGameplan = useCallback(async () => {
-    if (!validation.isValid || !canModify || isSaving || !localGameplan) {
+    if (!validation.isValid || !canModify || isSaving || !localGameplan || !currentUser) {
       return;
     }
 
     setIsSaving(true);
     try {
       let result;
+      let dto = {
+        GameplanID: team.ID.toString(),
+        UpdatedGameplan: {},
+        UpdatedNFLGameplan: {},
+        Username: currentUser.username,
+        TeamName: team.TeamName || ''
+      };
+      
       if (league === SimCFB) {
-        result = await saveCFBGameplan(localGameplan);
+        dto.UpdatedGameplan = localGameplan;
+        console.log(dto)
+        result = await saveCFBGameplan(dto);
       } else {
-        result = await saveNFLGameplan(localGameplan);
+        dto.UpdatedNFLGameplan = localGameplan;
+        result = await saveNFLGameplan(dto);
       }
 
       if (result && result.success) {
         onGameplanUpdate(localGameplan);
-        console.log('Gameplan saved successfully');
+        console.log("Gameplan saved successfully");
       } else {
-        console.error('Failed to save gameplan:', result?.error);
+        console.error("Failed to save gameplan:", result?.error);
       }
     } catch (error) {
-      console.error('Error saving gameplan:', error);
+      console.error("Error saving gameplan:", error);
     } finally {
       setIsSaving(false);
     }
-  }, [validation.isValid, canModify, isSaving, localGameplan, league, saveCFBGameplan, saveNFLGameplan, onGameplanUpdate]);
+  }, [
+    validation.isValid,
+    canModify,
+    isSaving,
+    localGameplan,
+    league,
+    saveCFBGameplan,
+    saveNFLGameplan,
+    onGameplanUpdate,
+    currentUser,
+    team
+  ]);
 
   const handleResetGameplan = useCallback(() => {
     setLocalGameplan(gameplan);

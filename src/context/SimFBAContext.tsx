@@ -126,8 +126,8 @@ interface SimFBAContextProps {
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
   saveCFBDepthChart: (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => Promise<void>;
   saveNFLDepthChart: (dto: any, updatedDepthChart?: NFLDepthChart) => Promise<void>;
-  saveCFBGameplan: (dto: any) => Promise<void>;
-  saveNFLGameplan: (dto: any) => Promise<void>;
+  saveCFBGameplan: (dto: any) => Promise<{ success: boolean; error?: unknown }>;
+  saveNFLGameplan: (dto: any) => Promise<{ success: boolean; error?: unknown }>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
@@ -217,8 +217,8 @@ const defaultContext: SimFBAContextProps = {
   updateCFBRosterMap: () => {},
   saveCFBDepthChart: async () => {},
   saveNFLDepthChart: async () => {},
-  saveCFBGameplan: async () => {},
-  saveNFLGameplan: async () => {},
+  saveCFBGameplan: async () => ({ success: false }),
+  saveNFLGameplan: async () => ({ success: false }),
   addRecruitToBoard: async () => {},
   removeRecruitFromBoard: async () => {},
   toggleScholarship: async () => {},
@@ -759,19 +759,39 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   };
 
   const saveCFBGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveCFBGameplan(dto);
-    enqueueSnackbar("Gameplan saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+    try {
+      await GameplanService.SaveCFBGameplan(dto);
+      enqueueSnackbar("Gameplan saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error saving CFB gameplan:", error);
+      enqueueSnackbar("Failed to save gameplan. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      return { success: false, error };
+    }
   };
 
   const saveNFLGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveNFLGameplan(dto);
-    enqueueSnackbar("Gameplan saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+    try {
+      await GameplanService.SaveNFLGameplan(dto);
+      enqueueSnackbar("Gameplan saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error saving NFL gameplan:", error);
+      enqueueSnackbar("Failed to save gameplan. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      return { success: false, error };
+    }
   };
 
   const addRecruitToBoard = async (dto: any) => {

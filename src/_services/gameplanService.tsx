@@ -1,5 +1,5 @@
 import { fbaUrl, bbaUrl, hckUrl } from "../_constants/urls";
-import { PostCall, GetCall } from "../_helper/fetchHelper";
+import { PostCall, GetCall, PUTCallNoResponse } from "../_helper/fetchHelper";
 
 export const GameplanService = {
   SaveCHLGameplan: async (dto: any): Promise<void> => {
