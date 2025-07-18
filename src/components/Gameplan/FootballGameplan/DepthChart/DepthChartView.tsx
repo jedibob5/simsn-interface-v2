@@ -104,27 +104,32 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
       if (occupiedIndex !== -1 && occupiedIndex !== existingPlayerIndex) {
         const occupiedPlayer = updatedPlayers[occupiedIndex];
         
-        if (existingPlayer.Position === newPosition) {
-          const existingPlayerPositionLevel = existingPlayer.PositionLevel;
-          const occupiedPlayerPositionLevel = occupiedPlayer.PositionLevel;
-          
-          updatedPlayers[occupiedIndex] = {
-            ...existingPlayer,
-            Position: newPosition,
-            PositionLevel: occupiedPlayerPositionLevel
-          };
-          updatedPlayers[existingPlayerIndex] = {
-            ...occupiedPlayer,
-            Position: existingPlayer.Position,
-            PositionLevel: existingPlayerPositionLevel
-          };
+        const swapData: any = {
+          ...occupiedPlayer,
+          PlayerID: existingPlayer.PlayerID,
+          FirstName: existingPlayer.FirstName,
+          LastName: existingPlayer.LastName,
+          OriginalPosition: existingPlayer.OriginalPosition,
+        };
+        
+        const existingSwapData: any = {
+          ...existingPlayer,
+          PlayerID: occupiedPlayer.PlayerID,
+          FirstName: occupiedPlayer.FirstName,
+          LastName: occupiedPlayer.LastName,
+          OriginalPosition: occupiedPlayer.OriginalPosition,
+        };
+        
+        if (league === SimCFB) {
+          swapData.CollegePlayer = existingPlayer.CollegePlayer;
+          existingSwapData.CollegePlayer = occupiedPlayer.CollegePlayer;
         } else {
-          updatedPlayers[occupiedIndex] = {
-            PlayerID: playerId,
-            Position: newPosition,
-            PositionLevel: occupiedPlayer.PositionLevel,
-          };
+          swapData.NFLPlayer = (existingPlayer as any).NFLPlayer;
+          existingSwapData.NFLPlayer = (occupiedPlayer as any).NFLPlayer;
         }
+        
+        updatedPlayers[occupiedIndex] = swapData;
+        updatedPlayers[existingPlayerIndex] = existingSwapData;
       } else {
         const targetPositionLevel = updatedPlayers.find(p => 
           p.Position === newPosition && String(p.PositionLevel) === String(newPositionLevel)
@@ -138,17 +143,46 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
       }
     } else {
       if (occupiedIndex !== -1) {
-        updatedPlayers[occupiedIndex] = {
+        const player = players.find(p => 
+          (p as any).PlayerID === playerId || (p as any).ID === playerId
+        );
+        
+        const updateData: any = {
+          ...updatedPlayers[occupiedIndex],
           PlayerID: playerId,
-          Position: newPosition,
-          PositionLevel: String(newPositionLevel),
+          FirstName: player?.FirstName || '',
+          LastName: player?.LastName || '',
+          OriginalPosition: player?.Position || ''
         };
+        
+        if (league === SimCFB) {
+          updateData.CollegePlayer = player || null;
+        } else {
+          updateData.NFLPlayer = player || null;
+        }
+        
+        updatedPlayers[occupiedIndex] = updateData;
       } else {
-        updatedPlayers.push({
+        const player = players.find(p => 
+          (p as any).PlayerID === playerId || (p as any).ID === playerId
+        );
+        
+        const newEntry: any = {
           PlayerID: playerId,
           Position: newPosition,
           PositionLevel: String(newPositionLevel),
-        });
+          FirstName: player?.FirstName || '',
+          LastName: player?.LastName || '',
+          OriginalPosition: player?.Position || '',
+        };
+        
+        if (league === SimCFB) {
+          newEntry.CollegePlayer = player || null;
+        } else {
+          newEntry.NFLPlayer = player || null;
+        }
+        
+        updatedPlayers.push(newEntry);
       }
     }
 
@@ -168,27 +202,22 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
     setIsSaving(true);
     try {
       const dto = {
-        DepthChartID: localDepthChart.ID,
+        DepthChartID: localDepthChart.DepthChartPlayers[0].DepthChartID,
         UpdatedPlayerPositions: localDepthChart.DepthChartPlayers?.map((dcPlayer: any) => {
-          const player = players.find(p => 
-            (p as any).PlayerID === dcPlayer.PlayerID || (p as any).ID === dcPlayer.PlayerID
-          );
-
-        const positionData = {
-          ...dcPlayer,
-          ID: dcPlayer.ID || 0,
-          DepthChartID: dcPlayer.DepthChartID || localDepthChart.ID,
-          PlayerID: dcPlayer.PlayerID,
-          Position: dcPlayer.Position,
-          PositionLevel: dcPlayer.PositionLevel,
-          FirstName: player?.FirstName || dcPlayer.FirstName || '',
-          LastName: player?.LastName || dcPlayer.LastName || '',
-          OriginalPosition: player?.Position || dcPlayer.OriginalPosition || dcPlayer.Position
+          const positionData = {
+            ID: dcPlayer.ID,
+            DepthChartID: dcPlayer.DepthChartID,
+            PlayerID: dcPlayer.PlayerID,
+            Position: dcPlayer.Position,
+            PositionLevel: dcPlayer.PositionLevel,
+            FirstName: dcPlayer.FirstName,
+            LastName: dcPlayer.LastName,
+            OriginalPosition: league === SimCFB 
+              ? (dcPlayer.CollegePlayer?.Position || dcPlayer.OriginalPosition)
+              : (dcPlayer.NFLPlayer?.Position || dcPlayer.OriginalPosition)
           };
           
-          if (league === SimCFB) {
-            return positionData;
-          }
+          return positionData;
         }) || []
       };
 
