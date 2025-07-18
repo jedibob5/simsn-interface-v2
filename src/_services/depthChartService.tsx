@@ -1,5 +1,5 @@
 import { fbaUrl } from "../_constants/urls";
-import { PostCall, GetCall, PUTCallNoResponse } from "../_helper/fetchHelper";
+import { PostCall, GetCall, PUTCallNoResponse, PostCallNoResponse } from "../_helper/fetchHelper";
 import { CollegeDepthChartPosition, NFLDepthChartPosition } from './../models/footballModels';
 
 export const DepthChartService = {
@@ -9,7 +9,7 @@ export const DepthChartService = {
   },
 
   SaveNFLDepthChart: async (dto: any): Promise<void> => {
-    await PostCall(`${fbaUrl}gameplan/nfl/updatedepthchart`, dto);
+    await PostCallNoResponse(`${fbaUrl}gameplan/nfl/updatedepthchart`, dto);
   },
 };
 
