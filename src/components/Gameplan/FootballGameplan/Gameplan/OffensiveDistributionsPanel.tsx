@@ -321,6 +321,13 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label={gameplan.RunnerDistributionWRPosition || 'WR1'}
               value={gameplan.RunnerDistributionWR}
               onChange={(e) => onChange('RunnerDistributionWR', parseInt(e.target.value) || 0)}
+              playerInfo={(() => {
+                const wrPosition = gameplan.RunnerDistributionWRPosition || 'WR1';
+                const wrLevel = parseInt(wrPosition.slice(2)) || 1;
+                return depthChart 
+                  ? getDepthChartPlayerInfo(depthChart, 'WR', wrLevel, league)
+                  : getGameplanPlayerInfo(players, 'WR', wrLevel, league);
+              })()}
               targetDepth={gameplan.RunnerDistributionWRPosition || 'WR1'}
               onTargetDepthChange={(position) => onChange('RunnerDistributionWRPosition', position)}
               targetDepthOptions={['WR1', 'WR2', 'WR3', 'WR4', 'WR5']}
