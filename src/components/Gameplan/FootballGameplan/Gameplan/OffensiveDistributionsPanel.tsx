@@ -1,10 +1,9 @@
-// OffensiveDistributionsPanel component for managing targeting and running distributions
 import React, { useState } from 'react';
 import { Text } from '../../../../_design/Typography';
 import { Button } from '../../../../_design/Buttons';
 import { Modal } from '../../../../_design/Modal';
 import { useModal } from '../../../../_hooks/useModal';
-import { CollegePlayer, NFLPlayer } from '../../../../models/footballModels';
+import { CollegePlayer, NFLPlayer, CollegeTeamDepthChart, NFLDepthChart } from '../../../../models/footballModels';
 import { SimCFB, SimNFL } from '../../../../_constants/constants';
 import { GameplanData } from './GameplanHelper';
 import { 
@@ -28,7 +27,7 @@ import {
   calculateOptionDistributionTotal, 
   calculateRPODistributionTotal 
 } from '../Utils/GameplanCalculationUtils';
-import { getGameplanPlayerInfo } from '../Utils/GameplanPlayerUtils';
+import { getGameplanPlayerInfo, getDepthChartPlayerInfo } from '../Utils/GameplanPlayerUtils';
 import {
   Team,
   Player
@@ -38,6 +37,7 @@ import { InformationCircle } from '../../../../_design/Icons';
 export interface OffensiveDistributionsPanelProps {
   gameplan: GameplanData;
   players: (CollegePlayer | NFLPlayer)[];
+  depthChart?: CollegeTeamDepthChart | NFLDepthChart | null;
   league: typeof SimCFB | typeof SimNFL;
   onChange: (field: string, value: any) => void;
   validation: GameplanValidationResult;
@@ -51,6 +51,7 @@ export interface OffensiveDistributionsPanelProps {
 export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelProps> = ({
   gameplan,
   players,
+  depthChart,
   league,
   onChange,
   validation,
@@ -230,7 +231,13 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               const fieldName = `Targeting${label}`;
               const position = label.slice(0, 2);
               const level = parseInt(label.slice(2)) || 1;
-              const playerInfo = getGameplanPlayerInfo(players, position, level, league);
+              
+              let playerInfo;
+              if (depthChart) {
+                playerInfo = getDepthChartPlayerInfo(depthChart, position, level, league);
+              } else {
+                playerInfo = getGameplanPlayerInfo(players, position, level, league);
+              }
               
               return (
                 <TargetInput
@@ -260,7 +267,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="QB"
               value={gameplan.RunnerDistributionQB}
               onChange={(e) => onChange('RunnerDistributionQB', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'QB', 1, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'QB', 1, league) : getGameplanPlayerInfo(players, 'QB', 1, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionQB')}
             />
@@ -269,7 +276,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="RB1"
               value={gameplan.RunnerDistributionRB1}
               onChange={(e) => onChange('RunnerDistributionRB1', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'RB', 1, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 1, league) : getGameplanPlayerInfo(players, 'RB', 1, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionRB1')}
             />
@@ -278,7 +285,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="RB2"
               value={gameplan.RunnerDistributionRB2}
               onChange={(e) => onChange('RunnerDistributionRB2', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'RB', 2, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 2, league) : getGameplanPlayerInfo(players, 'RB', 2, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionRB2')}
             />
@@ -287,7 +294,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="RB3"
               value={gameplan.RunnerDistributionRB3}
               onChange={(e) => onChange('RunnerDistributionRB3', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'RB', 3, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'RB', 3, league) : getGameplanPlayerInfo(players, 'RB', 3, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionRB3')}
             />
@@ -296,7 +303,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="FB1"
               value={gameplan.RunnerDistributionFB1}
               onChange={(e) => onChange('RunnerDistributionFB1', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'FB', 1, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 1, league) : getGameplanPlayerInfo(players, 'FB', 1, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionFB1')}
             />
@@ -305,7 +312,7 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               label="FB2"
               value={gameplan.RunnerDistributionFB2}
               onChange={(e) => onChange('RunnerDistributionFB2', parseInt(e.target.value) || 0)}
-              playerInfo={getGameplanPlayerInfo(players, 'FB', 2, league)}
+              playerInfo={depthChart ? getDepthChartPlayerInfo(depthChart, 'FB', 2, league) : getGameplanPlayerInfo(players, 'FB', 2, league)}
               disabled={disabled || gameplan.DefaultOffense}
               error={getFieldError(validation, 'RunnerDistributionFB2')}
             />

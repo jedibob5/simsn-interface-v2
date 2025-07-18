@@ -1,4 +1,4 @@
-import { CollegePlayer, NFLPlayer } from '../../../../models/footballModels';
+import { CollegePlayer, NFLPlayer, CollegeTeamDepthChart, NFLDepthChart, CollegeDepthChartPosition, NFLDepthChartPosition } from '../../../../models/footballModels';
 import { SimCFB, SimNFL } from '../../../../_constants/constants';
 import { getCFBOverall } from '../../../../_utility/getLetterGrade';
 import { GetNFLOverall } from '../../../Team/TeamPageUtils';
@@ -147,5 +147,34 @@ export const getGameplanPlayerInfo = (
   if (!player) return undefined;
 
   return getPlayerInfoForGameplan(player, league);
+};
+
+export const getDepthChartPlayerInfo = (
+  depthChart: CollegeTeamDepthChart | NFLDepthChart | null | undefined,
+  position: string,
+  level: number,
+  league: typeof SimCFB | typeof SimNFL
+): PlayerDisplayInfo | undefined => {
+  if (!depthChart || !depthChart.DepthChartPlayers) return undefined;
+
+  const depthChartPlayer = depthChart.DepthChartPlayers.find(
+    (player) => player.Position === position && player.PositionLevel === level.toString()
+  );
+
+  if (!depthChartPlayer) return undefined;
+
+  let actualPlayer: CollegePlayer | NFLPlayer | null = null;
+  
+  if (league === SimCFB) {
+    const cfbPlayer = depthChartPlayer as CollegeDepthChartPosition;
+    actualPlayer = cfbPlayer.CollegePlayer;
+  } else {
+    const nflPlayer = depthChartPlayer as NFLDepthChartPosition;
+    actualPlayer = nflPlayer.NFLPlayer;
+  }
+
+  if (!actualPlayer) return undefined;
+
+  return getPlayerInfoForGameplan(actualPlayer, league);
 };
 

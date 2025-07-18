@@ -150,6 +150,7 @@ export const CFBGameplanPage = () => {
         <GameplanView
           gameplan={cfbGameplan}
           players={teamPlayers}
+          depthChart={cfbDepthChart}
           team={cfbTeam}
           league={SimCFB}
           onGameplanUpdate={handleGameplanUpdate}
@@ -292,6 +293,7 @@ export const NFLGameplanPage = () => {
         <GameplanView
           gameplan={nflGameplan}
           players={selectedTeamPlayers}
+          depthChart={nflDepthChart}
           team={selectedTeam}
           league={SimNFL}
           onGameplanUpdate={handleGameplanUpdate}

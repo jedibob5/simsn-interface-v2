@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { CollegePlayer, NFLPlayer } from '../../../../models/footballModels';
+import { CollegePlayer, NFLPlayer, CollegeTeamDepthChart, NFLDepthChart } from '../../../../models/footballModels';
 import { SimCFB, SimNFL } from '../../../../_constants/constants';
 import { Text } from '../../../../_design/Typography';
 import { SelectDropdown } from '../../../../_design/Select';
@@ -27,6 +27,7 @@ import {
 export interface GameplanViewProps {
   gameplan: any;
   players: (CollegePlayer | NFLPlayer)[];
+  depthChart?: CollegeTeamDepthChart | NFLDepthChart | null;
   team: any;
   league: typeof SimCFB | typeof SimNFL;
   opponentTeam?: any;
@@ -44,6 +45,7 @@ export interface GameplanViewProps {
 const GameplanView: React.FC<GameplanViewProps> = ({
   gameplan,
   players,
+  depthChart,
   team,
   league,
   opponentTeam,
@@ -195,6 +197,7 @@ const GameplanView: React.FC<GameplanViewProps> = ({
           <OffensiveDistributionsPanel
             {...panelProps}
             players={players}
+            depthChart={depthChart}
             league={league}
           />
         );
