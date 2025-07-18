@@ -220,7 +220,7 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
                             </Text>
                           </div>
                         )}
-                        <div className={`absolute -top-2 -left-1 text-white rounded-full w-6 h-6 p-4 flex items-center justify-center text-xs font-bold ${
+                        <div className={`absolute -top-5 -left-1 text-white rounded-full w-6 h-6 p-4 flex items-center justify-center text-xs font-bold ${
                           swapTargetLevel === assignedPlayer.PositionLevel ? 'bg-blue-400' : 'bg-blue-500'
                         }`}>
                           {modalPosition}{assignedPlayer.PositionLevel}

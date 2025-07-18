@@ -14,6 +14,7 @@ import {
   generateCardGradient 
 } from '../Utils/ComponentStyleUtils';
 import { getRatingColor } from '../Utils/UIUtils';
+import { getYear } from '../../../../_utility/getYear';
 
 interface DepthChartCardProps {
   player: any;
@@ -92,7 +93,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
         />
       {category === ManagementCard && (
         <div 
-          className="absolute top-0 left-0 px-1 py-0.5 rounded-bl-md z-10"
+          className="absolute top-0 left-0 px-1 py-0.5 rounded-br-md z-10"
           style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
         >
           <Text 
@@ -104,7 +105,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
         </div>
       )}
         <div 
-          className="absolute top-0 right-0 px-1 py-0.5 rounded-bl-md z-10"
+          className="absolute top-0 right-0 px-1 rounded-bl-md py-0.5 z-10"
           style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
         >
           <Text 
@@ -114,8 +115,21 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
             {overallRating}
           </Text>
         </div>
+        {depthChartManager && league === SimCFB && (
+          <div 
+          className="absolute top-8 right-0 px-1 py-0.5 rounded-bl-lg rounded-tl-lg z-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+        >
+          <Text 
+            variant={getTextSize(size)} 
+            classes={`font-semibold`}
+          >
+            {getYear(player.year, player.isRedshirt)}
+          </Text>
+        </div>
+        )}
         <div className="flex flex-col h-full justify-between relative z-10">
-          <div className={`bg-white mx-auto mt-1 rounded-full overflow-hidden border-2 ${depthChartManager ? 'max-w-[2.5em] sm:max-w-[3em]' : `${pictureSize}`}`}>
+          <div className={`bg-white mx-auto mt-2 rounded-full overflow-hidden border-2 ${depthChartManager ? 'max-w-[2.5em] sm:max-w-[3em]' : `${pictureSize}`}`}>
             <PlayerPicture
               playerID={player?.PlayerID || player?.ID}
               team={team}
@@ -137,6 +151,19 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
               >
                 {player?.LastName || 'Player'}
               </Text>
+            {depthChartManager && (
+              <div 
+                  className="px-1 py-0.5 rounded-lg z-10"
+                  style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+              >
+                <Text 
+                  variant="xs" 
+                  classes={`font-semibold`}
+                >
+                  {player.Archetype}
+                </Text>
+              </div>
+              )}
             </div>
           </div>
         </div>
