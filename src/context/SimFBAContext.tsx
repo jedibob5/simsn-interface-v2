@@ -126,8 +126,8 @@ interface SimFBAContextProps {
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
   saveCFBDepthChart: (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => Promise<void>;
   saveNFLDepthChart: (dto: any, updatedDepthChart?: NFLDepthChart) => Promise<void>;
-  saveCFBGameplan: (dto: any) => Promise<{ success: boolean; error?: unknown }>;
-  saveNFLGameplan: (dto: any) => Promise<{ success: boolean; error?: unknown }>;
+  saveCFBGameplan: (dto: any, updatedGameplan?: CollegeGameplan) => Promise<{ success: boolean; error?: unknown }>;
+  saveNFLGameplan: (dto: any, updatedGameplan?: NFLGameplan) => Promise<{ success: boolean; error?: unknown }>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
@@ -758,9 +758,14 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   };
 
-  const saveCFBGameplan = async (dto: any) => {
+  const saveCFBGameplan = async (dto: any, updatedGameplan?: CollegeGameplan) => {
     try {
       await GameplanService.SaveCFBGameplan(dto);
+      
+      if (updatedGameplan) {
+        setCollegeGameplan(updatedGameplan);
+      }
+      
       enqueueSnackbar("Gameplan saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -776,9 +781,14 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   };
 
-  const saveNFLGameplan = async (dto: any) => {
+  const saveNFLGameplan = async (dto: any, updatedGameplan?: NFLGameplan) => {
     try {
       await GameplanService.SaveNFLGameplan(dto);
+      
+      if (updatedGameplan) {
+        setNFLGameplan(updatedGameplan);
+      }
+      
       enqueueSnackbar("Gameplan saved!", {
         variant: "success",
         autoHideDuration: 3000,
