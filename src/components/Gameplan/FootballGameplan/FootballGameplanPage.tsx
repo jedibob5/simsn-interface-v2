@@ -212,7 +212,6 @@ export const NFLGameplanPage = () => {
   const backgroundTextColor = getTextColorBasedOnBg(backgroundColor)
 
   const handleDepthChartUpdate = useCallback((updatedDepthChart: NFLDepthChart) => {
-    console.log('NFL depth chart updated locally:', updatedDepthChart);
   }, []);
 
   const handleGameplanUpdate = useCallback((updatedGameplan: GameplanData) => {

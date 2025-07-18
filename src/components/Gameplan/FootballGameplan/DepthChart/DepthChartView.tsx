@@ -222,10 +222,11 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
       };
 
       if (league === SimCFB) {
-        await saveCFBDepthChart(dto);
+        await saveCFBDepthChart(dto, localDepthChart);
       } else {
-        await saveNFLDepthChart(dto);
+        await saveNFLDepthChart(dto, localDepthChart);
       }
+      onDepthChartUpdate(localDepthChart);
     } catch (error) {
       console.error('Error saving depth chart:', error);
     } finally {
@@ -258,6 +259,10 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
       onHasUnsavedChangesChange(hasUnsavedChanges);
     }
   }, [hasUnsavedChanges, onHasUnsavedChangesChange]);
+
+  useEffect(() => {
+    setLocalDepthChart(depthChart);
+  }, [depthChart]);
 
   const openModal = (player: CFBPlayer | NFLPlayer) => {
     handleOpenModal();

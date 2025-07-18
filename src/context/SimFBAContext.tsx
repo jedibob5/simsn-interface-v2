@@ -124,8 +124,8 @@ interface SimFBAContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
-  saveCFBDepthChart: (dto: any) => Promise<void>;
-  saveNFLDepthChart: (dto: any) => Promise<void>;
+  saveCFBDepthChart: (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => Promise<void>;
+  saveNFLDepthChart: (dto: any, updatedDepthChart?: NFLDepthChart) => Promise<void>;
   saveCFBGameplan: (dto: any) => Promise<void>;
   saveNFLGameplan: (dto: any) => Promise<void>;
   addRecruitToBoard: (dto: any) => Promise<void>;
@@ -700,9 +700,21 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCFBRosterMap(newMap);
   };
 
-  const saveCFBDepthChart = async (dto: any) => {
+  const saveCFBDepthChart = async (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => {
     try {
       await DepthChartService.SaveCFBDepthChart(dto);
+      
+      if (updatedDepthChart) {
+        setCollegeDepthChart(updatedDepthChart);
+    
+        if (cfbTeam?.ID && cfbDepthchartMap) {
+          setCFBDepthchartMap(prev => ({
+            ...prev,
+            [cfbTeam.ID]: updatedDepthChart
+          }));
+        }
+      }
+      
       enqueueSnackbar("Depth Chart saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -717,9 +729,21 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   };
 
-  const saveNFLDepthChart = async (dto: any) => {
+  const saveNFLDepthChart = async (dto: any, updatedDepthChart?: NFLDepthChart) => {
     try {
       await DepthChartService.SaveNFLDepthChart(dto);
+      
+      if (updatedDepthChart) {
+        setNFLDepthChart(updatedDepthChart);
+        
+        if (nflTeam?.ID && nflDepthchartMap) {
+          setNFLDepthchartMap(prev => ({
+            ...prev,
+            [nflTeam.ID]: updatedDepthChart
+          }));
+        }
+      }
+      
       enqueueSnackbar("Depth Chart saved!", {
         variant: "success",
         autoHideDuration: 3000,
