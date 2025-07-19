@@ -1036,9 +1036,9 @@ interface NFLDepthChartInfoModalBodyProps {
   player: NFLPlayer;
 }
 
-export const NFLDepthChartInfoModalBody: FC<NFLDepthChartInfoModalBodyProps> = ({
-  player,
-}) => {
+export const NFLDepthChartInfoModalBody: FC<
+  NFLDepthChartInfoModalBodyProps
+> = ({ player }) => {
   const { currentUser } = useAuthStore();
   const { proTeamMap: nflTeamMap, cfbTeamMap } = useSimFBAStore();
   const team = nflTeamMap ? nflTeamMap[player.TeamID] : null;
@@ -1208,7 +1208,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
                          px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`}
             style={{ backgroundColor: "white" }}
           >
-            <PlayerPicture playerID={player.ID} league="SimCHL" team={team} />
+            <PlayerPicture playerID={player.ID} league={SimCHL} team={team} />
           </div>
           {team && player.IsSigned && (
             <Logo
