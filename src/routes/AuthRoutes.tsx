@@ -79,6 +79,24 @@ export const AuthRoutes = [
     }
   />,
   <Route
+    key="CFB Gameplan"
+    path={routes.CFB_GAMEPLAN}
+    element={
+      <AuthGuard>
+        <GameplanPage league={SimCFB} />
+      </AuthGuard>
+    }
+  />,
+  <Route
+    key="NFL Gameplan"
+    path={routes.NFL_GAMEPLAN}
+    element={
+      <AuthGuard>
+        <GameplanPage league={SimNFL} />
+      </AuthGuard>
+    }
+  />,
+  <Route
     key="CBB Team"
     path={routes.CBB_TEAM}
     element={

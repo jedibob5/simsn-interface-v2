@@ -18,6 +18,7 @@ import {
   CollegeStandings,
   CollegeTeam,
   CollegeTeamDepthChart,
+  CollegeGameplan,
   Croot,
   NewsLog,
   NFLCapsheet,
@@ -26,6 +27,7 @@ import {
   NFLPlayer,
   NFLStandings,
   NFLTeam,
+  NFLGameplan,
   Notification,
   RecruitingTeamProfile,
   Timestamp,
@@ -122,10 +124,10 @@ interface SimFBAContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
-  saveCFBDepthChart: (dto: any) => Promise<void>;
-  saveNFLDepthChart: (dto: any) => Promise<void>;
-  saveCFBGameplan: (dto: any) => Promise<void>;
-  saveNFLGameplan: (dto: any) => Promise<void>;
+  saveCFBDepthChart: (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => Promise<void>;
+  saveNFLDepthChart: (dto: any, updatedDepthChart?: NFLDepthChart) => Promise<void>;
+  saveCFBGameplan: (dto: any, updatedGameplan?: CollegeGameplan) => Promise<{ success: boolean; error?: unknown }>;
+  saveNFLGameplan: (dto: any, updatedGameplan?: NFLGameplan) => Promise<{ success: boolean; error?: unknown }>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
@@ -143,8 +145,11 @@ interface SimFBAContextProps {
   proContractMap: Record<number, NFLContract> | null;
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
   proPlayerMap: Record<number, NFLPlayer>;
-
   allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
+  collegeGameplan: CollegeGameplan | null;
+  nflGameplan: NFLGameplan | null;
+  collegeDepthChart: CollegeTeamDepthChart | null;
+  nflDepthChart: NFLDepthChart | null;
 }
 
 // ✅ Initial Context State
@@ -212,8 +217,8 @@ const defaultContext: SimFBAContextProps = {
   updateCFBRosterMap: () => {},
   saveCFBDepthChart: async () => {},
   saveNFLDepthChart: async () => {},
-  saveCFBGameplan: async () => {},
-  saveNFLGameplan: async () => {},
+  saveCFBGameplan: async () => ({ success: false }),
+  saveNFLGameplan: async () => ({ success: false }),
   addRecruitToBoard: async () => {},
   removeRecruitFromBoard: async () => {},
   toggleScholarship: async () => {},
@@ -230,6 +235,10 @@ const defaultContext: SimFBAContextProps = {
   proExtensionMap: {},
   allCFBTeamHistory: {},
   proPlayerMap: {},
+  collegeGameplan: null,
+  nflGameplan: null,
+  collegeDepthChart: null,
+  nflDepthChart: null,
 };
 
 export const SimFBAContext = createContext<SimFBAContextProps>(defaultContext);
@@ -359,6 +368,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
+  const [collegeGameplan, setCollegeGameplan] = useState<CollegeGameplan | null>(null);
+  const [nflGameplan, setNFLGameplan] = useState<NFLGameplan | null>(null);
+  const [collegeDepthChart, setCollegeDepthChart] = useState<CollegeTeamDepthChart | null>(null);
+  const [nflDepthChart, setNFLDepthChart] = useState<NFLDepthChart | null>(null);
   const [freeAgents, setFreeAgents] = useState<NFLPlayer[]>([]);
   const [waiverPlayers, setWaiverPlayers] = useState<NFLPlayer[]>([]);
 
@@ -486,6 +499,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setTopCFBReceivers(res.TopCFBReceivers);
       setCFBRosterMap(res.CollegeRosterMap);
       setPortalPlayers(res.PortalPlayers);
+      setCollegeGameplan(res.CollegeGameplan || null);
+      setNFLGameplan(res.NFLGameplan || null);
+      setCollegeDepthChart(res.CollegeDepthChart || null);
+      setNFLDepthChart(res.NFLDepthChart || null);
     }
 
     if (nflID > 0) {
@@ -683,36 +700,108 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCFBRosterMap(newMap);
   };
 
-  const saveCFBDepthChart = async (dto: any) => {
-    await DepthChartService.SaveCFBDepthChart(dto);
-    enqueueSnackbar("Depth Chart saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+  const saveCFBDepthChart = async (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => {
+    try {
+      await DepthChartService.SaveCFBDepthChart(dto);
+      
+      if (updatedDepthChart) {
+        setCollegeDepthChart(updatedDepthChart);
+    
+        if (cfbTeam?.ID && cfbDepthchartMap) {
+          setCFBDepthchartMap(prev => ({
+            ...prev,
+            [cfbTeam.ID]: updatedDepthChart
+          }));
+        }
+      }
+      
+      enqueueSnackbar("Depth Chart saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      console.error("Error saving CFB depth chart:", error);
+      enqueueSnackbar("Failed to save depth chart. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      throw error;
+    }
   };
 
-  const saveNFLDepthChart = async (dto: any) => {
-    await DepthChartService.SaveNFLDepthChart(dto);
-    enqueueSnackbar("Depth Chart saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+  const saveNFLDepthChart = async (dto: any, updatedDepthChart?: NFLDepthChart) => {
+    try {
+      await DepthChartService.SaveNFLDepthChart(dto);
+      
+      if (updatedDepthChart) {
+        setNFLDepthChart(updatedDepthChart);
+        
+        if (nflTeam?.ID && nflDepthchartMap) {
+          setNFLDepthchartMap(prev => ({
+            ...prev,
+            [nflTeam.ID]: updatedDepthChart
+          }));
+        }
+      }
+      
+      enqueueSnackbar("Depth Chart saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      console.error("Error saving NFL depth chart:", error);
+      enqueueSnackbar("Failed to save depth chart. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      throw error;
+    }
   };
 
-  const saveCFBGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveCFBGameplan(dto);
-    enqueueSnackbar("Gameplan saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+  const saveCFBGameplan = async (dto: any, updatedGameplan?: CollegeGameplan) => {
+    try {
+      await GameplanService.SaveCFBGameplan(dto);
+      
+      if (updatedGameplan) {
+        setCollegeGameplan(updatedGameplan);
+      }
+      
+      enqueueSnackbar("Gameplan saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error saving CFB gameplan:", error);
+      enqueueSnackbar("Failed to save gameplan. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      return { success: false, error };
+    }
   };
 
-  const saveNFLGameplan = async (dto: any) => {
-    const res = await GameplanService.SaveNFLGameplan(dto);
-    enqueueSnackbar("Gameplan saved!", {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+  const saveNFLGameplan = async (dto: any, updatedGameplan?: NFLGameplan) => {
+    try {
+      await GameplanService.SaveNFLGameplan(dto);
+      
+      if (updatedGameplan) {
+        setNFLGameplan(updatedGameplan);
+      }
+      
+      enqueueSnackbar("Gameplan saved!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error saving NFL gameplan:", error);
+      enqueueSnackbar("Failed to save gameplan. Please try again.", {
+        variant: "error",
+        autoHideDuration: 5000,
+      });
+      return { success: false, error };
+    }
   };
 
   const addRecruitToBoard = async (dto: any) => {
@@ -1096,6 +1185,10 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         proPlayerMap,
         freeAgents,
         waiverPlayers,
+        collegeGameplan,
+        nflGameplan,
+        collegeDepthChart,
+        nflDepthChart
       }}
     >
       {children}

@@ -42,6 +42,18 @@ export const ScoutAttributeType = "Scout Attribute";
 export const CancelOffer = "Cancel Offer";
 export const PracticeSquad = "Practice Squad";
 export const Affiliate = "Affiliate";
+export const Gameplan = "Gameplan";
+export const DepthChart = "Depth Chart";
+export const OffensiveDistributions = "Offensive Distributions";
+export const OffensiveFormations = "Offensive Formations";
+export const Offensive = "Offensive";
+export const Defensive = "Defensive";
+export const Defense = "Defense";
+export const SpecialTeams = "Special Teams";
+export const Team = "Team";
+export const Player = "Player";
+export const Formations = "Formations";
+export const Focus = "Focus";
 export const Help1 = "Help1";
 export const Help2 = "Help2";
 export const Help3 = "Help3";
@@ -100,6 +112,7 @@ export const DefendingZone = "Defending Zone";
 export const NeutralZone = "Neutral Zone";
 export const AttackingZone = "Attacking Zone";
 export const AttackingGoalZone = "Attacking Goal Zone";
+export const ManagementCard = "Management Card";
 export type Zone =
   | typeof DefendingGoalZone
   | typeof DefendingZone
@@ -488,6 +501,11 @@ export const Strength = "Strength";
 export const ThrowPower = "Throw Power";
 export const ThrowAccuracy = "Throw Accuracy";
 export const ShotgunRating = "Shotgun Rating";
+export const ShotgunRatingAcronyms = {
+  "Balanced": "BAL",
+  "Under Center": "UND",
+  "Shotgun": "GUN"
+} as const;
 export const Catching = "Catching";
 export const PassBlock = "Pass Block";
 export const RunBlock = "Run Block";

@@ -69,6 +69,50 @@ export const PUTCall = async <TRequest, TResponse>(
   }
 };
 
+// ✅ PUT Request without JSON Response (for void endpoints)
+export const PUTCallNoResponse = async (url: string, dto: any): Promise<void> => {
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dto),
+    });
+
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP Error: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error(`PUT request failed for URL: ${url}`, error);
+    throw error; // Rethrow to handle where the call is made
+  }
+};
+
+// ✅ POST Request without JSON Response (for void endpoints)
+export const PostCallNoResponse = async (url: string, dto: any): Promise<void> => {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dto),
+    });
+
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP Error: ${response.statusText}`);
+    }
+
+  } catch (error) {
+    console.error(`POST request failed for URL: ${url}`, error);
+    throw error; // Rethrow to handle where the call is made
+  }
+};
+
 // ✅ GET Request with JSON Response
 export const GetCall = async <T,>(url: string): Promise<T> => {
   try {
