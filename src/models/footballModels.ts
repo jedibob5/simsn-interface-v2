@@ -5272,6 +5272,7 @@ export class BootstrapData {
   ContractMap: { [key: number]: NFLContract };
   ExtensionMap: { [key: number]: NFLExtensionOffer };
   RecruitProfiles: RecruitPlayerProfile[];
+  NFLDraftees: NFLDraftee[];
 
   constructor(source: any = {}) {
     if (typeof source === "string") source = JSON.parse(source);
@@ -5382,6 +5383,7 @@ export class BootstrapData {
       NFLExtensionOffer,
       true
     );
+    this.NFLDraftees = this.convertValues(source["NFLDraftees"], NFLDraftee);
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

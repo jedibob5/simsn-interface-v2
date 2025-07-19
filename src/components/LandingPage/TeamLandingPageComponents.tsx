@@ -1,7 +1,7 @@
 import { getLogo } from "../../_utility/getLogo";
 import { Text } from "../../_design/Typography";
 import { Logo } from "../../_design/Logo";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { getTextColorBasedOnBg } from "../../_utility/getBorderClass";
 import { darkenColor } from "../../_utility/getDarkerColor";
 import {
@@ -30,6 +30,11 @@ import { ClickableGameLabel, ClickableTeamLabel } from "../Common/Labels";
 import { Medic } from "../../_design/Icons";
 import { useModal } from "../../_hooks/useModal";
 import { SchedulePageGameModal } from "../Schedule/Common/GameModal";
+import { Modal } from "../../_design/Modal";
+import { useSimFBAStore } from "../../context/SimFBAContext";
+import { Border } from "../../_design/Borders";
+import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
+import { usePagination } from "../../_hooks/usePagination";
 
 interface GamesBarProps {
   games: any[];
@@ -978,6 +983,7 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
 }) => {
   const navigate = useNavigate();
   const { goToTeamPage } = useDeepLink();
+  const draftListModal = useModal();
   return (
     <>
       <SectionCards
@@ -1030,6 +1036,14 @@ export const TeamQuickLinks: FC<TeamQuickLinksProps> = ({
               <Button size="xs" onClick={() => navigate(routes.NFL_DRAFT_ROOM)}>
                 Draft
               </Button>
+              <Button size="xs" onClick={draftListModal.handleOpenModal}>
+                Draft List
+              </Button>
+              <DraftListModal
+                isOpen={draftListModal.isModalOpen}
+                onClose={draftListModal.handleCloseModal}
+                title="Draft List"
+              />
             </>
           )}
           {league === SimCBB && (
@@ -1193,5 +1207,107 @@ export const TeamInjuries = ({
         </Text>
       )}
     </SectionCards>
+  );
+};
+
+interface DraftListModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  actions?: React.ReactNode;
+}
+
+export const DraftListModal: React.FC<DraftListModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  actions,
+}) => {
+  const { nflDraftees, cfbTeamMap } = useSimFBAStore();
+  const pageSize = useMemo(() => {
+    return 100;
+  }, []);
+  const { currentPage, totalPages, goToPreviousPage, goToNextPage } =
+    usePagination(nflDraftees.length, pageSize);
+
+  const pagedData = useMemo(() => {
+    if (totalPages === 1) return nflDraftees;
+    const start = currentPage!! * pageSize;
+    return nflDraftees.slice(start, start + pageSize);
+  }, [totalPages, nflDraftees, currentPage, pageSize]);
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={title} actions={actions}>
+      <div className="flex flex-row p-4 mb-2">
+        <Text variant="body" classes="text-white-500 font-semibold">
+          Please use Interface 2.0 for the full draft experience.
+        </Text>
+      </div>
+      <Border direction="col" classes="p-4 max-h-[60vh] overflow-y-auto">
+        {pagedData.map((draftee, index) => {
+          const { feet, inches } = HeightToFeetAndInches(draftee.Height);
+          const collegeTeam = cfbTeamMap![draftee.CollegeID];
+          return (
+            <Border direction="row" classes="p-2">
+              <div className="grid grid-cols-8">
+                <div
+                  className={`flex my-1 items-center justify-center 
+                         px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`}
+                  style={{ backgroundColor: "white" }}
+                >
+                  <PlayerPicture
+                    playerID={draftee.ID}
+                    league={SimNFL}
+                    team={collegeTeam}
+                  />
+                </div>
+                <div className="flex flex-col text-start justify-center col-span-4 ms-8">
+                  <Text variant="body-small" classes="font-semibold">
+                    {draftee.FirstName} {draftee.LastName}
+                  </Text>
+                  <Text variant="small" classes="font-semibold">
+                    {collegeTeam.TeamName} {collegeTeam.Mascot}
+                  </Text>
+                  <Text variant="small" classes="font-semibold">
+                    {draftee.Position} {draftee.Archetype}
+                  </Text>
+                  {draftee.PositionTwo.length > 0 && (
+                    <Text variant="body-small" classes="font-semibold">
+                      {draftee.Position} {draftee.Archetype}
+                    </Text>
+                  )}
+                </div>
+                <div className="flex flex-col text-start justify-center col-span-3">
+                  <Text variant="small" classes="font-semibold">
+                    Height: {feet}' {inches}"
+                  </Text>
+                  <Text variant="small" classes="font-semibold">
+                    Weight: {draftee.Weight}lbs
+                  </Text>
+                  <Text variant="small" classes="font-semibold">
+                    Overall: {draftee.OverallGrade}
+                  </Text>
+                </div>
+              </div>
+            </Border>
+          );
+        })}
+      </Border>
+      <div className="flex flex-row justify-center py-2">
+        <ButtonGroup>
+          <Button onClick={goToPreviousPage} disabled={currentPage === 0}>
+            Prev
+          </Button>
+          <Text variant="body-small" classes="flex items-center">
+            {currentPage + 1}
+          </Text>
+          <Button
+            onClick={goToNextPage}
+            disabled={currentPage >= totalPages - 1}
+          >
+            Next
+          </Button>
+        </ButtonGroup>
+      </div>
+    </Modal>
   );
 };

@@ -42,6 +42,7 @@ import {
   NFLWaiverOffDTO,
   FreeAgencyOfferDTO,
   NFLRequest,
+  NFLDraftee,
 } from "../models/footballModels";
 import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
@@ -115,6 +116,7 @@ interface SimFBAContextProps {
   topNFLPassers: NFLPlayer[];
   topNFLRushers: NFLPlayer[];
   topNFLReceivers: NFLPlayer[];
+  nflDraftees: NFLDraftee[];
   removeUserfromCFBTeamCall: (teamID: number) => Promise<void>;
   removeUserfromNFLTeamCall: (request: NFLRequest) => Promise<void>;
   addUserToCFBTeam: (teamID: number, user: string) => void;
@@ -124,10 +126,22 @@ interface SimFBAContextProps {
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
-  saveCFBDepthChart: (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => Promise<void>;
-  saveNFLDepthChart: (dto: any, updatedDepthChart?: NFLDepthChart) => Promise<void>;
-  saveCFBGameplan: (dto: any, updatedGameplan?: CollegeGameplan) => Promise<{ success: boolean; error?: unknown }>;
-  saveNFLGameplan: (dto: any, updatedGameplan?: NFLGameplan) => Promise<{ success: boolean; error?: unknown }>;
+  saveCFBDepthChart: (
+    dto: any,
+    updatedDepthChart?: CollegeTeamDepthChart
+  ) => Promise<void>;
+  saveNFLDepthChart: (
+    dto: any,
+    updatedDepthChart?: NFLDepthChart
+  ) => Promise<void>;
+  saveCFBGameplan: (
+    dto: any,
+    updatedGameplan?: CollegeGameplan
+  ) => Promise<{ success: boolean; error?: unknown }>;
+  saveNFLGameplan: (
+    dto: any,
+    updatedGameplan?: NFLGameplan
+  ) => Promise<{ success: boolean; error?: unknown }>;
   addRecruitToBoard: (dto: any) => Promise<void>;
   removeRecruitFromBoard: (dto: any) => Promise<void>;
   toggleScholarship: (dto: any) => Promise<void>;
@@ -206,6 +220,7 @@ const defaultContext: SimFBAContextProps = {
   topNFLReceivers: [],
   freeAgents: [],
   waiverPlayers: [],
+  nflDraftees: [],
   removeUserfromCFBTeamCall: async () => {},
   removeUserfromNFLTeamCall: async () => {},
   addUserToCFBTeam: async () => {},
@@ -368,13 +383,17 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
-  const [collegeGameplan, setCollegeGameplan] = useState<CollegeGameplan | null>(null);
+  const [collegeGameplan, setCollegeGameplan] =
+    useState<CollegeGameplan | null>(null);
   const [nflGameplan, setNFLGameplan] = useState<NFLGameplan | null>(null);
-  const [collegeDepthChart, setCollegeDepthChart] = useState<CollegeTeamDepthChart | null>(null);
-  const [nflDepthChart, setNFLDepthChart] = useState<NFLDepthChart | null>(null);
+  const [collegeDepthChart, setCollegeDepthChart] =
+    useState<CollegeTeamDepthChart | null>(null);
+  const [nflDepthChart, setNFLDepthChart] = useState<NFLDepthChart | null>(
+    null
+  );
   const [freeAgents, setFreeAgents] = useState<NFLPlayer[]>([]);
   const [waiverPlayers, setWaiverPlayers] = useState<NFLPlayer[]>([]);
-
+  const [nflDraftees, setNFLDraftees] = useState<NFLDraftee[]>([]);
   const proPlayerMap = useMemo(() => {
     const playerMap: Record<number, NFLPlayer> = {};
 
@@ -621,6 +640,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setProExtensionMap(res.ExtensionMap);
       setFreeAgents(res.FreeAgents);
       setWaiverPlayers(res.WaiverPlayers);
+      setNFLDraftees(res.NFLDraftees);
     }
 
     setPlayerFaces(res.FaceData);
@@ -700,21 +720,24 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     setCFBRosterMap(newMap);
   };
 
-  const saveCFBDepthChart = async (dto: any, updatedDepthChart?: CollegeTeamDepthChart) => {
+  const saveCFBDepthChart = async (
+    dto: any,
+    updatedDepthChart?: CollegeTeamDepthChart
+  ) => {
     try {
       await DepthChartService.SaveCFBDepthChart(dto);
-      
+
       if (updatedDepthChart) {
         setCollegeDepthChart(updatedDepthChart);
-    
+
         if (cfbTeam?.ID && cfbDepthchartMap) {
-          setCFBDepthchartMap(prev => ({
+          setCFBDepthchartMap((prev) => ({
             ...prev,
-            [cfbTeam.ID]: updatedDepthChart
+            [cfbTeam.ID]: updatedDepthChart,
           }));
         }
       }
-      
+
       enqueueSnackbar("Depth Chart saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -729,21 +752,24 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   };
 
-  const saveNFLDepthChart = async (dto: any, updatedDepthChart?: NFLDepthChart) => {
+  const saveNFLDepthChart = async (
+    dto: any,
+    updatedDepthChart?: NFLDepthChart
+  ) => {
     try {
       await DepthChartService.SaveNFLDepthChart(dto);
-      
+
       if (updatedDepthChart) {
         setNFLDepthChart(updatedDepthChart);
-        
+
         if (nflTeam?.ID && nflDepthchartMap) {
-          setNFLDepthchartMap(prev => ({
+          setNFLDepthchartMap((prev) => ({
             ...prev,
-            [nflTeam.ID]: updatedDepthChart
+            [nflTeam.ID]: updatedDepthChart,
           }));
         }
       }
-      
+
       enqueueSnackbar("Depth Chart saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -758,14 +784,17 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   };
 
-  const saveCFBGameplan = async (dto: any, updatedGameplan?: CollegeGameplan) => {
+  const saveCFBGameplan = async (
+    dto: any,
+    updatedGameplan?: CollegeGameplan
+  ) => {
     try {
       await GameplanService.SaveCFBGameplan(dto);
-      
+
       if (updatedGameplan) {
         setCollegeGameplan(updatedGameplan);
       }
-      
+
       enqueueSnackbar("Gameplan saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -784,11 +813,11 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const saveNFLGameplan = async (dto: any, updatedGameplan?: NFLGameplan) => {
     try {
       await GameplanService.SaveNFLGameplan(dto);
-      
+
       if (updatedGameplan) {
         setNFLGameplan(updatedGameplan);
       }
-      
+
       enqueueSnackbar("Gameplan saved!", {
         variant: "success",
         autoHideDuration: 3000,
@@ -1188,7 +1217,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         collegeGameplan,
         nflGameplan,
         collegeDepthChart,
-        nflDepthChart
+        nflDepthChart,
+        nflDraftees,
       }}
     >
       {children}
