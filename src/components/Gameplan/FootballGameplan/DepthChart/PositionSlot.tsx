@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { CollegePlayer as CFBPlayer, NFLPlayer } from '../../../../models/footballModels';
 import DepthChartCard from '../Common/DepthChartCard';
 import BackupPlayerCard from '../Common/BackupPlayerCard';
-import { SimCFB, SimNFL } from '../../../../_constants/constants';
+import { SimCFB, SimNFL, Formations } from '../../../../_constants/constants';
 import { Text } from '../../../../_design/Typography';
 import { 
   getEligiblePositionsForDepthPosition, 
   getUnassignedPlayersForPosition,
   getPlayerId 
 } from '../Utils/PlayerUtils';
-import { 
-  POSITION_SLOT_SIZE_CLASSES, 
-  POSITION_SLOT_MIN_HEIGHTS 
-} from '../Utils/ComponentStyleUtils';
-import { MODAL_CLASSES, GRID_CLASSES, EMPTY_STATE_CLASSES, HOVER_EFFECTS, TRANSITIONS } from '../Constants/UIConstants';
 
 interface PositionSlotProps {
   position: string;
@@ -28,6 +23,7 @@ interface PositionSlotProps {
   showBackupBelow?: boolean;
   onPlayerAssign?: (playerId: number, position: string, positionLevel: number) => void;
   openModal?: (player: CFBPlayer | NFLPlayer) => void;
+  backgroundColor?: string;
 }
 
 const PositionSlot: React.FC<PositionSlotProps> = ({
@@ -42,7 +38,8 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   startingLevel = 1,
   showBackupBelow = false,
   onPlayerAssign,
-  openModal
+  openModal,
+  backgroundColor,
 }) => {
   const [showPlayerSelection, setShowPlayerSelection] = useState(false);
   const [selectedSlotLevel, setSelectedSlotLevel] = useState(1);
@@ -82,14 +79,14 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   const sortedAssignedPlayers = assignedPlayers.sort((a: any, b: any) => parseInt(a.PositionLevel) - parseInt(b.PositionLevel));
 
   const slotSizes = {
-    sm: 'w-20',
-    md: 'w-24', 
+    sm: 'w-28',
+    md: 'w-32', 
     lg: 'w-28'
   };
 
   const minHeights = {
     sm: 'min-h-[6rem]',
-    md: 'min-h-[8rem]',
+    md: 'min-h-[9rem]',
     lg: 'min-h-[9rem]'
   };
 
@@ -132,6 +129,8 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
                   league={league}
                   position={position}
                   size={size}
+                  innerBackgroundColor={backgroundColor}
+                  category={Formations}
                 />
               </div>
             );
