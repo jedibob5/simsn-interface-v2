@@ -8,75 +8,76 @@ export const RATING_THRESHOLDS = {
 
 export const RATING_COLORS = {
   STRING: {
-    'A+': 'text-yellow-400',
-    'A': 'text-yellow-400',
-    'A-': 'text-purple-400',
-    'B+': 'text-purple-400',
-    'B': 'text-blue-400',
-    'B-': 'text-blue-400',
-    'C+': 'text-green-400',
-    'C': 'text-green-400',
-    'C-': 'text-green-400',
-    'D+': 'text-gray-300',
-    'D': 'text-gray-300',
-    'D-': 'text-gray-300',
-    'F': 'text-gray-500'
+    'A+': 'text-[#00ACC9]',
+    'A': 'text-[#00A995]',
+    'A-': 'text-[#00A666]',
+    'B+': 'text-[#64B052]',
+    'B': 'text-[#AEBA3F]',
+    'B-': 'text-[#D7C12C]',
+    'C+': 'text-[#F1C51A]',
+    'C': 'text-[#FDC70D]',
+    'C-': 'text-[#FCBF15]',
+    'D+': 'text-[#F8AC23]',
+    'D': 'text-[#F18831]',
+    'D-': 'text-[#EA5139]',
+    'F': 'text-[#AC2B27]'
   },
   NUMBER: {
-    ELITE: 'text-yellow-400',
-    EXCELLENT: 'text-purple-400',
-    GOOD: 'text-blue-400',
-    ABOVE_AVERAGE: 'text-green-400',
-    AVERAGE: 'text-gray-300',
-    BELOW_AVERAGE: 'text-gray-500'
+    ELITE: 'text-[#00ACC9]',
+    EXCELLENT: 'text-[#00A666]',
+    GOOD: 'text-[#64B052]',
+    ABOVE_AVERAGE: 'text-[#64B052]',
+    AVERAGE: 'text-[#D7C12C]',
+    BELOW_AVERAGE: 'text-[#FDC70D]'
   }
 } as const;
 
 export const RATING_BG_COLORS = {
   STRING: {
-    'A+': 'bg-yellow-400',
-    'A': 'bg-yellow-400',
-    'A-': 'bg-purple-400',
-    'B+': 'bg-purple-400',
-    'B': 'bg-blue-400',
-    'B-': 'bg-blue-400',
-    'C+': 'bg-green-400',
-    'C': 'bg-green-400',
-    'C-': 'bg-green-400',
-    'D+': 'bg-gray-300',
-    'D': 'bg-gray-300',
-    'D-': 'bg-gray-300',
-    'F': 'bg-gray-500'
+    'A+': 'bg-[#00ACC9]',
+    'A': 'bg-[#00A995]',
+    'A-': 'bg-[#00A666]',
+    'B+': 'bg-[#64B052]',
+    'B': 'bg-[#AEBA3F]',
+    'B-': 'bg-[#D7C12C]',
+    'C+': 'bg-[#F1C51A]',
+    'C': 'bg-[#FDC70D]',
+    'C-': 'bg-[#FCBF15]',
+    'D+': 'bg-[#F8AC23]',
+    'D': 'bg-[#F18831]',
+    'D-': 'bg-[#EA5139]',
+    'F': 'bg-[#AC2B27]'
   },
   NUMBER: {
-    ELITE: 'bg-yellow-400',
-    EXCELLENT: 'bg-purple-400',
-    GOOD: 'bg-blue-400',
-    ABOVE_AVERAGE: 'bg-green-400',
-    AVERAGE: 'bg-gray-300',
-    BELOW_AVERAGE: 'bg-gray-500'
+    ELITE: 'bg-[#00ACC9]',
+    EXCELLENT: 'bg-[#00A666]',
+    GOOD: 'bg-[#64B052]',
+    ABOVE_AVERAGE: 'bg-[#64B052]',
+    AVERAGE: 'bg-[#D7C12C]',
+    BELOW_AVERAGE: 'bg-[#FDC70D]'
   }
 } as const;
 
 export const ATTRIBUTE_COLORS = {
   STRING: {
-    'A+': 'text-green-400',
-    'A': 'text-green-400',
-    'A-': 'text-blue-400',
-    'B+': 'text-blue-400',
-    'B': 'text-yellow-400',
-    'B-': 'text-yellow-400',
-    'C+': 'text-orange-400',
-    'C': 'text-orange-400',
-    'C-': 'text-orange-400',
-    DEFAULT: 'text-red-400'
+  'A+': 'text-[#00A995]',
+  'A': 'text-[#00A666]',
+  'A-': 'text-[#64B052]',
+  'B+': 'text-[#AEBA3F]',
+  'B': 'text-[#D7C12C]',
+  'B-': 'text-[#F1C51A]',
+  'C+': 'text-[#FDC70D]',
+  'C': 'text-[#FCBF15]',
+  'C-': 'text-[#F8AC23]',
+  'D+': 'text-[#F18831]',
+    DEFAULT: 'text-[#AC2B27]'
   },
   NUMBER: {
-    EXCELLENT: { threshold: 80, color: 'text-green-400' },
-    GOOD: { threshold: 70, color: 'text-blue-400' },
-    AVERAGE: { threshold: 60, color: 'text-yellow-400' },
-    BELOW_AVERAGE: { threshold: 50, color: 'text-orange-400' },
-    POOR: { threshold: 0, color: 'text-red-400' }
+    EXCELLENT: { threshold: 80, color: 'text-[#00A666]' },
+    GOOD: { threshold: 70, color: 'text-[#64B052]' },
+    AVERAGE: { threshold: 60, color: 'text-[#D7C12C]' },
+    BELOW_AVERAGE: { threshold: 50, color: 'text-[#FDC70D]' },
+    POOR: { threshold: 0, color: 'text-[#AC2B27]' }
   }
 } as const;
 

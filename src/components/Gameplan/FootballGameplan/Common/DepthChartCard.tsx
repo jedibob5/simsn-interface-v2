@@ -48,7 +48,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   const sizeClasses = getSizeClasses(size, 'depthChart');
   const pictureSize = getPictureSize(size, true);
   const overallRating = getPlayerOverallRating(player, league, showLetterGrade);
-  
+  console.log('text: ', textColorClass)
   if (!player) {
     return (
       <div className={`${sizeClasses} w-full h-full ${classes}`}>
@@ -89,7 +89,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
         }}
       >
         <div 
-          className="absolute inset-0 opacity-25"
+          className="absolute inset-0 opacity-10"
           style={generateBackgroundPattern(accentColor)}
         />
       {category === ManagementCard && (
@@ -130,7 +130,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
         </div>
         )}
         <div className="flex flex-col h-full justify-between relative z-10">
-          <div className={`bg-white mx-auto mt-2 rounded-full overflow-hidden border-2 ${depthChartManager ? 'max-w-[2.5em] sm:max-w-[3em]' : `${pictureSize}`}`}>
+          <div className={`bg-white mx-auto mt-2 rounded-full overflow-hidden ${depthChartManager ? 'max-w-[2.5em] sm:max-w-[3em]' : `${pictureSize}`}`}>
             <PlayerPicture
               playerID={player?.PlayerID || player?.ID}
               team={team}
@@ -143,12 +143,22 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
               <Text 
                 variant={category === Formations ? (size === 'lg' ? 'small' : size === 'md' ? 'xs' : 'xs') : getTextSize(size)} 
                 classes={`font-bold ${textColorClass} leading-tight truncate block`}
+                style={{
+                  textShadow: textColorClass.includes('white') 
+                    ? '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'
+                    : '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+                }}
               >
                 {player?.FirstName || ''}
               </Text>
               <Text 
                 variant={getTextSize(size)} 
                 classes={`font-bold ${textColorClass} leading-tight truncate block`}
+                style={{
+                  textShadow: textColorClass.includes('white') 
+                    ? '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'
+                    : '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+                }}
               >
                 {player?.LastName || ''}
               </Text>

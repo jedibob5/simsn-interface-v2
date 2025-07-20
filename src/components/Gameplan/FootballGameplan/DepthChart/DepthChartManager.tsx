@@ -96,11 +96,13 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
   };
 
   const handleSlotClick = (position: string, positionLevel: number) => {
+    if (!canModify) return;
     setModalPosition(position);
     handleOpenModal();
   };
 
   const handleSwapClick = (position: string) => {
+    if (!canModify) return;
     setModalPosition(position);
     handleOpenModal();
   };
@@ -115,15 +117,17 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
           <Text variant="h4" classes="text-white font-semibold">
             {selectedPosition} Depth Chart ({assignedPlayers.length}/{limit})
           </Text>
-          <Button
-            variant="secondaryOutline"
-            size="sm"
-            onClick={() => handleSwapClick(selectedPosition)}
-            className="flex items-center gap-2"
-          >
-            <ArrowsUpDown />
-            Swap
-          </Button>
+          {canModify && (
+            <Button
+              variant="secondaryOutline"
+              size="sm"
+              onClick={() => handleSwapClick(selectedPosition)}
+              className="flex items-center gap-2"
+            >
+              <ArrowsUpDown />
+              Swap
+            </Button>
+          )}
         </div>
         
         <div className="space-y-3 overflow-y-auto max-h-[20em]">
@@ -242,6 +246,13 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
 
   return (
     <div className="space-y-6">
+      {!canModify && (
+        <div className="text-center mb-4 p-3 bg-yellow-900 bg-opacity-30 border border-yellow-600 rounded-lg">
+          <Text variant="body" classes="text-yellow-400">
+            Viewing {team?.TeamName || 'Team'} Depth Chart (Read-Only)
+          </Text>
+        </div>
+      )}
       {canModify && (
         <div className="flex gap-2 justify-center">
           <div className={`border rounded-lg p-4 ${isValid ? 'bg-green-900 bg-opacity-50 border-green-500' : 'bg-red-900 bg-opacity-50 border-red-500'}`}>

@@ -22,6 +22,9 @@ import {
 } from "../../../_constants/constants";
 import { Text } from "../../../_design/Typography";
 import { Input } from "../../../_design/Inputs";
+import { SelectDropdown } from "../../../_design/Select";
+import { SelectOption } from "../../../_hooks/useSelectStyles";
+import { SingleValue } from "react-select";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { useResponsive } from "../../../_hooks/useMobile";
 import PlayerPicture from "../../../_utility/usePlayerFaces";
@@ -38,6 +41,8 @@ export const CFBGameplanPage = () => {
     cfbTeam,
     cfbDepthchartMap,
     cfbRosterMap,
+    cfbTeamOptions,
+    cfbTeamMap,
     saveCFBDepthChart,
     collegeGameplan: cfbGameplan,
     collegeDepthChart: cfbDepthChart
@@ -47,17 +52,37 @@ export const CFBGameplanPage = () => {
   const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
   const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
   const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
+  const [selectedTeamDepthChart, setSelectedTeamDepthChart] = useState<CFBDepthChart | null>(null);
   
   const teamPlayers = useMemo(() => {
-    if (cfbTeam && cfbRosterMap) {
-      return cfbRosterMap[cfbTeam.ID] || [];
+    if (selectedTeam && cfbRosterMap) {
+      return cfbRosterMap[selectedTeam.ID] || [];
     }
     return [];
-  }, [cfbRosterMap, cfbTeam]);
+  }, [cfbRosterMap, selectedTeam]);
 
   const [gameplanData, setGameplanData] = useState<CFBGameplan | null>(null);
   const [depthChartData, setDepthChartData] = useState<any>(null);
   const [isLoadingGameplan, setIsLoadingGameplan] = useState(false);
+
+  useEffect(() => {
+    if (selectedTeam && cfbDepthchartMap) {
+      const depthChart = cfbDepthchartMap[selectedTeam.ID];
+      setSelectedTeamDepthChart(depthChart || null);
+    }
+  }, [selectedTeam, cfbDepthchartMap]);
+
+  const handleTeamSelection = useCallback((selectedOption: SingleValue<SelectOption>) => {
+    if (selectedOption && cfbTeamMap) {
+      const teamId = Number(selectedOption.value);
+      const team = cfbTeamMap[teamId];
+      if (team) {
+        setSelectedTeam(team);
+        setDepthChartHasUnsavedChanges(false);
+      }
+    }
+  }, [cfbTeamMap]);
 
   const handleDepthChartUpdate = useCallback((updatedDepthChart: CFBDepthChart) => {
   }, []);
@@ -89,16 +114,16 @@ export const CFBGameplanPage = () => {
     setIsUnsavedChangesModalOpen(false);
   }, []);
 
-  const borderColor = cfbTeam?.ColorOne;
+  const borderColor = selectedTeam?.ColorOne;
   const backgroundColor = "#1f2937";
-  const accentColor = cfbTeam?.ColorTwo;
+  const accentColor = selectedTeam?.ColorTwo;
   const borderTextColor = getTextColorBasedOnBg(borderColor)
   const backgroundTextColor = getTextColorBasedOnBg(backgroundColor)
 
   return (
     <div className="sm:container w-full sm:mx-auto sm:px-4 py-8">
       <div className="text-center mb-8">
-        <div className="flex justify-center space-x-4 mb-6">
+        <div className="flex justify-center items-center space-x-4 mb-6">
           <ButtonGroup>
             <Button
               variant={category === Gameplan ? "primary" : "secondary"}
@@ -115,6 +140,17 @@ export const CFBGameplanPage = () => {
               Depth Chart
             </Button>
           </ButtonGroup>
+          {category === DepthChart && cfbTeamOptions && (
+            <div className="ml-4" style={{ minWidth: '200px' }}>
+              <SelectDropdown
+                options={cfbTeamOptions}
+                value={cfbTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
+                onChange={handleTeamSelection}
+                placeholder="Select Team"
+                isClearable={false}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -129,10 +165,11 @@ export const CFBGameplanPage = () => {
       {category === DepthChart ? (
         <DepthChartView
           players={teamPlayers}
-          depthChart={cfbDepthChart}
-          team={cfbTeam}
+          depthChart={selectedTeamDepthChart || cfbDepthChart}
+          team={selectedTeam}
           league={SimCFB}
           onDepthChartUpdate={handleDepthChartUpdate}
+          canModify={selectedTeam?.ID === cfbTeam?.ID}
           backgroundColor={backgroundColor}
           borderColor={borderColor}
           accentColor={accentColor}
@@ -149,16 +186,16 @@ export const CFBGameplanPage = () => {
       ) : cfbGameplan ? (
         <GameplanView
           gameplan={cfbGameplan}
-          players={teamPlayers}
+          players={cfbRosterMap && cfbTeam ? cfbRosterMap[cfbTeam.ID] || [] : []}
           depthChart={cfbDepthChart}
           team={cfbTeam}
           league={SimCFB}
           onGameplanUpdate={handleGameplanUpdate}
-          backgroundColor={backgroundColor}
-          borderColor={borderColor}
-          accentColor={accentColor}
-          borderTextColor={borderTextColor}
-          backgroundTextColor={backgroundTextColor}
+          backgroundColor="#1f2937"
+          borderColor={cfbTeam?.ColorOne}
+          accentColor={cfbTeam?.ColorTwo}
+          borderTextColor={getTextColorBasedOnBg(cfbTeam?.ColorOne)}
+          backgroundTextColor={getTextColorBasedOnBg("#1f2937")}
           onHasUnsavedChangesChange={setGameplanHasUnsavedChanges}
         />
       ) : (
@@ -181,6 +218,8 @@ export const NFLGameplanPage = () => {
   const {
     nflTeam,
     proTeamMap: nflTeamMap,
+    nflTeamOptions,
+    nflDepthchartMap,
     proRosterMap: NFLRosterMap,
     nflGameplan,
     nflDepthChart
@@ -198,6 +237,7 @@ export const NFLGameplanPage = () => {
     }
     return nflTeam;
   });
+  const [selectedTeamDepthChart, setSelectedTeamDepthChart] = useState<NFLDepthChart | null>(null);
 
   const selectedTeamPlayers = useMemo(() => {
     if (selectedTeam && NFLRosterMap) {
@@ -205,6 +245,24 @@ export const NFLGameplanPage = () => {
     }
     return [];
   }, [NFLRosterMap, selectedTeam]);
+
+  useEffect(() => {
+    if (selectedTeam && nflDepthchartMap) {
+      const depthChart = nflDepthchartMap[selectedTeam.ID];
+      setSelectedTeamDepthChart(depthChart || null);
+    }
+  }, [selectedTeam, nflDepthchartMap]);
+
+  const handleTeamSelection = useCallback((selectedOption: SingleValue<SelectOption>) => {
+    if (selectedOption && nflTeamMap) {
+      const teamId = Number(selectedOption.value);
+      const team = nflTeamMap[teamId];
+      if (team) {
+        setSelectedTeam(team);
+        setDepthChartHasUnsavedChanges(false);
+      }
+    }
+  }, [nflTeamMap]);
 
   const borderColor = selectedTeam?.ColorOne;
   const backgroundColor = "#1f2937";
@@ -247,7 +305,7 @@ export const NFLGameplanPage = () => {
     <div>
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center space-x-4 mb-6">
+          <div className="flex justify-center items-center space-x-4 mb-6">
             <ButtonGroup>
               <Button
                 variant={category === Gameplan ? "primary" : "secondary"}
@@ -264,6 +322,17 @@ export const NFLGameplanPage = () => {
                 Depth Chart
               </Button>
             </ButtonGroup>
+            {category === DepthChart && nflTeamOptions && (
+              <div className="ml-4" style={{ minWidth: '200px' }}>
+                <SelectDropdown
+                  options={nflTeamOptions}
+                  value={nflTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
+                  onChange={handleTeamSelection}
+                  placeholder="Select Team"
+                  isClearable={false}
+                />
+              </div>
+            )}
           </div>
         </div>
         
@@ -278,10 +347,11 @@ export const NFLGameplanPage = () => {
       {category === DepthChart ? (
         <DepthChartView
           players={selectedTeamPlayers}
-          depthChart={nflDepthChart}
+          depthChart={selectedTeamDepthChart || nflDepthChart}
           team={selectedTeam}
           league={SimNFL}
           onDepthChartUpdate={handleDepthChartUpdate}
+          canModify={selectedTeam?.ID === nflTeam?.ID}
           backgroundColor={backgroundColor}
           borderColor={borderColor}
           accentColor={accentColor}
@@ -292,16 +362,16 @@ export const NFLGameplanPage = () => {
       ) : nflGameplan ? (
         <GameplanView
           gameplan={nflGameplan}
-          players={selectedTeamPlayers}
+          players={NFLRosterMap && nflTeam ? NFLRosterMap[nflTeam.ID] || [] : []}
           depthChart={nflDepthChart}
-          team={selectedTeam}
+          team={nflTeam}
           league={SimNFL}
           onGameplanUpdate={handleGameplanUpdate}
-          backgroundColor={backgroundColor}
-          borderColor={borderColor}
-          accentColor={accentColor}
-          borderTextColor={borderTextColor}
-          backgroundTextColor={backgroundTextColor}
+          backgroundColor="#1f2937"
+          borderColor={nflTeam?.ColorOne}
+          accentColor={nflTeam?.ColorTwo}
+          borderTextColor={getTextColorBasedOnBg(nflTeam?.ColorOne)}
+          backgroundTextColor={getTextColorBasedOnBg("#1f2937")}
           onHasUnsavedChangesChange={setGameplanHasUnsavedChanges}
         />
       ) : (
