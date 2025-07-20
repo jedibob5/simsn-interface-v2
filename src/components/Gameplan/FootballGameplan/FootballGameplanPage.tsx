@@ -123,7 +123,7 @@ export const CFBGameplanPage = () => {
   return (
     <div className="sm:container w-full sm:mx-auto sm:px-4 py-8">
       <div className="text-center mb-8">
-        <div className="flex justify-center items-center space-x-4 mb-6">
+        <div className="flex flex-col 2xl:flex-row justify-center items-center 2xl:space-x-4 space-y-4 2xl:space-y-0 mb-6">
           <ButtonGroup>
             <Button
               variant={category === Gameplan ? "primary" : "secondary"}
@@ -141,15 +141,15 @@ export const CFBGameplanPage = () => {
             </Button>
           </ButtonGroup>
           {category === DepthChart && cfbTeamOptions && (
-            <div className="ml-4" style={{ minWidth: '200px' }}>
-              <SelectDropdown
-                options={cfbTeamOptions}
-                value={cfbTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
-                onChange={handleTeamSelection}
-                placeholder="Select Team"
-                isClearable={false}
-              />
-            </div>
+          <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
+            <SelectDropdown
+              options={cfbTeamOptions}
+              value={cfbTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
+              onChange={handleTeamSelection}
+              placeholder="Select Team"
+              isClearable={false}
+            />
+          </div>
           )}
         </div>
       </div>
@@ -305,7 +305,7 @@ export const NFLGameplanPage = () => {
     <div>
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center space-x-4 mb-6">
+          <div className="flex flex-col 2xl:flex-row justify-center items-center 2xl:space-x-4 space-y-4 2xl:space-y-0 mb-6">
             <ButtonGroup>
               <Button
                 variant={category === Gameplan ? "primary" : "secondary"}
@@ -323,7 +323,7 @@ export const NFLGameplanPage = () => {
               </Button>
             </ButtonGroup>
             {category === DepthChart && nflTeamOptions && (
-              <div className="ml-4" style={{ minWidth: '200px' }}>
+              <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
                 <SelectDropdown
                   options={nflTeamOptions}
                   value={nflTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
