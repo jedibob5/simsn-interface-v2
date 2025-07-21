@@ -134,6 +134,7 @@ export const FLEXBONE_GUN = 'flexbone-gun';
 export const WING_SPLIT_BACK_GUN = 'wing-split-back-gun';
 export const DOUBLE_WING_SPLIT = 'double-wing-split';
 export const DOUBLE_WING = 'double-wing';
+export const SINGLEBACK = 'singleback';
 
 export const FOUR_THREE_BASE = '4-3-base';
 export const FOUR_THREE_OVER = '4-3-over';
@@ -194,6 +195,7 @@ export const POSITION_PREFIXES = {
 
 export const FORMATION_KEYWORDS = {
   GUN: 'gun',
+  SINGLEBACK: 'singleback',
   PISTOL: 'pistol',
   SPREAD: 'spread',
   EMPTY: 'empty',

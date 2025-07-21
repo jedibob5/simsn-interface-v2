@@ -7,6 +7,7 @@ import {
   TIGHT,
   WING,
   EMPTY,
+  SINGLEBACK,
   FLEXBONE_GUN,
   WING_SPLIT_BACK_GUN,
   DOUBLE_WING_SPLIT,
@@ -49,7 +50,7 @@ import {
 
 export type FormationType = 
   | typeof UNDER_CENTER | typeof GUN | typeof PISTOL | typeof SPREAD | typeof TIGHT | typeof WING | typeof EMPTY 
-  | typeof FLEXBONE_GUN | typeof WING_SPLIT_BACK_GUN | typeof DOUBLE_WING_SPLIT | typeof DOUBLE_WING;
+  | typeof FLEXBONE_GUN | typeof WING_SPLIT_BACK_GUN | typeof DOUBLE_WING_SPLIT | typeof DOUBLE_WING | typeof SINGLEBACK;
 
 export type DefensiveFormationType = 
   | typeof FOUR_THREE_BASE | typeof FOUR_THREE_OVER | typeof FOUR_THREE_UNDER | typeof FOUR_THREE_LIGHT | typeof FOUR_THREE_HEAVY
@@ -83,6 +84,11 @@ export interface WRPositioning {
 
 export const getFormationType = (formationName: string, positions: string[] = []): FormationType => {
   const name = formationName.toLowerCase();
+  console.log(name)
+
+  if (name.includes(FORMATION_KEYWORDS.SINGLEBACK) && !name.includes(FORMATION_KEYWORDS.GUN)) {
+    return SINGLEBACK;
+  }
 
   if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.SPLIT)) {
     return DOUBLE_WING_SPLIT;
@@ -265,6 +271,7 @@ export const getQBPosition = (formationType: FormationType): number => {
     case TIGHT:
     case WING:
     case DOUBLE_WING:
+    case SINGLEBACK:
     default:
       return GRID_POSITIONS.ROWS[5];
   }
