@@ -262,3 +262,55 @@ export const getRatingBgColor = (rating: number | string) => {
   if (rating >= 65) return 'bg-gray-300';
   return 'bg-gray-500';
 };
+
+export const findPlayerData = (
+  playerId: number, 
+  players: (CollegePlayer | NFLPlayer)[]
+) => {
+  return players.find(p => 
+    (p as any).PlayerID === playerId || (p as any).ID === playerId
+  );
+};
+
+export const updatePlayerInfo = (
+  slot: any, 
+  playerData: any, 
+  playerId: number,
+  league: typeof SimCFB | typeof SimNFL
+) => ({
+  ...slot,
+  PlayerID: playerData.PlayerID || playerData.ID || playerId,
+  FirstName: playerData.FirstName || '',
+  LastName: playerData.LastName || '',
+  OriginalPosition: playerData.Position || '',
+  CollegePlayer: league === SimCFB ? playerData : slot.CollegePlayer,
+  NFLPlayer: league === SimNFL ? playerData : slot.NFLPlayer
+});
+
+export const swapPlayersData = (
+  slot1: any,
+  slot2: any,
+  league: typeof SimCFB | typeof SimNFL
+): [any, any] => {
+  const swappedSlot1 = {
+    ...slot1,
+    PlayerID: slot2.PlayerID,
+    FirstName: slot2.FirstName,
+    LastName: slot2.LastName,
+    OriginalPosition: slot2.OriginalPosition,
+    CollegePlayer: league === SimCFB ? slot2.CollegePlayer : slot1.CollegePlayer,
+    NFLPlayer: league === SimNFL ? slot2.NFLPlayer : slot1.NFLPlayer
+  };
+  
+  const swappedSlot2 = {
+    ...slot2,
+    PlayerID: slot1.PlayerID,
+    FirstName: slot1.FirstName,
+    LastName: slot1.LastName,
+    OriginalPosition: slot1.OriginalPosition,
+    CollegePlayer: league === SimCFB ? slot1.CollegePlayer : slot2.CollegePlayer,
+    NFLPlayer: league === SimNFL ? slot1.NFLPlayer : slot2.NFLPlayer
+  };
+  
+  return [swappedSlot1, swappedSlot2];
+};
