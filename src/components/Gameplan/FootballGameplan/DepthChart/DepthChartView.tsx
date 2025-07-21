@@ -287,7 +287,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
                  'Special Teams Depth Chart'}
               </Text>
               <Text variant="body" classes="text-gray-400 mt-2">
-                Visual representation of your depth chart
+                Visual representation of the depth chart
               </Text>
             </div>
             <FormationView
