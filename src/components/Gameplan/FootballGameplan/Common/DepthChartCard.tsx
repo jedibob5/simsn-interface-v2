@@ -38,7 +38,8 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   showLetterGrade,
   category,
   depthChartManager,
-  innerBackgroundColor
+  innerBackgroundColor,
+  position
 }) => {
   const teamColors = useTeamColors(team?.ColorOne, team?.ColorTwo, team?.ColorThree);
   const backgroundColor = teamColors.One;
@@ -102,6 +103,19 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
             classes={`font-bold`}
           >
              {player.Position}{player.PositionTwo ? `/${player.PositionTwo}` : ''}
+          </Text>
+        </div>
+      )}
+      {category === Formations && (
+        <div 
+          className="absolute top-0 left-0 px-1 py-0.5 rounded-br-md z-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+        >
+          <Text 
+            variant={getTextSize(size)} 
+            classes={`font-bold`}
+          >
+             {position ? `${position}` : ''}
           </Text>
         </div>
       )}

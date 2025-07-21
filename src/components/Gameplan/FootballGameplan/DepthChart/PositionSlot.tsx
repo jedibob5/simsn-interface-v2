@@ -49,12 +49,10 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   };
 
   const handleSlotClick = (positionLevel: number) => {
-    console.log('Slot clicked:', position, positionLevel);
     if (onPlayerAssign) {
       setSelectedSlotLevel(positionLevel);
       setShowPlayerSelection(true);
     } else {
-      console.log('onPlayerAssign not provided');
     }
   };
 
@@ -91,12 +89,7 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center space-y-1">
-      {label && (
-        <Text variant="xs" classes="text-white font-bold bg-black bg-opacity-50 px-2 py-1 rounded">
-          {label}
-        </Text>
-      )}
+    <div className="flex flex-col items-center mt-2">
       <div className={`${slotSizes[size]} flex flex-col space-y-1`}>
         <div 
           className={`
@@ -127,7 +120,7 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
                   player={player}
                   team={team}
                   league={league}
-                  position={position}
+                  position={label}
                   size={size}
                   innerBackgroundColor={backgroundColor}
                   category={Formations}
@@ -149,7 +142,7 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
         {showBackupBelow && (() => {
           let backupPlayer;
           if (position === 'WR') {
-            const targetLevel = startingLevel === 1 ? 3 : 4;
+            const targetLevel = startingLevel === 1 ? 3 : startingLevel === 2 ? 4 : startingLevel === 4 ? 5 : 4;
             backupPlayer = sortedAssignedPlayers.find((dcPlayer: any) => parseInt(dcPlayer.PositionLevel) === targetLevel);
           } else {
             const nextLevel = startingLevel + 1;
