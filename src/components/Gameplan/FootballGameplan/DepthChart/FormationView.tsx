@@ -6,6 +6,7 @@ import { Text } from '../../../../_design/Typography';
 import { FormationMap, Formation } from '../Constants/GameplanConstants';
 import { Button } from '../../../../_design/Buttons';
 import { getFormationLayout, getDefensiveFormationLayout, getDefensiveLinePositions, getFormationType, shouldRenderPosition } from './FormationViewHelper';
+import { ArrowRight, ArrowLeft } from '../../../../_design/Icons';
 
 interface FormationViewProps {
   formationType: 'offense' | 'defense' | 'specialteams';
@@ -81,14 +82,15 @@ const FormationView: React.FC<FormationViewProps> = ({
   const getOffenseFormation = () => (
     <div className="space-y-4">
       {availableFormations.length > 1 && currentFormation && (
-        <div className="flex items-center justify-center space-x-4 p-1 rounded-lg border-2" style={{ backgroundColor: backgroundColor, borderColor: borderColor }}>
+        <div className="flex items-center space-x-4 p-1 rounded-lg border-2 justify-center" style={{ backgroundColor: backgroundColor, borderColor: borderColor }}>
+          <div className="flex w-1/2 justify-between items-center">
           <Button
             onClick={handlePreviousFormation}
             variant="secondary"
             size="sm"
-            classes="text-white hover:bg-gray-700 transition-colors"
+            classes="text-white hover:bg-gray-700 transition-colors h-1/2"
           >
-            ←
+            <ArrowLeft />
           </Button>
           <div className="text-center">
             <Text variant="h4" classes="text-white font-semibold">
@@ -102,10 +104,11 @@ const FormationView: React.FC<FormationViewProps> = ({
             onClick={handleNextFormation}
             variant="secondary"
             size="sm"
-            classes="text-white hover:bg-gray-700 transition-colors"
+            classes="text-white hover:bg-gray-700 transition-colors h-1/2"
           >
-            →
+            <ArrowRight />
           </Button>
+          </div>
         </div>
       )}
       
@@ -185,31 +188,33 @@ const FormationView: React.FC<FormationViewProps> = ({
   const getDefenseFormation = () => (
     <div className="space-y-4">
       {availableFormations.length > 1 && currentFormation && (
-        <div className="flex items-center justify-center space-x-4 p-1 rounded-lg border-2" style={{ backgroundColor: backgroundColor, borderColor: borderColor }}>
-          <Button
-            onClick={handlePreviousFormation}
-            variant="secondary"
-            size="sm"
-            classes="text-white hover:bg-gray-700 transition-colors"
-          >
-            ←
-          </Button>
-          <div className="text-center">
-            <Text variant="h4" classes="text-white font-semibold">
-              {currentFormation.name}
-            </Text>
-            <Text variant="small" classes="text-gray-300">
-              {currentFormationIndex + 1} of {availableFormations.length}
-            </Text>
+        <div className="flex items-center space-x-4 p-1 rounded-lg border-2 justify-center" style={{ backgroundColor: backgroundColor, borderColor: borderColor }}>
+          <div className="flex w-1/2 justify-between items-center">
+            <Button
+              onClick={handlePreviousFormation}
+              variant="secondary"
+              size="sm"
+              classes="text-white hover:bg-gray-700 transition-colors h-1/2"
+            >
+              <ArrowLeft />
+            </Button>
+            <div className="text-center">
+              <Text variant="h4" classes="text-white font-semibold">
+                {currentFormation.name}
+              </Text>
+              <Text variant="small" classes="text-gray-300">
+                {currentFormationIndex + 1} of {availableFormations.length}
+              </Text>
+            </div>
+            <Button
+              onClick={handleNextFormation}
+              variant="secondary"
+              size="sm"
+              classes="text-white hover:bg-gray-700 transition-colors h-1/2"
+            >
+              <ArrowRight />
+            </Button>
           </div>
-          <Button
-            onClick={handleNextFormation}
-            variant="secondary"
-            size="sm"
-            classes="text-white hover:bg-gray-700 transition-colors"
-          >
-            →
-          </Button>
         </div>
       )}
       

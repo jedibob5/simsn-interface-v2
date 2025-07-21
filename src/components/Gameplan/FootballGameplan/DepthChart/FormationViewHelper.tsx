@@ -521,7 +521,6 @@ export const getFormationLayout = (formation: Formation): FormationLayout => {
 };
 
 export const getDefensiveFormationLayout = (formation: Formation, defensiveScheme?: string): FormationLayout => {
-  console.log(formation)
   const formationType = getDefensiveFormationType(formation.name, formation.positions, defensiveScheme);
   
   const positions: FormationPositionData[] = [];
@@ -624,7 +623,6 @@ export const getDefensiveLinePositions = (formation: Formation, defensiveScheme?
     }
   } else if (formationType === THREE_THREE_FIVE_NICKEL) {
     const rolbPosition = formation.positions.find(p => p === `${POSITION_PREFIXES.ROLB}1`);
-    console.log(rolbPosition)
     if (rolbPosition) {
       if (defensiveScheme === '2-Gap' && !formation.positions.includes(`${POSITION_PREFIXES.DT}1`)) {
         dlPositions = [...dlPositions, rolbPosition];
@@ -684,7 +682,6 @@ const addLinebackerPositions = (positions: FormationPositionData[], lbPositions:
   const lbRow = 7;
   
   let filteredLbPositions = lbPositions;
-  console.log(filteredLbPositions)
   if (formationType === FOUR_FOUR_OVER || formationType === FOUR_THREE_OVER || formationType === THREE_THREE_FIVE_OVER || formationType === THREE_FOUR_EAGLE) {
     filteredLbPositions = lbPositions.filter(p => p !== `${POSITION_PREFIXES.LOLB}1`);
   }
