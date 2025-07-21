@@ -23,6 +23,7 @@ interface DepthChartViewProps {
   depthChart: any;
   team: any;
   league: typeof SimCFB | typeof SimNFL;
+  gameplan?: any;
   onDepthChartUpdate: (updatedDepthChart: any) => void;
   onTeamChange?: (team: any) => void;
   canModify?: boolean;
@@ -39,6 +40,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
   depthChart,
   team,
   league,
+  gameplan,
   onDepthChartUpdate,
   onTeamChange,
   canModify = true,
@@ -294,6 +296,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
               depthChart={localDepthChart}
               team={team}
               league={league}
+              gameplan={gameplan}
               borderColor={borderColor}
               backgroundColor={backgroundColor}
               accentColor={accentColor}

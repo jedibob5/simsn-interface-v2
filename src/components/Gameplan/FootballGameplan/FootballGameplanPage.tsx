@@ -168,6 +168,7 @@ export const CFBGameplanPage = () => {
           depthChart={selectedTeamDepthChart || cfbDepthChart}
           team={selectedTeam}
           league={SimCFB}
+          gameplan={cfbGameplan}
           onDepthChartUpdate={handleDepthChartUpdate}
           canModify={selectedTeam?.ID === cfbTeam?.ID}
           backgroundColor={backgroundColor}
@@ -350,6 +351,7 @@ export const NFLGameplanPage = () => {
           depthChart={selectedTeamDepthChart || nflDepthChart}
           team={selectedTeam}
           league={SimNFL}
+          gameplan={nflGameplan}
           onDepthChartUpdate={handleDepthChartUpdate}
           canModify={selectedTeam?.ID === nflTeam?.ID}
           backgroundColor={backgroundColor}
