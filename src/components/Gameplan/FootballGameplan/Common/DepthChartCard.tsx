@@ -48,7 +48,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   const sizeClasses = getSizeClasses(size, 'depthChart');
   const pictureSize = getPictureSize(size, true);
   const overallRating = getPlayerOverallRating(player, league, showLetterGrade);
-  console.log('text: ', textColorClass)
+
   if (!player) {
     return (
       <div className={`${sizeClasses} w-full h-full ${classes}`}>

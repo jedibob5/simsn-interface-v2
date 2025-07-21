@@ -3,10 +3,9 @@ import { CollegePlayer, NFLPlayer } from '../../../../models/footballModels';
 import { SimCFB, SimNFL } from '../../../../_constants/constants';
 
 interface ValidationError {
-  type: 'error' | 'warning';
+  field: string;
   message: string;
-  position?: string;
-  player?: string;
+  severity: 'error' | 'warning';
 }
 
 interface ValidationResult {
@@ -36,8 +35,9 @@ export const useDepthChartValidation = ({
     if (!depthChart?.DepthChartPlayers || !canModify) {
       if (!canModify) {
         errors.push({
-          type: 'error',
-          message: 'You do not have permission to modify this depth chart.'
+          field: 'permissions',
+          message: 'You do not have permission to modify this depth chart.',
+          severity: 'error'
         });
       }
       return { isValid: false, errors, warnings };
@@ -52,10 +52,9 @@ export const useDepthChartValidation = ({
       const player = playerMap.get(dcPlayer.PlayerID);
       if (!player) {
         errors.push({
-          type: 'error',
+          field: dcPlayer.Position,
           message: `Player ID ${dcPlayer.PlayerID} is no longer on the team. Please remove them from their ${dcPlayer.Position} position.`,
-          position: dcPlayer.Position,
-          player: `Player ID ${dcPlayer.PlayerID}`
+          severity: 'error'
         });
         return;
       }
@@ -67,10 +66,9 @@ export const useDepthChartValidation = ({
         
         if (cfbPlayer.IsRedshirting) {
           errors.push({
-            type: 'error',
+            field: dcPlayer.Position,
             message: `${playerName} is currently a redshirt player. Please swap them from their ${dcPlayer.Position} position level.`,
-            position: dcPlayer.Position,
-            player: playerName
+            severity: 'error'
           });
         }
       } else {
@@ -78,10 +76,9 @@ export const useDepthChartValidation = ({
         
         if (nflPlayer.IsPracticeSquad) {
           errors.push({
-            type: 'error',
+            field: dcPlayer.Position,
             message: `${playerName} is on the practice squad but is listed in the depth chart. Please swap them from their ${dcPlayer.Position} position level.`,
-            position: dcPlayer.Position,
-            player: playerName
+            severity: 'error'
           });
         }
       }
@@ -99,10 +96,9 @@ export const useDepthChartValidation = ({
           : (player as NFLPlayer).WeeksOfRecovery;
         
         errors.push({
-          type: 'error',
+          field: dcPlayer.Position,
           message: `${playerName} is injured with ${injuryType || 'unknown injury'}. They are unable to play for ${weeksOfRecovery || 'unknown'} weeks. Please swap them from their ${dcPlayer.Position} position level.`,
-          position: dcPlayer.Position,
-          player: playerName
+          severity: 'error'
         });
       }
     });
@@ -135,6 +131,15 @@ export const useDepthChartValidation = ({
       );
 
       if (firstStringPositions.length > 1) {
+        const positionNames = firstStringPositions.map((pos: any) => pos.position).join(', ');
+        errors.push({
+          field: 'multiple-positions',
+          message: `${playerName} is assigned as first string to multiple positions: ${positionNames}. A player can only be first string at one position.`,
+          severity: 'error'
+        });
+      }
+
+      if (firstStringPositions.length > 1) {
         for (const [groupName, groupPositions] of Object.entries(positionGroups)) {
           const groupFirstStringCount = firstStringPositions.filter((pos: any) => 
             groupPositions.includes(pos.position)
@@ -149,9 +154,9 @@ export const useDepthChartValidation = ({
             }[groupName];
 
             errors.push({
-              type: 'error',
+              field: groupName,
               message: `You have ${playerName} set at First String for multiple ${groupDisplayName} positions. Please resolve this issue.`,
-              player: playerName
+              severity: 'error'
             });
           }
         }
