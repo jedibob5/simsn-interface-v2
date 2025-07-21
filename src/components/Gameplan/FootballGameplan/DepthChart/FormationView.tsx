@@ -211,7 +211,7 @@ const FormationView: React.FC<FormationViewProps> = ({
   );
 
   const getDefenseFormation = () => (
-    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden">
+    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <div
@@ -410,7 +410,7 @@ const FormationView: React.FC<FormationViewProps> = ({
   );
 
   const getSpecialTeamsFormation = () => (
-    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden">
+    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <div

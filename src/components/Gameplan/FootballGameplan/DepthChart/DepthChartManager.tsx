@@ -161,7 +161,7 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex items-center gap-2">
                       <Text variant="body-small" classes="text-white">
-                        {assignedPlayer.playerData.Archetype} {assignedPlayer.playerData.Position}
+                        {assignedPlayer.playerData.Archetype} {assignedPlayer.playerData.Position}{assignedPlayer.playerData.PositionTwo ? `/${assignedPlayer.playerData.PositionTwo}` : ''}
                       </Text>
                       <Text variant="body-small" classes="text-white font-semibold">
                         {assignedPlayer.playerData.FirstName} {assignedPlayer.playerData.LastName}

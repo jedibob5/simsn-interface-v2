@@ -101,7 +101,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
             variant={getTextSize(size)} 
             classes={`font-bold`}
           >
-            {player.Position}
+             {player.Position}{player.PositionTwo ? `/${player.PositionTwo}` : ''}
           </Text>
         </div>
       )}
