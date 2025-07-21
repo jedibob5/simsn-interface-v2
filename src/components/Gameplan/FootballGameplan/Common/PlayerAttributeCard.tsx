@@ -131,12 +131,22 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
               <Text 
                 variant="xs" 
                 classes={`font-bold ${textColorClass} leading-tight truncate`}
+                style={{
+                  textShadow: textColorClass.includes('white') 
+                    ? '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'
+                    : '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+                }}
               >
                 {player.FirstName}
               </Text>
               <Text 
                 variant="xs" 
                 classes={`font-bold ${textColorClass} leading-tight truncate`}
+                style={{
+                  textShadow: textColorClass.includes('white') 
+                    ? '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'
+                    : '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+                }}
               >
                 {player.LastName}
               </Text>
@@ -156,7 +166,11 @@ export const PlayerAttributeCard: React.FC<PlayerAttributeCardProps> = ({
                   <Text 
                     variant="xs" 
                     classes={`font-bold ${getAttributeColor(attr.Letter || attr.Value)} leading-tight text-xs`}
-                    style={{ fontSize: '0.7rem' }}
+                    style={{ fontSize: '0.7rem',
+                             textShadow: textColorClass.includes('white') 
+                              ? '0.5px 0.5px 0 black, -0.5px -0.5px 0 black, 0.5px -0.5px 0 black, -0.5px 0.5px 0 black'
+                              : '0.5px 0.5px 0 white, -0.5px -0.5px 0 white, 0.5px -0.5px 0 white, -0.5px 0.5px 0 white'
+                     }}
                   >
                     {getAttributeDisplayValue(attr)}
                   </Text>

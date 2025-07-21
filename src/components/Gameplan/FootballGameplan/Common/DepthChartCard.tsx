@@ -170,6 +170,11 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
                 <Text 
                   variant="xs" 
                   classes={`font-semibold`}
+                  style={{
+                    textShadow: textColorClass.includes('white') 
+                    ? '1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black'
+                    : '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+                  }}
                 >
                   {player.Archetype}
                 </Text>
