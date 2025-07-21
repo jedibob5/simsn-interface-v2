@@ -84,7 +84,6 @@ export interface WRPositioning {
 
 export const getFormationType = (formationName: string, positions: string[] = []): FormationType => {
   const name = formationName.toLowerCase();
-  console.log(name)
 
   if (name.includes(FORMATION_KEYWORDS.SINGLEBACK) && !name.includes(FORMATION_KEYWORDS.GUN)) {
     return SINGLEBACK;
