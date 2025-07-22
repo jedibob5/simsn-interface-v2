@@ -63,7 +63,88 @@ export const generateSimpleBackgroundPattern = (accentColor: string): React.CSSP
 };
 
 export const generateCardGradient = (backgroundColor: string): string => {
-  return `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor}dd 100%)`;
+  return `linear-gradient(135deg, ${backgroundColor} 50%, ${backgroundColor}dd 100%)`;
+};
+
+export type BackgroundPatternType = 'squares' | 'simple-squares' | 'stripes' | 'dots' | 'hexagon' | 'waves' | 'triangles' | 'cross' | 'texture' | 'none';
+
+export const generateStripedPattern = (accentColor: string): React.CSSProperties => {
+  return {
+    backgroundImage: `repeating-linear-gradient(45deg, ${accentColor} 0px, ${accentColor} 2px, transparent 2px, transparent 8px)`,
+  };
+};
+
+export const generateDotPattern = (accentColor: string): React.CSSProperties => {
+  return {
+    backgroundImage: `radial-gradient(circle at 50% 50%, ${accentColor} 1px, transparent 1px)`,
+    backgroundSize: '8px 8px',
+  };
+};
+
+export const generateHexPattern = (accentColor: string): React.CSSProperties => {
+  const encodedColor = encodeURIComponent(accentColor);
+  return {
+    backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='10,2 17,6 17,14 10,18 3,14 3,6' fill='${encodedColor}' opacity='0.15'/%3E%3C/svg%3E")`,
+    backgroundSize: '20px 20px',
+  };
+};
+
+export const generateWavePattern = (accentColor: string): React.CSSProperties => {
+  const encodedColor = encodeURIComponent(accentColor);
+  return {
+    backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,5 Q5,0 10,5 T20,5' stroke='${encodedColor}' stroke-width='1' fill='none' opacity='0.2'/%3E%3C/svg%3E")`,
+    backgroundSize: '20px 10px',
+  };
+};
+
+export const generateTrianglePattern = (accentColor: string): React.CSSProperties => {
+  return {
+    backgroundImage: `linear-gradient(45deg, transparent 40%, ${accentColor} 40%, ${accentColor} 60%, transparent 60%)`,
+    backgroundSize: '8px 8px',
+  };
+};
+
+export const generateCrossPattern = (accentColor: string): React.CSSProperties => {
+  return {
+    backgroundImage: `
+      linear-gradient(90deg, transparent 40%, ${accentColor} 40%, ${accentColor} 60%, transparent 60%),
+      linear-gradient(0deg, transparent 40%, ${accentColor} 40%, ${accentColor} 60%, transparent 60%)
+    `,
+    backgroundSize: '8px 8px',
+  };
+};
+
+export const generateTexturePattern = (accentColor: string): React.CSSProperties => {
+  return {
+    backgroundImage: `radial-gradient(circle at 50% 50%, ${accentColor} 1px, transparent 1px), radial-gradient(circle at 75% 75%, ${accentColor} 1px, transparent 1px)`,
+    backgroundSize: '4px 4px',
+  };
+};
+
+export const getBackgroundPattern = (patternType: BackgroundPatternType, accentColor: string): React.CSSProperties => {
+  switch (patternType) {
+    case 'squares':
+      return generateBackgroundPattern(accentColor);
+    case 'simple-squares':
+      return generateSimpleBackgroundPattern(accentColor);
+    case 'stripes':
+      return generateStripedPattern(accentColor);
+    case 'dots':
+      return generateDotPattern(accentColor);
+    case 'hexagon':
+      return generateHexPattern(accentColor);
+    case 'waves':
+      return generateWavePattern(accentColor);
+    case 'triangles':
+      return generateTrianglePattern(accentColor);
+    case 'cross':
+      return generateCrossPattern(accentColor);
+    case 'texture':
+      return generateTexturePattern(accentColor);
+    case 'none':
+    default:
+      return {};
+  }
 };
 
 export const getSizeClasses = (size: ComponentSize, type: 'depthChart' | 'attribute' | 'positionSlot') => {

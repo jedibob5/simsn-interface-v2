@@ -181,11 +181,13 @@ const FormationView: React.FC<FormationViewProps> = ({
           <div className="row-start-11 row-span-2 rounded-lg bg-opacity-75 col-[1_/_span_14] w-full border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
             <div className="flex items-center justify-between w-full h-full px-4">
               <Logo url={logo} />
-              <Text variant="h1" classes={`uppercase ${borderTextColor}`}                 style={{
-                  textShadow: borderTextColor?.includes('white') 
-                    ? '1.5px 1.5px 0 black, -1.5px -1.5px 0 black, 1.5px -1.5px 0 black, -1.5px 1.5px 0 black'
-                    : '1.5px 1.5px 0 white, -1.5px -1.5px 0 white, 1.5px -1.5px 0 white, -1.5px 1.5px 0 white'
-                }}>{league === SimCFB ? team.TeamName : team.Mascot}</Text>
+              <Text variant="h1" classes={`uppercase ${borderTextColor}`}                 
+                    style={{
+                      textShadow: borderTextColor?.includes('white') 
+                        ? '1.5px 1.5px 0 black, -1.5px -1.5px 0 black, 1.5px -1.5px 0 black, -1.5px 1.5px 0 black'
+                        : '1.5px 1.5px 0 white, -1.5px -1.5px 0 white, 1.5px -1.5px 0 white, -1.5px 1.5px 0 white'
+              }}>
+                  {league === SimCFB ? team.TeamName : team.Mascot}</Text>
               <Logo url={logo} />
             </div>
           </div>
@@ -292,7 +294,13 @@ const FormationView: React.FC<FormationViewProps> = ({
           <div className="row-start-1 row-span-2 rounded-lg bg-opacity-75 col-[1_/_span_14] w-full border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
             <div className="flex items-center justify-between w-full h-full px-4">
               <Logo url={logo} />
-              <Text variant="h1" classes={`uppercase ${textColorClass}`}>{league === SimCFB ? team.TeamName : team.Mascot}</Text>
+              <Text variant="h1" classes={`uppercase ${borderTextColor}`}                 
+                    style={{
+                      textShadow: borderTextColor?.includes('white') 
+                        ? '1.5px 1.5px 0 black, -1.5px -1.5px 0 black, 1.5px -1.5px 0 black, -1.5px 1.5px 0 black'
+                        : '1.5px 1.5px 0 white, -1.5px -1.5px 0 white, 1.5px -1.5px 0 white, -1.5px 1.5px 0 white'
+              }}>
+                {league === SimCFB ? team.TeamName : team.Mascot}</Text>
               <Logo url={logo} />
             </div>
           </div>
