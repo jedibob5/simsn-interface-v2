@@ -286,7 +286,10 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
         <Modal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          title={modalPlayer ? `${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}` : ''}
+          title={modalPlayer ? `${modalPlayer.PositionTwo ?
+                               `${modalPlayer.Position}/${modalPlayer.PositionTwo}` 
+                               : modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}` 
+                               : ''}
           maxWidth="max-w-4xl"
         >
           {modalPlayer && (

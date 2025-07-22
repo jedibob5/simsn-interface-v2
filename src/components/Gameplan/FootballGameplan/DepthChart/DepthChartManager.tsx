@@ -4,6 +4,8 @@ import { SimCFB, SimNFL } from '../../../../_constants/constants';
 import { Text } from '../../../../_design/Typography';
 import { Button, ButtonGroup } from '../../../../_design/Buttons';
 import { useModal } from '../../../../_hooks/useModal';
+import { Modal } from '../../../../_design/Modal';
+import { CFBPlayerInfoModalBody, NFLDepthChartInfoModalBody } from '../../../Common/Modals';
 import { 
   POSITION_LIMITS, 
   OFFENSIVE_POSITIONS, 
@@ -62,6 +64,8 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
   const [selectedGroup, setSelectedGroup] = useState<'OFF' | 'DEF' | 'ST'>('OFF');
   const [modalPosition, setModalPosition] = useState<string>('');
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
+  const [modalPlayer, setModalPlayer] = useState<CollegePlayer | NFLPlayer | null>(null);
+  const { isModalOpen: isPlayerModalOpen, handleOpenModal: handleOpenPlayerModal, handleCloseModal: handleClosePlayerModal } = useModal();
   const getAssignedPlayersForPosition = (position: string) => {
     if (!depthChart?.DepthChartPlayers) return [];
 
@@ -109,6 +113,11 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
     handleOpenModal();
   };
 
+  const openModal = (player: CollegePlayer | NFLPlayer) => {
+    handleOpenPlayerModal();
+    setModalPlayer(player);
+  };
+
   const renderSelectedPosition = () => {
     const assignedPlayers = getAssignedPlayersForPosition(selectedPosition);
     const limit = POSITION_LIMITS[selectedPosition as keyof typeof POSITION_LIMITS];
@@ -137,7 +146,7 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
             const positionLevel = index + 1;
             const assignedPlayer = assignedPlayers.find((p: any) => parseInt(p.PositionLevel) === positionLevel);
             
-            let assignedPlayerOverall = 'N/A';
+            let assignedPlayerOverall;
             let assignedPlayerBackground = 'bg-gray-500';
             
             if (assignedPlayer?.playerData) {
@@ -165,9 +174,20 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
                       <Text variant="body-small" classes="text-white">
                         {assignedPlayer.playerData.Archetype} {assignedPlayer.playerData.Position}{assignedPlayer.playerData.PositionTwo ? `/${assignedPlayer.playerData.PositionTwo}` : ''}
                       </Text>
-                      <Text variant="body-small" classes="text-white font-semibold">
-                        {assignedPlayer.playerData.FirstName} {assignedPlayer.playerData.LastName}
-                      </Text>
+                      <div
+                        className="cursor-pointer hover:text-blue-400 transition-colors"
+                        onClick={() => openModal(assignedPlayer.playerData)}
+                        onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                          (e.target as HTMLElement).style.color = "#fcd53f";
+                        }}
+                        onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                          (e.target as HTMLElement).style.color = "";
+                        }}
+                      >
+                        <Text variant="body-small" classes="text-white font-semibold">
+                          {assignedPlayer.playerData.FirstName} {assignedPlayer.playerData.LastName}
+                        </Text>
+                      </div>
                     </div>
                     <div className="ml-auto">
                       <div 
@@ -365,6 +385,31 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
         onPlayerMove={onPlayerMove}
         onPlayerSwap={onPlayerSwap}
       />
+      
+      <Modal
+        isOpen={isPlayerModalOpen}
+        onClose={() => {
+          handleClosePlayerModal();
+          setModalPlayer(null);
+        }}
+        title={modalPlayer ? `${modalPlayer.PositionTwo ?
+                               `${modalPlayer.Position}/${modalPlayer.PositionTwo}` 
+                               : modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}` 
+                               : ''}
+        maxWidth="max-w-4xl"
+      >
+        {modalPlayer && (
+          league === SimCFB ? (
+            <CFBPlayerInfoModalBody
+              player={modalPlayer as CollegePlayer}
+            />
+          ) : (
+            <NFLDepthChartInfoModalBody
+              player={modalPlayer as NFLPlayer}
+            />
+          )
+        )}
+      </Modal>
     </div>
   );
 };
