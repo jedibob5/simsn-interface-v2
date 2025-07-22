@@ -88,6 +88,36 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
     setSelectedFormationType(formationType);
   }, []);
 
+  const handlePlayerSwap = useCallback((fromPlayerId: number, toPlayerId: number, position: string, fromLevel: number, toLevel: number) => {
+    if (!localDepthChart?.DepthChartPlayers) return;
+
+    let updatedPlayers = [...localDepthChart.DepthChartPlayers];
+    
+    const fromPlayerIndex = updatedPlayers.findIndex(
+      dcPlayer => dcPlayer.PlayerID === fromPlayerId && dcPlayer.Position === position && String(dcPlayer.PositionLevel) === String(fromLevel)
+    );
+    const toPlayerIndex = updatedPlayers.findIndex(
+      dcPlayer => dcPlayer.PlayerID === toPlayerId && dcPlayer.Position === position && String(dcPlayer.PositionLevel) === String(toLevel)
+    );
+    
+    if (fromPlayerIndex !== -1 && toPlayerIndex !== -1) {
+      const [swappedSlot1, swappedSlot2] = swapPlayersData(
+        updatedPlayers[fromPlayerIndex],
+        updatedPlayers[toPlayerIndex],
+        league
+      );
+      updatedPlayers[fromPlayerIndex] = swappedSlot1;
+      updatedPlayers[toPlayerIndex] = swappedSlot2;
+    }
+
+    const updatedDepthChart = {
+      ...localDepthChart,
+      DepthChartPlayers: updatedPlayers
+    };
+
+    setLocalDepthChart(updatedDepthChart);
+  }, [localDepthChart, league]);
+
   const handlePlayerMove = useCallback((playerId: number, newPosition: string, newPositionLevel: number) => {
     if (!localDepthChart?.DepthChartPlayers) return;
 
@@ -326,6 +356,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
               league={league}
               selectedPosition={selectedPosition}
               onPlayerMove={handlePlayerMove}
+              onPlayerSwap={handlePlayerSwap}
               onPositionChange={handlePositionSelection}
               onFormationTypeChange={handleFormationTypeChange}
               canModify={canModify}

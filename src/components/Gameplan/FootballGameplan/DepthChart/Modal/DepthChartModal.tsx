@@ -24,6 +24,7 @@ interface DepthChartModalProps {
   team: any;
   league: typeof SimCFB | typeof SimNFL;
   onPlayerMove: (playerId: number, position: string, positionLevel: number) => void;
+  onPlayerSwap: (fromPlayerId: number, toPlayerId: number, position: string, fromLevel: number, toLevel: number) => void;
 }
 
 const DepthChartModal: React.FC<DepthChartModalProps> = ({
@@ -34,7 +35,8 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
   depthChart,
   team,
   league,
-  onPlayerMove
+  onPlayerMove,
+  onPlayerSwap
 }) => {
   const [showAttributes, setShowAttributes] = useState(false);
   const [swapTargetLevel, setSwapTargetLevel] = useState<number | null>(null);
@@ -80,14 +82,10 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
       const fromPlayer = allAssigned.find(p => p.PositionLevel === fromLevel);
       const toPlayer = allAssigned.find(p => p.PositionLevel === toLevel);
       
-      if (fromPlayer && fromPlayer.playerData) {
+      if (fromPlayer && fromPlayer.playerData && toPlayer && toPlayer.playerData) {
         const fromPlayerId = (fromPlayer.playerData as any).PlayerID || (fromPlayer.playerData as any).ID;
-        onPlayerMove(fromPlayerId, modalPosition, toLevel);
-      }
-      
-      if (toPlayer && toPlayer.playerData) {
         const toPlayerId = (toPlayer.playerData as any).PlayerID || (toPlayer.playerData as any).ID;
-        onPlayerMove(toPlayerId, modalPosition, fromLevel);
+        onPlayerSwap(fromPlayerId, toPlayerId, modalPosition, fromLevel, toLevel);
       }
     }
   };

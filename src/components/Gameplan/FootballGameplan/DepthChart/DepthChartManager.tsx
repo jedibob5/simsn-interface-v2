@@ -25,6 +25,7 @@ interface DepthChartManagerProps {
   league: typeof SimCFB | typeof SimNFL;
   selectedPosition: string;
   onPlayerMove: (playerId: number, position: string, positionLevel: number) => void;
+  onPlayerSwap: (fromPlayerId: number, toPlayerId: number, position: string, fromLevel: number, toLevel: number) => void;
   onPositionChange: (position: string) => void;
   onFormationTypeChange?: (formationType: 'offense' | 'defense' | 'specialteams') => void;
   canModify?: boolean;
@@ -45,6 +46,7 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
   league,
   selectedPosition,
   onPlayerMove,
+  onPlayerSwap,
   onPositionChange,
   onFormationTypeChange,
   canModify = true,
@@ -361,6 +363,7 @@ const DepthChartManager: React.FC<DepthChartManagerProps> = ({
         team={team}
         league={league}
         onPlayerMove={onPlayerMove}
+        onPlayerSwap={onPlayerSwap}
       />
     </div>
   );
