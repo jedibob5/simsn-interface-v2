@@ -53,7 +53,7 @@ export const useDepthChartValidation = ({
       if (!player) {
         errors.push({
           field: dcPlayer.Position,
-          message: `Player ID ${dcPlayer.PlayerID} is no longer on the team. Please remove them from their ${dcPlayer.Position} position.`,
+          message: `${dcPlayer.OriginalPosition} ${dcPlayer.FirstName} ${dcPlayer.LastName} is no longer on the team. Please remove them from their ${dcPlayer.Position} position.`,
           severity: 'error'
         });
         return;

@@ -65,6 +65,39 @@ export const getAvailablePlayersForPosition = (
   return players.filter(player => eligiblePositions.includes(player.Position));
 };
 
+const POSITION_PRIORITY_MAP: Record<string, string[]> = {
+  'LE': ['DE', 'DT', 'OLB', 'ILB', 'SS', 'FS'],
+  'RE': ['DE', 'DT', 'OLB', 'ILB', 'SS', 'FS'],
+  'DT': ['DT', 'DE', 'ILB', 'OLB'],
+  
+  'LOLB': ['OLB', 'ILB', 'SS', 'DT', 'FS', 'CB', 'DE'],
+  'ROLB': ['OLB', 'ILB', 'SS', 'DT', 'FS', 'CB', 'DE'],
+  'MLB': ['ILB', 'OLB', 'SS', 'FS', 'CB', 'DT', 'DE'],
+  
+  'SS': ['SS', 'FS', 'CB', 'OLB', 'ILB'],
+  'FS': ['FS', 'SS', 'CB', 'OLB', 'ILB'],
+  'CB': ['CB', 'FS', 'SS', 'OLB', 'ILB'],
+  
+  'LT': ['OT', 'OG', 'C', 'LT', 'RT', 'LG', 'RG', 'FB', 'TE'],
+  'RT': ['OT', 'OG', 'C', 'RT', 'LT', 'RG', 'LG', 'FB', 'TE'],
+  'LG': ['OG', 'OT', 'C', 'LG', 'RG', 'LT', 'RT', 'FB', 'TE'],
+  'RG': ['OG', 'OT', 'C', 'RG', 'LG', 'RT', 'LT', 'FB', 'TE'],
+  'C': ['C', 'OG', 'OT', 'LG', 'RG', 'LT', 'RT', 'FB', 'TE']
+};
+
+const getPositionPriority = (position: string, playerPosition: string): number => {
+  const priorityList = POSITION_PRIORITY_MAP[position];
+  if (!priorityList) {
+    return playerPosition === position ? 0 : 1;
+  }
+  
+  const index = priorityList.indexOf(playerPosition);
+  if (index === -1) {
+    return playerPosition === 'ATH' ? 999 : 998;
+  }
+  return index;
+};
+
 export const getUnassignedPlayersForPosition = (
   position: string,
   players: (CollegePlayer | NFLPlayer)[],
@@ -89,12 +122,6 @@ export const getUnassignedPlayersForPosition = (
   });
   
   return filtered.sort((a, b) => {
-    const aIsExactMatch = a.Position === position;
-    const bIsExactMatch = b.Position === position;
-    
-    if (aIsExactMatch && !bIsExactMatch) return -1;
-    if (!aIsExactMatch && bIsExactMatch) return 1;
-    
     if (position === 'PR' || position === 'KR') {
       const aSpeed = league === SimNFL ? (a as NFLPlayer).Speed : (a as CollegePlayer).Speed;
       const bSpeed = league === SimNFL ? (b as NFLPlayer).Speed : (b as CollegePlayer).Speed;
@@ -105,6 +132,13 @@ export const getUnassignedPlayersForPosition = (
       const aStrength = league === SimNFL ? (a as NFLPlayer).Strength : (a as CollegePlayer).Strength;
       const bStrength = league === SimNFL ? (b as NFLPlayer).Strength : (b as CollegePlayer).Strength;
       return (bStrength || 0) - (aStrength || 0);
+    }
+    
+    const aPriority = getPositionPriority(position, a.Position);
+    const bPriority = getPositionPriority(position, b.Position);
+    
+    if (aPriority !== bPriority) {
+      return aPriority - bPriority;
     }
     
     const aOverall = league === SimNFL ? (a as NFLPlayer).Overall : (a as CollegePlayer).Overall;
