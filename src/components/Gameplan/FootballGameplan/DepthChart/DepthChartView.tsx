@@ -333,11 +333,6 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
               openModal={openModal}
               borderTextColor={borderTextColor}
             />
-            <div className="mt-4 text-center">
-              <Text variant="small" classes="text-gray-400">
-                Visual representation of your saved depth chart
-              </Text>
-            </div>
           </div>
         )}
           <div className="relative">
