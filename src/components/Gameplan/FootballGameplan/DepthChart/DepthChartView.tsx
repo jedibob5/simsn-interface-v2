@@ -66,7 +66,6 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
     league,
     canModify
   });
-  
   const teamOptions = league === SimCFB ? cfbTeamOptions : nflTeamOptions;
   const teamMap = league === SimCFB ? cfbTeamMap : proTeamMap;
 

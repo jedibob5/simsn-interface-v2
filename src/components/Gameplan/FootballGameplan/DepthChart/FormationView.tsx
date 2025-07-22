@@ -39,7 +39,6 @@ const FormationView: React.FC<FormationViewProps> = ({
 }) => {
   const [currentFormationIndex, setCurrentFormationIndex] = useState(0);
   const logo = getLogo(league, team.ID, false);
-
   const availableFormations = useMemo(() => {
     if (formationType === 'offense') {
       const offensiveScheme = gameplan?.OffensiveScheme || team?.TeamGameplan?.OffensiveScheme;
@@ -272,6 +271,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             <div className="flex justify-center items-center gap-1" style={{ gridColumnStart: 5, gridColumnEnd: 10, gridRowStart: 11 }}>
               {getDefensiveLinePositions(currentFormation, defensiveScheme).map(position => {
                 const positionType = position.replace(/\d+$/, '');
+                const positionLevel = parseInt(position.match(/\d+$/)?.[0] || '1');
                 return (
                   <PositionSlot
                     key={position}
@@ -283,6 +283,7 @@ const FormationView: React.FC<FormationViewProps> = ({
                     league={league}
                     size="md"
                     label={position}
+                    startingLevel={positionLevel}
                     showBackupBelow={false}
                     openModal={openModal}
                     backgroundColor={backgroundColor}

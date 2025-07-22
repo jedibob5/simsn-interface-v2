@@ -66,6 +66,13 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
 
   const getPlayersForPosition = () => {
     if (!depthChart?.DepthChartPlayers) return [];
+    if (label && label.match(/^[A-Z]+\d+$/)) {
+      const filtered = depthChart.DepthChartPlayers
+        .filter((dcPlayer: any) => {
+          return dcPlayer.Position === position && parseInt(dcPlayer.PositionLevel) === startingLevel;
+        });
+      return filtered;
+    }
     
     return depthChart.DepthChartPlayers
       .filter((dcPlayer: any) => dcPlayer.Position === position)
