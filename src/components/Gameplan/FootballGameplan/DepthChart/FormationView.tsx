@@ -7,6 +7,8 @@ import { FormationMap, Formation } from '../Constants/GameplanConstants';
 import { Button } from '../../../../_design/Buttons';
 import { getFormationLayout, getDefensiveFormationLayout, getDefensiveLinePositions, getFormationType, shouldRenderPosition } from './FormationViewHelper';
 import { ArrowRight, ArrowLeft } from '../../../../_design/Icons';
+import { getLogo } from '../../../../_utility/getLogo';
+import { Logo } from '../../../../_design/Logo';
 
 interface FormationViewProps {
   formationType: 'offense' | 'defense' | 'specialteams';
@@ -36,7 +38,8 @@ const FormationView: React.FC<FormationViewProps> = ({
   openModal
 }) => {
   const [currentFormationIndex, setCurrentFormationIndex] = useState(0);
-  
+  const logo = getLogo(league, team.ID, false);
+
   const availableFormations = useMemo(() => {
     if (formationType === 'offense') {
       const offensiveScheme = gameplan?.OffensiveScheme || team?.TeamGameplan?.OffensiveScheme;
@@ -176,8 +179,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             })}
           </div>
           <div className="row-start-11 row-span-2 rounded-lg bg-opacity-75 col-[1_/_span_14] w-full border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex items-center justify-between w-full h-full px-4">
+              <Logo url={logo} />
               <Text variant="h1" classes={`uppercase ${borderTextColor}`}>{league === SimCFB ? team.TeamName : team.Mascot}</Text>
+              <Logo url={logo} />
             </div>
           </div>
         </div>
@@ -281,8 +286,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             </div>
           )}
           <div className="row-start-1 row-span-2 rounded-lg bg-opacity-75 col-[1_/_span_14] w-full border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
-            <div className="flex items-center justify-center w-full h-full">
+            <div className="flex items-center justify-between w-full h-full px-4">
+              <Logo url={logo} />
               <Text variant="h1" classes={`uppercase ${borderTextColor}`}>{league === SimCFB ? team.TeamName : team.Mascot}</Text>
+              <Logo url={logo} />
             </div>
           </div>
         </div>
