@@ -16,7 +16,7 @@ import { CFBPlayerInfoModalBody, NFLDepthChartInfoModalBody } from '../../../Com
 import { useModal } from '../../../../_hooks/useModal';
 import { Modal } from '../../../../_design/Modal';
 import { useResponsive } from '../../../../_hooks/useMobile';
-import { findPlayerData, updatePlayerInfo, swapPlayersData } from './Modal/DepthChartModalHelper';
+import { findPlayerData, updatePlayerInfo, swapPlayersData, clearPlayerFromSlot, isPlayerOnTeam } from './Modal/DepthChartModalHelper';
 
 interface DepthChartViewProps {
   players: (CFBPlayer | NFLPlayer)[];
@@ -101,13 +101,26 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
     );
     
     if (fromPlayerIndex !== -1 && toPlayerIndex !== -1) {
-      const [swappedSlot1, swappedSlot2] = swapPlayersData(
-        updatedPlayers[fromPlayerIndex],
-        updatedPlayers[toPlayerIndex],
-        league
-      );
-      updatedPlayers[fromPlayerIndex] = swappedSlot1;
-      updatedPlayers[toPlayerIndex] = swappedSlot2;
+      const fromPlayerOnTeam = isPlayerOnTeam(fromPlayerId, players);
+      const toPlayerOnTeam = isPlayerOnTeam(toPlayerId, players);
+      
+      if (fromPlayerOnTeam && toPlayerOnTeam) {
+        const [swappedSlot1, swappedSlot2] = swapPlayersData(
+          updatedPlayers[fromPlayerIndex],
+          updatedPlayers[toPlayerIndex],
+          league
+        );
+        updatedPlayers[fromPlayerIndex] = swappedSlot1;
+        updatedPlayers[toPlayerIndex] = swappedSlot2;
+      } else if (fromPlayerOnTeam && !toPlayerOnTeam) {
+        updatedPlayers[toPlayerIndex] = clearPlayerFromSlot(updatedPlayers[toPlayerIndex]);
+        const updatedFromSlot = updatePlayerInfo(updatedPlayers[toPlayerIndex], findPlayerData(fromPlayerId, players), fromPlayerId, league);
+        updatedPlayers[toPlayerIndex] = updatedFromSlot;
+        updatedPlayers[fromPlayerIndex] = clearPlayerFromSlot(updatedPlayers[fromPlayerIndex]);
+      } else {
+        console.warn('Cannot swap - from player is no longer on team');
+        return;
+      }
     }
 
     const updatedDepthChart = {
@@ -116,7 +129,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
     };
 
     setLocalDepthChart(updatedDepthChart);
-  }, [localDepthChart, league]);
+  }, [localDepthChart, league, players]);
 
   const handlePlayerMove = useCallback((playerId: number, newPosition: string, newPositionLevel: number) => {
     if (!localDepthChart?.DepthChartPlayers) return;

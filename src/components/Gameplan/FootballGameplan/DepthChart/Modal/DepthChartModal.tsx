@@ -9,7 +9,8 @@ import PlayerAttributeCard from '../../Common/PlayerAttributeCard';
 import {
   getUnassignedPlayersForPosition,
   getAllAssignedPlayersForPosition,
-  getOverarchingPosition
+  getOverarchingPosition,
+  isPlayerOnTeam
 } from './DepthChartModalHelper';
 import { 
   ArrowsUpDown 
@@ -82,10 +83,33 @@ const DepthChartModal: React.FC<DepthChartModalProps> = ({
       const fromPlayer = allAssigned.find(p => p.PositionLevel === fromLevel);
       const toPlayer = allAssigned.find(p => p.PositionLevel === toLevel);
       
-      if (fromPlayer && fromPlayer.playerData && toPlayer && toPlayer.playerData) {
+      const hasFromPlayer = fromPlayer && fromPlayer.playerData;
+      const hasToPlayer = toPlayer && toPlayer.playerData;
+      
+      if (hasFromPlayer && hasToPlayer) {
         const fromPlayerId = (fromPlayer.playerData as any).PlayerID || (fromPlayer.playerData as any).ID;
         const toPlayerId = (toPlayer.playerData as any).PlayerID || (toPlayer.playerData as any).ID;
-        onPlayerSwap(fromPlayerId, toPlayerId, modalPosition, fromLevel, toLevel);
+        
+        const fromPlayerOnTeam = isPlayerOnTeam(fromPlayerId, players);
+        const toPlayerOnTeam = isPlayerOnTeam(toPlayerId, players);
+        
+        if (fromPlayerOnTeam && toPlayerOnTeam) {
+          onPlayerSwap(fromPlayerId, toPlayerId, modalPosition, fromLevel, toLevel);
+        } else if (fromPlayerOnTeam && !toPlayerOnTeam) {
+          onPlayerMove(fromPlayerId, modalPosition, toLevel);
+        } else {
+          console.warn('Cannot swap - from player is no longer on team');
+        }
+      } else if (hasFromPlayer && !hasToPlayer) {
+        const fromPlayerId = (fromPlayer.playerData as any).PlayerID || (fromPlayer.playerData as any).ID;
+        if (isPlayerOnTeam(fromPlayerId, players)) {
+          onPlayerMove(fromPlayerId, modalPosition, toLevel);
+        }
+      } else if (!hasFromPlayer && hasToPlayer) {
+        const toPlayerId = (toPlayer.playerData as any).PlayerID || (toPlayer.playerData as any).ID;
+        if (isPlayerOnTeam(toPlayerId, players)) {
+          onPlayerMove(toPlayerId, modalPosition, fromLevel);
+        }
       }
     }
   };
