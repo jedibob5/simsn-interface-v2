@@ -85,7 +85,7 @@ const BackupPlayerCard: React.FC<BackupPlayerCardProps> = ({
           style={generateBackgroundPattern(accentColor)}
         />
         <div 
-          className="absolute top-0 left-0 px-1 rounded-br-sm z-10"
+          className="absolute top-0 left-0 px-1 rounded-br-md z-10"
           style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
         >
           <Text 
