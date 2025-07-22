@@ -68,6 +68,11 @@ export const getRatingBgColor = (rating: number | string): string => {
 };
 
 export const getAttributeColor = (value: any): string => {
+  // Check for shotgun rating values and return white
+  if (value === 'Balanced' || value === 'Under Center' || value === 'Shotgun') {
+    return 'text-white';
+  }
+  
   if (typeof value === 'string') {
     return ATTRIBUTE_COLORS.STRING[value as keyof typeof ATTRIBUTE_COLORS.STRING] || ATTRIBUTE_COLORS.STRING.DEFAULT;
   }

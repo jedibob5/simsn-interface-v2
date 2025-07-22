@@ -42,7 +42,7 @@ const FormationView: React.FC<FormationViewProps> = ({
         ))}
       </div>
       <div className="absolute inset-0 grid grid-cols-14 grid-rows-12 gap-1 p-4">
-        <div className="col-start-1 col-span-3 row-start-2 flex justify-center">
+        <div className="col-[1_/_span_1] row-start-2 flex justify-center">
           <PositionSlot
             position="WR"
             positionLevels={4} 
@@ -55,9 +55,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-start-11 col-span-2 row-start-2 flex justify-center">
+        <div className="col-[14_/_span_1] row-start-2 flex justify-center">
           <PositionSlot
             position="WR"
             positionLevels={4}
@@ -70,9 +71,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={2}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-start-10 col-span-1 row-start-2 flex justify-center">
+        <div className="col-[13_/_span_1] row-start-2 flex justify-center">
           <PositionSlot
             position="TE"
             positionLevels={1}
@@ -84,9 +86,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="TE1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-span-8 col-start-3 row-start-3 flex justify-center items-center gap-1">
+        <div className="col-[6_/_span_5] row-start-3 flex justify-center items-center gap-1">
           <PositionSlot
             position="LT"
             positionLevels={1}
@@ -98,6 +101,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="LT1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="LG"
@@ -110,6 +114,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="LG1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="C"
@@ -122,6 +127,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="C1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="RG"
@@ -134,6 +140,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="RG1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="RT"
@@ -146,9 +153,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="RT1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-start-6 col-span-1 row-start-7 flex justify-center">
+        <div className="col-[7_/_span_1] row-start-7 flex justify-center">
           <PositionSlot
             position="RB"
             positionLevels={1}
@@ -160,9 +168,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="RB1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-start-7 col-span-1 row-start-6 flex justify-center">
+        <div className="col-[8_/_span_1] row-start-6 flex justify-center">
           <PositionSlot
             position="QB"
             positionLevels={1}
@@ -174,9 +183,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="QB1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="col-start-8 col-span-1 row-start-7 flex justify-center">
+        <div className="col-[9_/_span_1] row-start-7 flex justify-center">
           <PositionSlot
             position="FB"
             positionLevels={1}
@@ -188,9 +198,10 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="FB1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
-        <div className="row-start-12 row-span-12 rounded-lg bg-opacity-75 col-span-12 border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
+        <div className="row-start-12 row-span-12 rounded-lg bg-opacity-75 col-[1_/_span_14] w-full border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
           <div className="flex items-center justify-center w-full h-full">
             <Text variant="h1" classes={`uppercase ${borderTextColor}`}>{league === SimCFB ? team.TeamName : team.Mascot}</Text>
           </div>
@@ -200,7 +211,7 @@ const FormationView: React.FC<FormationViewProps> = ({
   );
 
   const getDefenseFormation = () => (
-    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden">
+    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <div
@@ -223,6 +234,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="LE1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="DT"
@@ -236,6 +248,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="DT"
@@ -249,6 +262,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={2}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="RE"
@@ -261,6 +275,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             label="RE1"
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-span-9 col-start-3 row-start-6 flex justify-center items-center gap-6">
@@ -276,6 +291,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="MLB"
@@ -289,6 +305,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={false}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="MLB"
@@ -302,6 +319,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={2}
             showBackupBelow={false}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
           <PositionSlot
             position="LOLB"
@@ -315,6 +333,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-1 col-span-2 row-start-5 flex justify-center">
@@ -330,6 +349,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-12 col-span-2 row-start-5 flex justify-center">
@@ -345,6 +365,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={2}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-1 col-[14_/_span_14] row-start-1 row-span-2 rounded-lg border-2" style={{ backgroundColor: borderColor, borderColor: accentColor }}>
@@ -365,6 +386,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-11 col-span-1 row-start-3 flex justify-center">
@@ -380,6 +402,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
       </div>
@@ -387,7 +410,7 @@ const FormationView: React.FC<FormationViewProps> = ({
   );
 
   const getSpecialTeamsFormation = () => (
-    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden">
+    <div className="relative w-[75rem] h-[40rem] bg-gradient-to-b from-green-600 via-green-500 to-green-600 rounded-lg overflow-hidden border-2" style={{ borderColor }}>
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <div
@@ -411,6 +434,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-3 col-span-1 row-start-9 flex justify-center">
@@ -426,6 +450,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-span-12 col-start-1 row-start-1 justify-center grid grid-cols-8 gap-2">
@@ -443,6 +468,7 @@ const FormationView: React.FC<FormationViewProps> = ({
                 startingLevel={level}
                 showBackupBelow={false}
                 openModal={openModal}
+                backgroundColor={backgroundColor}
               />
             </div>
           ))}
@@ -460,6 +486,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-13 col-span-1 row-start-9 flex justify-center">
@@ -475,6 +502,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
         <div className="col-start-1 col-span-1 row-start-9 flex justify-center">
@@ -490,6 +518,7 @@ const FormationView: React.FC<FormationViewProps> = ({
             startingLevel={1}
             showBackupBelow={true}
             openModal={openModal}
+            backgroundColor={backgroundColor}
           />
         </div>
       </div>

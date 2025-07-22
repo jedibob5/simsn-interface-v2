@@ -95,6 +95,11 @@ const BackupPlayerCard: React.FC<BackupPlayerCardProps> = ({
           <Text 
             variant="xs" 
             classes={`font-semibold ${textColorClass} leading-tight text-center text-[10px] truncate`}
+            style={{
+                  textShadow: textColorClass.includes('white') 
+                    ? '0.5px 0.5px 0 black, -0.5px -0.5px 0 black, 0.5px -0.5px 0 black, -0.5px 0.5px 0 black'
+                    : '0.5px 0.5px 0 white, -0.5px -0.5px 0 white, 0.5px -0.5px 0 white, -0.5px 0.5px 0 white'
+                }}
           >
             {player?.FirstName?.charAt(0) || 'U'}. {player?.LastName || 'Unknown'}
           </Text>

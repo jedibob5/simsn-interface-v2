@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { CollegePlayer as CFBPlayer, NFLPlayer } from '../../../../models/footballModels';
 import DepthChartCard from '../Common/DepthChartCard';
 import BackupPlayerCard from '../Common/BackupPlayerCard';
-import { SimCFB, SimNFL } from '../../../../_constants/constants';
+import { SimCFB, SimNFL, Formations } from '../../../../_constants/constants';
 import { Text } from '../../../../_design/Typography';
 import { 
   getEligiblePositionsForDepthPosition, 
   getUnassignedPlayersForPosition,
   getPlayerId 
 } from '../Utils/PlayerUtils';
-import { 
-  POSITION_SLOT_SIZE_CLASSES, 
-  POSITION_SLOT_MIN_HEIGHTS 
-} from '../Utils/ComponentStyleUtils';
-import { MODAL_CLASSES, GRID_CLASSES, EMPTY_STATE_CLASSES, HOVER_EFFECTS, TRANSITIONS } from '../Constants/UIConstants';
 
 interface PositionSlotProps {
   position: string;
@@ -28,6 +23,7 @@ interface PositionSlotProps {
   showBackupBelow?: boolean;
   onPlayerAssign?: (playerId: number, position: string, positionLevel: number) => void;
   openModal?: (player: CFBPlayer | NFLPlayer) => void;
+  backgroundColor?: string;
 }
 
 const PositionSlot: React.FC<PositionSlotProps> = ({
@@ -42,7 +38,8 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   startingLevel = 1,
   showBackupBelow = false,
   onPlayerAssign,
-  openModal
+  openModal,
+  backgroundColor,
 }) => {
   const [showPlayerSelection, setShowPlayerSelection] = useState(false);
   const [selectedSlotLevel, setSelectedSlotLevel] = useState(1);
@@ -52,12 +49,10 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   };
 
   const handleSlotClick = (positionLevel: number) => {
-    console.log('Slot clicked:', position, positionLevel);
     if (onPlayerAssign) {
       setSelectedSlotLevel(positionLevel);
       setShowPlayerSelection(true);
     } else {
-      console.log('onPlayerAssign not provided');
     }
   };
 
@@ -82,24 +77,19 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
   const sortedAssignedPlayers = assignedPlayers.sort((a: any, b: any) => parseInt(a.PositionLevel) - parseInt(b.PositionLevel));
 
   const slotSizes = {
-    sm: 'w-20',
-    md: 'w-24', 
+    sm: 'w-28',
+    md: 'w-32', 
     lg: 'w-28'
   };
 
   const minHeights = {
     sm: 'min-h-[6rem]',
-    md: 'min-h-[8rem]',
+    md: 'min-h-[9rem]',
     lg: 'min-h-[9rem]'
   };
 
   return (
-    <div className="flex flex-col items-center space-y-1">
-      {label && (
-        <Text variant="xs" classes="text-white font-bold bg-black bg-opacity-50 px-2 py-1 rounded">
-          {label}
-        </Text>
-      )}
+    <div className="flex flex-col items-center mt-2">
       <div className={`${slotSizes[size]} flex flex-col space-y-1`}>
         <div 
           className={`
@@ -130,8 +120,10 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
                   player={player}
                   team={team}
                   league={league}
-                  position={position}
+                  position={label}
                   size={size}
+                  innerBackgroundColor={backgroundColor}
+                  category={Formations}
                 />
               </div>
             );
@@ -150,7 +142,7 @@ const PositionSlot: React.FC<PositionSlotProps> = ({
         {showBackupBelow && (() => {
           let backupPlayer;
           if (position === 'WR') {
-            const targetLevel = startingLevel === 1 ? 3 : 4;
+            const targetLevel = startingLevel === 1 ? 3 : startingLevel === 2 ? 4 : startingLevel === 4 ? 5 : 4;
             backupPlayer = sortedAssignedPlayers.find((dcPlayer: any) => parseInt(dcPlayer.PositionLevel) === targetLevel);
           } else {
             const nextLevel = startingLevel + 1;
