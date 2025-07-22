@@ -314,3 +314,21 @@ export const swapPlayersData = (
   
   return [swappedSlot1, swappedSlot2];
 };
+
+export const clearPlayerFromSlot = (slot: any): any => ({
+  ...slot,
+  PlayerID: 0,
+  FirstName: '',
+  LastName: '',
+  OriginalPosition: ''
+});
+
+export const isPlayerOnTeam = (
+  playerId: number,
+  players: (CollegePlayer | NFLPlayer)[]
+): boolean => {
+  return players.some(player => {
+    const id = (player as any).PlayerID || (player as any).ID;
+    return id === playerId;
+  });
+};

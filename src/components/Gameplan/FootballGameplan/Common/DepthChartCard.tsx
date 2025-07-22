@@ -10,11 +10,13 @@ import {
   getSizeClasses, 
   getTextSize, 
   getPictureSize, 
-  generateBackgroundPattern, 
-  generateCardGradient 
+  getBackgroundPattern,
+  generateCardGradient,
+  BackgroundPatternType
 } from '../Utils/ComponentStyleUtils';
 import { getRatingColor } from '../Utils/UIUtils';
 import { getYear } from '../../../../_utility/getYear';
+import { isBrightColor } from '../../../../_utility/isBrightColor';
 
 interface DepthChartCardProps {
   player: any;
@@ -27,6 +29,7 @@ interface DepthChartCardProps {
   category?: string;
   depthChartManager?: boolean;
   innerBackgroundColor?: string;
+  backgroundPattern?: BackgroundPatternType;
 }
 
 export const DepthChartCard: React.FC<DepthChartCardProps> = ({
@@ -39,7 +42,8 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   category,
   depthChartManager,
   innerBackgroundColor,
-  position
+  position,
+  backgroundPattern = 'texture'
 }) => {
   const teamColors = useTeamColors(team?.ColorOne, team?.ColorTwo, team?.ColorThree);
   const backgroundColor = teamColors.One;
@@ -49,6 +53,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
   const sizeClasses = getSizeClasses(size, 'depthChart');
   const pictureSize = getPictureSize(size, true);
   const overallRating = getPlayerOverallRating(player, league, showLetterGrade);
+  const patternBg = isBrightColor(backgroundColor) ? "#000000" : "#FFFFFF";
 
   if (!player) {
     return (
@@ -91,7 +96,7 @@ export const DepthChartCard: React.FC<DepthChartCardProps> = ({
       >
         <div 
           className="absolute inset-0 opacity-10"
-          style={generateBackgroundPattern(accentColor)}
+          style={getBackgroundPattern(backgroundPattern, patternBg)}
         />
       {category === ManagementCard && (
         <div 

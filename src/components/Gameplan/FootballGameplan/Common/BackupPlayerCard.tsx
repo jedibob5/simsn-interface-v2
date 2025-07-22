@@ -10,6 +10,8 @@ import { generateSimpleBackgroundPattern, generateCardGradient } from '../Utils/
 import { getRatingColor } from '../Utils/UIUtils';
 import { CARD_CLASSES, TRANSITIONS } from '../Constants/UIConstants';
 import RatingBadge from './RatingBadge';
+import { generateBackgroundPattern } from '../Utils/ComponentStyleUtils';
+import { getTextSize } from '../Utils/ComponentStyleUtils';
 
 interface BackupPlayerCardProps {
   player: CollegePlayer | NFLPlayer | null | undefined;
@@ -48,6 +50,10 @@ const BackupPlayerCard: React.FC<BackupPlayerCardProps> = ({
             background: 'linear-gradient(135deg, #374151 0%, #4B5563 100%)',
           }}
         >
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={generateBackgroundPattern(accentColor)}
+          />
           <div className="flex items-center justify-center h-full">
             <Text variant="xs" classes="text-gray-400 text-center text-[10px]">
               No Player
@@ -75,12 +81,16 @@ const BackupPlayerCard: React.FC<BackupPlayerCardProps> = ({
         }}
       >
         <div 
-          className="absolute top-0 left-0 px-1 rounded-br-sm z-10"
-          style={{ backgroundColor: accentColor }}
+          className="absolute inset-0 opacity-10"
+          style={generateBackgroundPattern(accentColor)}
+        />
+        <div 
+          className="absolute top-0 left-0 px-1 rounded-br-md z-10"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
         >
           <Text 
-            variant="xs" 
-            classes={`font-bold text-[10px] ${getTextColorBasedOnBg(accentColor)}`}
+            variant={getTextSize("md")} 
+            classes={`font-bold ${getTextColorBasedOnBg(accentColor)}`}
           >
             {positionLevel}
           </Text>

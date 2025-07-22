@@ -27,7 +27,9 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   QuestionMarkCircleIcon,
   TrophyIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/16/solid";
 import { GiDiamondTrophy, GiTrophyCup, GiRibbonMedal, GiTrophy, GiShieldBash, GiShield, GiSoccerKick, GiAmericanFootballPlayer, GiTicTacToe } from "react-icons/gi";
 import { IoIosRibbon } from "react-icons/io";
@@ -288,5 +290,13 @@ export const TicTacToe: React.FC<LockIconProps> = ({ textColorClass }) => {
 
 export const ArrowDown: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <ArrowDownIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const ArrowRight: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowRightIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const ArrowLeft: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowLeftIcon className={`size-5 ${textColorClass}`} />;
 };
 

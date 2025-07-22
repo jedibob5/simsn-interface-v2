@@ -16,13 +16,14 @@ import { CFBPlayerInfoModalBody, NFLDepthChartInfoModalBody } from '../../../Com
 import { useModal } from '../../../../_hooks/useModal';
 import { Modal } from '../../../../_design/Modal';
 import { useResponsive } from '../../../../_hooks/useMobile';
-import { findPlayerData, updatePlayerInfo, swapPlayersData } from './Modal/DepthChartModalHelper';
+import { findPlayerData, updatePlayerInfo, swapPlayersData, clearPlayerFromSlot, isPlayerOnTeam } from './Modal/DepthChartModalHelper';
 
 interface DepthChartViewProps {
   players: (CFBPlayer | NFLPlayer)[];
   depthChart: any;
   team: any;
   league: typeof SimCFB | typeof SimNFL;
+  gameplan?: any;
   onDepthChartUpdate: (updatedDepthChart: any) => void;
   onTeamChange?: (team: any) => void;
   canModify?: boolean;
@@ -39,6 +40,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
   depthChart,
   team,
   league,
+  gameplan,
   onDepthChartUpdate,
   onTeamChange,
   canModify = true,
@@ -85,6 +87,49 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
   const handleFormationTypeChange = useCallback((formationType: 'offense' | 'defense' | 'specialteams') => {
     setSelectedFormationType(formationType);
   }, []);
+
+  const handlePlayerSwap = useCallback((fromPlayerId: number, toPlayerId: number, position: string, fromLevel: number, toLevel: number) => {
+    if (!localDepthChart?.DepthChartPlayers) return;
+
+    let updatedPlayers = [...localDepthChart.DepthChartPlayers];
+    
+    const fromPlayerIndex = updatedPlayers.findIndex(
+      dcPlayer => dcPlayer.PlayerID === fromPlayerId && dcPlayer.Position === position && String(dcPlayer.PositionLevel) === String(fromLevel)
+    );
+    const toPlayerIndex = updatedPlayers.findIndex(
+      dcPlayer => dcPlayer.PlayerID === toPlayerId && dcPlayer.Position === position && String(dcPlayer.PositionLevel) === String(toLevel)
+    );
+    
+    if (fromPlayerIndex !== -1 && toPlayerIndex !== -1) {
+      const fromPlayerOnTeam = isPlayerOnTeam(fromPlayerId, players);
+      const toPlayerOnTeam = isPlayerOnTeam(toPlayerId, players);
+      
+      if (fromPlayerOnTeam && toPlayerOnTeam) {
+        const [swappedSlot1, swappedSlot2] = swapPlayersData(
+          updatedPlayers[fromPlayerIndex],
+          updatedPlayers[toPlayerIndex],
+          league
+        );
+        updatedPlayers[fromPlayerIndex] = swappedSlot1;
+        updatedPlayers[toPlayerIndex] = swappedSlot2;
+      } else if (fromPlayerOnTeam && !toPlayerOnTeam) {
+        updatedPlayers[toPlayerIndex] = clearPlayerFromSlot(updatedPlayers[toPlayerIndex]);
+        const updatedFromSlot = updatePlayerInfo(updatedPlayers[toPlayerIndex], findPlayerData(fromPlayerId, players), fromPlayerId, league);
+        updatedPlayers[toPlayerIndex] = updatedFromSlot;
+        updatedPlayers[fromPlayerIndex] = clearPlayerFromSlot(updatedPlayers[fromPlayerIndex]);
+      } else {
+        console.warn('Cannot swap - from player is no longer on team');
+        return;
+      }
+    }
+
+    const updatedDepthChart = {
+      ...localDepthChart,
+      DepthChartPlayers: updatedPlayers
+    };
+
+    setLocalDepthChart(updatedDepthChart);
+  }, [localDepthChart, league, players]);
 
   const handlePlayerMove = useCallback((playerId: number, newPosition: string, newPositionLevel: number) => {
     if (!localDepthChart?.DepthChartPlayers) return;
@@ -254,7 +299,10 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
         <Modal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          title={modalPlayer ? `${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}` : ''}
+          title={modalPlayer ? `${modalPlayer.PositionTwo ?
+                               `${modalPlayer.Position}/${modalPlayer.PositionTwo}` 
+                               : modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}` 
+                               : ''}
           maxWidth="max-w-4xl"
         >
           {modalPlayer && (
@@ -285,7 +333,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
                  'Special Teams Depth Chart'}
               </Text>
               <Text variant="body" classes="text-gray-400 mt-2">
-                Visual representation of your depth chart
+                Visual representation of the depth chart for {team.TeamName}
               </Text>
             </div>
             <FormationView
@@ -294,17 +342,13 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
               depthChart={localDepthChart}
               team={team}
               league={league}
+              gameplan={gameplan}
               borderColor={borderColor}
               backgroundColor={backgroundColor}
               accentColor={accentColor}
               openModal={openModal}
               borderTextColor={borderTextColor}
             />
-            <div className="mt-4 text-center">
-              <Text variant="small" classes="text-gray-400">
-                Visual representation of your saved depth chart
-              </Text>
-            </div>
           </div>
         )}
           <div className="relative">
@@ -323,6 +367,7 @@ const DepthChartView: React.FC<DepthChartViewProps> = ({
               league={league}
               selectedPosition={selectedPosition}
               onPlayerMove={handlePlayerMove}
+              onPlayerSwap={handlePlayerSwap}
               onPositionChange={handlePositionSelection}
               onFormationTypeChange={handleFormationTypeChange}
               canModify={canModify}

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSimFBAStore } from "../../../context/SimFBAContext";
+import { useAuthStore } from "../../../context/AuthContext";
 import { DepthChartService } from "../../../_services/depthChartService";
 import {
   CollegeGameplan as CFBGameplan,
@@ -18,10 +19,11 @@ import {
   SimCFB,
   SimNFL,
   Gameplan,
-  DepthChart
+  DepthChart,
+  AdminRole
 } from "../../../_constants/constants";
 import { Text } from "../../../_design/Typography";
-import { Input } from "../../../_design/Inputs";
+import { Input, ToggleSwitch } from "../../../_design/Inputs";
 import { SelectDropdown } from "../../../_design/Select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
 import { SingleValue } from "react-select";
@@ -36,6 +38,7 @@ import { getTextColorBasedOnBg } from '../../../_utility/getBorderClass';
 import UnsavedChangesModal from "./Common/UnsavedChangesModal";
 
 export const CFBGameplanPage = () => {
+  const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
   const {
     cfbTeam,
@@ -52,9 +55,10 @@ export const CFBGameplanPage = () => {
   const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
   const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
   const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
+  const [adminModeEnabled, setAdminModeEnabled] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(cfbTeam);
   const [selectedTeamDepthChart, setSelectedTeamDepthChart] = useState<CFBDepthChart | null>(null);
-  
+
   const teamPlayers = useMemo(() => {
     if (selectedTeam && cfbRosterMap) {
       return cfbRosterMap[selectedTeam.ID] || [];
@@ -80,6 +84,7 @@ export const CFBGameplanPage = () => {
       if (team) {
         setSelectedTeam(team);
         setDepthChartHasUnsavedChanges(false);
+        setAdminModeEnabled(false);
       }
     }
   }, [cfbTeamMap]);
@@ -141,15 +146,26 @@ export const CFBGameplanPage = () => {
             </Button>
           </ButtonGroup>
           {category === DepthChart && cfbTeamOptions && (
-          <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
-            <SelectDropdown
-              options={cfbTeamOptions}
-              value={cfbTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
-              onChange={handleTeamSelection}
-              placeholder="Select Team"
-              isClearable={false}
-            />
-          </div>
+            <div className="flex flex-col 2xl:flex-row items-center gap-4">
+              <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
+                <SelectDropdown
+                  options={cfbTeamOptions}
+                  value={cfbTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
+                  onChange={handleTeamSelection}
+                  placeholder="Select Team"
+                  isClearable={false}
+                />
+              </div>
+              {currentUser?.roleID && currentUser.roleID === AdminRole && selectedTeam?.ID !== cfbTeam?.ID && (
+                <div className="flex justify-center items-center gap-2">
+                  <ToggleSwitch
+                    onChange={(checked) => setAdminModeEnabled(checked)}
+                    checked={adminModeEnabled}
+                  />
+                  <Text variant="small" classes="text-white">Admin Mode</Text>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -168,8 +184,9 @@ export const CFBGameplanPage = () => {
           depthChart={selectedTeamDepthChart || cfbDepthChart}
           team={selectedTeam}
           league={SimCFB}
+          gameplan={cfbGameplan}
           onDepthChartUpdate={handleDepthChartUpdate}
-          canModify={selectedTeam?.ID === cfbTeam?.ID}
+          canModify={selectedTeam?.ID === cfbTeam?.ID || (currentUser?.roleID === AdminRole && adminModeEnabled)}
           backgroundColor={backgroundColor}
           borderColor={borderColor}
           accentColor={accentColor}
@@ -214,6 +231,7 @@ export const CFBGameplanPage = () => {
 
 export const NFLGameplanPage = () => {
   const { teamId } = useParams<{ teamId?: string }>();
+  const { currentUser } = useAuthStore();
   const fbStore = useSimFBAStore();
   const {
     nflTeam,
@@ -229,6 +247,7 @@ export const NFLGameplanPage = () => {
   const [isUnsavedChangesModalOpen, setIsUnsavedChangesModalOpen] = useState(false);
   const [depthChartHasUnsavedChanges, setDepthChartHasUnsavedChanges] = useState(false);
   const [gameplanHasUnsavedChanges, setGameplanHasUnsavedChanges] = useState(false);
+  const [adminModeEnabled, setAdminModeEnabled] = useState(false);
 
   const [selectedTeam, setSelectedTeam] = useState(() => {
     if (teamId && nflTeamMap) {
@@ -260,6 +279,7 @@ export const NFLGameplanPage = () => {
       if (team) {
         setSelectedTeam(team);
         setDepthChartHasUnsavedChanges(false);
+        setAdminModeEnabled(false);
       }
     }
   }, [nflTeamMap]);
@@ -323,14 +343,25 @@ export const NFLGameplanPage = () => {
               </Button>
             </ButtonGroup>
             {category === DepthChart && nflTeamOptions && (
-              <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
-                <SelectDropdown
-                  options={nflTeamOptions}
-                  value={nflTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
-                  onChange={handleTeamSelection}
-                  placeholder="Select Team"
-                  isClearable={false}
-                />
+              <div className="flex flex-col 2xl:flex-row items-center gap-4">
+                <div className="2xl:ml-4 w-full 2xl:w-auto" style={{ minWidth: '200px', maxWidth: '300px' }}>
+                  <SelectDropdown
+                    options={nflTeamOptions}
+                    value={nflTeamOptions.find(opt => opt.value === String(selectedTeam?.ID))}
+                    onChange={handleTeamSelection}
+                    placeholder="Select Team"
+                    isClearable={false}
+                  />
+                </div>
+                {currentUser?.roleID && currentUser.roleID === AdminRole && selectedTeam?.ID !== nflTeam?.ID && (
+                  <div className="flex justify-center items-center gap-2">
+                    <ToggleSwitch
+                      onChange={(checked) => setAdminModeEnabled(checked)}
+                      checked={adminModeEnabled}
+                    />
+                    <Text variant="small" classes="text-white">Admin Mode</Text>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -350,8 +381,9 @@ export const NFLGameplanPage = () => {
           depthChart={selectedTeamDepthChart || nflDepthChart}
           team={selectedTeam}
           league={SimNFL}
+          gameplan={nflGameplan}
           onDepthChartUpdate={handleDepthChartUpdate}
-          canModify={selectedTeam?.ID === nflTeam?.ID}
+          canModify={selectedTeam?.ID === nflTeam?.ID || (currentUser?.roleID === AdminRole && adminModeEnabled)}
           backgroundColor={backgroundColor}
           borderColor={borderColor}
           accentColor={accentColor}

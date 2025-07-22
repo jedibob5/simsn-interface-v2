@@ -122,3 +122,131 @@ export const SPECIAL_POSITION_SORTING = {
   KR: 'Speed',
   STU: 'Strength'
 } as const;
+
+export const UNDER_CENTER = 'under-center';
+export const GUN = 'gun';
+export const PISTOL = 'pistol';
+export const SPREAD = 'spread';
+export const TIGHT = 'tight';
+export const WING = 'wing';
+export const EMPTY = 'empty';
+export const FLEXBONE_GUN = 'flexbone-gun';
+export const WING_SPLIT_BACK_GUN = 'wing-split-back-gun';
+export const DOUBLE_WING_SPLIT = 'double-wing-split';
+export const DOUBLE_WING = 'double-wing';
+export const SINGLEBACK = 'singleback';
+
+export const FOUR_THREE_BASE = '4-3-base';
+export const FOUR_THREE_OVER = '4-3-over';
+export const FOUR_THREE_UNDER = '4-3-under';
+export const FOUR_THREE_LIGHT = '4-3-light';
+export const FOUR_THREE_HEAVY = '4-3-heavy';
+export const THREE_FOUR_BASE = '3-4-base';
+export const THREE_FOUR_OVER = '3-4-over';
+export const THREE_FOUR_UNDER = '3-4-under';
+export const THREE_FOUR_OKIE = '3-4-okie';
+export const THREE_FOUR_BRONCO = '3-4-bronco';
+export const THREE_FOUR_EAGLE = '3-4-eagle';
+export const THREE_FOUR_FOUR_HEAVY = '3-4-4-heavy';
+export const FOUR_FOUR_BASE = '4-4-base';
+export const FOUR_FOUR_OVER = '4-4-over';
+export const FOUR_FOUR_UNDER = '4-4-under';
+export const FOUR_FOUR_JUMBO = '4-4-jumbo';
+export const FOUR_FOUR_HEAVY = '4-4-heavy';
+export const FOUR_TWO_FIVE_BASE = '4-2-5-base';
+export const FOUR_TWO_FIVE_NICKEL = '4-2-5-nickel';
+export const THREE_THREE_FIVE_BASE = '3-3-5-base';
+export const THREE_THREE_FIVE_OVER = '3-3-5-over';
+export const THREE_THREE_FIVE_NICKEL = '3-3-5-nickel';
+export const DIME_FOUR_ONE_SIX = 'dime-4-1-6';
+export const DIME_THREE_TWO_SIX = 'dime-3-2-6';
+export const FOUR_ONE_SIX_DIME = '4-1-6-dime';
+export const FOUR_ONE_SIX_BIG_DIME = '4-1-6-big-dime';
+export const THREE_TWO_SIX_DIME = '3-2-6-dime';
+export const THREE_TWO_SIX_BIG_PENNY = '3-2-6-big-penny';
+export const THREE_TWO_SIX_PENNY = '3-2-6-penny';
+export const QUARTER = 'quarter';
+export const GOAL_LINE = 'goal-line';
+
+export const POSITION_PREFIXES = {
+  QB: 'QB',
+  WR: 'WR',
+  TE: 'TE',
+  RB: 'RB',
+  FB: 'FB',
+  LT: 'LT',
+  LG: 'LG',
+  C: 'C',
+  RG: 'RG',
+  RT: 'RT',
+  RE: 'RE',
+  DT: 'DT',
+  LE: 'LE',
+  DE: 'DE',
+  LOLB: 'LOLB',
+  MLB: 'MLB',
+  ROLB: 'ROLB',
+  OLB: 'OLB',
+  ILB: 'ILB',
+  CB: 'CB',
+  FS: 'FS',
+  SS: 'SS'
+} as const;
+
+export const FORMATION_KEYWORDS = {
+  GUN: 'gun',
+  SINGLEBACK: 'singleback',
+  PISTOL: 'pistol',
+  SPREAD: 'spread',
+  EMPTY: 'empty',
+  TIGHT: 'tight',
+  WING: 'wing',
+  DOUBLE: 'double',
+  FLEXBONE: 'flexbone',
+  HEAVY: 'heavy',
+  LIGHT: 'light',
+  OVER: 'over',
+  UNDER: 'under',
+  BASE: 'base',
+  NICKEL: 'nickel',
+  DIME: 'dime',
+  QUARTER: 'quarter',
+  GOAL: 'goal',
+  LINE: 'line',
+  SPLIT: 'split',
+  BACK: 'back',
+  OKIE: 'okie',
+  BRONCO: 'bronco',
+  EAGLE: 'eagle',
+  JUMBO: 'jumbo',
+  BIG: 'big',
+  PENNY: 'penny'
+} as const;
+
+export const GRID_POSITIONS = {
+  COLUMNS: {
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    11: 11,
+    12: 12,
+    13: 13
+  },
+  ROWS: {
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9
+  }
+} as const;
