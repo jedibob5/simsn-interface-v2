@@ -1861,6 +1861,122 @@ export const setPriorityCFBAttributes = (
       ];
       break;
 
+    case "STU":
+      priorityAttributes = [
+        {
+          Name: Speed,
+          Value: player.Speed,
+          Letter: getCFBLetterGrade(
+            Speed,
+            player.Position,
+            player.Speed,
+            player.Year
+          ),
+        },
+        {
+          Name: Strength,
+          Value: player.Strength,
+          Letter: getCFBLetterGrade(
+            Strength,
+            player.Position,
+            player.Strength,
+            player.Year
+          ),
+        },
+        {
+          Name: Agility,
+          Value: player.Agility,
+          Letter: getCFBLetterGrade(
+            Agility,
+            player.Position,
+            player.Agility,
+            player.Year
+          ),
+        },
+        {
+          Name: Tackle,
+          Value: player.Tackle,
+          Letter: getCFBLetterGrade(
+            Tackle,
+            player.Position,
+            player.Tackle,
+            player.Year
+          ),
+        },
+      ];
+      break;
+
+    case "FG":
+      priorityAttributes = [
+        {
+          Name: KickAccuracy,
+          Value: player.KickAccuracy,
+          Letter: getCFBLetterGrade(
+            "KickAccuracy",
+            player.Position,
+            player.KickAccuracy,
+            player.Year
+          ),
+        },
+        {
+          Name: KickPower,
+          Value: player.KickPower,
+          Letter: getCFBLetterGrade(
+            "KickPower",
+            player.Position,
+            player.KickPower,
+            player.Year
+          ),
+        },
+      ];
+      break;
+
+    case "PR":
+    case "KR":
+      priorityAttributes = [
+        {
+          Name: Speed,
+          Value: player.Speed,
+          Letter: getCFBLetterGrade(
+            Speed,
+            player.Position,
+            player.Speed,
+            player.Year
+          ),
+        },
+        {
+          Name: Agility,
+          Value: player.Agility,
+          Letter: getCFBLetterGrade(
+            Agility,
+            player.Position,
+            player.Agility,
+            player.Year
+          ),
+        },
+        {
+          Name: Carrying,
+          Value: player.Carrying,
+          Letter: getCFBLetterGrade(
+            Carrying,
+            player.Position,
+            player.Carrying,
+            player.Year
+          ),
+        },
+        {
+          Name: Catching,
+          Value: player.Catching,
+          Letter: getCFBLetterGrade(
+            Catching,
+            player.Position,
+            player.Catching,
+            player.Year
+          ),
+        },
+      ];
+      break;
+
     case "ATH":
       priorityAttributes = [
         {
@@ -2033,6 +2149,10 @@ const priorityAttributesMap: { [key: string]: string[] } = {
   ],
   K: ["KickAccuracy", "KickPower"],
   P: ["PuntAccuracy", "PuntPower"],
+  STU: [Speed, Strength, Agility, Tackle],
+  FG: ["KickAccuracy", "KickPower"],
+  PR: [Speed, Agility, Carrying, Catching],
+  KR: [Speed, Agility, Carrying, Catching],
   ATH: [Agility, Speed, Strength],
 };
 

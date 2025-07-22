@@ -208,6 +208,14 @@ export const getOverarchingPosition = (position: string): string => {
       return 'FS';
     case 'SS':
       return 'SS';
+    case 'STU':
+      return 'STU';
+    case 'FG':
+      return 'FG';
+    case 'PR':
+      return 'PR';
+    case 'KR':
+      return 'KR';
     default:
       return position;
   }
