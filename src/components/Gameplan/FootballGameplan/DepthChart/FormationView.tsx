@@ -229,7 +229,7 @@ const FormationView: React.FC<FormationViewProps> = ({
           ))}
         </div>
         
-        <div className="absolute inset-0 grid grid-cols-14 grid-rows-12 p-2">
+        <div className="absolute grid inset-0 grid-rows-12 p-2" style={{ gridTemplateColumns: 'repeat(14, minmax(0.5, 1fr))' }}>
           {formationLayout?.positions.map(positionData => {
             if (!positionData.shouldRender || !shouldRenderPosition(positionData.position, currentFormation, formationType)) {
               return null;
@@ -301,7 +301,7 @@ const FormationView: React.FC<FormationViewProps> = ({
           />
         ))}
       </div>
-      <div className="absolute inset-0 grid grid-cols-14 grid-rows-12 gap-1 p-4">
+      <div className="absolute inset-0 grid grid-rows-12 gap-1 p-4" style={{ gridTemplateColumns: 'repeat(14, minmax(0.5, 1fr))' }}>
         <div className="col-start-2 col-span-1 row-start-9 flex justify-center">
           <PositionSlot
             position="K"
