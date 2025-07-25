@@ -103,6 +103,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
   }, [optionList, playerID]);
 
   const staminaTextColor = useMemo(() => {
+    if (!player) return "";
     if (player.GoalieStamina < 30) {
       return "text-red-400";
     }
