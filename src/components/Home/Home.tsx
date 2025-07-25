@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { PageContainer } from "../../_design/Container";
-import { ButtonGroup, PillButton } from "../../_design/Buttons";
+import { Button, ButtonGroup, PillButton } from "../../_design/Buttons";
 import { TeamLandingPage } from "../LandingPage/TeamLandingPage";
 import { Text } from "../../_design/Typography";
 import {
@@ -21,6 +21,9 @@ import { useSimBBAStore } from "../../context/SimBBAContext";
 import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { useLeagueStore } from "../../context/LeagueContext";
 import { simLogos } from "../../_constants/logos";
+import { Border } from "../../_design/Borders";
+import { useNavigate } from "react-router-dom";
+import routes from "../../_constants/routes";
 
 export const Home = () => {
   const {
@@ -33,6 +36,7 @@ export const Home = () => {
     isPHLUser,
   } = useAuthStore();
   const { setSelectedLeague, selectedLeague, ts } = useLeagueStore();
+  const navigate = useNavigate();
   const fbStore = useSimFBAStore();
   const bkStore = useSimBBAStore();
   const hkStore = useSimHCKStore();
@@ -114,8 +118,70 @@ export const Home = () => {
     setSelectedTeam(team);
   };
 
+  const isParticipating = useMemo(() => {
+    if (!currentUser) return false;
+    const { cbb_id, teamId, NFLTeamID, CHLTeamID, PHLTeamID, NBATeamID } =
+      currentUser;
+    if (
+      !cbb_id &&
+      !teamId &&
+      !NFLTeamID &&
+      !CHLTeamID &&
+      !PHLTeamID &&
+      !NBATeamID
+    ) {
+      return false;
+    }
+    if (
+      cbb_id === 0 &&
+      teamId === 0 &&
+      NFLTeamID === 0 &&
+      CHLTeamID === 0 &&
+      PHLTeamID === 0 &&
+      NBATeamID === 0
+    ) {
+      return false;
+    }
+    return true;
+  }, [currentUser]);
+
   return (
-    <PageContainer isLoading={isLoadingData}>
+    <PageContainer isLoading={isLoadingData && isParticipating}>
+      {!isParticipating && (
+        <>
+          <Border
+            direction="col"
+            classes="p-4 h-full mt-[20vh] md:w-[80vw] xl:w-[40vw]"
+          >
+            <div className="flex mb-2 justify-center">
+              <img
+                src={`${simLogos.SimSN}`}
+                className="h-20 sm:h-40"
+                alt="SimSNLogo"
+              />
+            </div>
+            <div className="flex flex-row mb-2 justify-center">
+              <Text variant="body" classes="font-semibold">
+                Welcome to Simulation Sports Network!
+              </Text>
+            </div>
+            <div className="flex flex-row mb-4 justify-center">
+              <Text variant="body-small" classes="">
+                We are an online multiplayer sports simulation community. We
+                currently run sports management simulations for College Football
+                (SimCFB), Pro Football (SimNFL), College Basketball (SimCBB),
+                Pro Basketball (SimNBA), College Hockey (SimCHL), and Pro Hockey
+                (SimPHL).
+              </Text>
+            </div>
+            <div className="flex flex-row mb-2 justify-center">
+              <Button onClick={() => navigate(routes.AVAILABLE_TEAMS)}>
+                Click here to join a league and start your SimSN Career
+              </Button>
+            </div>
+          </Border>
+        </>
+      )}
       <div className="flex flex-col px-2 mt-1">
         <div className="flex flex-row mb-1">
           <ButtonGroup>

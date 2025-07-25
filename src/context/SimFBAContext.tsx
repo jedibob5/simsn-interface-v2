@@ -123,6 +123,14 @@ interface SimFBAContextProps {
   addUserToNFLTeam: (teamID: number, user: string, role: string) => void;
   cutCFBPlayer: (playerID: number, teamID: number) => Promise<void>;
   cutNFLPlayer: (playerID: number, teamID: number) => Promise<void>;
+  sendNFLPlayerToPracticeSquad: (
+    playerID: number,
+    teamID: number
+  ) => Promise<void>;
+  placeNFLPlayerOnTradeBlock: (
+    playerID: number,
+    teamID: number
+  ) => Promise<void>;
   redshirtPlayer: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer: (playerID: number, teamID: number) => Promise<void>;
   updateCFBRosterMap: (newMap: Record<number, CollegePlayer[]>) => void;
@@ -227,6 +235,8 @@ const defaultContext: SimFBAContextProps = {
   addUserToNFLTeam: async () => {},
   cutCFBPlayer: async () => {},
   cutNFLPlayer: async () => {},
+  sendNFLPlayerToPracticeSquad: async () => {},
+  placeNFLPlayerOnTradeBlock: async () => {},
   redshirtPlayer: async () => {},
   promisePlayer: async () => {},
   updateCFBRosterMap: () => {},
@@ -542,6 +552,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       nflID = currentUser.NFLTeamID;
     }
     const res = await BootstrapService.GetSecondFBABootstrapData(cfbID, nflID);
+    console.log({ res });
     if (cfbID > 0) {
       setCollegeNews(res.CollegeNews);
       setTeamProfileMap(res.TeamProfileMap);
@@ -591,7 +602,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setCFBStandingsMap(collegeStandingsMap);
     }
 
-    if (res.AllProGames.length > 0 && cfb_Timestamp) {
+    if (res.AllProGames && res.AllProGames.length > 0 && cfb_Timestamp) {
       const currentSeasonGames = res.AllProGames.filter(
         (x) => x.SeasonID === cfb_Timestamp.NFLSeasonID
       );
@@ -602,7 +613,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setProTeamsGames(teamGames);
     }
 
-    if (res.ProStandings.length > 0 && cfb_Timestamp) {
+    if (res.ProStandings && res.ProStandings.length > 0 && cfb_Timestamp) {
       const currentSeasonStandings = res.ProStandings.filter(
         (x) => x.SeasonID === cfb_Timestamp.NFLSeasonID
       );
@@ -712,6 +723,52 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         (player) => player.ID !== playerID
       );
       setProRosterMap(rosterMap);
+    },
+    [proRosterMap]
+  );
+
+  const sendNFLPlayerToPracticeSquad = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.SendNFLPLayerToPracticeSquad(playerID);
+      setProRosterMap((prevMap) => {
+        const teamRoster = prevMap![teamID];
+        if (!teamRoster) return prevMap;
+
+        return {
+          ...prevMap,
+          [teamID]: teamRoster.map((player) =>
+            player.ID === playerID
+              ? new NFLPlayer({
+                  ...player,
+                  IsPracticeSquad: !player.IsPracticeSquad,
+                })
+              : player
+          ),
+        };
+      });
+    },
+    [proRosterMap]
+  );
+
+  const placeNFLPlayerOnTradeBlock = useCallback(
+    async (playerID: number, teamID: number) => {
+      const res = await PlayerService.SendPHLPlayerToTradeBlock(playerID);
+      setProRosterMap((prevMap) => {
+        const teamRoster = prevMap![teamID];
+        if (!teamRoster) return prevMap;
+
+        return {
+          ...prevMap,
+          [teamID]: teamRoster.map((player) =>
+            player.ID === playerID
+              ? new NFLPlayer({
+                  ...player,
+                  IsOnTradeBlock: !player.IsOnTradeBlock,
+                })
+              : player
+          ),
+        };
+      });
     },
     [proRosterMap]
   );
@@ -1186,6 +1243,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         redshirtPlayer,
         promisePlayer,
         cutNFLPlayer,
+        sendNFLPlayerToPracticeSquad,
+        placeNFLPlayerOnTradeBlock,
         updateCFBRosterMap,
         saveCFBDepthChart,
         saveNFLDepthChart,
