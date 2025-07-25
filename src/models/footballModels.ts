@@ -1019,6 +1019,13 @@ export class FreeAgencyOffer {
     }
     return a;
   }
+
+  updateField(name: string, value: number): FreeAgencyOffer {
+    const copy = new FreeAgencyOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
+  }
 }
 export class NFLPlayerSeasonStats {
   ID: number;

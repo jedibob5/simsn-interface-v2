@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
 import { AuthService } from "../../_services/auth";
@@ -34,47 +34,82 @@ export const SideMenu = ({}) => {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
   // ✅ Generate logos based on current user
-  let logo = "";
-  let cfbLogo = "";
-  let cbbLogo = "";
-  let nflLogo = "";
-  let nbaLogo = "";
-  let chlLogo = "";
-  let phlLogo = "";
-  if (currentUser) {
-    if (currentUser.teamId) {
-      cfbLogo = getLogo(SimCFB, currentUser.teamId!, currentUser.isRetro);
-    }
-    if (currentUser.NFLTeamID) {
-      nflLogo = getLogo(SimNFL, currentUser.NFLTeamID!, currentUser.isRetro);
-    }
-    if (currentUser.cbb_id) {
-      cbbLogo = getLogo(SimCBB, currentUser.cbb_id!, currentUser.isRetro);
-    }
-    if (currentUser.NBATeamID) {
-      nbaLogo = getLogo(SimNBA, currentUser.NBATeamID!, currentUser.isRetro);
-    }
-    if (currentUser.CHLTeamID) {
-      chlLogo = getLogo(SimCHL, currentUser.CHLTeamID!, currentUser.isRetro);
-    }
-    if (currentUser.PHLTeamID) {
-      phlLogo = getLogo(SimPHL, currentUser.PHLTeamID!, currentUser.isRetro);
-    }
+  const { cfbLogo, nflLogo, cbbLogo, nbaLogo, chlLogo, phlLogo, logo } =
+    useMemo(() => {
+      let cfbLogo = "";
+      let nflLogo = "";
+      let cbbLogo = "";
+      let nbaLogo = "";
+      let chlLogo = "";
+      let phlLogo = "";
+      let logo = "";
 
-    if (currentUser.DefaultLeague === SimCFB) {
-      logo = cfbLogo;
-    } else if (currentUser.DefaultLeague === SimNFL) {
-      logo = nflLogo;
-    } else if (currentUser.DefaultLeague === SimCBB) {
-      logo = cbbLogo;
-    } else if (currentUser.DefaultLeague === SimNBA) {
-      logo = nbaLogo;
-    } else if (currentUser.DefaultLeague === SimCHL) {
-      logo = chlLogo;
-    } else if (currentUser.DefaultLeague === SimPHL) {
-      logo = phlLogo;
-    }
-  }
+      if (currentUser) {
+        const {
+          teamId,
+          NFLTeamID,
+          cbb_id,
+          NBATeamID,
+          CHLTeamID,
+          PHLTeamID,
+          isRetro,
+          DefaultLeague,
+        } = currentUser;
+
+        if (teamId) {
+          cfbLogo = getLogo(SimCFB, teamId, isRetro);
+        }
+        if (NFLTeamID) {
+          nflLogo = getLogo(SimNFL, NFLTeamID, isRetro);
+        }
+        if (cbb_id) {
+          cbbLogo = getLogo(SimCBB, cbb_id, isRetro);
+        }
+        if (NBATeamID) {
+          nbaLogo = getLogo(SimNBA, NBATeamID, isRetro);
+        }
+        if (CHLTeamID) {
+          chlLogo = getLogo(SimCHL, CHLTeamID, isRetro);
+        }
+        if (PHLTeamID) {
+          phlLogo = getLogo(SimPHL, PHLTeamID, isRetro);
+        }
+
+        switch (DefaultLeague) {
+          case SimCFB:
+            logo = cfbLogo;
+            break;
+          case SimNFL:
+            logo = nflLogo;
+            break;
+          case SimCBB:
+            logo = cbbLogo;
+            break;
+          case SimNBA:
+            logo = nbaLogo;
+            break;
+          case SimCHL:
+            logo = chlLogo;
+            break;
+          case SimPHL:
+            logo = phlLogo;
+            break;
+          default:
+            // Fallback priority if DefaultLeague is not defined
+            logo =
+              cfbLogo ||
+              nflLogo ||
+              cbbLogo ||
+              nbaLogo ||
+              chlLogo ||
+              phlLogo ||
+              "";
+            break;
+        }
+      }
+
+      return { cfbLogo, nflLogo, cbbLogo, nbaLogo, chlLogo, phlLogo, logo };
+    }, [currentUser]);
 
   // ✅ Handle Logout
   const logout = async () => {

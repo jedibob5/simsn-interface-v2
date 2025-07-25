@@ -301,7 +301,7 @@ export const OfferModal: FC<OfferModalProps> = ({
           if (match) {
             const editedYear = Number(match[1]);
             if (editedYear > updated.ContractLength) {
-              return updated.updateField(name, val);
+              updated = updated.updateField(name, val);
             }
             // otherwise overwrite **all** bonus fields 1…ContractLength
             for (let year = 1; year <= updated.ContractLength; year++) {
@@ -391,7 +391,7 @@ export const OfferModal: FC<OfferModalProps> = ({
           <Border direction="col" classes="text-start p-3">
             <Text variant="h6">Rules</Text>
             <Text variant="xs">
-              - Contracts need to be between 1 through 5 years.
+              Contracts need to be between 1 through 5 years.
             </Text>
             {league === SimPHL && (
               <Text variant="xs">

@@ -7,6 +7,7 @@ import {
   InfoType,
   League,
   ModalAction,
+  PracticeSquad,
   Promise,
   RecruitInfoType,
   Redshirt,
@@ -38,6 +39,7 @@ interface ActionModalProps {
   contract?: any;
   offer?: any;
   cutPlayer?: (playerID: number, teamID: number) => Promise<void>;
+  sendToPracticeSquad?: (playerID: number, teamID: number) => Promise<void>;
   affiliatePlayer?: (playerID: number, teamID: number) => Promise<void>;
   redshirtPlayer?: (playerID: number, teamID: number) => Promise<void>;
   promisePlayer?: (playerID: number, teamID: number) => Promise<void>;
@@ -71,6 +73,7 @@ export const ActionModal: FC<ActionModalProps> = ({
   cancelFAOffer,
   affiliatePlayer,
   tradeBlockPlayer,
+  sendToPracticeSquad,
   attribute = "",
 }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -106,6 +109,11 @@ export const ActionModal: FC<ActionModalProps> = ({
       case TradeBlock:
         if (tradeBlockPlayer) {
           await tradeBlockPlayer(playerID!, teamID!);
+        }
+        break;
+      case PracticeSquad:
+        if (sendToPracticeSquad) {
+          await sendToPracticeSquad(playerID!, teamID!);
         }
         break;
       case AddRecruitType:
@@ -291,6 +299,25 @@ export const ActionModal: FC<ActionModalProps> = ({
               player back up onto your roster. Once the player is claimed by
               another team or claimed by you, they cannot be placed back onto
               the Affiliate Team.
+            </Text>
+            <Text className="mb4 text-start">
+              Are you sure you want to confirm this action?
+            </Text>
+          </>
+        )}
+        {modalAction === PracticeSquad && (
+          <>
+            <Text className="mb4 text-start">
+              WARNING! Once you've confirmed,{" "}
+              <strong>
+                {playerID} {playerLabel}
+              </strong>{" "}
+              will be sent to your NFL Team's Practice Squad. Other teams may
+              attempt to pick up this player. If an offer is placed, you will
+              have approximately 3 FA Syncs to make a decision to pick the
+              player back up onto your roster. Once the player is claimed by
+              another team or claimed by you, they cannot be placed back onto
+              the NFL Team.
             </Text>
             <Text className="mb4 text-start">
               Are you sure you want to confirm this action?

@@ -527,7 +527,11 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
       setAllProGames(res.AllProGames);
     }
 
-    if (res.AllCollegeGames.length > 0 && cbb_Timestamp) {
+    if (
+      res.AllCollegeGames &&
+      res.AllCollegeGames.length > 0 &&
+      cbb_Timestamp
+    ) {
       const currentSeasonGames = res.AllCollegeGames.filter(
         (x) => x.SeasonID === cbb_Timestamp.SeasonID
       );
