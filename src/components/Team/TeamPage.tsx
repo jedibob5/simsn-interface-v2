@@ -945,6 +945,8 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
     nflTeamOptions,
     proStandingsMap: nflStandingsMap,
     cutNFLPlayer,
+    sendNFLPlayerToPracticeSquad,
+    placeNFLPlayerOnTradeBlock,
     capsheetMap: nflCapsheetMap,
     proContractMap: nflContractMap,
   } = fbStore;
@@ -1044,6 +1046,8 @@ const NFLTeamPage = ({ league, ts }: TeamPageProps) => {
           modalAction={modalAction}
           player={modalPlayer}
           cutPlayer={cutNFLPlayer}
+          sendToPracticeSquad={sendNFLPlayerToPracticeSquad}
+          tradeBlockPlayer={placeNFLPlayerOnTradeBlock}
         />
       )}
       <div className="flex flex-row">

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   League,
   SimCHL,
@@ -344,6 +344,17 @@ export const CHLPlayerInfoModalBody: FC<CHLPlayerInfoModalBodyProps> = ({
           )}
           {player.Position === "G" && (
             <>
+              <div className="flex flex-col px-1 gap-1">
+                <Text
+                  variant="small"
+                  classes="mb-1 whitespace-nowrap font-semibold"
+                >
+                  Strength
+                </Text>
+                <Text variant="small">
+                  {getHockeyLetterGrade(player.Strength, player.Year)}
+                </Text>
+              </div>
               <div className="flex flex-col px-1 gap-1">
                 <Text
                   variant="small"
@@ -850,15 +861,20 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
     player,
     player.ShowLetterGrade
   );
-  const rawValue = Array.from(
-    { length: contract.ContractLength },
-    (_, index) =>
-      (contract[`Y${index + 1}BaseSalary`] || 0) +
-      (contract[`Y${index + 1}Bonus`] || 0)
-  ).reduce((sum, salary) => sum + salary, 0);
-  const currentYearValue = (
-    (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0)
-  ).toFixed(2);
+  const rawValue = useMemo(() => {
+    if (!contract) return 0;
+    return Array.from(
+      { length: contract.ContractLength },
+      (_, index) =>
+        (contract[`Y${index + 1}BaseSalary`] || 0) +
+        (contract[`Y${index + 1}Bonus`] || 0)
+    ).reduce((sum, salary) => sum + salary, 0);
+  }, [contract]);
+  const currentYearValue = useMemo(() => {
+    if (!contract) return 0;
+    return (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0).toFixed(2);
+  }, [contract]);
+
   const totalValue = `${rawValue.toFixed(2)}`;
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
@@ -961,37 +977,179 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
           </>
         )}
       </div>
+      {contract && (
+        <>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+              Contract
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {contract.ContractLength} years
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1  font-semibold">
+              Total Value
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${totalValue}M`}
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 font-semibold">
+              Current Year
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${currentYearValue}M`}
+            </Text>
+          </div>
+          <div className="flex flex-col">
+            <Text variant="body" classes="mb-1 font-semibold">
+              Bonus (p.a)
+            </Text>
+            <Text variant="small" classes="whitespace-nowrap">
+              {`${contract.Y1Bonus.toFixed(2)}M`}
+            </Text>
+          </div>
+        </>
+      )}
+      <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+        <div className="grid w-full grid-cols-4 gap-3">
+          {priorityAttributes.map((attr, idx) => (
+            <div key={idx} className="flex flex-col px-1 gap-1">
+              <Text
+                variant="small"
+                classes="mb-1 whitespace-nowrap font-semibold"
+              >
+                {attr.Name}
+              </Text>
+              <Text variant="small">{attr.Value}</Text>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface NFLDepthChartInfoModalBodyProps {
+  player: NFLPlayer;
+}
+
+export const NFLDepthChartInfoModalBody: FC<
+  NFLDepthChartInfoModalBodyProps
+> = ({ player }) => {
+  const { currentUser } = useAuthStore();
+  const { proTeamMap: nflTeamMap, cfbTeamMap } = useSimFBAStore();
+  const team = nflTeamMap ? nflTeamMap[player.TeamID] : null;
+  const teamLogo = getLogo(SimNFL, player.TeamID, currentUser?.isRetro);
+  const cfbTeam = cfbTeamMap?.[player.CollegeID];
+  const heightObj = HeightToFeetAndInches(player.Height);
+  const priorityAttributes = setPriorityNFLAttributes(
+    player,
+    player.ShowLetterGrade
+  );
+
+  return (
+    <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
+      <div className="row-span-3 flex flex-col items-center">
+        <div className="flex items-center justify-center h-[6rem] w-[6rem] sm:h-[8rem] sm:w-[8rem] px-5 rounded-lg border-2 bg-white">
+          <PlayerPicture playerID={player.ID} league={SimNFL} team={team} />
+        </div>
+        {team && (
+          <Logo
+            url={teamLogo}
+            label={team.TeamAbbr}
+            classes="h-[5rem] max-h-[5rem]"
+            containerClass="p-4"
+            textClass="text-small"
+          />
+        )}
+      </div>
       <div className="flex flex-col">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-          Contract
+          Hometown
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {contract.ContractLength} years
+          {player.Hometown.length > 0 && `${player.Hometown}, ${player.State}`}
         </Text>
       </div>
       <div className="flex flex-col">
-        <Text variant="body" classes="mb-1  font-semibold">
-          Total Value
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Experience
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {`${totalValue}M`}
+          {GetNFLYear(player.Experience)}
         </Text>
       </div>
       <div className="flex flex-col">
-        <Text variant="body" classes="mb-1 font-semibold">
-          Current Year
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Age
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {`${currentYearValue}M`}
+          {player.Age}
         </Text>
       </div>
       <div className="flex flex-col">
-        <Text variant="body" classes="mb-1 font-semibold">
-          Bonus (p.a)
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Height
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {`${contract.Y1Bonus.toFixed(2)}M`}
+          {heightObj.feet}'{heightObj.inches}"
         </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Weight
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Weight} lbs
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Personality
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.Personality}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Overall
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {player.ShowLetterGrade
+            ? GetNFLOverall(player.Overall, player.ShowLetterGrade)
+            : player.Overall}
+        </Text>
+      </div>
+      <div className="flex flex-col">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          College
+        </Text>
+        <Text variant="small" classes="whitespace-nowrap">
+          {cfbTeam?.TeamAbbr}
+        </Text>
+      </div>
+      <div className="flex flex-col items-center">
+        <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+          Drafted
+        </Text>
+        {player.DraftedRound === 0 && player.DraftedPick === 0 ? (
+          <Text variant="small" classes="whitespace-nowrap">
+            UDFA
+          </Text>
+        ) : (
+          <>
+            <Text variant="small" classes="whitespace-nowrap">
+              Round {player.DraftedRound} - Pick {player.DraftedPick}
+            </Text>
+            <Text variant="xs" classes="whitespace-nowrap text-small">
+              by {player.DraftedTeam}
+            </Text>
+          </>
+        )}
       </div>
       <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
         <div className="grid w-full grid-cols-4 gap-3">
@@ -1050,7 +1208,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
                          px-3 h-[3rem] min-h-[3rem] sm:w-[5rem] sm:max-w-[5rem] sm:h-[5rem] rounded-lg border-2`}
             style={{ backgroundColor: "white" }}
           >
-            <PlayerPicture playerID={player.ID} league="SimCHL" team={team} />
+            <PlayerPicture playerID={player.ID} league={SimCHL} team={team} />
           </div>
           {team && player.IsSigned && (
             <Logo
@@ -1169,7 +1327,7 @@ export const CHLCrootInfoModalBody: FC<CHLCrootInfoModalBodyProps> = ({
             )}
           </div>
           <div
-            className={`w-full grid grid-cols-${
+            className={`w-full max-h-[8rem] overflow-y-auto grid grid-cols-${
               hasSigned ? "4" : "3"
             } gap-y-2 mb-2`}
           >

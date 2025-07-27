@@ -15,6 +15,7 @@ import {
   SwedenRegionOptions,
   USA,
   USARegionOptions,
+  Potentials,
 } from "../../../_constants/constants";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
@@ -218,6 +219,13 @@ export const useCHLRecruiting = () => {
     setModalPlayer(player);
   };
 
+  const updateRecruitingCategory = (category: RecruitingCategory) => {
+    setRecruitingCategory(category);
+    if (category === Overview && tableViewType === Potentials) {
+      setTableViewType(Attributes);
+    }
+  };
+
   return {
     teamProfile,
     recruitMap,
@@ -253,5 +261,6 @@ export const useCHLRecruiting = () => {
     recruitingLocked,
     filteredClass,
     SelectClass,
+    updateRecruitingCategory,
   };
 };

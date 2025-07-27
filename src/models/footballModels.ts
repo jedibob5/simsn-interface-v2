@@ -944,6 +944,7 @@ export class NFLWaiverOffer {
   }
 }
 export class FreeAgencyOffer {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -967,7 +968,9 @@ export class FreeAgencyOffer {
   ContractValue: number;
   BonusPercentage: number;
   AAV: number;
+  Syncs: number;
   IsActive: boolean;
+  IsRejected: boolean;
 
   constructor(source: any = {}) {
     if ("string" === typeof source) source = JSON.parse(source);
@@ -994,7 +997,9 @@ export class FreeAgencyOffer {
     this.ContractValue = source["ContractValue"];
     this.BonusPercentage = source["BonusPercentage"];
     this.AAV = source["AAV"];
+    this.Syncs = source["Syncs"];
     this.IsActive = source["IsActive"];
+    this.IsRejected = source["IsRejected"];
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1013,6 +1018,13 @@ export class FreeAgencyOffer {
       return new classs(a);
     }
     return a;
+  }
+
+  updateField(name: string, value: number): FreeAgencyOffer {
+    const copy = new FreeAgencyOffer();
+    Object.assign(copy, this);
+    (copy as any)[name] = value;
+    return copy;
   }
 }
 export class NFLPlayerSeasonStats {
@@ -2324,6 +2336,7 @@ export class NFLTeam {
   SpecialTeamsGrade: string;
   PenaltyMarks: number;
   JerseyType: number;
+  LastLogin: Time;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -2376,6 +2389,7 @@ export class NFLTeam {
     this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
     this.JerseyType = source["JerseyType"];
+    this.LastLogin = this.convertValues(source["LastLogin"], Time);
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];
@@ -5111,6 +5125,7 @@ export class CollegeTeam {
   SpecialTeamsGrade: string;
   PenaltyMarks: number;
   JerseyType: number;
+  LastLogin: Time;
   ConferenceID: number;
   Conference: string;
   DivisionID: number;
@@ -5160,6 +5175,7 @@ export class CollegeTeam {
     this.SpecialTeamsGrade = source["SpecialTeamsGrade"];
     this.PenaltyMarks = source["PenaltyMarks"];
     this.JerseyType = source["JerseyType"];
+    this.LastLogin = this.convertValues(source["LastLogin"], Time);
     this.ConferenceID = source["ConferenceID"];
     this.Conference = source["Conference"];
     this.DivisionID = source["DivisionID"];
@@ -5241,6 +5257,9 @@ export class BootstrapData {
   ProRosterMap: { [key: number]: NFLPlayer[] } | null;
   CapsheetMap: { [key: number]: NFLCapsheet } | null;
   PracticeSquadPlayers: NFLPlayer[];
+  FreeAgents: NFLPlayer[];
+  WaiverPlayers: NFLPlayer[];
+
   ProInjuryReport: NFLPlayer[];
   FreeAgentOffers: FreeAgencyOffer[];
   WaiverWireOffers: NFLWaiverOffer[];
@@ -5260,6 +5279,7 @@ export class BootstrapData {
   ContractMap: { [key: number]: NFLContract };
   ExtensionMap: { [key: number]: NFLExtensionOffer };
   RecruitProfiles: RecruitPlayerProfile[];
+  NFLDraftees: NFLDraftee[];
 
   constructor(source: any = {}) {
     if (typeof source === "string") source = JSON.parse(source);
@@ -5314,6 +5334,8 @@ export class BootstrapData {
       source["PracticeSquadPlayers"],
       NFLPlayer
     );
+    this.FreeAgents = this.convertValues(source["FreeAgents"], NFLPlayer);
+    this.WaiverPlayers = this.convertValues(source["WaiverPlayers"], NFLPlayer);
     this.FreeAgentOffers = this.convertValues(
       source["FreeAgentOffers"],
       FreeAgencyOffer
@@ -5368,6 +5390,7 @@ export class BootstrapData {
       NFLExtensionOffer,
       true
     );
+    this.NFLDraftees = this.convertValues(source["NFLDraftees"], NFLDraftee);
   }
 
   convertValues(a: any, classs: any, asMap: boolean = false): any {

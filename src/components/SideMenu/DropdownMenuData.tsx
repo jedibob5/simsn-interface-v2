@@ -52,6 +52,7 @@ export const useSideMenu = () => {
         isRoute: true,
         route: routes.CFB_GAMEPLAN,
         league: SimCFB,
+        click: () => navigate(routes.CFB_GAMEPLAN),
         toggle: () => toggleMenu(),
       },
       {
@@ -97,8 +98,9 @@ export const useSideMenu = () => {
       {
         label: "Gameplan",
         isRoute: true,
-        route: "",
+        route: routes.NFL_GAMEPLAN,
         league: SimNFL,
+        click: () => navigate(routes.NFL_GAMEPLAN),
         toggle: () => toggleMenu(),
       },
       {

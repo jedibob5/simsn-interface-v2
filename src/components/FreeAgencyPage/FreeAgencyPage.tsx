@@ -5,7 +5,8 @@ import { useSimHCKStore } from "../../context/SimHockeyContext";
 import { useSimFBAStore } from "../../context/SimFBAContext";
 import { useSimBBAStore } from "../../context/SimBBAContext";
 import { PageContainer } from "../../_design/Container";
-import { PHLFreeAgency } from "./PHLFreeAgency.tsx/PHLFreeAgency";
+import { PHLFreeAgency } from "./PHLFreeAgency/PHLFreeAgency";
+import { NFLFreeAgency } from "./NFLFreeAgency/NFLFreeAgency";
 
 interface FreeAgencyPageProps {
   league: League;
@@ -14,7 +15,7 @@ interface FreeAgencyPageProps {
 export const FreeAgencyPage: FC<FreeAgencyPageProps> = ({ league }) => {
   const { selectedLeague, setSelectedLeague } = useLeagueStore();
   const { phlTeam } = useSimHCKStore();
-  const { nflTeam } = useSimFBAStore();
+  const { nflTeam, isLoadingThree } = useSimFBAStore();
   const { nbaTeam } = useSimBBAStore();
 
   useEffect(() => {
@@ -30,11 +31,11 @@ export const FreeAgencyPage: FC<FreeAgencyPageProps> = ({ league }) => {
     if (selectedLeague === SimNBA && nbaTeam) {
       return false;
     }
-    if (selectedLeague === SimNFL && nflTeam) {
+    if (selectedLeague === SimNFL && nflTeam && !isLoadingThree) {
       return false;
     }
     return true;
-  }, [phlTeam, selectedLeague]);
+  }, [phlTeam, nflTeam, isLoadingThree, selectedLeague]);
 
   return (
     <>
@@ -45,7 +46,11 @@ export const FreeAgencyPage: FC<FreeAgencyPageProps> = ({ league }) => {
           </>
         )}
         {selectedLeague === SimNBA && nbaTeam && <></>}
-        {selectedLeague === SimNFL && nflTeam && <></>}
+        {selectedLeague === SimNFL && nflTeam && (
+          <>
+            <NFLFreeAgency />
+          </>
+        )}
       </PageContainer>
     </>
   );

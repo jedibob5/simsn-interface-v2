@@ -50,6 +50,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
   let coach = 0;
   let season = 0;
   let affinities: any[] = [];
+  let res = 0;
   switch (league) {
     case SimCHL:
       const tp = TeamProfile as HockeyTeamProfile;
@@ -74,6 +75,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
       teamLabel = cfbt.TeamName;
       classRank = cfbtp.RecruitingClassRank;
       affinities = getAffinityList(cfbtp);
+      res = cfbtp.RecruitingEfficiencyScore * 100;
       break;
     default:
       break;
@@ -105,6 +107,7 @@ export const RecruitingSideBar: FC<RecruitingSideBarProps> = ({
             Spots Remaining:{" "}
             {TeamProfile!.RecruitClassSize - TeamProfile!.TotalCommitments}
           </Text>
+          {res > 0 && <Text variant="xs">RES: {res.toFixed(3)}%</Text>}
         </div>
         {league === SimCFB && (
           <div className="flex flex-col gap-x-2 flex-wrap w-full text-start mt-2">

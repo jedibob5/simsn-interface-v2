@@ -23,6 +23,7 @@ import {
   TextGreen,
   Affiliate,
   TradeBlock,
+  PracticeSquad,
 } from "../../_constants/constants";
 import {
   getCHLAttributes,
@@ -1053,7 +1054,11 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
               },
               {
                 value: "practiceSquad",
-                label: `Demote to Reserves - ${item.FirstName} ${item.LastName}`,
+                label: `${
+                  item.IsPracticeSquad
+                    ? "Bring Up from Practice Squad"
+                    : "Send Down to Practice Squad"
+                } - ${item.FirstName} ${item.LastName}`,
               },
               {
                 value: "tradeBlock",
@@ -1063,6 +1068,10 @@ export const NFLRosterTable: FC<NFLRosterTableProps> = ({
             onChange={(selectedOption) => {
               if (selectedOption?.value === "cut") {
                 openModal(Cut, item);
+              } else if (selectedOption?.value === "practiceSquad") {
+                openModal(PracticeSquad, item);
+              } else if (selectedOption?.value === "tradeBlock") {
+                openModal(TradeBlock, item);
               } else {
                 console.log(`Action selected: ${selectedOption?.value}`);
               }

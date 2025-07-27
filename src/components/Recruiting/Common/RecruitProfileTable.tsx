@@ -86,7 +86,7 @@ const getRecruitProfileColumns = (
         { header: "GK", accessor: "Goalkeeping" },
         { header: "GV", accessor: "GoalieVision" },
       ]);
-    } else if (!isMobile && category === Potentials) {
+    } else if (category === Potentials) {
       columns = columns.concat([
         { header: "Agi", accessor: "AgilityGrade" },
         { header: "FO", accessor: "FaceoffsGrade" },
@@ -267,7 +267,7 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
       <TableCell>
         <span className={`text-xs`}>{croot.OverallGrade}</span>
       </TableCell>
-      {category === Attributes && (
+      {category === Attributes && !isMobile && (
         <>
           {attrList.map((attr) => (
             <TableCell>
@@ -325,10 +325,10 @@ export const CHLProfileRow: FC<CHLProfileRowProps> = ({
         </div>
       </TableCell>
       <TableCell>
-        <span className={`text-xs`}>{modValue.toFixed(3)}</span>
+        <span className={`text-xs`}>{modValue.toFixed(2)}</span>
       </TableCell>
       <TableCell>
-        <span className={`text-xs`}>{profile.TotalPoints}</span>
+        <span className={`text-xs`}>{profile.TotalPoints.toFixed(2)}</span>
       </TableCell>
       <TableCell>
         <ButtonGroup classes="flex-nowrap">

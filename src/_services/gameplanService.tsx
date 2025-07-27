@@ -1,5 +1,5 @@
 import { fbaUrl, bbaUrl, hckUrl } from "../_constants/urls";
-import { PostCall, GetCall } from "../_helper/fetchHelper";
+import { PostCall, GetCall, PUTCallNoResponse, PostCallNoResponse } from "../_helper/fetchHelper";
 
 export const GameplanService = {
   SaveCHLGameplan: async (dto: any): Promise<void> => {
@@ -27,10 +27,10 @@ export const GameplanService = {
   },
 
   SaveCFBGameplan: async (dto: any): Promise<void> => {
-    await PostCall(`${fbaUrl}gameplan/college/updategameplan`, dto);
+    await PostCallNoResponse(`${fbaUrl}gameplan/college/updategameplan`, dto);
   },
 
   SaveNFLGameplan: async (dto: any): Promise<void> => {
-    await PostCall(`${fbaUrl}gameplan/nfl/updategameplan`, dto);
+    await PostCallNoResponse(`${fbaUrl}gameplan/nfl/updategameplan`, dto);
   },
 };

@@ -26,11 +26,15 @@ import {
   BellAlertIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   QuestionMarkCircleIcon,
-  TrophyIcon
+  TrophyIcon,
+  ArrowDownIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/16/solid";
-import { GiDiamondTrophy, GiTrophyCup, GiRibbonMedal, GiTrophy } from "react-icons/gi";
+import { GiDiamondTrophy, GiTrophyCup, GiRibbonMedal, GiTrophy, GiShieldBash, GiShield, GiSoccerKick, GiAmericanFootballPlayer, GiTicTacToe } from "react-icons/gi";
 import { IoIosRibbon } from "react-icons/io";
-import { FaMedal } from "react-icons/fa";
+import { FaMedal, FaChalkboardTeacher, FaSortAmountUp } from "react-icons/fa";
+
 
 
 // 🔑 Define Props Interface for LockIcon
@@ -259,3 +263,40 @@ export const Medal: React.FC<LockIconProps> = ({ textColorClass }) => {
 export const Ribbon: React.FC<LockIconProps> = ({ textColorClass }) => {
   return <GiRibbonMedal className={`size-5 ${textColorClass}`} />;
 };
+
+export const ChalkBoard: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <FaChalkboardTeacher className={`size-5 ${textColorClass}`} />;
+};
+
+export const SortUp: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <FaSortAmountUp className={`size-5 ${textColorClass}`} />;
+};
+
+export const ShieldBash: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiShieldBash className={`size-5 ${textColorClass}`} />;
+};
+
+export const KickBall: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiSoccerKick className={`size-5 ${textColorClass}`} />;
+};
+
+export const FootballPlayer: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiAmericanFootballPlayer className={`size-5 ${textColorClass}`} />;
+};
+
+export const TicTacToe: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <GiTicTacToe className={`size-5 ${textColorClass}`} />;
+};
+
+export const ArrowDown: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowDownIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const ArrowRight: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowRightIcon className={`size-5 ${textColorClass}`} />;
+};
+
+export const ArrowLeft: React.FC<LockIconProps> = ({ textColorClass }) => {
+  return <ArrowLeftIcon className={`size-5 ${textColorClass}`} />;
+};
+

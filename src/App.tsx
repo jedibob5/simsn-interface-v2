@@ -16,9 +16,10 @@ function App() {
 }
 
 const InnerApp = () => {
-  const authStore = useAuthStore();
+  const { viewMode, isLoading } = useAuthStore();
+  if (isLoading) return null;
   return (
-    <div className={authStore.viewMode}>
+    <div className={viewMode}>
       <SimFBAProvider>
         <SimBBAProvider>
           <SimHCKProvider>

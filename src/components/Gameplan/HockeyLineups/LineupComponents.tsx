@@ -37,6 +37,7 @@ import {
   getHCKAISortObject,
   getHCKGoalieSortObject,
 } from "./useLineupUtils";
+import { getHockeyLetterGrade } from "../../../_utility/getLetterGrade";
 
 interface LineupPlayerProps {
   playerID: number;
@@ -52,6 +53,7 @@ interface LineupPlayerProps {
     value: number
   ) => void;
   property: string;
+  league?: League;
   activatePlayer: (player: CollegePlayer | ProfessionalPlayer) => void;
 }
 
@@ -66,6 +68,7 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
   ChangePlayerInput,
   property,
   activatePlayer,
+  league,
 }) => {
   const player = rosterMap[playerID];
   const GetValue = useCallback(
@@ -98,6 +101,17 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
   const selectedOption = useMemo(() => {
     return optionList.find((opt) => Number(opt.value) === playerID) || null;
   }, [optionList, playerID]);
+
+  const staminaTextColor = useMemo(() => {
+    if (!player) return "";
+    if (player.GoalieStamina < 30) {
+      return "text-red-400";
+    }
+    if (player.GoalieStamina > 75) {
+      return "text-green-400";
+    }
+    return "";
+  }, [player]);
 
   return (
     <div className="flex flex-col px-4 h-full w-full max-w-[20rem]">
@@ -174,16 +188,58 @@ export const LineupPlayer: FC<LineupPlayerProps> = ({
         </div>
         {playerID > 0 && player && (
           <div className="flex flex-col gap-y-2 flex-1">
-            {zoneInputList.map((x) => (
-              <Input
-                type="number"
-                key={x.key}
-                label={x.label}
-                name={x.key}
-                value={player[x.key] as number}
-                onChange={ChangeInput}
-              />
-            ))}
+            {property !== "GoalieID" &&
+              zoneInputList.map((x) => (
+                <Input
+                  type="number"
+                  key={x.key}
+                  label={x.label}
+                  name={x.key}
+                  value={player[x.key] as number}
+                  onChange={ChangeInput}
+                />
+              ))}
+            {property === "GoalieID" && (
+              <div className="mt-2 grid grid-cols-2 gap-y-2">
+                <Text variant="small">Agility</Text>
+                <Text variant="small" classes="font-semibold">
+                  {league === SimCHL
+                    ? getHockeyLetterGrade(player.Agility, player.Year)
+                    : player.Agility}
+                </Text>
+                <Text variant="small">Strength</Text>
+                <Text variant="small" classes="font-semibold">
+                  {league === SimCHL
+                    ? getHockeyLetterGrade(player.Strength, player.Year)
+                    : player.Strength}
+                </Text>
+                <Text variant="small">Goalie Vision</Text>
+                <Text variant="small" classes="font-semibold">
+                  {league === SimCHL
+                    ? getHockeyLetterGrade(player.GoalieVision, player.Year)
+                    : player.GoalieVision}
+                </Text>
+                <Text variant="small">Goalkeeping</Text>
+                <Text variant="small" classes="font-semibold">
+                  {league === SimCHL
+                    ? getHockeyLetterGrade(player.Goalkeeping, player.Year)
+                    : player.Goalkeeping}
+                </Text>
+                <Text variant="small" classes="border-t-[0.1em] pt-2">
+                  Current Stamina
+                </Text>
+                <Text
+                  variant="small"
+                  classes={`font-semibold border-t-[0.1em] pt-2 ${staminaTextColor}`}
+                >
+                  {player.GoalieStamina}
+                </Text>
+                <Text variant="small">Max Stamina</Text>
+                <Text variant="small" classes="font-semibold">
+                  100
+                </Text>
+              </div>
+            )}
           </div>
         )}
       </>
@@ -797,8 +853,6 @@ export const HCKAIGameplanModal: FC<HCKAIGameplanModalProps> = ({
       gp[`DefenderSortPreference2`] = defenderSort2;
       gp[`DefenderSortPreference3`] = defenderSort3;
     }
-
-    console.log({ gp });
 
     onClose();
     await saveGameplan(gp);
