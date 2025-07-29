@@ -9,6 +9,9 @@ import {
   EMPTY,
   SINGLEBACK,
   FLEXBONE_GUN,
+  SPLIT_BACK_GUN,
+  WING_T,
+  WING_T_DOUBLE_TIGHT,
   WING_SPLIT_BACK_GUN,
   DOUBLE_WING_SPLIT,
   DOUBLE_WING_TIGHT,
@@ -52,7 +55,7 @@ import {
 } from '../Constants/DepthChartConstants';
 
 export type FormationType = 
-  | typeof UNDER_CENTER | typeof GUN | typeof PISTOL | typeof SPREAD | typeof TIGHT | typeof WING | typeof EMPTY 
+  | typeof UNDER_CENTER | typeof GUN | typeof PISTOL | typeof SPREAD | typeof TIGHT | typeof WING | typeof EMPTY | typeof WING_T | typeof WING_T_DOUBLE_TIGHT | typeof SPLIT_BACK_GUN
   | typeof FLEXBONE_GUN | typeof WING_SPLIT_BACK_GUN | typeof DOUBLE_WING_SPLIT | typeof DOUBLE_WING_TIGHT | typeof DOUBLE_WING_SPREAD | typeof DOUBLE_WING_STRONG | typeof DOUBLE_WING | typeof SINGLEBACK;
 
 export type DefensiveFormationType = 
@@ -92,6 +95,10 @@ export const getFormationType = (formationName: string, positions: string[] = []
     return SINGLEBACK;
   }
 
+  if (name.includes(FORMATION_KEYWORDS.WINGT) && name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.TIGHT)) {
+    return WING_T_DOUBLE_TIGHT;
+  }
+
   if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.SPLIT)) {
     return DOUBLE_WING_SPLIT;
   }
@@ -118,6 +125,14 @@ export const getFormationType = (formationName: string, positions: string[] = []
 
   if (name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.SPLIT) && name.includes(FORMATION_KEYWORDS.BACK) && name.includes(FORMATION_KEYWORDS.GUN)) {
     return WING_SPLIT_BACK_GUN;
+  }
+
+  if (name.includes(FORMATION_KEYWORDS.SPLIT) && name.includes(FORMATION_KEYWORDS.BACK) && name.includes(FORMATION_KEYWORDS.GUN)) {
+    return SPLIT_BACK_GUN;
+  }
+
+  if (name.includes(FORMATION_KEYWORDS.WINGT)) {
+    return WING_T;
   }
   
   if (name.includes(FORMATION_KEYWORDS.EMPTY) || (positions.filter(p => p.startsWith(POSITION_PREFIXES.WR)).length >= 5)) {
@@ -274,6 +289,8 @@ export const getQBPosition = (formationType: FormationType): number => {
   switch (formationType) {
     case GUN:
     case SPREAD:
+    case WING_SPLIT_BACK_GUN:
+    case SPLIT_BACK_GUN:
       return GRID_POSITIONS.ROWS[7];
     case PISTOL:
       return GRID_POSITIONS.ROWS[6];
@@ -541,6 +558,16 @@ export const getFormationLayout = (formation: Formation): FormationLayout => {
     }
 
     if (index === 1 && formationType === DOUBLE_WING_STRONG){
+      rbCol = GRID_POSITIONS.COLUMNS[12];
+      rbRow = GRID_POSITIONS.ROWS[3];
+    }
+
+    if (index === 1 && formationType === WING_T_DOUBLE_TIGHT){
+      rbCol = GRID_POSITIONS.COLUMNS[12];
+      rbRow = GRID_POSITIONS.ROWS[3];
+    }
+
+    if (index === 1 && formationType === WING_T){
       rbCol = GRID_POSITIONS.COLUMNS[12];
       rbRow = GRID_POSITIONS.ROWS[3];
     }
