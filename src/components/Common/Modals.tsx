@@ -872,9 +872,9 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   }, [contract]);
   const currentYearValue = useMemo(() => {
     if (!contract) return 0;
-    return (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0).toFixed(2);
+    return ((contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0)).toFixed(2);
   }, [contract]);
-
+console.log(contract)
   const totalValue = `${rawValue.toFixed(2)}`;
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
