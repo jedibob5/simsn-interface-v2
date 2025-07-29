@@ -453,6 +453,7 @@ export const OfferModal: FC<OfferModalProps> = ({
                 label="Length"
                 name="ContractLength"
                 value={offer.ContractLength || 0}
+                max={5}
                 onChange={ChangeInput}
               />
             )}
