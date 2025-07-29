@@ -106,7 +106,7 @@ export const useSideMenu = () => {
       {
         label: "Free Agency",
         isRoute: true,
-        route: "",
+        route: routes.NFL_FREE_AGENCY,
         league: SimNFL,
         toggle: () => toggleMenu(),
       },
