@@ -133,6 +133,9 @@ export const EMPTY = 'empty';
 export const FLEXBONE_GUN = 'flexbone-gun';
 export const WING_SPLIT_BACK_GUN = 'wing-split-back-gun';
 export const DOUBLE_WING_SPLIT = 'double-wing-split';
+export const DOUBLE_WING_TIGHT = 'double-wing-tight';
+export const DOUBLE_WING_SPREAD = 'double-wing-spread';
+export const DOUBLE_WING_STRONG = 'double-wing-strong';
 export const DOUBLE_WING = 'double-wing';
 export const SINGLEBACK = 'singleback';
 
@@ -202,6 +205,7 @@ export const FORMATION_KEYWORDS = {
   TIGHT: 'tight',
   WING: 'wing',
   DOUBLE: 'double',
+  STRONG: 'strong',
   FLEXBONE: 'flexbone',
   HEAVY: 'heavy',
   LIGHT: 'light',

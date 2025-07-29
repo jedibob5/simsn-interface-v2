@@ -11,6 +11,9 @@ import {
   FLEXBONE_GUN,
   WING_SPLIT_BACK_GUN,
   DOUBLE_WING_SPLIT,
+  DOUBLE_WING_TIGHT,
+  DOUBLE_WING_SPREAD,
+  DOUBLE_WING_STRONG,
   DOUBLE_WING,
   FOUR_THREE_BASE,
   FOUR_THREE_OVER,
@@ -50,7 +53,7 @@ import {
 
 export type FormationType = 
   | typeof UNDER_CENTER | typeof GUN | typeof PISTOL | typeof SPREAD | typeof TIGHT | typeof WING | typeof EMPTY 
-  | typeof FLEXBONE_GUN | typeof WING_SPLIT_BACK_GUN | typeof DOUBLE_WING_SPLIT | typeof DOUBLE_WING | typeof SINGLEBACK;
+  | typeof FLEXBONE_GUN | typeof WING_SPLIT_BACK_GUN | typeof DOUBLE_WING_SPLIT | typeof DOUBLE_WING_TIGHT | typeof DOUBLE_WING_SPREAD | typeof DOUBLE_WING_STRONG | typeof DOUBLE_WING | typeof SINGLEBACK;
 
 export type DefensiveFormationType = 
   | typeof FOUR_THREE_BASE | typeof FOUR_THREE_OVER | typeof FOUR_THREE_UNDER | typeof FOUR_THREE_LIGHT | typeof FOUR_THREE_HEAVY
@@ -91,6 +94,18 @@ export const getFormationType = (formationName: string, positions: string[] = []
 
   if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.SPLIT)) {
     return DOUBLE_WING_SPLIT;
+  }
+
+  if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.TIGHT)) {
+    return DOUBLE_WING_TIGHT;
+  }
+
+  if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.SPREAD)) {
+    return DOUBLE_WING_SPREAD;
+  }
+
+  if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING) && name.includes(FORMATION_KEYWORDS.STRONG)) {
+    return DOUBLE_WING_STRONG;
   }
 
   if (name.includes(FORMATION_KEYWORDS.DOUBLE) && name.includes(FORMATION_KEYWORDS.WING)) {
@@ -287,11 +302,32 @@ export const getWRPositioning = (formationType: FormationType, formationName: st
       wrPositions.forEach((wr, index) => {
         switch (index) {
           case 0:
-            positioning[wr] = { row: 2, col: 12 };
+            positioning[wr] = { row: 3, col: 12 };
             break;
         }
       });
       break;
+
+
+    case 'double-wing-spread':
+      wrPositions.forEach((wr, index) => {
+        switch (index) {
+          case 0:
+            positioning[wr] = { row: 2, col: 1 };
+            break;
+          case 1:
+            positioning[wr] = { row: 2, col: 13 };
+            break;
+          case 2:
+            positioning[wr] = { row: 3, col: 2 };
+            break;
+          case 3:
+            positioning[wr] = { row: 3, col: 12 };
+            break;
+        }
+      });
+      break;
+
     case 'empty':
       wrPositions.forEach((wr, index) => {
         switch (index) {
@@ -449,6 +485,7 @@ export const getFormationLayout = (formation: Formation): FormationLayout => {
   const fbPositions = formation.positions.filter(p => p.startsWith(POSITION_PREFIXES.FB));
   
   const wrPositioning = getWRPositioning(formationType, formation.name, wrPositions);
+  console.log(wrPositions)
   wrPositions.forEach(wr => {
     if (wrPositioning[wr]) {
       positions.push({
@@ -493,6 +530,21 @@ export const getFormationLayout = (formation: Formation): FormationLayout => {
       rbRow = GRID_POSITIONS.ROWS[3];
     }
 
+    if (index === 0 && formationType === DOUBLE_WING){
+      rbCol = GRID_POSITIONS.COLUMNS[2];
+      rbRow = GRID_POSITIONS.ROWS[3];
+    }
+
+    if (index === 1 && formationType === DOUBLE_WING){
+      rbCol = GRID_POSITIONS.COLUMNS[12];
+      rbRow = GRID_POSITIONS.ROWS[3];
+    }
+
+    if (index === 1 && formationType === DOUBLE_WING_STRONG){
+      rbCol = GRID_POSITIONS.COLUMNS[12];
+      rbRow = GRID_POSITIONS.ROWS[3];
+    }
+
     if (index === 1 && formationType === FLEXBONE_GUN){
       rbCol = GRID_POSITIONS.COLUMNS[7];
       rbRow = GRID_POSITIONS.ROWS[9];
@@ -510,7 +562,7 @@ export const getFormationLayout = (formation: Formation): FormationLayout => {
       shouldRender: true
     });
   });
-  
+
   fbPositions.forEach(fb => {
     positions.push({
       position: fb,
