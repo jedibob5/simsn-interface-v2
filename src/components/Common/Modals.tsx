@@ -952,10 +952,10 @@ console.log(contract)
       </div>
       <div className="flex flex-col">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-          College
+          Potential
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {cfbTeam?.TeamAbbr}
+          {player.PotentialGrade}
         </Text>
       </div>
       <div className="flex flex-col items-center">
@@ -976,6 +976,9 @@ console.log(contract)
             </Text>
           </>
         )}
+        {cfbTeam && <Text variant="xs" classes="whitespace-nowrap text-small">
+          from {cfbTeam?.TeamAbbr}
+        </Text>}
       </div>
       {contract && (
         <>
