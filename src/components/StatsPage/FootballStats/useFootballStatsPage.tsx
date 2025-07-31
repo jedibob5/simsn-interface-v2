@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import {
+  FootballStatsType,
   GameDay,
   GameType,
   InfoType,
   ModalAction,
+  PASSING,
   PLAYER_VIEW,
   REGULAR_SEASON,
   SimCFB,
@@ -64,8 +66,8 @@ export const useFootballStats = () => {
   );
   const [statsView, setStatsView] = useState<StatsView>(WEEK_VIEW);
   const [statsType, setStatsType] = useState<StatsType>(PLAYER_VIEW);
+    const [footballStatsType, setFBStatsType] = useState<FootballStatsType>(PASSING);
   const [gameType, setGameType] = useState<GameType>(REGULAR_SEASON);
-  const [viewGoalieStats, setViewGoalieStats] = useState<boolean>(false);
   const [selectedWeek, setSelectedWeek] = useState<number>(2501);
   const [selectedSeason, setSelectedSeason] = useState<number>(
     cfb_Timestamp!.CollegeSeasonID
@@ -272,7 +274,6 @@ export const useFootballStats = () => {
     statsType,
     statsView,
     gameType,
-    viewGoalieStats,
     currentPage,
     goToPreviousPage,
     goToNextPage,

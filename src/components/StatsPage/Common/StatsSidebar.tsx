@@ -4,6 +4,7 @@ import {
   BDay,
   CDay,
   DDay,
+  FootballStatsType,
   GameDay,
   League,
   navyBlueColor,
@@ -31,21 +32,24 @@ import { SelectDropdown } from "../../../_design/Select";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { useResponsive } from "../../../_hooks/useMobile";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { CollegeTeam, NFLTeam } from "../../../models/footballModels";
 
 interface StatsSidebarProps {
-  team: CHLTeam | PHLTeam;
+  team: CHLTeam | PHLTeam | CollegeTeam | NFLTeam;
   teamColors: any;
   league: League;
   statsView: StatsView;
   statsType: StatsType;
+  footballStatsType?: StatsType;
   weekOptions: { label: string; value: string }[];
   seasonOptions: { label: string; value: string }[];
-  gameDay: GameDay;
-  changeGameDay: (day: GameDay) => void;
+  gameDay?: GameDay;
+  changeGameDay?: (day: GameDay) => void;
   SelectWeekOption: (opts: any) => void;
   SelectSeasonOption: (opts: any) => void;
   ChangeStatsView: (newView: StatsView) => void;
   ChangeStatsType: (newView: StatsType) => void;
+  ChangeFBStatsType?: (newStatsType: FootballStatsType) => void;
   HandleHelpModal: () => void;
   Search: () => Promise<void>;
   Export: () => Promise<void>;
@@ -218,7 +222,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === ADay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(ADay)}
+                      onClick={() => changeGameDay!(ADay)}
                     >
                       {ADay}
                     </Button>
@@ -226,7 +230,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === BDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(BDay)}
+                      onClick={() => changeGameDay!(BDay)}
                     >
                       {BDay}
                     </Button>
@@ -234,7 +238,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === CDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(CDay)}
+                      onClick={() => changeGameDay!(CDay)}
                     >
                       {CDay}
                     </Button>
@@ -242,7 +246,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === DDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(DDay)}
+                      onClick={() => changeGameDay!(DDay)}
                     >
                       {DDay}
                     </Button>
@@ -347,7 +351,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === ADay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(ADay)}
+                        onClick={() => changeGameDay!(ADay)}
                       >
                         {ADay}
                       </Button>
@@ -355,7 +359,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === BDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(BDay)}
+                        onClick={() => changeGameDay!(BDay)}
                       >
                         {BDay}
                       </Button>
@@ -363,7 +367,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === CDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(CDay)}
+                        onClick={() => changeGameDay!(CDay)}
                       >
                         {CDay}
                       </Button>
@@ -371,7 +375,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === DDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(DDay)}
+                        onClick={() => changeGameDay!(DDay)}
                       >
                         {DDay}
                       </Button>
@@ -461,7 +465,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === ADay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(ADay)}
+                      onClick={() => changeGameDay!(ADay)}
                     >
                       {ADay}
                     </Button>
@@ -469,7 +473,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === BDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(BDay)}
+                      onClick={() => changeGameDay!(BDay)}
                     >
                       {BDay}
                     </Button>
@@ -477,7 +481,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === CDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(CDay)}
+                      onClick={() => changeGameDay!(CDay)}
                     >
                       {CDay}
                     </Button>
@@ -485,7 +489,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === DDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(DDay)}
+                      onClick={() => changeGameDay!(DDay)}
                     >
                       {DDay}
                     </Button>

@@ -134,6 +134,19 @@ export type StatsView = typeof WEEK_VIEW | typeof SEASON_VIEW;
 export const PLAYER_VIEW = "PLAYER";
 export const TEAM_VIEW = "TEAM";
 export type StatsType = typeof PLAYER_VIEW | typeof TEAM_VIEW;
+export const PASSING = "PASSING";
+export const RUSHING = "RUSHING";
+export const RECEIVING = "RECEIVING";
+export const DEFENSE = "DEFENSE";
+export const SPECIAL_TEAMS = "SPECIAL TEAMS";
+export const OLINE = "OLINE";
+export type FootballStatsType =
+  | typeof PASSING
+  | typeof RUSHING
+  | typeof RECEIVING
+  | typeof DEFENSE
+  | typeof OLINE
+  | typeof SPECIAL_TEAMS;
 export const PRESEASON = "PRESEASON";
 export const REGULAR_SEASON = "REGULARSEASON";
 export const POST_SEASON = "POSTSEASON";
@@ -180,6 +193,18 @@ export const SundayNoon = "Sunday Noon";
 export const SundayAfternoon = "Sunday Afternoon";
 export const SundayNightFootball = "Sunday Night Football";
 export const MondayNightFootball = "Monday Night Football";
+export type Timeslot =
+  | typeof ThursdayNight
+  | typeof FridayNight
+  | typeof SaturdayMorning
+  | typeof SaturdayAfternoon
+  | typeof SaturdayEvening
+  | typeof SaturdayNight
+  | typeof ThursdayNightFootball
+  | typeof SundayNoon
+  | typeof SundayAfternoon
+  | typeof SundayNightFootball
+  | typeof MondayNightFootball;
 export const FreeAgent = "FreeAgent";
 export const Waivers = "Waivers";
 export const GLeague = "GLeague";
@@ -502,9 +527,9 @@ export const ThrowPower = "Throw Power";
 export const ThrowAccuracy = "Throw Accuracy";
 export const ShotgunRating = "Shotgun Rating";
 export const ShotgunRatingAcronyms = {
-  "Balanced": "BAL",
+  Balanced: "BAL",
   "Under Center": "UND",
-  "Shotgun": "GUN"
+  Shotgun: "GUN",
 } as const;
 export const Catching = "Catching";
 export const PassBlock = "Pass Block";
