@@ -69,6 +69,7 @@ export const getNFLSalaryData = (offer: NFLFreeAgencyOffer) => {
     Y5Bonus,
     ContractLength,
     ContractValue,
+    AAV,
   } = offer;
 
   const salaries: number[] = [
@@ -106,6 +107,7 @@ export const getNFLSalaryData = (offer: NFLFreeAgencyOffer) => {
     totalSalaries,
     salaries,
     bonuses,
+    AAV,
   };
 };
 
@@ -361,7 +363,9 @@ export const GeneratePHLFAErrorList = (
 export const GenerateNFLFAErrorList = (
   offer: NFLFreeAgencyOffer,
   ts: Timestamp,
-  capsheet: NFLCapsheet
+  capsheet: NFLCapsheet,
+  playerAAV: number,
+  offerAAV: number
 ): string[] => {
   const errors: string[] = [];
   const {
@@ -432,6 +436,14 @@ export const GenerateNFLFAErrorList = (
   // 7) Rule6: any non-zero salary must be ≥ $0.5M
   if (!ValidateNFLRule6(y1, y2, y3, y4, y5, ContractLength)) {
     errors.push("Any non-zero salary must be at least $0.5 million.");
+  }
+
+  console.log({ offerAAV, playerAAV });
+
+  if (playerAAV > offerAAV) {
+    errors.push(
+      `The offered AAV (${offerAAV}) is lower than the player's expected AAV (${playerAAV})`
+    );
   }
 
   // 8) Rule5: bonus % rules around draft
