@@ -215,6 +215,9 @@ export const ActionModal: FC<ActionModalProps> = ({
     case TradeBlock:
       title = `Change Trade Status for ${playerLabel}?`;
       break;
+    case PracticeSquad:
+      title = `Change Practice Squad Status for ${playerLabel}?`;
+      break;
     case InfoType:
     case RecruitInfoType:
       title = `${playerID} ${playerLabel}`;
@@ -307,19 +310,27 @@ export const ActionModal: FC<ActionModalProps> = ({
         )}
         {modalAction === PracticeSquad && (
           <>
-            <Text className="mb4 text-start">
+            <Text className="mb-4 text-start">
               WARNING! Once you've confirmed,{" "}
               <strong>
                 {playerID} {playerLabel}
               </strong>{" "}
-              will be sent to your NFL Team's Practice Squad. Other teams may
-              attempt to pick up this player. If an offer is placed, you will
-              have approximately 3 FA Syncs to make a decision to pick the
-              player back up onto your roster. Once the player is claimed by
-              another team or claimed by you, they cannot be placed back onto
-              the NFL Team.
+              practice squad status will change.
             </Text>
-            <Text className="mb4 text-start">
+            <Text className="mb-4 text-start">
+              If you are placing {playerID} {playerLabel} <strong>onto</strong>{" "}
+              the practice squad, other teams may attempt to pick up this
+              player. If an offer is placed, you will have approximately 3 FA
+              Syncs to make a decision to pick the player back up onto your
+              roster. Once the player is claimed by another team or claimed by
+              you, they cannot be placed back onto the NFL Team.
+            </Text>
+            <Text className="mb-4 text-start">
+              If you are placing {playerID} {playerLabel} <strong>back</strong>{" "}
+              onto your team, then you don't have to worry about any existing
+              practice squad offers on the player, as they will be removed.
+            </Text>
+            <Text className="mb-4 text-start">
               Are you sure you want to confirm this action?
             </Text>
           </>
