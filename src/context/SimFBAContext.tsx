@@ -609,7 +609,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       nflID = currentUser.NFLTeamID;
     }
     const res = await BootstrapService.GetSecondFBABootstrapData(cfbID, nflID);
-    console.log({ res });
+
     if (cfbID > 0) {
       setCollegeNews(res.CollegeNews);
       setTeamProfileMap(res.TeamProfileMap);
@@ -1101,6 +1101,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const SearchFootballStats = useCallback(async (dto: any) => {
     if (dto.League === SimCFB) {
       const res = await StatsService.FBACollegeStatsSearch(dto);
+      console.log({ res, dto });
       if (dto.ViewType === SEASON_VIEW) {
         setCfbPlayerSeasonStats((prev) => {
           return { ...prev, [dto.SeasonID]: res.CFBPlayerSeasonStats };

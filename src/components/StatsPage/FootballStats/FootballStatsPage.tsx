@@ -27,6 +27,7 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
     conferenceOptions,
     totalPages,
     statsType,
+    footballStatsType,
     statsView,
     gameType,
     currentPage,
@@ -34,6 +35,7 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
     goToNextPage,
     handleCloseModal,
     ChangeStatsType,
+    ChangeFBStatsType,
     ChangeGameType,
     ChangeStatsView,
     handlePlayerModal,
@@ -74,6 +76,8 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
           statsType={statsType}
           ChangeStatsView={ChangeStatsView}
           ChangeStatsType={ChangeStatsType}
+          ChangeFBStatsType={ChangeFBStatsType}
+          footballStatsType={footballStatsType}
           HandleHelpModal={helpModal.handleOpenModal}
           weekOptions={weekOptions}
           seasonOptions={seasonOptions}

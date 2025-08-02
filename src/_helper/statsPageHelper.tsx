@@ -4,8 +4,11 @@ import {
   BASE_FBA_WEEKS_IN_SEASON,
   BASE_HCK_SEASON,
   BASE_HCK_WEEKS_IN_SEASON,
+  FootballStatsType,
   GameDay,
+  PASSING,
   PLAYER_VIEW,
+  RUSHING,
   StatsType,
   StatsView,
   WEEK_VIEW,
@@ -314,9 +317,11 @@ export const MakeCFBPlayerMapFromRosterMap = (
   }
 
   const unsignedPlayers = rosterMap[0];
-  for (let i = 0; i < unsignedPlayers.length; i++) {
-    const player = unsignedPlayers[i];
-    playerMap[player.ID] = player;
+  if (unsignedPlayers) {
+    for (let i = 0; i < unsignedPlayers.length; i++) {
+      const player = unsignedPlayers[i];
+      playerMap[player.ID] = player;
+    }
   }
 
   return playerMap;
@@ -338,9 +343,11 @@ export const MakeNFLPlayerMapFromRosterMap = (
   }
 
   const unsignedPlayers = rosterMap[0];
-  for (let i = 0; i < unsignedPlayers.length; i++) {
-    const player = unsignedPlayers[i];
-    playerMap[player.ID] = player;
+  if (unsignedPlayers) {
+    for (let i = 0; i < unsignedPlayers.length; i++) {
+      const player = unsignedPlayers[i];
+      playerMap[player.ID] = player;
+    }
   }
 
   return playerMap;
@@ -413,6 +420,7 @@ export const useFilteredFootballStats = ({
   teamMap,
   playerMap,
   statsType,
+  footballStatsType,
 }: {
   selectedStats: any[];
   selectedTeams: string[];
@@ -420,6 +428,7 @@ export const useFilteredFootballStats = ({
   teamMap: Record<number, { ConferenceID: number }>;
   playerMap: Record<number, { Position: string }>;
   statsType: StatsType;
+  footballStatsType: FootballStatsType;
 }) => {
   // 1) build Sets once per change
   const teamSet = useMemo(() => new Set(selectedTeams), [selectedTeams]);
@@ -452,6 +461,18 @@ export const useFilteredFootballStats = ({
         if (!player) return false;
         // Maybe filter by stat type
         // (pass, rush, receiving, defense, special teams, OLine)
+
+        if (footballStatsType === PASSING) {
+          return (
+            ["QB", "ATH"].includes(player.Position) || stat.PassAttempts > 0
+          );
+        }
+        if (footballStatsType === RUSHING) {
+          return (
+            ["RB", "FB", "QB", "ATH"].includes(player.Position) ||
+            stat.RushingAttempts > 0
+          );
+        }
       }
 
       // 4) If we get here, we've passed all active filters

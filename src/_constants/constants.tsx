@@ -571,7 +571,7 @@ export const navyBlueColor = "#1f2937";
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;
 export const BASE_HCK_WEEKS_IN_SEASON = 30;
-export const BASE_FBA_WEEKS_IN_SEASON = 25;
+export const BASE_FBA_WEEKS_IN_SEASON = 24;
 export const BASE_HCK_SEASON = 2024;
 export const BASE_FBA_SEASON = 2020;
 

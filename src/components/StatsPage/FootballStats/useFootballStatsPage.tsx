@@ -66,7 +66,8 @@ export const useFootballStats = () => {
   );
   const [statsView, setStatsView] = useState<StatsView>(WEEK_VIEW);
   const [statsType, setStatsType] = useState<StatsType>(PLAYER_VIEW);
-    const [footballStatsType, setFBStatsType] = useState<FootballStatsType>(PASSING);
+  const [footballStatsType, setFBStatsType] =
+    useState<FootballStatsType>(PASSING);
   const [gameType, setGameType] = useState<GameType>(REGULAR_SEASON);
   const [selectedWeek, setSelectedWeek] = useState<number>(2501);
   const [selectedSeason, setSelectedSeason] = useState<number>(
@@ -158,6 +159,7 @@ export const useFootballStats = () => {
     teamMap,
     playerMap,
     statsType,
+    footballStatsType,
   });
 
   const pageSize = 100;
@@ -190,6 +192,11 @@ export const useFootballStats = () => {
 
   const ChangeStatsType = (newView: StatsType) => {
     setStatsType(newView);
+    setCurrentPage(0);
+  };
+
+  const ChangeFBStatsType = (newView: FootballStatsType) => {
+    setFBStatsType(newView);
     setCurrentPage(0);
   };
 
@@ -275,10 +282,12 @@ export const useFootballStats = () => {
     statsView,
     gameType,
     currentPage,
+    footballStatsType,
     goToPreviousPage,
     goToNextPage,
     handleCloseModal,
     ChangeStatsType,
+    ChangeFBStatsType,
     ChangeGameType,
     ChangeStatsView,
     handlePlayerModal,
