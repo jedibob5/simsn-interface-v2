@@ -165,6 +165,7 @@ export const OfferTable: FC<OfferTableProps> = ({
     backgroundColor: string
   ) => {
     const player = playerMap[item.NFLPlayerID] as NFLPlayer;
+    if (!player) return <></>;
     const offers = offersByPlayer[item.NFLPlayerID];
     let offerIds = [];
     let logos: string[] = [];
