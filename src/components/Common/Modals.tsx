@@ -872,9 +872,9 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
   }, [contract]);
   const currentYearValue = useMemo(() => {
     if (!contract) return 0;
-    return (contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0).toFixed(2);
+    return ((contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0)).toFixed(2);
   }, [contract]);
-
+console.log(contract)
   const totalValue = `${rawValue.toFixed(2)}`;
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
@@ -952,10 +952,10 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
       </div>
       <div className="flex flex-col">
         <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
-          College
+          Potential
         </Text>
         <Text variant="small" classes="whitespace-nowrap">
-          {cfbTeam?.TeamAbbr}
+          {player.PotentialGrade}
         </Text>
       </div>
       <div className="flex flex-col items-center">
@@ -976,6 +976,9 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
             </Text>
           </>
         )}
+        {cfbTeam && <Text variant="xs" classes="whitespace-nowrap text-small">
+          from {cfbTeam?.TeamAbbr}
+        </Text>}
       </div>
       {contract && (
         <>

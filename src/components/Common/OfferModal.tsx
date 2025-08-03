@@ -283,7 +283,9 @@ export const OfferModal: FC<OfferModalProps> = ({
       return GenerateNFLFAErrorList(
         offer as NFLFreeAgencyOffer,
         ts as Timestamp,
-        capsheet as NFLCapsheet
+        capsheet as NFLCapsheet,
+        Number(playerAAV),
+        aavValue
       );
     }
     return list;
@@ -452,6 +454,7 @@ export const OfferModal: FC<OfferModalProps> = ({
                 label="Length"
                 name="ContractLength"
                 value={offer.ContractLength || 0}
+                max={5}
                 onChange={ChangeInput}
               />
             )}

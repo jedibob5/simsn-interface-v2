@@ -100,6 +100,35 @@ export const Table = <T,>({
         if (a.Contract[key] < b.Contract[key]) return order === "asc" ? 1 : -1;
       }
 
+      if (key.includes("Grade")) {
+        const gradeOrder = [
+          "A+",
+          "A",
+          "A-",
+          "B+",
+          "B",
+          "B-",
+          "C+",
+          "C",
+          "C-",
+          "D+",
+          "D",
+          "D-",
+          "F",
+        ];
+        const ai = gradeOrder.indexOf(a[key] ?? "");
+        const bi = gradeOrder.indexOf(b[key] ?? "");
+        // if either grade isn’t found, fallback to string compare
+        if (ai === -1 || bi === -1) {
+          if (a[key] < b[key]) return order === "asc" ? -1 : 1;
+          if (a[key] > b[key]) return order === "asc" ? 1 : -1;
+          return 0;
+        }
+        if (ai < bi) return order === "asc" ? -1 : 1;
+        if (ai > bi) return order === "asc" ? 1 : -1;
+        return 0;
+      }
+
       if (a[key] < b[key]) return order === "asc" ? -1 : 1;
       if (a[key] > b[key]) return order === "asc" ? 1 : -1;
       return 0;
