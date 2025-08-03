@@ -82,7 +82,11 @@ export const StatsPage: FC<StatsPageProps> = ({ league }) => {
           </>
         )}
         {selectedLeague === SimNBA && nbaTeam && <></>}
-        {selectedLeague === SimNFL && nflTeam && <></>}
+        {selectedLeague === SimNFL && nflTeam && (
+          <>
+            <FootballStatsPage league={selectedLeague} />
+          </>
+        )}
       </PageContainer>
     </>
   );

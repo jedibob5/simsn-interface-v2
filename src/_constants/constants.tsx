@@ -140,13 +140,19 @@ export const RECEIVING = "RECEIVING";
 export const DEFENSE = "DEFENSE";
 export const SPECIAL_TEAMS = "SPECIAL TEAMS";
 export const OLINE = "OLINE";
+export const RETURN = "RETURN";
+export const OVERALL = "OVERALL";
+export const OFFENSE = "OFFENSE";
 export type FootballStatsType =
   | typeof PASSING
   | typeof RUSHING
   | typeof RECEIVING
   | typeof DEFENSE
   | typeof OLINE
-  | typeof SPECIAL_TEAMS;
+  | typeof RETURN
+  | typeof SPECIAL_TEAMS
+  | typeof OVERALL
+  | typeof OFFENSE;
 export const PRESEASON = "PRESEASON";
 export const REGULAR_SEASON = "REGULARSEASON";
 export const POST_SEASON = "POSTSEASON";

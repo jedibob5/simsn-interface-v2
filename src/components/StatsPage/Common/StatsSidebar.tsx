@@ -9,10 +9,13 @@ import {
   GameDay,
   League,
   navyBlueColor,
+  OFFENSE,
   OLINE,
+  OVERALL,
   PASSING,
   PLAYER_VIEW,
   RECEIVING,
+  RETURN,
   RUSHING,
   SEASON_VIEW,
   SimCFB,
@@ -229,70 +232,134 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                     </Text>
                   </div>
                   <ButtonGroup classes="flex sm:flex-auto flex-row mb-2 justify-center">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === PASSING ? "success" : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(PASSING)}
-                    >
-                      Passing
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === RUSHING ? "success" : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(RUSHING)}
-                    >
-                      Rushing
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === RECEIVING
-                          ? "success"
-                          : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(RECEIVING)}
-                    >
-                      Receiving
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === DEFENSE ? "success" : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(DEFENSE)}
-                    >
-                      Defense
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === OLINE ? "success" : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(OLINE)}
-                    >
-                      OLine
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={
-                        footballStatsType === SPECIAL_TEAMS
-                          ? "success"
-                          : "secondary"
-                      }
-                      onClick={() => ChangeFBStatsType!(SPECIAL_TEAMS)}
-                    >
-                      Special Teams
-                    </Button>
+                    {statsType === PLAYER_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === PASSING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(PASSING)}
+                        >
+                          Passing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RUSHING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RUSHING)}
+                        >
+                          Rushing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RECEIVING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RECEIVING)}
+                        >
+                          Receiving
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OLINE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OLINE)}
+                        >
+                          OLine
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === SPECIAL_TEAMS
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(SPECIAL_TEAMS)}
+                        >
+                          Special Teams
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RETURN
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RETURN)}
+                        >
+                          Returns
+                        </Button>
+                      </>
+                    )}
+                    {statsType === TEAM_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OVERALL
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OVERALL)}
+                        >
+                          Overall
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OFFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OFFENSE)}
+                        >
+                          Offense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                      </>
+                    )}
                   </ButtonGroup>
                 </>
               )}

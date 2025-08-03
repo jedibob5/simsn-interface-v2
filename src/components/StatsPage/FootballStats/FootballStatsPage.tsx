@@ -11,6 +11,8 @@ import { navyBlueColor } from "../../../_constants/constants";
 import { Text } from "../../../_design/Typography";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { FootballStatsTable } from "./FootballStatsTable";
+import { ToggleSwitch } from "../../../_design/Inputs";
 
 export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
   const {
@@ -31,6 +33,8 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
     statsView,
     gameType,
     currentPage,
+    isFBS,
+    ChangeLeagueView,
     goToPreviousPage,
     goToNextPage,
     handleCloseModal,
@@ -96,6 +100,10 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
                 backgroundColor: navyBlueColor,
               }}
             >
+              <div className="flex flex-col">
+                <Text variant="h4">View FBS</Text>
+                <ToggleSwitch checked={isFBS} onChange={ChangeLeagueView} />
+              </div>
               {!isDesktop && (
                 <div className="flex flex-row gap-x-2">
                   <CategoryDropdown
@@ -143,8 +151,7 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
                 backgroundColor: navyBlueColor,
               }}
             >
-              {/* Football Stats Table Should have Passing, Rushing, Receiving, Defense, ST, OLine options */}
-              {/* <HockeyStatsTable
+              <FootballStatsTable
                 team={team}
                 teamMap={teamMap}
                 teamColors={teamColors}
@@ -155,9 +162,9 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
                 stats={filteredStats}
                 statsType={statsType}
                 statsView={statsView}
-                isGoalie={viewGoalieStats}
+                footballStatsType={footballStatsType}
                 currentPage={currentPage}
-              /> */}
+              />
               <div className="flex flex-row justify-center py-2">
                 <ButtonGroup>
                   <Button

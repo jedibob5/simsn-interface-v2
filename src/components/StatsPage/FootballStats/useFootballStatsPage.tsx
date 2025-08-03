@@ -5,6 +5,7 @@ import {
   GameType,
   InfoType,
   ModalAction,
+  OVERALL,
   PASSING,
   PLAYER_VIEW,
   REGULAR_SEASON,
@@ -22,10 +23,10 @@ import {
   GetFBACollegeStats,
   GetFBAProStats,
   getFBAWeekID,
-  MakeCFBPlayerMapFromRosterMap,
+  GetFilteredCFBConferenceOptions,
+  GetFilteredCFBTeamOptions,
   MakeFBASeasonsOptionList,
   MakeFBAWeeksOptionList,
-  MakeNFLPlayerMapFromRosterMap,
   useFilteredFootballStats,
 } from "../../../_helper/statsPageHelper";
 import { usePagination } from "../../../_hooks/usePagination";
@@ -42,11 +43,8 @@ export const useFootballStats = () => {
     proTeamMap,
     cfbTeamOptions,
     cfbConferenceOptions,
-    nflTeams,
     nflTeamOptions,
     nflConferenceOptions,
-    cfbRosterMap,
-    proRosterMap,
     cfbPlayerGameStatsMap,
     cfbPlayerSeasonStatsMap,
     cfbTeamGameStatsMap,
@@ -56,6 +54,8 @@ export const useFootballStats = () => {
     nflTeamGameStatsMap,
     nflTeamSeasonStatsMap,
     cfb_Timestamp,
+    cfbPlayerMap,
+    nflPlayerMap,
     SearchFootballStats,
     ExportFootballStats,
   } = useSimFBAStore();
@@ -75,6 +75,7 @@ export const useFootballStats = () => {
   ); // SEASON ID
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
   const [selectedConferences, setSelectedConferences] = useState<string[]>([]);
+  const [isFBS, setIsFBS] = useState<boolean>(true);
 
   const team = useMemo(() => {
     if (selectedLeague === SimCFB) {
@@ -96,12 +97,12 @@ export const useFootballStats = () => {
 
   const playerMap = useMemo(() => {
     if (selectedLeague === SimCFB) {
-      return MakeCFBPlayerMapFromRosterMap(cfbTeams, cfbRosterMap!!);
+      return cfbPlayerMap;
     } else if (selectedLeague === SimNFL) {
-      return MakeNFLPlayerMapFromRosterMap(nflTeams, proRosterMap!!);
+      return nflPlayerMap;
     }
     return [];
-  }, [selectedLeague, cfbTeams, nflTeams, cfbRosterMap, proRosterMap]);
+  }, [selectedLeague, cfbPlayerMap, nflPlayerMap]);
 
   const teamMap = useMemo(() => {
     if (selectedLeague === SimCFB) {
@@ -160,6 +161,8 @@ export const useFootballStats = () => {
     playerMap,
     statsType,
     footballStatsType,
+    selectedLeague,
+    isFBS,
   });
 
   const pageSize = 100;
@@ -173,17 +176,21 @@ export const useFootballStats = () => {
 
   const teamOptions = useMemo(() => {
     if (selectedLeague === SimCFB) {
-      return cfbTeamOptions;
+      return GetFilteredCFBTeamOptions(isFBS, cfbTeamOptions, cfbTeamMap!!);
     }
     return nflTeamOptions;
-  }, [selectedLeague]);
+  }, [selectedLeague, isFBS, cfbTeamMap]);
 
   const conferenceOptions = useMemo(() => {
     if (selectedLeague === SimCFB) {
-      return cfbConferenceOptions;
+      return GetFilteredCFBConferenceOptions(
+        isFBS,
+        cfbConferenceOptions,
+        cfbTeams
+      );
     }
     return nflConferenceOptions;
-  }, [selectedLeague]);
+  }, [selectedLeague, isFBS, cfbConferenceOptions, cfbTeams]);
 
   const ChangeStatsView = (newView: StatsView) => {
     setStatsView(newView);
@@ -192,6 +199,11 @@ export const useFootballStats = () => {
 
   const ChangeStatsType = (newView: StatsType) => {
     setStatsType(newView);
+    if (newView === PLAYER_VIEW) {
+      setFBStatsType(PASSING);
+    } else {
+      setFBStatsType(OVERALL);
+    }
     setCurrentPage(0);
   };
 
@@ -264,6 +276,10 @@ export const useFootballStats = () => {
     };
     return await ExportFootballStats(dto);
   };
+  const ChangeLeagueView = () => {
+    setIsFBS((prev) => !prev);
+    setCurrentPage(0);
+  };
 
   return {
     team,
@@ -283,6 +299,8 @@ export const useFootballStats = () => {
     gameType,
     currentPage,
     footballStatsType,
+    isFBS,
+    ChangeLeagueView,
     goToPreviousPage,
     goToNextPage,
     handleCloseModal,
