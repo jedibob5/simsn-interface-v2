@@ -9,6 +9,7 @@ import {
   PASSING,
   PLAYER_VIEW,
   REGULAR_SEASON,
+  SEASON_VIEW,
   SimCFB,
   SimNFL,
   StatsType,
@@ -64,7 +65,7 @@ export const useFootballStats = () => {
   const [modalPlayer, setModalPlayer] = useState<NFLPlayer | CollegePlayer>(
     {} as NFLPlayer
   );
-  const [statsView, setStatsView] = useState<StatsView>(WEEK_VIEW);
+  const [statsView, setStatsView] = useState<StatsView>(SEASON_VIEW);
   const [statsType, setStatsType] = useState<StatsType>(PLAYER_VIEW);
   const [footballStatsType, setFBStatsType] =
     useState<FootballStatsType>(PASSING);
