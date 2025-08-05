@@ -1281,12 +1281,13 @@ export const OptionPlayLabels = [
 ];
 
 export const PassPlayLabels = [
-  'Quick',
   'Short',
+  'Medium',
   'Long',
+  'Deep',
   'Screen',
-  'PAShort',
-  'PALong'
+  'PAMedium',
+  'PADeep'
 ];
 
 export const RPOLabels = [
@@ -1333,12 +1334,13 @@ export const FocusPlayOptions = [
   'Triple Option',
   'RPO Choice',
   'RPO Peek',
-  'Quick Pass',
   'Short Pass',
+  'Medium Pass',
   'Long Pass',
+  'Deep Pass',
   'Screen Pass',
-  'Play Action Short',
-  'Play Action Long'
+  'Play Action Medium',
+  'Play Action Deep'
 ];
 
 export const SchemeDropdownClass = 'btn btn-outline-secondary dropdown-toggle w-full';

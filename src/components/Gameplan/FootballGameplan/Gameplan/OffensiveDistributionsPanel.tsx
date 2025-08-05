@@ -119,12 +119,12 @@ export const OffensiveDistributionsPanel: React.FC<OffensiveDistributionsPanelPr
               const fieldName = `Pass${label}`;
               let displayLabel = label;
               let passType = label;
-              if (index === 4) {
-                displayLabel = 'Play Action Short';
-                passType = 'PlayActionShort';
-              } else if (index === 5) {
-                displayLabel = 'Play Action Long';
-                passType = 'PlayActionLong';
+              if (index === 5) {
+                displayLabel = 'PA Medium';
+                passType = 'PAMedium';
+              } else if (index === 6) {
+                displayLabel = 'PA Deep';
+                passType = 'PADeep';
               }
               
               return (

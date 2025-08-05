@@ -182,7 +182,7 @@ export const getPassTypeRanges = (passType: string): { scheme: string; max: numb
   const ranges = [];
   
   switch (passType) {
-    case 'Quick':
+    case 'Short':
       ranges.push(
         { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50 },
         { scheme: 'Pro, Power Run, I Option', max: 45 },
@@ -190,7 +190,7 @@ export const getPassTypeRanges = (passType: string): { scheme: string; max: numb
         { scheme: 'Spread Option, Pistol', max: 50 }
       );
       break;
-    case 'Short':
+    case 'Medium':
       ranges.push(
         { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Play Action Short: max 50' },
         { scheme: 'Pro, Power Run, I Option', max: 45 },
@@ -214,7 +214,7 @@ export const getPassTypeRanges = (passType: string): { scheme: string; max: numb
         { scheme: 'Spread Option, Pistol', max: 20 }
       );
       break;
-    case 'PlayActionShort':
+    case 'PAMedium':
       ranges.push(
         { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Short: max 50' },
         { scheme: 'Pro, Power Run, I Option', max: 20 },
@@ -222,7 +222,7 @@ export const getPassTypeRanges = (passType: string): { scheme: string; max: numb
         { scheme: 'Spread Option, Pistol', max: 25 }
       );
       break;
-    case 'PlayActionLong':
+    case 'PADeep':
       ranges.push(
         { scheme: 'Air Raid, Vertical, West Coast, Run and Shoot', max: 50, note: 'Combined with Long: max 50' },
         { scheme: 'Pro, Power Run, I Option', max: 20 },
