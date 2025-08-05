@@ -4,15 +4,25 @@ import {
   BDay,
   CDay,
   DDay,
+  DEFENSE,
+  FootballStatsType,
   GameDay,
   League,
   navyBlueColor,
+  OFFENSE,
+  OLINE,
+  OVERALL,
+  PASSING,
   PLAYER_VIEW,
+  RECEIVING,
+  RETURN,
+  RUSHING,
   SEASON_VIEW,
   SimCFB,
   SimCHL,
   SimNFL,
   SimPHL,
+  SPECIAL_TEAMS,
   StatsType,
   StatsView,
   TEAM_VIEW,
@@ -31,21 +41,24 @@ import { SelectDropdown } from "../../../_design/Select";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { useResponsive } from "../../../_hooks/useMobile";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
+import { CollegeTeam, NFLTeam } from "../../../models/footballModels";
 
 interface StatsSidebarProps {
-  team: CHLTeam | PHLTeam;
+  team: CHLTeam | PHLTeam | CollegeTeam | NFLTeam;
   teamColors: any;
   league: League;
   statsView: StatsView;
   statsType: StatsType;
+  footballStatsType?: FootballStatsType;
   weekOptions: { label: string; value: string }[];
   seasonOptions: { label: string; value: string }[];
-  gameDay: GameDay;
-  changeGameDay: (day: GameDay) => void;
+  gameDay?: GameDay;
+  changeGameDay?: (day: GameDay) => void;
   SelectWeekOption: (opts: any) => void;
   SelectSeasonOption: (opts: any) => void;
   ChangeStatsView: (newView: StatsView) => void;
   ChangeStatsType: (newView: StatsType) => void;
+  ChangeFBStatsType?: (newStatsType: FootballStatsType) => void;
   HandleHelpModal: () => void;
   Search: () => Promise<void>;
   Export: () => Promise<void>;
@@ -62,6 +75,8 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
   ChangeStatsView,
   statsType,
   ChangeStatsType,
+  ChangeFBStatsType,
+  footballStatsType,
   HandleHelpModal,
   weekOptions,
   seasonOptions,
@@ -75,6 +90,9 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
   let teamLabel = "";
   let conferenceLabel = "";
   if (league === SimCHL || league === SimPHL) {
+    teamLabel = `${team.TeamName} ${team.Mascot}`;
+    conferenceLabel = `${team.Conference} Conference`;
+  } else if (league === SimCFB || league === SimNFL) {
     teamLabel = `${team.TeamName} ${team.Mascot}`;
     conferenceLabel = `${team.Conference} Conference`;
   }
@@ -197,6 +215,154 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                   Season
                 </Button>
               </ButtonGroup>
+              {(league === SimCFB || league === SimNFL) && (
+                <>
+                  <div
+                    className="w-full rounded-md text-center my-2 mb-2"
+                    style={{
+                      backgroundColor: teamColors.One,
+                      borderColor: teamColors.One,
+                    }}
+                  >
+                    <Text
+                      variant="body-small"
+                      className={`font-semibold rounded-md py-1 mb-1 mt-1 ${headerTextColorClass}`}
+                    >
+                      FB Stat Type
+                    </Text>
+                  </div>
+                  <ButtonGroup classes="flex sm:flex-auto flex-row mb-2 justify-center">
+                    {statsType === PLAYER_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === PASSING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(PASSING)}
+                        >
+                          Passing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RUSHING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RUSHING)}
+                        >
+                          Rushing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RECEIVING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RECEIVING)}
+                        >
+                          Receiving
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OLINE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OLINE)}
+                        >
+                          OLine
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === SPECIAL_TEAMS
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(SPECIAL_TEAMS)}
+                        >
+                          Special Teams
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RETURN
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RETURN)}
+                        >
+                          Returns
+                        </Button>
+                      </>
+                    )}
+                    {statsType === TEAM_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OVERALL
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OVERALL)}
+                        >
+                          Overall
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OFFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OFFENSE)}
+                        >
+                          Offense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                      </>
+                    )}
+                  </ButtonGroup>
+                </>
+              )}
               {league !== SimCFB && league !== SimNFL && (
                 <>
                   <div
@@ -218,7 +384,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === ADay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(ADay)}
+                      onClick={() => changeGameDay!(ADay)}
                     >
                       {ADay}
                     </Button>
@@ -226,7 +392,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === BDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(BDay)}
+                      onClick={() => changeGameDay!(BDay)}
                     >
                       {BDay}
                     </Button>
@@ -234,7 +400,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === CDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(CDay)}
+                      onClick={() => changeGameDay!(CDay)}
                     >
                       {CDay}
                     </Button>
@@ -242,7 +408,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === DDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(DDay)}
+                      onClick={() => changeGameDay!(DDay)}
                     >
                       {DDay}
                     </Button>
@@ -347,7 +513,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === ADay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(ADay)}
+                        onClick={() => changeGameDay!(ADay)}
                       >
                         {ADay}
                       </Button>
@@ -355,7 +521,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === BDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(BDay)}
+                        onClick={() => changeGameDay!(BDay)}
                       >
                         {BDay}
                       </Button>
@@ -363,7 +529,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === CDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(CDay)}
+                        onClick={() => changeGameDay!(CDay)}
                       >
                         {CDay}
                       </Button>
@@ -371,7 +537,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                         type="button"
                         size="sm"
                         variant={gameDay === DDay ? "success" : "secondary"}
-                        onClick={() => changeGameDay(DDay)}
+                        onClick={() => changeGameDay!(DDay)}
                       >
                         {DDay}
                       </Button>
@@ -461,7 +627,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === ADay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(ADay)}
+                      onClick={() => changeGameDay!(ADay)}
                     >
                       {ADay}
                     </Button>
@@ -469,7 +635,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === BDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(BDay)}
+                      onClick={() => changeGameDay!(BDay)}
                     >
                       {BDay}
                     </Button>
@@ -477,7 +643,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === CDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(CDay)}
+                      onClick={() => changeGameDay!(CDay)}
                     >
                       {CDay}
                     </Button>
@@ -485,7 +651,7 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       type="button"
                       size="sm"
                       variant={gameDay === DDay ? "success" : "secondary"}
-                      onClick={() => changeGameDay(DDay)}
+                      onClick={() => changeGameDay!(DDay)}
                     >
                       {DDay}
                     </Button>

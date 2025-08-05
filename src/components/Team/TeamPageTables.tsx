@@ -5,13 +5,11 @@ import {
   CollegePlayer as CHLPlayer,
   ProfessionalPlayer as PHLPlayer,
   ProContract as PHLContract,
-  DraftPick,
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
   NFLPlayer,
   NFLContract,
-  Timestamp,
 } from "../../models/footballModels";
 import { useResponsive } from "../../_hooks/useMobile";
 import {
@@ -19,7 +17,6 @@ import {
   Potentials,
   Contracts,
   Overview,
-  ButtonGreen,
   TextGreen,
   Affiliate,
   TradeBlock,
@@ -59,6 +56,7 @@ import {
 import { TradeBlockRow } from "./TeamPageTypes";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../_hooks/useSelectStyles";
+import { useSimHCKStore } from "../../context/SimHockeyContext";
 
 interface CHLRosterTableProps {
   roster: CHLPlayer[];
@@ -83,6 +81,7 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
 }) => {
   const textColorClass = getTextColorBasedOnBg(backgroundColor);
   const { isDesktop, isTablet } = useResponsive();
+  const { hck_Timestamp } = useSimHCKStore();
 
   let rosterColumns = useMemo(() => {
     let columns = [
@@ -254,7 +253,10 @@ export const CHLRosterTable: FC<CHLRosterTableProps> = ({
               if (selectedOption?.value === "cut") {
                 openModal(Cut, item);
               }
-              if (selectedOption?.value === "redshirt") {
+              if (
+                selectedOption?.value === "redshirt" &&
+                hck_Timestamp!.Week < 2
+              ) {
                 openModal(Redshirt, item);
               }
               if (selectedOption?.value === "promise") {

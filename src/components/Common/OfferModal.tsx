@@ -356,9 +356,8 @@ export const OfferModal: FC<OfferModalProps> = ({
         ...offer,
         NFLPlayerID: player.ID,
         TeamID: capsheet.ID,
-        AAV: offer.AAV,
+        AAV: aavValue,
       });
-      console.log({ dto });
       await confirmOffer(dto);
     }
 

@@ -39,15 +39,29 @@ import {
   CollegeTeamProfileData as CFBTeamProfileData,
   RecruitPlayerProfile,
   UpdateRecruitingBoardDTO,
+  CollegePlayerStats,
+  CollegePlayerSeasonStats,
+  CollegeTeamStats,
+  CollegeTeamSeasonStats,
+  NFLPlayerStats,
+  NFLPlayerSeasonStats,
+  NFLTeamStats,
+  NFLTeamSeasonStats,
   NFLWaiverOffDTO,
   FreeAgencyOfferDTO,
   NFLRequest,
   NFLDraftee,
+  HistoricCollegePlayer,
+  NFLRetiredPlayer,
 } from "../models/footballModels";
-import { useLeagueStore } from "./LeagueContext";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { fba_ws } from "../_constants/urls";
-import { CloseToHome, SimFBA } from "../_constants/constants";
+import {
+  CloseToHome,
+  SEASON_VIEW,
+  SimCFB,
+  SimFBA,
+} from "../_constants/constants";
 import { PlayerService } from "../_services/playerService";
 import { useSnackbar } from "notistack";
 import FBATeamHistoryService from "../_services/teamHistoryService";
@@ -57,8 +71,13 @@ import {
   ValidateAffinity,
   ValidateCloseToHome,
 } from "../_helper/recruitingHelper";
+import { StatsService } from "../_services/statsService";
 import { FreeAgencyService } from "../_services/freeAgencyService";
 import { TeamService } from "../_services/teamService";
+import {
+  MakeCFBPlayerMapFromRosterMap,
+  MakeNFLPlayerMapFromRosterMap,
+} from "../_helper/statsPageHelper";
 
 // ✅ Define Types for Context
 interface SimFBAContextProps {
@@ -75,10 +94,14 @@ interface SimFBAContextProps {
   currentCFBStandings: CollegeStandings[];
   cfbStandingsMap: Record<number, CollegeStandings> | null;
   cfbRosterMap: Record<number, CollegePlayer[]> | null;
+  cfbPlayerMap: Record<number, CollegePlayer>;
+  nflPlayerMap: Record<number, NFLPlayer>;
   recruits: Croot[];
   recruitProfiles: RecruitPlayerProfile[];
   teamProfileMap: Record<number, RecruitingTeamProfile> | null;
   portalPlayers: CollegePlayer[];
+  historicCollegePlayers: HistoricCollegePlayer[];
+  nflRetiredPlayers: NFLRetiredPlayer[];
   collegeInjuryReport: CollegePlayer[];
   allCFBStandings: CollegeStandings[];
   allCollegeGames: CollegeGame[];
@@ -157,6 +180,8 @@ interface SimFBAContextProps {
   SaveRecruitingBoard: () => Promise<void>;
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDTO) => Promise<void>;
   ExportCFBRecruits: () => Promise<void>;
+  SearchFootballStats: (dto: any) => Promise<void>;
+  ExportFootballStats: (dto: any) => Promise<void>;
   SaveFreeAgencyOffer: (dto: any) => Promise<void>;
   CancelFreeAgencyOffer: (dto: any) => Promise<void>;
   SaveWaiverWireOffer: (dto: any) => Promise<void>;
@@ -168,6 +193,14 @@ interface SimFBAContextProps {
   proExtensionMap: Record<number, NFLExtensionOffer> | null;
   proPlayerMap: Record<number, NFLPlayer>;
   allCFBTeamHistory: { [key: number]: CFBTeamProfileData };
+  cfbPlayerGameStatsMap: Record<number, CollegePlayerStats[]>;
+  cfbPlayerSeasonStatsMap: Record<number, CollegePlayerSeasonStats[]>;
+  cfbTeamGameStatsMap: Record<number, CollegeTeamStats[]>;
+  cfbTeamSeasonStatsMap: Record<number, CollegeTeamSeasonStats[]>;
+  nflPlayerGameStatsMap: Record<number, NFLPlayerStats[]>;
+  nflPlayerSeasonStatsMap: Record<number, NFLPlayerSeasonStats[]>;
+  nflTeamGameStatsMap: Record<number, NFLTeamStats[]>;
+  nflTeamSeasonStatsMap: Record<number, NFLTeamSeasonStats[]>;
   collegeGameplan: CollegeGameplan | null;
   nflGameplan: NFLGameplan | null;
   collegeDepthChart: CollegeTeamDepthChart | null;
@@ -194,6 +227,10 @@ const defaultContext: SimFBAContextProps = {
   recruitProfiles: [],
   teamProfileMap: {},
   portalPlayers: [],
+  historicCollegePlayers: [],
+  nflRetiredPlayers: [],
+  cfbPlayerMap: {},
+  nflPlayerMap: {},
   collegeInjuryReport: [],
   currentCollegeSeasonGames: [],
   collegeTeamsGames: [],
@@ -251,6 +288,8 @@ const defaultContext: SimFBAContextProps = {
   SaveRecruitingBoard: async () => {},
   SaveAIRecruitingSettings: async () => {},
   ExportCFBRecruits: async () => {},
+  SearchFootballStats: async () => {},
+  ExportFootballStats: async () => {},
   SaveFreeAgencyOffer: async () => {},
   CancelFreeAgencyOffer: async () => {},
   SaveWaiverWireOffer: async () => {},
@@ -259,6 +298,14 @@ const defaultContext: SimFBAContextProps = {
   proContractMap: {},
   proExtensionMap: {},
   allCFBTeamHistory: {},
+  cfbPlayerGameStatsMap: {},
+  cfbPlayerSeasonStatsMap: {},
+  cfbTeamGameStatsMap: {},
+  cfbTeamSeasonStatsMap: {},
+  nflPlayerGameStatsMap: {},
+  nflPlayerSeasonStatsMap: {},
+  nflTeamGameStatsMap: {},
+  nflTeamSeasonStatsMap: {},
   proPlayerMap: {},
   collegeGameplan: null,
   nflGameplan: null,
@@ -318,6 +365,12 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     RecruitingTeamProfile
   > | null>({});
   const [portalPlayers, setPortalPlayers] = useState<CollegePlayer[]>([]);
+  const [historicCollegePlayers, setHistoricCollegePlayers] = useState<
+    HistoricCollegePlayer[]
+  >([]);
+  const [nflRetiredPlayers, setNFLRetiredPlayers] = useState<
+    NFLRetiredPlayer[]
+  >([]);
   const [collegeInjuryReport, setCollegeInjuryReport] = useState<
     CollegePlayer[]
   >([]);
@@ -393,6 +446,30 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
   const [allCFBTeamHistory, setAllCFBTeamHistory] = useState<{
     [key: number]: CFBTeamProfileData;
   }>({});
+  const [cfbPlayerGameStatsMap, setCfbPlayerGameStatsMap] = useState<
+    Record<number, CollegePlayerStats[]>
+  >({});
+  const [cfbPlayerSeasonStatsMap, setCfbPlayerSeasonStats] = useState<
+    Record<number, CollegePlayerSeasonStats[]>
+  >({});
+  const [cfbTeamGameStatsMap, setCfbTeamGameStats] = useState<
+    Record<number, CollegeTeamStats[]>
+  >([]);
+  const [cfbTeamSeasonStatsMap, setCfbTeamSeasonStats] = useState<
+    Record<number, CollegeTeamSeasonStats[]>
+  >([]);
+  const [nflPlayerGameStatsMap, setNflPlayerGameStats] = useState<
+    Record<number, NFLPlayerStats[]>
+  >([]);
+  const [nflPlayerSeasonStatsMap, setNflPlayerSeasonStats] = useState<
+    Record<number, NFLPlayerSeasonStats[]>
+  >([]);
+  const [nflTeamGameStatsMap, setNflTeamGameStats] = useState<
+    Record<number, NFLTeamStats[]>
+  >([]);
+  const [nflTeamSeasonStatsMap, setNflTeamSeasonStats] = useState<
+    Record<number, NFLTeamSeasonStats[]>
+  >([]);
   const [collegeGameplan, setCollegeGameplan] =
     useState<CollegeGameplan | null>(null);
   const [nflGameplan, setNFLGameplan] = useState<NFLGameplan | null>(null);
@@ -496,6 +573,26 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     }
   }, [currentUser]);
 
+  const cfbPlayerMap = useMemo(() => {
+    if (!cfbRosterMap || !cfbTeams) return {};
+    const initialMap = MakeCFBPlayerMapFromRosterMap(cfbTeams, cfbRosterMap);
+    for (let i = 0; i < historicCollegePlayers.length; i++) {
+      const player = new CollegePlayer(historicCollegePlayers[i]);
+      initialMap[player.ID] = player;
+    }
+    return initialMap;
+  }, [cfbTeams, cfbRosterMap, historicCollegePlayers]);
+
+  const nflPlayerMap = useMemo(() => {
+    if (!proRosterMap || !nflTeams) return {};
+    const initialMap = MakeNFLPlayerMapFromRosterMap(nflTeams, proRosterMap!!);
+    for (let i = 0; i < nflRetiredPlayers.length; i++) {
+      const player = new NFLPlayer(nflRetiredPlayers[i]);
+      initialMap[player.ID] = player;
+    }
+    return initialMap;
+  }, [nflTeams, proRosterMap, nflRetiredPlayers]);
+
   const bootstrapAllData = async () => {
     await getFirstBootstrapData();
     await new Promise((resolve) => setTimeout(resolve, 3500)); // Wait 5 seconds
@@ -520,7 +617,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
 
     if (cfbID > 0) {
       setCFBTeam(res.CollegeTeam);
-
+      setHistoricCollegePlayers(res.HistoricCollegePlayers);
       setCollegeInjuryReport(res.CollegeInjuryReport);
       setCollegeNotifications(res.CollegeNotifications);
       setTopCFBPassers(res.TopCFBPassers);
@@ -565,6 +662,7 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setTopNFLReceivers(res.TopNFLReceivers);
       setCapsheetMap(res.CapsheetMap);
       setProRosterMap(res.ProRosterMap);
+      setNFLRetiredPlayers(res.RetiredPlayers);
       setPracticeSquadPlayers(res.PracticeSquadPlayers);
       setProInjuryReport(res.ProInjuryReport);
       setAllProGames(res.AllProGames);
@@ -1040,6 +1138,73 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
     await RecruitService.ExportCFBCroots();
   }, []);
 
+  const SearchFootballStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCFB) {
+      const res = await StatsService.FBACollegeStatsSearch(dto);
+      if (dto.ViewType === SEASON_VIEW) {
+        setCfbPlayerSeasonStats((prev) => {
+          return { ...prev, [dto.SeasonID]: res.CFBPlayerSeasonStats };
+        });
+        setCfbTeamSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.CFBTeamSeasonStats,
+          };
+        });
+      } else {
+        setCfbPlayerGameStatsMap((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.CFBPlayerGameStats,
+          };
+        });
+        setCfbTeamGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.CFBTeamGameStats,
+          };
+        });
+      }
+    } else {
+      const res = await StatsService.FBAProStatsSearch(dto);
+      if (dto.ViewType === SEASON_VIEW) {
+        setNflPlayerSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.NFLPlayerSeasonStats,
+          };
+        });
+        setNflTeamSeasonStats((prev) => {
+          return {
+            ...prev,
+            [dto.SeasonID]: res.NFLTeamSeasonStats,
+          };
+        });
+      } else {
+        setNflPlayerGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.NFLPlayerGameStats,
+          };
+        });
+        setNflTeamGameStats((prev) => {
+          return {
+            ...prev,
+            [dto.WeekID]: res.NFLTeamGameStats,
+          };
+        });
+      }
+    }
+  }, []);
+
+  const ExportFootballStats = useCallback(async (dto: any) => {
+    if (dto.League === SimCFB) {
+      const res = await StatsService.FBACollegeStatsExport(dto);
+    } else {
+      const res = await StatsService.FBAProStatsExport(dto);
+    }
+  }, []);
+
   const SaveFreeAgencyOffer = useCallback(async (dto: FreeAgencyOfferDTO) => {
     const res = await FreeAgencyService.FBASaveFreeAgencyOffer(dto);
     if (res) {
@@ -1203,6 +1368,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         recruitProfiles,
         teamProfileMap,
         portalPlayers,
+        historicCollegePlayers,
+        nflRetiredPlayers,
         collegeInjuryReport,
         currentCollegeSeasonGames,
         collegeTeamsGames,
@@ -1238,6 +1405,8 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         topNFLPassers,
         topNFLRushers,
         topNFLReceivers,
+        cfbPlayerMap,
+        nflPlayerMap,
         cutCFBPlayer,
         redshirtPlayer,
         promisePlayer,
@@ -1269,6 +1438,16 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
         proExtensionMap,
         allCFBTeamHistory,
         isLoadingFour,
+        cfbPlayerGameStatsMap,
+        cfbPlayerSeasonStatsMap,
+        cfbTeamGameStatsMap,
+        cfbTeamSeasonStatsMap,
+        nflPlayerGameStatsMap,
+        nflPlayerSeasonStatsMap,
+        nflTeamGameStatsMap,
+        nflTeamSeasonStatsMap,
+        SearchFootballStats,
+        ExportFootballStats,
         proPlayerMap,
         freeAgents,
         waiverPlayers,

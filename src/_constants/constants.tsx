@@ -134,6 +134,25 @@ export type StatsView = typeof WEEK_VIEW | typeof SEASON_VIEW;
 export const PLAYER_VIEW = "PLAYER";
 export const TEAM_VIEW = "TEAM";
 export type StatsType = typeof PLAYER_VIEW | typeof TEAM_VIEW;
+export const PASSING = "PASSING";
+export const RUSHING = "RUSHING";
+export const RECEIVING = "RECEIVING";
+export const DEFENSE = "DEFENSE";
+export const SPECIAL_TEAMS = "SPECIAL TEAMS";
+export const OLINE = "OLINE";
+export const RETURN = "RETURN";
+export const OVERALL = "OVERALL";
+export const OFFENSE = "OFFENSE";
+export type FootballStatsType =
+  | typeof PASSING
+  | typeof RUSHING
+  | typeof RECEIVING
+  | typeof DEFENSE
+  | typeof OLINE
+  | typeof RETURN
+  | typeof SPECIAL_TEAMS
+  | typeof OVERALL
+  | typeof OFFENSE;
 export const PRESEASON = "PRESEASON";
 export const REGULAR_SEASON = "REGULARSEASON";
 export const POST_SEASON = "POSTSEASON";
@@ -180,6 +199,18 @@ export const SundayNoon = "Sunday Noon";
 export const SundayAfternoon = "Sunday Afternoon";
 export const SundayNightFootball = "Sunday Night Football";
 export const MondayNightFootball = "Monday Night Football";
+export type Timeslot =
+  | typeof ThursdayNight
+  | typeof FridayNight
+  | typeof SaturdayMorning
+  | typeof SaturdayAfternoon
+  | typeof SaturdayEvening
+  | typeof SaturdayNight
+  | typeof ThursdayNightFootball
+  | typeof SundayNoon
+  | typeof SundayAfternoon
+  | typeof SundayNightFootball
+  | typeof MondayNightFootball;
 export const FreeAgent = "FreeAgent";
 export const Waivers = "Waivers";
 export const GLeague = "GLeague";
@@ -502,9 +533,9 @@ export const ThrowPower = "Throw Power";
 export const ThrowAccuracy = "Throw Accuracy";
 export const ShotgunRating = "Shotgun Rating";
 export const ShotgunRatingAcronyms = {
-  "Balanced": "BAL",
+  Balanced: "BAL",
   "Under Center": "UND",
-  "Shotgun": "GUN"
+  Shotgun: "GUN",
 } as const;
 export const Catching = "Catching";
 export const PassBlock = "Pass Block";
@@ -546,7 +577,9 @@ export const navyBlueColor = "#1f2937";
 export const MIN_SALARY = 0.75;
 export const MAX_SALARY = 14;
 export const BASE_HCK_WEEKS_IN_SEASON = 30;
+export const BASE_FBA_WEEKS_IN_SEASON = 24;
 export const BASE_HCK_SEASON = 2024;
+export const BASE_FBA_SEASON = 2020;
 
 export const CHLConferenceNames = [
   { label: "ConferenceID", value: "1", name: "AHA" },
