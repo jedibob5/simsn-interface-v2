@@ -94,7 +94,8 @@ export const Table = <T,>({
         key.includes("Y2") ||
         key.includes("Y3") ||
         key.includes("Y4") ||
-        key.includes("Y5")
+        key.includes("Y5") ||
+        key.includes("ContractLength")
       ) {
         if (a.Contract[key] > b.Contract[key]) return order === "asc" ? -1 : 1;
         if (a.Contract[key] < b.Contract[key]) return order === "asc" ? 1 : -1;
