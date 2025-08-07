@@ -7,12 +7,13 @@ import { useTeamColors } from "../../../_hooks/useTeamColors";
 import { ActionModal } from "../../Common/ActionModal";
 import { StatsSidebar } from "../Common/StatsSidebar";
 import { Border } from "../../../_design/Borders";
-import { navyBlueColor, SimCFB } from "../../../_constants/constants";
+import { Help1, navyBlueColor, SimCFB } from "../../../_constants/constants";
 import { Text } from "../../../_design/Typography";
 import { CategoryDropdown } from "../../Recruiting/Common/RecruitingCategoryDropdown";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { FootballStatsTable } from "./FootballStatsTable";
 import { ToggleSwitch } from "../../../_design/Inputs";
+import { StatsPageHelpModal } from "../Common/StatsPageHelpModal";
 
 export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
   const {
@@ -33,8 +34,8 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
     statsView,
     gameType,
     currentPage,
-    isFBS,
-    ChangeLeagueView,
+    leagueOptions,
+    SelectLeagueOption,
     goToPreviousPage,
     goToNextPage,
     handleCloseModal,
@@ -71,6 +72,12 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
           player={modalPlayer}
         />
       )}
+      <StatsPageHelpModal
+        isOpen={helpModal.isModalOpen}
+        onClose={helpModal.handleCloseModal}
+        league={league}
+        modalAction={Help1}
+      />
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[minmax(200px,2fr)_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         <StatsSidebar
           team={team!!}
@@ -101,10 +108,13 @@ export const FootballStatsPage: FC<StatsPageProps> = ({ league }) => {
               }}
             >
               {league === SimCFB && (
-                <div className="flex flex-col">
-                  <Text variant="h4">View FBS</Text>
-                  <ToggleSwitch checked={isFBS} onChange={ChangeLeagueView} />
-                </div>
+                <CategoryDropdown
+                  label="League"
+                  options={leagueOptions}
+                  change={SelectLeagueOption}
+                  isMulti={false}
+                  isMobile={isMobile}
+                />
               )}
               {!isDesktop && (
                 <div className="flex flex-row gap-x-2">

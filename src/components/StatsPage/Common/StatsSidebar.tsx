@@ -132,17 +132,19 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
               variant="body-small"
               className={`font-semibold rounded-md py-1 my-1 ${headerTextColorClass}`}
             >
-              Input
+              Actions
             </Text>
           </div>
           <div className="md:space-y-2 gap-x-2 md:gap-x-0 mb-2 flex flex-row items-center lg:flex-col">
-            <CategoryDropdown
-              label="Week"
-              options={weekOptions}
-              change={SelectWeekOption}
-              isMulti={false}
-              isMobile={isMobile}
-            />
+            {statsView === WEEK_VIEW && (
+              <CategoryDropdown
+                label="Week"
+                options={weekOptions}
+                change={SelectWeekOption}
+                isMulti={false}
+                isMobile={isMobile}
+              />
+            )}
             <CategoryDropdown
               label="Season"
               options={seasonOptions}
@@ -150,37 +152,33 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
               isMulti={false}
               isMobile={isMobile}
             />
+            <ButtonGroup classes="mb-4">
+              <Button
+                size="sm"
+                type="button"
+                variant="success"
+                onClick={Search}
+              >
+                Search
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="warning"
+                onClick={Export}
+              >
+                Export
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="primary"
+                onClick={HandleHelpModal}
+              >
+                Help
+              </Button>
+            </ButtonGroup>
           </div>
-          <div
-            className="w-full rounded-md text-center my-2 mb-2"
-            style={{
-              backgroundColor: teamColors.One,
-              borderColor: teamColors.One,
-            }}
-          >
-            <Text
-              variant="body-small"
-              className={`font-semibold rounded-md py-1 my-1 ${headerTextColorClass}`}
-            >
-              Actions
-            </Text>
-          </div>
-          <ButtonGroup classes="mb-4">
-            <Button size="sm" type="button" variant="success" onClick={Search}>
-              Search
-            </Button>
-            <Button type="button" size="sm" variant="warning" onClick={Export}>
-              Export
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="primary"
-              onClick={HandleHelpModal}
-            >
-              Help
-            </Button>
-          </ButtonGroup>
           {isDesktop && (
             <>
               <div
@@ -197,7 +195,10 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                   Stats View
                 </Text>
               </div>
-              <ButtonGroup classes="flex flex-row sm:flex-auto sm:flex-1 mb-2">
+              <ButtonGroup
+                classes="sm:flex-auto sm:flex-1 mb-2"
+                style={{ flexGrow: 0 }}
+              >
                 <Button
                   type="button"
                   size="sm"
@@ -228,10 +229,13 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       variant="body-small"
                       className={`font-semibold rounded-md py-1 mb-1 mt-1 ${headerTextColorClass}`}
                     >
-                      FB Stat Type
+                      Stat Category
                     </Text>
                   </div>
-                  <ButtonGroup classes="flex sm:flex-auto flex-row mb-2 justify-center">
+                  <ButtonGroup
+                    classes="flex sm:flex-auto flex-row mb-2 justify-center"
+                    style={{ flexGrow: 0 }}
+                  >
                     {statsType === PLAYER_VIEW && (
                       <>
                         <Button
@@ -379,7 +383,10 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                       Game Day
                     </Text>
                   </div>
-                  <ButtonGroup classes="flex sm:flex-auto flex-row mb-2">
+                  <ButtonGroup
+                    classes="flex sm:flex-auto flex-row mb-2"
+                    style={{ flexGrow: 0 }}
+                  >
                     <Button
                       type="button"
                       size="sm"
@@ -429,7 +436,10 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                   Stats Type
                 </Text>
               </div>
-              <ButtonGroup classes="flex sm:flex-auto flex-row mb-2">
+              <ButtonGroup
+                classes="flex sm:flex-auto flex-row mb-2"
+                style={{ flexGrow: 0 }}
+              >
                 <Button
                   type="button"
                   size="sm"
@@ -506,6 +516,154 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                     Team
                   </Button>
                 </ButtonGroup>
+                {(league === SimCFB || league === SimNFL) && (
+                  <>
+                    <div
+                      className="w-full rounded-md text-center my-2 mb-2"
+                      style={{
+                        backgroundColor: teamColors.One,
+                        borderColor: teamColors.One,
+                      }}
+                    >
+                      <Text
+                        variant="body-small"
+                        className={`font-semibold rounded-md py-1 mb-1 mt-1 ${headerTextColorClass}`}
+                      >
+                        Stat Category
+                      </Text>
+                    </div>
+                    <ButtonGroup classes="flex sm:flex-auto flex-row mb-2 justify-center">
+                      {statsType === PLAYER_VIEW && (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === PASSING
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(PASSING)}
+                          >
+                            Passing
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === RUSHING
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(RUSHING)}
+                          >
+                            Rushing
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === RECEIVING
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(RECEIVING)}
+                          >
+                            Receiving
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === DEFENSE
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(DEFENSE)}
+                          >
+                            Defense
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === OLINE
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(OLINE)}
+                          >
+                            OLine
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === SPECIAL_TEAMS
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(SPECIAL_TEAMS)}
+                          >
+                            Special Teams
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === RETURN
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(RETURN)}
+                          >
+                            Returns
+                          </Button>
+                        </>
+                      )}
+                      {statsType === TEAM_VIEW && (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === OVERALL
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(OVERALL)}
+                          >
+                            Overall
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === OFFENSE
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(OFFENSE)}
+                          >
+                            Offense
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant={
+                              footballStatsType === DEFENSE
+                                ? "success"
+                                : "secondary"
+                            }
+                            onClick={() => ChangeFBStatsType!(DEFENSE)}
+                          >
+                            Defense
+                          </Button>
+                        </>
+                      )}
+                    </ButtonGroup>
+                  </>
+                )}
                 {league !== SimCFB && league !== SimNFL && (
                   <>
                     <ButtonGroup classes="flex sm:flex-auto flex-row mb-2">
@@ -605,7 +763,154 @@ export const StatsSidebar: FC<StatsSidebarProps> = ({
                   </Button>
                 </ButtonGroup>
               </div>
-
+              {(league === SimCFB || league === SimNFL) && (
+                <>
+                  <div
+                    className="w-full rounded-md text-center my-2 mb-2"
+                    style={{
+                      backgroundColor: teamColors.One,
+                      borderColor: teamColors.One,
+                    }}
+                  >
+                    <Text
+                      variant="body-small"
+                      className={`font-semibold rounded-md py-1 mb-1 mt-1 ${headerTextColorClass}`}
+                    >
+                      Stat Category
+                    </Text>
+                  </div>
+                  <ButtonGroup classes="flex sm:flex-auto flex-row mb-2 justify-center">
+                    {statsType === PLAYER_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === PASSING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(PASSING)}
+                        >
+                          Passing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RUSHING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RUSHING)}
+                        >
+                          Rushing
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RECEIVING
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RECEIVING)}
+                        >
+                          Receiving
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OLINE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OLINE)}
+                        >
+                          OLine
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === SPECIAL_TEAMS
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(SPECIAL_TEAMS)}
+                        >
+                          Special Teams
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === RETURN
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(RETURN)}
+                        >
+                          Returns
+                        </Button>
+                      </>
+                    )}
+                    {statsType === TEAM_VIEW && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OVERALL
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OVERALL)}
+                        >
+                          Overall
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === OFFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(OFFENSE)}
+                        >
+                          Offense
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant={
+                            footballStatsType === DEFENSE
+                              ? "success"
+                              : "secondary"
+                          }
+                          onClick={() => ChangeFBStatsType!(DEFENSE)}
+                        >
+                          Defense
+                        </Button>
+                      </>
+                    )}
+                  </ButtonGroup>
+                </>
+              )}
               {league !== SimCFB && league !== SimNFL && (
                 <>
                   <div

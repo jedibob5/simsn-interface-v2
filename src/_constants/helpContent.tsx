@@ -132,3 +132,56 @@ export const NFLFreeAgencyHelpContent: string[][] = [
     "This feature is in active development and will be added at a later, unspecified date.",
   ],
 ];
+
+export const FBStatsHelpContent: string[][] = [
+  [
+    "Welcome to the Football Stats Page!",
+    "This page allows you to view game stats across the current season and previous seasons.",
+    "The left sidebar allows you to input and select which season & week of the season you'd like to view.",
+  ],
+  [
+    "Searching",
+    "To control whether you want to view Season or Weekly stats, select a Stats View by clicking one of the buttons. Once a view is selected, select a season and (if viewing Week) week from the dropdown.",
+    "Click the search button, and results should populate momentarily!",
+  ],
+  [
+    "Stats Categories",
+    "For football, there are several stat categories to choose from.",
+    "Passing category allows you to view all passing stats across the season and week. This is also the default category selected.",
+    "Rushing will display stats for all players who have made a rush attempt during the week/season.",
+    "Receiving will display stats for all players who had at least one target during the week/season.",
+    "Defense will display stats for all defensive players who have made at least one snap during the week/season.",
+    "OLine will display stats for all linemen who have made at least one snap during the week/season.",
+    "Special Teams will display stats for all kickers and punters who have made at least one snap during the week/season.",
+    "Returns display stats for all special team returners who have made at least one snap during the week/season.",
+  ],
+  [
+    "Table Views",
+    "The table will always display information relevant to the stats view, stats type, and category selected.",
+    "Click on any of the column headers to sort the data by that column.",
+    "To view more data, click on either the Prev or Next button below to view more stats.",
+  ],
+];
+
+export const HCKStatsHelpContent: string[][] = [
+  [
+    "Welcome to the Hockey Stats Page!",
+    "This page allows you to view game stats across the current season and previous seasons.",
+    "The left sidebar allows you to input and select which season & week of the season you'd like to view.",
+  ],
+  [
+    "Searching",
+    "To control whether you want to view Season or Weekly stats, select a Stats View by clicking one of the buttons. Once a view is selected, select a season and (if viewing Week) week from the dropdown.",
+    "Click the search button, and results should populate momentarily!",
+  ],
+  [
+    "Stats Categories",
+    "For hockey, you can toggle between goalie and non-goalie positions.",
+  ],
+  [
+    "Table Views",
+    "The table will always display information relevant to the stats view, stats type, and category selected.",
+    "Click on any of the column headers to sort the data by that column.",
+    "To view more data, click on either the Prev or Next button below to view more stats.",
+  ],
+];

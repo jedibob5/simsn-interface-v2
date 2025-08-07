@@ -74,10 +74,14 @@ export const GetFootballStatsColumns = (
   statsView: StatsView,
   isMobile: boolean
 ) => {
-  let columns = [{ header: "Team", accessor: "TeamName" }];
+  let columns = [{ header: "", accessor: "" }];
+  if (statsType === TEAM_VIEW) {
+    columns = columns.concat([{ header: "Team", accessor: "TeamName" }]);
+  }
 
   if (statsType === PLAYER_VIEW) {
     columns = columns.concat([
+      { header: "Team", accessor: "Team" },
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
@@ -85,7 +89,7 @@ export const GetFootballStatsColumns = (
       { header: "Ovr", accessor: "Overall" },
     ]);
   } else if (statsType === TEAM_VIEW) {
-    columns = columns.concat([{ header: "Conf", accessor: "ConferenceName" }]);
+    columns = columns.concat([{ header: "Conf", accessor: "Conference" }]);
   }
   if (statsView === SEASON_VIEW) {
     columns = columns.concat([{ header: "GP", accessor: "GamesPlayed" }]);
@@ -273,16 +277,21 @@ export const GetHockeyStatsColumns = (
   isMobile: boolean,
   isGoalie: boolean
 ) => {
-  let columns = [{ header: "Team", accessor: "TeamName" }];
-
+  let columns = [{ header: "", accessor: "" }];
+  if (statsType === TEAM_VIEW) {
+    columns = columns.concat([{ header: "Team", accessor: "TeamName" }]);
+  }
   if (statsType === PLAYER_VIEW) {
     columns = columns.concat([
+      { header: "Team", accessor: "Team" },
       { header: "Name", accessor: "LastName" },
       { header: "Pos", accessor: "Position" },
       { header: isMobile ? "Arch" : "Archetype", accessor: "Archetype" },
       { header: "Exp", accessor: "Year" },
       { header: "Ovr", accessor: "Overall" },
     ]);
+  } else if (statsType === TEAM_VIEW) {
+    columns = columns.concat([{ header: "Conf", accessor: "Conference" }]);
   }
 
   if (statsView === SEASON_VIEW) {

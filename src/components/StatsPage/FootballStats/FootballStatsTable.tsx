@@ -97,8 +97,12 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
         style={{ backgroundColor }}
       >
         <TableCell>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center justify-center">
             <Logo variant="small" url={logo} containerClass="mr-2" />
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex flex-row items-start">
             <Text variant="xs">{team.TeamName}</Text>
           </div>
         </TableCell>
@@ -153,6 +157,7 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
   ) => {
     const team = teamMap[item.TeamID] as CollegeTeam;
     if (!team) return <></>;
+    item.Team = team;
     const logo = getLogo(league, team.ID, false);
     const values = GetFootballTeamStatsValues(
       item,
@@ -167,8 +172,12 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
         style={{ backgroundColor }}
       >
         <TableCell>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center justify-center">
             <Logo variant="small" url={logo} containerClass="mr-2" />
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex flex-row items-start">
             <Text variant="xs">{team.TeamName}</Text>
           </div>
         </TableCell>
@@ -210,8 +219,12 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
         style={{ backgroundColor }}
       >
         <TableCell>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center  justify-center">
             <Logo variant="small" url={logo} containerClass="mr-2" />
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex flex-row items-start">
             <Text variant="xs">{team.TeamName}</Text>
           </div>
         </TableCell>
@@ -266,6 +279,7 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
   ) => {
     const team = teamMap[item.TeamID] as NFLTeam;
     if (!team) return <></>;
+    item.Team = team;
     const logo = getLogo(league, team.ID, false);
     const values = GetFootballTeamStatsValues(
       item,
@@ -279,8 +293,12 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
         style={{ backgroundColor }}
       >
         <TableCell>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center  justify-center">
             <Logo variant="small" url={logo} containerClass="mr-2" />
+          </div>
+        </TableCell>
+        <TableCell>
+          <div className="flex flex-row items-start">
             <Text variant="xs">{team.TeamName}</Text>
           </div>
         </TableCell>
@@ -318,6 +336,7 @@ export const FootballStatsTable: FC<FootballStatsTableProps> = ({
       team={team}
       currentPage={currentPage}
       enablePagination
+      page={`Stats${statsType}`}
     />
   );
 };
