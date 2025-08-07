@@ -6,6 +6,7 @@ import { RecruitingTeamProfile as FootballTeamProfile } from "../../../models/fo
 import { Table } from "../../../_design/Table";
 import { getLogo } from "../../../_utility/getLogo";
 import { Logo } from "../../../_design/Logo";
+import { TeamRecruitingProfile } from "../../../models/basketballModels";
 
 const getRankingsColumns = (league: League, isMobile: boolean) => {
   let columns: { header: string; accessor: string }[] = [
@@ -28,7 +29,10 @@ interface TeamRankingsTableProps {
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
-  teamProfiles: HockeyTeamProfile[] | FootballTeamProfile[];
+  teamProfiles:
+    | HockeyTeamProfile[]
+    | FootballTeamProfile[]
+    | TeamRecruitingProfile[];
   teamMap: any;
   team: any;
   league: League;

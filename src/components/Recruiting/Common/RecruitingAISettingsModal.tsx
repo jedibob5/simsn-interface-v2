@@ -19,12 +19,17 @@ import {
 } from "../../../_helper/recruitingHelper";
 import { SingleValue } from "react-select";
 import { SelectOption } from "../../../_hooks/useSelectStyles";
+import { TeamRecruitingProfile } from "../../../models/basketballModels";
 
 interface RecruitAISettingsProps {
   isOpen: boolean;
   onClose: () => void;
   league: League;
-  teamProfile: HockeyTeamProfile | FootballTeamProfile | null;
+  teamProfile:
+    | HockeyTeamProfile
+    | FootballTeamProfile
+    | TeamRecruitingProfile
+    | null;
   SaveSettings: (dto: any) => Promise<void>;
 }
 
@@ -36,7 +41,7 @@ export const RecruitingAISettingsModal: FC<RecruitAISettingsProps> = ({
   SaveSettings,
 }) => {
   const [configBoard, setConfigBoard] = useState<
-    HockeyTeamProfile | FootballTeamProfile
+    HockeyTeamProfile | FootballTeamProfile | TeamRecruitingProfile
   >(teamProfile!!);
 
   const ChangeNumericInput = (event: React.ChangeEvent<HTMLInputElement>) => {

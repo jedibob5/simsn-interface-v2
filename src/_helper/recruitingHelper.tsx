@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Croot, Recruit } from "../models/hockeyModels";
+import { Croot as HockeyCroot } from "../models/hockeyModels";
 import {
   Croot as FootballCroot,
   RecruitingTeamProfile,
@@ -18,6 +18,7 @@ import {
   SmallSchool,
   SmallTown,
 } from "../_constants/constants";
+import { Croot } from "../models/basketballModels";
 
 type RegionMap = {
   [state: string]: { [city: string]: string };
@@ -49,7 +50,7 @@ export const useFilteredHockeyRecruits = ({
   statuses,
   stars,
 }: {
-  recruits: Croot[];
+  recruits: HockeyCroot[];
   country: string;
   positions: string[];
   archetype: string[];
@@ -104,6 +105,66 @@ export const useFilteredHockeyRecruits = ({
     },
     // depend on the raw list plus the Sets
     [recruits, country, positionSet, archSet, regionSet, starsSet, statusSet]
+  );
+};
+
+export const useFilteredBasketballRecruits = ({
+  recruits,
+  positions,
+  archetype,
+  regions,
+  statuses,
+  stars,
+}: {
+  recruits: Croot[];
+  positions: string[];
+  archetype: string[];
+  regions: string[];
+  statuses: string[];
+  stars: number[];
+}) => {
+  // 1) build Sets once per-change
+  const positionSet = useMemo(() => new Set(positions), [positions]);
+  const archSet = useMemo(() => new Set(archetype), [archetype]);
+  const regionSet = useMemo(() => new Set(regions), [regions]);
+  const statusSet = useMemo(() => new Set(statuses), [statuses]);
+  const starsSet = useMemo(() => new Set(stars), [stars]);
+
+  // 2) filter in one pass, rejecting any row that fails an active filter
+  return useMemo(
+    () => {
+      return recruits.filter((r) => {
+        // position
+        if (positionSet.size > 0 && !positionSet.has(r.Position)) {
+          return false;
+        }
+
+        // archetype
+        if (archSet.size > 0 && !archSet.has(r.Archetype)) {
+          return false;
+        }
+
+        // region (state)
+        if (regionSet.size > 0 && !regionSet.has(r.State)) {
+          return false;
+        }
+
+        // stars
+        if (starsSet.size > 0 && !starsSet.has(r.Stars)) {
+          return false;
+        }
+
+        // recruiting status
+        if (statusSet.size > 0 && !statusSet.has(r.SigningStatus)) {
+          return false;
+        }
+
+        // passed all active filters
+        return true;
+      });
+    },
+    // depend on the raw list plus the Sets
+    [recruits, positionSet, archSet, regionSet, starsSet, statusSet]
   );
 };
 

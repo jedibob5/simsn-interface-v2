@@ -525,6 +525,33 @@ export const FootballArchetypeOptions = [
   { label: "Soccer Player", value: "Soccer Player" },
 ];
 
+export const BasketballPositionOptions = [
+  { label: "Point Guards", value: "PG" },
+  { label: "Shooting Guards", value: "SG" },
+  { label: "Small Forwards", value: "SF" },
+  { label: "Power Forwards", value: "PF" },
+  { label: "Centers", value: "C" },
+];
+
+export const BasketballArchetypeOptions = [
+  { label: "All-Around", value: "All-Around" },
+  { label: "Floor General", value: "Floor General" },
+  { label: "Sharp Shooter", value: "Sharp Shooter" },
+  { label: "Mid-Range Magician", value: "Mid-Range Magician" },
+  { label: "Defensive Dawg", value: "Defensive Dawg" },
+  { label: "3-and-D", value: "3-and-D" },
+  { label: "Dunk Specialist", value: "Dunk Specialist" },
+  { label: "Microwave", value: "Microwave" },
+  { label: "Two-Way Wing", value: "Two-Way Wing" },
+  { label: "Slasher", value: "Slasher" },
+  { label: "Traditional Forward", value: "Traditional Forward" },
+  { label: "Offensive Weapon", value: "Offensive Weapon" },
+  { label: "Point Forward", value: "Point Forward" },
+  { label: "Rim Protector", value: "Rim Protector" },
+  { label: "Stretch Bigs", value: "Stretch Bigs" },
+  { label: "Lob Threat", value: "Lob Threat" },
+];
+
 export const Agility = "Agility";
 export const Speed = "Speed";
 export const Carrying = "Carrying";

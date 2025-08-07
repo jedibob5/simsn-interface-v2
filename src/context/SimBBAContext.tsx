@@ -40,12 +40,7 @@ import {
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { BootstrapService } from "../_services/bootstrapService";
 import { bba_ws } from "../_constants/urls";
-import {
-  Assistant,
-  SEASON_VIEW,
-  SimBBA,
-  SimCBB,
-} from "../_constants/constants";
+import { SimBBA, SimCBB } from "../_constants/constants";
 import { StatsService } from "../_services/statsService";
 import { enqueueSnackbar } from "notistack";
 import { FreeAgencyService } from "../_services/freeAgencyService";

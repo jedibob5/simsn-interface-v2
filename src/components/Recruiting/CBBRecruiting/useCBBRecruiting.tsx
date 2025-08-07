@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useModal } from "../../../_hooks/useModal";
-import { useSimFBAStore } from "../../../context/SimFBAContext";
+import { useSimBBAStore } from "../../../context/SimBBAContext";
 import {
   Attributes,
   ModalAction,
@@ -9,26 +9,28 @@ import {
   RecruitingCategory,
   USARegionOptions,
 } from "../../../_constants/constants";
+import { Croot as FootballCroot } from "../../../models/footballModels";
 import {
-  Croot as FootballCroot,
-  RecruitingTeamProfile,
-} from "../../../models/footballModels";
-import { Croot as BasketballCroot } from "../../../models/basketballModels";
+  Croot as BasketballCroot,
+  TeamRecruitingProfile,
+} from "../../../models/basketballModels";
 import { Croot as HockeyCroot } from "../../../models/hockeyModels";
-import { useFilteredFootballRecruits } from "../../../_helper/recruitingHelper";
+import { useFilteredBasketballRecruits } from "../../../_helper/recruitingHelper";
 import { usePagination } from "../../../_hooks/usePagination";
-export const useCFBRecruiting = () => {
-  const fbStore = useSimFBAStore();
+
+export const useCBBRecruiting = () => {
+  const bbStore = useSimBBAStore();
   const {
     recruits,
     teamProfileMap,
-    cfbTeam,
-    cfbTeams,
-    cfbTeamMap,
+    cbbTeam,
+    cbbTeams,
+    cbbTeamMap,
     recruitProfiles,
-    cfb_Timestamp,
-  } = fbStore;
+    cbb_Timestamp,
+  } = bbStore;
   const { isModalOpen, handleOpenModal, handleCloseModal } = useModal();
+
   const [recruitingCategory, setRecruitingCategory] =
     useState<RecruitingCategory>(Overview);
   const [tableViewType, setTableViewType] = useState<string>(Attributes);
@@ -40,21 +42,21 @@ export const useCFBRecruiting = () => {
   const [statuses, setStatuses] = useState<string[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
   const [selectedClassView, setSelectedClassView] = useState<number>(
-    cfbTeam!.ID
+    cbbTeam!.ID
   );
   const [conferences, setConferences] = useState<any[]>([]);
   const [attribute, setAttribute] = useState<string>("");
   const [modalPlayer, setModalPlayer] = useState<
     HockeyCroot | FootballCroot | BasketballCroot
-  >({} as FootballCroot);
+  >({} as BasketballCroot);
   const [modalAction, setModalAction] = useState<ModalAction>(RecruitInfoType);
 
   const recruitingLocked = useMemo(() => {
-    if (cfb_Timestamp) {
-      return cfb_Timestamp.IsRecruitingLocked;
+    if (cbb_Timestamp) {
+      return cbb_Timestamp.IsRecruitingLocked;
     }
     return false;
-  }, [cfb_Timestamp]);
+  }, [cbb_Timestamp]);
 
   const recruitOnBoardMap = useMemo(() => {
     const boardMap: Record<number, boolean> = {};
@@ -77,11 +79,11 @@ export const useCFBRecruiting = () => {
   }, [country]);
 
   const teamProfile = useMemo(() => {
-    if (cfbTeam && teamProfileMap) {
-      return teamProfileMap[Number(cfbTeam.ID)];
+    if (cbbTeam && teamProfileMap) {
+      return teamProfileMap[Number(cbbTeam.ID)];
     }
     return null;
-  }, [cfbTeam, teamProfileMap]);
+  }, [cbbTeam, teamProfileMap]);
 
   const recruitMap = useMemo(() => {
     const rMap: any = {};
@@ -91,7 +93,7 @@ export const useCFBRecruiting = () => {
     return rMap;
   }, [recruits]);
 
-  const filteredRecruits = useFilteredFootballRecruits({
+  const filteredRecruits = useFilteredBasketballRecruits({
     recruits,
     positions,
     archetype,
@@ -107,8 +109,8 @@ export const useCFBRecruiting = () => {
   const pageSize = 100;
 
   const teamRankList = useMemo(() => {
-    const teamsList = [...cfbTeams];
-    let profileList: RecruitingTeamProfile[] = [];
+    const teamsList = [...cbbTeams];
+    let profileList: TeamRecruitingProfile[] = [];
     teamsList.forEach((team) => {
       profileList.push(teamProfileMap![team.ID]);
     });
@@ -120,19 +122,19 @@ export const useCFBRecruiting = () => {
         }
         if (
           conferences.length > 0 &&
-          conferences.includes(cfbTeamMap![team.ID].ConferenceID)
+          conferences.includes(cbbTeamMap![team.ID].ConferenceID)
         ) {
           return true;
         }
         if (
           selectedTeams.length > 0 &&
-          selectedTeams.includes(cfbTeamMap![team.ID].ID)
+          selectedTeams.includes(cbbTeamMap![team.ID].ID)
         ) {
           return true;
         }
         return false;
       });
-  }, [conferences, selectedTeams, cfbTeams, cfbTeamMap, teamProfileMap]);
+  }, [conferences, selectedTeams, cbbTeams, cbbTeamMap, teamProfileMap]);
 
   const {
     currentPage,

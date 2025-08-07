@@ -18,6 +18,7 @@ import {
 import { Table, TableCell } from "../../../_design/Table";
 import { getLogo } from "../../../_utility/getLogo";
 import { Logo } from "../../../_design/Logo";
+import { Croot } from "../../../models/basketballModels";
 
 const getClassColumns = (league: League, isMobile: boolean) => {
   if (league === SimCFB) {
@@ -60,7 +61,7 @@ interface RecruitingClassTableProps {
   colorOne?: string;
   colorTwo?: string;
   colorThree?: string;
-  crootingClass: HockeyCroot[] | FootballCroot[];
+  crootingClass: HockeyCroot[] | FootballCroot[] | Croot[];
   teamMap: any;
   team: any;
   league: League;
