@@ -1684,6 +1684,7 @@ export class NFLDepthChart {
   }
 }
 export class NFLTeamSeasonStats {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -1890,6 +1891,7 @@ export class NFLTeamSeasonStats {
   }
 }
 export class NFLTeamStats {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -4133,6 +4135,7 @@ export class DeletedAt {
   }
 }
 export class CollegeTeamSeasonStats {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;
@@ -4339,6 +4342,7 @@ export class CollegeTeamSeasonStats {
   }
 }
 export class CollegeTeamStats {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;

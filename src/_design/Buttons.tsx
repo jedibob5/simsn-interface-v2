@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, ReactNode } from "react";
+import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { ButtonColor, ButtonGreen } from "../_constants/constants";
 
 // 🔑 Define Button Props Interface
@@ -138,7 +138,7 @@ export const PillButton: React.FC<PillButtonProps> = ({
 };
 
 // 🔑 Define ButtonGroup Props Interface
-interface ButtonGroupProps {
+interface ButtonGroupProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   classes?: string;
   direction?: string;
@@ -148,10 +148,12 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
   children,
   classes = "",
   direction = "row",
+  ...props
 }) => {
   return (
     <div
       className={`flex pt-1 lg:pt-0 flex-wrap flex-${direction} gap-x-1 sm:gap-x-2 gap-y-2 ${classes}`}
+      {...props}
     >
       {children}
     </div>

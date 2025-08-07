@@ -37,6 +37,7 @@ export interface TableProps<T> {
   league?: League;
   enablePagination?: boolean;
   currentPage?: number;
+  page?: string;
 }
 
 export const Table = <T,>({
@@ -49,6 +50,7 @@ export const Table = <T,>({
   league,
   enablePagination = false,
   currentPage = 0,
+  page = "",
 }: TableProps<T>): JSX.Element => {
   let backgroundColor = "#1f2937";
   let borderColor = team?.ColorTwo || "#4B5563";
@@ -129,13 +131,40 @@ export const Table = <T,>({
         if (ai > bi) return order === "asc" ? 1 : -1;
         return 0;
       }
-
+      if (page === "StatsPLAYER") {
+        if (
+          key.includes("LastName") ||
+          key.includes("Team") ||
+          key.includes("TeamName") ||
+          key.includes("Position") ||
+          key.includes("Archetype") ||
+          key.includes("Year") ||
+          key.includes("Overall")
+        ) {
+          if (!a.Player || !b.Player) return 0;
+          if (a.Player[key] > b.Player[key]) return order === "asc" ? -1 : 1;
+          if (a.Player[key] < b.Player[key]) return order === "asc" ? 1 : -1;
+          return 0;
+        }
+      }
+      if (page === "StatsTEAM") {
+        if (
+          key.includes("Conference") ||
+          key.includes("Team") ||
+          key.includes("TeamName")
+        ) {
+          if (!a.Team || !b.Team) return 0;
+          if (a.Team[key] > b.Team[key]) return order === "asc" ? -1 : 1;
+          if (a.Team[key] < b.Team[key]) return order === "asc" ? 1 : -1;
+          return 0;
+        }
+      }
       if (a[key] < b[key]) return order === "asc" ? -1 : 1;
       if (a[key] > b[key]) return order === "asc" ? 1 : -1;
       return 0;
     });
     setSortedData(sorted);
-  }, [data, sortState]);
+  }, [data, sortState, page]);
 
   const pageSize = 100;
 

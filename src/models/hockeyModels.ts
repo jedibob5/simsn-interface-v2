@@ -4600,6 +4600,7 @@ export class BaseTeamStats {
   }
 }
 export class TeamSeasonStats {
+  [key: string]: any;
   StatType: number;
   GamesPlayed: number;
   PointPercentage: number;
@@ -5049,7 +5050,6 @@ export class CollegeTeamSeasonStats {
   DeletedAt: DeletedAt;
   SeasonID: number;
   TeamID: number;
-  Team: string;
   GoalsFor: number;
   GoalsAgainst: number;
   Assists: number;
@@ -5181,7 +5181,6 @@ export class CollegeTeamGameStats {
   UpdatedAt: Time;
   DeletedAt: DeletedAt;
   TeamID: number;
-  Team: string;
   GoalsFor: number;
   GoalsAgainst: number;
   Assists: number;
@@ -5276,7 +5275,6 @@ export class ProfessionalTeamSeasonStats {
   UpdatedAt: Time;
   DeletedAt: DeletedAt;
   TeamID: number;
-  Team: string;
   GoalsFor: number;
   GoalsAgainst: number;
   Assists: number;
@@ -5401,7 +5399,6 @@ export class ProfessionalTeamGameStats {
   UpdatedAt: Time;
   DeletedAt: DeletedAt;
   TeamID: number;
-  Team: string;
   GoalsFor: number;
   GoalsAgainst: number;
   Assists: number;

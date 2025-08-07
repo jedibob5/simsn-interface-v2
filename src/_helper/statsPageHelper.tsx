@@ -433,7 +433,7 @@ export const useFilteredFootballStats = ({
   statsType,
   footballStatsType,
   selectedLeague,
-  isFBS,
+  selectedLeagueOption,
 }: {
   selectedStats: any[];
   selectedTeams: string[];
@@ -443,7 +443,7 @@ export const useFilteredFootballStats = ({
   statsType: StatsType;
   footballStatsType: FootballStatsType;
   selectedLeague: string;
-  isFBS: boolean;
+  selectedLeagueOption: number;
 }) => {
   // 1) build Sets once per change
   const teamSet = useMemo(() => new Set(selectedTeams), [selectedTeams]);
@@ -478,10 +478,10 @@ export const useFilteredFootballStats = ({
         if (!player) return false;
         if (selectedLeague === SimCFB) {
           const team = teamMap[stat.TeamID];
-          if (isFBS && !team.IsFBS) {
+          if (selectedLeagueOption === 2 && !team.IsFBS) {
             return false;
           }
-          if (!isFBS && team.IsFBS) {
+          if (selectedLeagueOption === 3 && team.IsFBS) {
             return false;
           }
         }
@@ -533,10 +533,10 @@ export const useFilteredFootballStats = ({
         if (!team) return false;
         if (selectedLeague === SimCFB) {
           const team = teamMap[stat.TeamID];
-          if (isFBS && !team.IsFBS) {
+          if (selectedLeagueOption === 2 && !team.IsFBS) {
             return false;
           }
-          if (!isFBS && team.IsFBS) {
+          if (selectedLeagueOption === 3 && team.IsFBS) {
             return false;
           }
         }
@@ -552,7 +552,7 @@ export const useFilteredFootballStats = ({
     teamMap,
     playerMap,
     statsType,
-    isFBS,
+    selectedLeagueOption,
     selectedLeague,
     footballStatsType,
   ]);
@@ -566,7 +566,7 @@ export const isFBASeasonStats = (s: any): s is FBASeasonStats => {
 };
 
 export const GetFilteredCFBTeamOptions = (
-  isFBS: boolean,
+  selectedLeagueOption: number,
   cfbTeamOptions: { label: string; value: string }[],
   teamMap: Record<number, CollegeTeam>
 ) => {
@@ -575,7 +575,10 @@ export const GetFilteredCFBTeamOptions = (
     const opt = cfbTeamOptions[i];
     const teamID = Number(opt.value);
     const team = teamMap[teamID];
-    if ((isFBS && team.IsFBS) || (!isFBS && !team.IsFBS)) {
+    if (
+      (selectedLeagueOption === 2 && team.IsFBS) ||
+      (selectedLeagueOption === 3 && !team.IsFBS)
+    ) {
       optionsList.push(opt);
     }
   }
@@ -583,7 +586,7 @@ export const GetFilteredCFBTeamOptions = (
 };
 
 export const GetFilteredCFBConferenceOptions = (
-  isFBS: boolean,
+  selectedLeagueOption: number,
   cfbConferenceOptions: { label: string; value: string }[],
   cfbTeams: CollegeTeam[]
 ) => {
@@ -598,7 +601,10 @@ export const GetFilteredCFBConferenceOptions = (
   const optionsList = [];
   for (let i = 0; i < cfbTeams.length; i++) {
     const team = cfbTeams[i];
-    if ((isFBS && team.IsFBS) || (!isFBS && !team.IsFBS)) {
+    if (
+      (selectedLeagueOption === 2 && team.IsFBS) ||
+      (selectedLeagueOption === 3 && !team.IsFBS)
+    ) {
       const conf = optionsMap[team.ConferenceID];
       if (selectedMap[team.ConferenceID]) {
         continue;
