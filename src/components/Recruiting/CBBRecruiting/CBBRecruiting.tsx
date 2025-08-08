@@ -427,7 +427,7 @@ export const CBBRecruiting = () => {
                 }}
               >
                 <TeamRankingsTable
-                  colorOne={teamColors.One}
+                  colorOne={navyBlueColor}
                   colorTwo={teamColors.Two}
                   colorThree={teamColors.Three}
                   teamProfiles={teamRankList}

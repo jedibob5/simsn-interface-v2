@@ -131,6 +131,7 @@ interface SimBBAContextProps {
   SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDto) => Promise<void>;
   SearchBasketballStats: (dto: any) => Promise<void>;
   ExportBasketballStats: (dto: any) => Promise<void>;
+  ExportCBBRecruits: () => Promise<void>;
 }
 
 // ✅ Initial Context State
@@ -211,6 +212,7 @@ const defaultContext: SimBBAContextProps = {
   CancelWaiverWireOffer: async () => {},
   SearchBasketballStats: async () => {},
   ExportBasketballStats: async () => {},
+  ExportCBBRecruits: async () => {},
 };
 
 export const SimBBAContext = createContext<SimBBAContextProps>(defaultContext);
@@ -957,6 +959,10 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const ExportCBBRecruits = useCallback(async () => {
+    await RecruitService.ExportCFBCroots();
+  }, []);
+
   return (
     <SimBBAContext.Provider
       value={{
@@ -1036,6 +1042,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
         CancelWaiverWireOffer,
         SearchBasketballStats,
         ExportBasketballStats,
+        ExportCBBRecruits,
       }}
     >
       {children}

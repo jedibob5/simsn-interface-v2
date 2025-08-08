@@ -32,7 +32,7 @@ export const useSideMenu = () => {
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const dropdowns: Record<string, DropdownItem[]> = {
     SimCFB: [
-        {
+      {
         label: "Team Profile",
         isRoute: true,
         route: routes.CFB_TEAMPROFILE,
@@ -150,14 +150,7 @@ export const useSideMenu = () => {
         toggle: () => toggleMenu(),
       },
       {
-        label: "Recruiting Overview",
-        isRoute: true,
-        route: "",
-        league: SimCBB,
-        toggle: () => toggleMenu(),
-      },
-      {
-        label: "Recruiting Board",
+        label: "Recruiting",
         isRoute: true,
         route: routes.CBB_RECRUITING,
         league: SimCBB,

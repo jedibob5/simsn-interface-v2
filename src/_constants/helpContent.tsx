@@ -39,7 +39,37 @@ export const CFBRecruitingHelpContent: string[][] = [
   [
     "Overview Page",
     "This page showcases over 6000+ different recruits from all over the United States whom are eligible and capable of playing in the SimCFB.",
-    "You can filter down the list further by using the different dropdowns showcased on the page. 'Positions' will filter the list by positions; 'Archetype' will filter the list further by the recruit's archetype. You can also filter the list by country in addition. If you select USA, Canada, Sweden, or Russia as a country, you may also in addition filter further by the different regions within each country. Stars allows you to filter by the recruit's star rating. Finally, Status allows you to filter by how far along the recruit is from making a decision to sign with a school.",
+    "You can filter down the list further by using the different dropdowns showcased on the page. 'Positions' will filter the list by positions; 'Archetype' will filter the list further by the recruit's archetype. You can also filter the list by country in addition. Stars allows you to filter by the recruit's star rating. Finally, Status allows you to filter by how far along the recruit is from making a decision to sign with a school.",
+    "To view more info on each recruit, click on their name. To add a recruit to your board, click the green 'Plus' button. If a recruit is already on your board or has been signed, the button will grey out.",
+  ],
+  [
+    "Team Board Page",
+    "This page allows you to spend points towards the recruits you are targeting. Here, you may view a recruit's attributes; scout their potential attributes; and view their preferences.",
+    "To offer a recruit a scholarship, click on the grey 'Scholarship' button on their row. Any points you put toward a recruit with a scholarship will consider your points during the recruiting syncs.",
+    "Additionally, to add points towards a recruit, input a number into the Add Points input. The number of points selectable on a recruit may be between 0 and 20. Additionally, you may view how the recruit's affinities and team's affinities match up in the Modifier (Mod.) column based on the amount of points that you have allocated.",
+    "To save your points spent, click on the Save button at the top.",
+  ],
+  [
+    "AI Settings",
+    "As you're learning the recruiting system, you may choose to toggle the AI settings and allow the game to recruit for you! To do this, click on the settings button and select the 'AI' Toggle to 'On'.",
+    "In addition, you may control how your team behaves when the AI is activated.",
+    "You can choose to adjust the minimum and maximum ratings for Star rating on the recruit, and how much points you would like to have allocated possible.",
+    "The minimum range for star is at least 2 (So max range of 3-5 stars); and the minimum range for points is at least 5 points (So a range of 15-20 is possible, but a range of 18-20 points is not).",
+    "When you're done adjusting the AI settings, click 'Confirm' to save your settings.",
+  ],
+];
+
+export const CBBRecruitingHelpContent: string[][] = [
+  [
+    "Welcome to the SimCBB Recruiting Page!",
+    "This page is where you will build the future of your SimCBB program.",
+    "The top row controls the different views available on this page. The 'Overview' button handles the list of all recruits. The 'Board' button is your personal team board -- any recruit you add can be viewed here. The 'Rankings' page showcases the recruiting rankings for this year and where each team ranks.",
+    "The buttons to the right of the Overview, Board, and Rankings buttons; these handle the different views within the tables.",
+  ],
+  [
+    "Overview Page",
+    "This page showcases over 1000+ different recruits from all over the United States whom are eligible and capable of playing in the SimCFB.",
+    "You can filter down the list further by using the different dropdowns showcased on the page. 'Positions' will filter the list by positions; 'Archetype' will filter the list further by the recruit's archetype. You can also filter the list by country in addition. Stars allows you to filter by the recruit's star rating. Finally, Status allows you to filter by how far along the recruit is from making a decision to sign with a school.",
     "To view more info on each recruit, click on their name. To add a recruit to your board, click the green 'Plus' button. If a recruit is already on your board or has been signed, the button will grey out.",
   ],
   [

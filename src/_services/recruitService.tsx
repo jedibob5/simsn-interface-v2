@@ -99,11 +99,17 @@ export const RecruitService = {
     return await PostCall(`${fbaUrl}recruiting/savecrootboard/`, dto);
   },
 
-  FBAToggleAIBehavior: async (dto: any): Promise<FBAUpdateRecruitingBoardDTO> => {
+  FBAToggleAIBehavior: async (
+    dto: any
+  ): Promise<FBAUpdateRecruitingBoardDTO> => {
     return await PostCall(`${fbaUrl}recruiting/save/ai/`, dto);
   },
 
   ExportCFBCroots: async () => {
     await GetExportCall(`${fbaUrl}recruits/export/all/`, "blob");
+  },
+
+  ExportCBBCroots: async () => {
+    await GetExportCall(`${bbaUrl}croots/export/all/`, "blob");
   },
 };
