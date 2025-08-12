@@ -52,6 +52,9 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
   league,
   isMobile = false,
 }) => {
+  if (!teamMap) {
+    return <></>;
+  }
   const backgroundColor = colorOne;
   const borderColor = colorTwo;
   const secondaryBorderColor = colorThree;
