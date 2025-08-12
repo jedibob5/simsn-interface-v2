@@ -115,18 +115,21 @@ export const useFilteredBasketballRecruits = ({
   regions,
   statuses,
   stars,
+  country,
 }: {
   recruits: Croot[];
   positions: string[];
   archetype: string[];
   regions: string[];
   statuses: string[];
+  country: string[];
   stars: number[];
 }) => {
   // 1) build Sets once per-change
   const positionSet = useMemo(() => new Set(positions), [positions]);
   const archSet = useMemo(() => new Set(archetype), [archetype]);
   const regionSet = useMemo(() => new Set(regions), [regions]);
+  const countrySet = useMemo(() => new Set(country), [country]);
   const statusSet = useMemo(() => new Set(statuses), [statuses]);
   const starsSet = useMemo(() => new Set(stars), [stars]);
 
@@ -146,6 +149,10 @@ export const useFilteredBasketballRecruits = ({
 
         // region (state)
         if (regionSet.size > 0 && !regionSet.has(r.State)) {
+          return false;
+        }
+
+        if (countrySet.size > 0 && !countrySet.has(r.Country)) {
           return false;
         }
 

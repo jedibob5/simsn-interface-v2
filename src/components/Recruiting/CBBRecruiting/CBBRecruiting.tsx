@@ -1,6 +1,7 @@
 import {
   BasketballArchetypeOptions,
   BasketballPositionOptions,
+  cbbCountryOptions,
   Help1,
   navyBlueColor,
   Overview,
@@ -80,6 +81,8 @@ export const CBBRecruiting = () => {
     recruitingLocked,
     filteredClass,
     SelectClass,
+    country,
+    SelectCountryOptions,
   } = useCBBRecruiting();
 
   const { isMobile } = useResponsive();
@@ -301,6 +304,14 @@ export const CBBRecruiting = () => {
                       isMobile={isMobile}
                     />
                   )}
+
+                  <CategoryDropdown
+                    label="Country"
+                    options={cbbCountryOptions}
+                    change={SelectCountryOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
                   <CategoryDropdown
                     label="Stars"
                     options={StarOptions}

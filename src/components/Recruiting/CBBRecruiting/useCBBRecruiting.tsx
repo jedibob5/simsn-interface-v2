@@ -3,6 +3,7 @@ import { useModal } from "../../../_hooks/useModal";
 import { useSimBBAStore } from "../../../context/SimBBAContext";
 import {
   Attributes,
+  cbbUSARegionOptions,
   ModalAction,
   Overview,
   RecruitInfoType,
@@ -34,7 +35,7 @@ export const useCBBRecruiting = () => {
   const [recruitingCategory, setRecruitingCategory] =
     useState<RecruitingCategory>(Overview);
   const [tableViewType, setTableViewType] = useState<string>(Attributes);
-  const [country, setCountry] = useState<string>("");
+  const [country, setCountry] = useState<string[]>([]);
   const [stars, setStars] = useState<number[]>([]);
   const [positions, setPositions] = useState<string[]>([]);
   const [archetype, setArchetype] = useState<string[]>([]);
@@ -75,7 +76,7 @@ export const useCBBRecruiting = () => {
   }, [recruitProfiles]);
 
   const regionOptions = useMemo(() => {
-    return USARegionOptions;
+    return cbbUSARegionOptions;
   }, [country]);
 
   const teamProfile = useMemo(() => {
@@ -100,6 +101,7 @@ export const useCBBRecruiting = () => {
     regions,
     statuses,
     stars,
+    country,
   });
 
   const filteredClass = useMemo(() => {
@@ -168,6 +170,12 @@ export const useCBBRecruiting = () => {
     setCurrentPage(0);
   };
 
+  const SelectCountryOptions = (opts: any) => {
+    const options = [...opts.map((x: any) => x.value)];
+    setCountry(options);
+    setCurrentPage(0);
+  };
+
   const SelectStatusOptions = (opts: any) => {
     const options = [...opts.map((x: any) => x.value)];
     setStatuses(options);
@@ -233,5 +241,6 @@ export const useCBBRecruiting = () => {
     sortedCrootProfiles,
     filteredClass,
     SelectClass,
+    SelectCountryOptions,
   };
 };
