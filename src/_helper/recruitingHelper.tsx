@@ -353,6 +353,27 @@ export const getDefensiveSchemesList = () => {
   ];
 };
 
+export const getCBBAIBehaviorList = () => {
+  return [
+    { label: "Talent", value: "Talent" },
+    { label: "Potential", value: "Potential" },
+    { label: "Star", value: "Star" },
+  ];
+};
+
+export const getCBBAttributeList = () => {
+  return [
+    { label: "Finishing", value: "Finishing" },
+    { label: "Shooting2", value: "Shooting2" },
+    { label: "Shooting3", value: "Shooting3" },
+    { label: "FreeThrow", value: "FreeThrow" },
+    { label: "Ballwork", value: "Ballwork" },
+    { label: "Rebounding", value: "Rebounding" },
+    { label: "Interior Defense", value: "Interior Defense" },
+    { label: "Perimeter Defense", value: "Perimeter Defense" },
+  ];
+};
+
 export const isGoodFit = (
   offensiveScheme: string,
   defensiveScheme: string,

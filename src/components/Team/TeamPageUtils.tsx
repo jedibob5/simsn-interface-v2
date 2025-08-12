@@ -24,7 +24,7 @@ import {
 } from "../../models/hockeyModels";
 import {
   CollegePlayer as CFBPlayer,
-  Croot,
+  Croot as FBCroot,
   NFLContract,
   NFLPlayer,
 } from "../../models/footballModels";
@@ -67,6 +67,7 @@ import {
 } from "../../_helper/utilHelper";
 import {
   CollegePlayer as CBBPlayer,
+  Croot as BasketballCroot,
   NBAPlayer,
 } from "../../models/basketballModels";
 import { TradeBlockRow } from "./TeamPageTypes";
@@ -593,7 +594,7 @@ export const getAdditionalCrootPreferenceAttributes = (player: HockeyCroot) => {
 };
 
 export const getCFBCrootAttributes = (
-  player: Croot,
+  player: FBCroot,
   isMobile: boolean,
   category: string
 ) => {
@@ -613,6 +614,34 @@ export const getCFBCrootAttributes = (
     { label: "Pot", value: player.PotentialGrade },
     { label: "AF1", value: player.AffinityOne },
     { label: "AF2", value: player.AffinityTwo },
+  ];
+  return list;
+};
+
+export const getCBBCrootAttributes = (
+  player: BasketballCroot,
+  isMobile: boolean,
+  category: string
+) => {
+  let list = [
+    { label: "ID", value: player.ID },
+    { label: "Name", value: `${player.FirstName} ${player.LastName}` },
+    { label: "Pos", value: player.Position },
+    { label: "Arch", value: player.Archetype },
+    { label: "Stars", value: player.Stars },
+    { label: "Ht", value: player.Height },
+    { label: "St", value: annotateRegion(player.State) },
+    { label: "Ct", value: annotateCountry(player.Country) },
+    { label: "Ovr", value: player.OverallGrade },
+    { label: "Ins", value: player.Finishing },
+    { label: "Mid", value: player.Shooting2 },
+    { label: "3pt", value: player.Shooting3 },
+    { label: "FT", value: player.FreeThrow },
+    { label: "BW", value: player.Ballwork },
+    { label: "RB", value: player.Rebounding },
+    { label: "Int.D", value: player.InteriorDefense },
+    { label: "PD", value: player.PerimeterDefense },
+    { label: "Pot", value: player.PotentialGrade },
   ];
   return list;
 };
@@ -2310,7 +2339,7 @@ export const getAdditionalCBBAttributes = (player: CBBPlayer) => {
 export const getPriorityCBBAttributes = (player: CBBPlayer) => {
   return [
     {
-      label: "Finishing",
+      label: "Inside Shooting",
       value: getCBBLetterGrade(player.Finishing),
     },
     {
@@ -2352,6 +2381,43 @@ export const getPriorityCBBAttributes = (player: CBBPlayer) => {
     {
       label: "Minutes",
       value: player.Minutes,
+    },
+  ];
+};
+
+export const getPriorityCBBCrootAttributes = (player: BasketballCroot) => {
+  return [
+    {
+      label: "Inside Shooting",
+      value: player.Finishing,
+    },
+    {
+      label: "Mid Range Shooting",
+      value: player.Shooting2,
+    },
+    {
+      label: "3pt Shooting",
+      value: player.Shooting3,
+    },
+    {
+      label: "Free Throw",
+      value: player.FreeThrow,
+    },
+    {
+      label: "Ballwork",
+      value: player.Ballwork,
+    },
+    {
+      label: "Rebounding",
+      value: player.Rebounding,
+    },
+    {
+      label: "Int. Defense",
+      value: player.InteriorDefense,
+    },
+    {
+      label: "Per. Defense",
+      value: player.PerimeterDefense,
     },
   ];
 };

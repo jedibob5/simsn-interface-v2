@@ -438,8 +438,6 @@ export const GenerateNFLFAErrorList = (
     errors.push("Any non-zero salary must be at least $0.5 million.");
   }
 
-  console.log({ offerAAV, playerAAV });
-
   if (playerAAV > offerAAV) {
     errors.push(
       `The offered AAV (${offerAAV}) is lower than the player's expected AAV (${playerAAV})`

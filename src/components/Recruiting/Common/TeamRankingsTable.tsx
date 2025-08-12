@@ -199,7 +199,6 @@ export const TeamRankingsTable: FC<TeamRankingsTableProps> = ({
   ) => {
     const cbbTeam = teamMap[item.ID] as CBBTeam;
     const logo = getLogo(SimCBB, item.ID, false);
-    console.log({ textColorClass });
     return (
       <div
         key={item.ID}
