@@ -982,7 +982,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   }, []);
 
   const ExportCBBRecruits = useCallback(async () => {
-    await RecruitService.ExportCFBCroots();
+    await RecruitService.ExportCBBCroots();
   }, []);
 
   return (
