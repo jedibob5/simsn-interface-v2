@@ -1895,7 +1895,7 @@ export const CBBCrootInfoModalBody: FC<CBBCrootInfoModalBodyProps> = ({
           >
             {player.LeadingTeams &&
               player.LeadingTeams.map((team) => {
-                const logo = getLogo(SimCFB, team.TeamID, false);
+                const logo = getLogo(SimCBB, team.TeamID, false);
                 const fullOdds = Math.round(team.Odds * 100);
                 const displayStatus = getDisplayStatus(fullOdds);
                 return (
