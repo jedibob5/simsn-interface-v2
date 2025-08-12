@@ -36,16 +36,12 @@ import {
   NBAWaiverOfferDTO,
   NBAContractOfferDTO,
   PlayerRecruitProfile,
+  CrootProfile,
 } from "../models/basketballModels";
 import { useWebSockets } from "../_hooks/useWebsockets";
 import { BootstrapService } from "../_services/bootstrapService";
 import { bba_ws } from "../_constants/urls";
-import {
-  Assistant,
-  SEASON_VIEW,
-  SimBBA,
-  SimCBB,
-} from "../_constants/constants";
+import { SimBBA, SimCBB } from "../_constants/constants";
 import { StatsService } from "../_services/statsService";
 import { enqueueSnackbar } from "notistack";
 import { FreeAgencyService } from "../_services/freeAgencyService";
@@ -133,9 +129,10 @@ interface SimBBAContextProps {
   SaveWaiverWireOffer: (dto: any) => Promise<void>;
   CancelWaiverWireOffer: (dto: any) => Promise<void>;
   SaveRecruitingBoard: () => Promise<void>;
-  SaveAIRecruitingSettings: (dto: UpdateRecruitingBoardDto) => Promise<void>;
+  SaveAIRecruitingSettings: (dto: TeamRecruitingProfile) => Promise<void>;
   SearchBasketballStats: (dto: any) => Promise<void>;
   ExportBasketballStats: (dto: any) => Promise<void>;
+  ExportCBBRecruits: () => Promise<void>;
 }
 
 // ✅ Initial Context State
@@ -216,6 +213,7 @@ const defaultContext: SimBBAContextProps = {
   CancelWaiverWireOffer: async () => {},
   SearchBasketballStats: async () => {},
   ExportBasketballStats: async () => {},
+  ExportCBBRecruits: async () => {},
 };
 
 export const SimBBAContext = createContext<SimBBAContextProps>(defaultContext);
@@ -702,13 +700,23 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     const apiDTO = {
       ...dto,
       SeasonID: cbb_Timestamp?.SeasonID,
-      Team: cbbTeam,
+      Team: cbbTeam?.Team,
       Recruiter: cbbTeam?.Coach,
       ProfileID: cbbTeam?.ID,
     };
     const profile = await RecruitService.BBACreateRecruitProfile(apiDTO);
     if (profile) {
-      setRecruitProfiles((profiles) => [...profiles, profile]);
+      setRecruitProfiles((profiles) => {
+        const profileIDX = profiles.findIndex(
+          (x) => x.RecruitID === apiDTO.RecruitID
+        );
+        if (profileIDX < 0) {
+          return [...profiles, profile];
+        }
+        const newProfiles = [...profiles];
+        newProfiles[profileIDX] = { ...profile } as PlayerRecruitProfile;
+        return newProfiles;
+      });
     }
   };
 
@@ -789,17 +797,28 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
   };
 
   const SaveRecruitingBoard = useCallback(async () => {
+    const crootProfiles = recruitProfiles.map((profile) => {
+      return new CrootProfile({
+        ID: profile.ID,
+        RecruitID: profile.RecruitID,
+        ProfileID: profile.ProfileID,
+        CurrentWeeksPoints: profile.CurrentWeeksPoints,
+      });
+    });
     const dto = {
       Profile: teamProfileMap!![cbbTeam!.ID],
-      Recruits: recruitProfiles,
+      Recruits: crootProfiles,
       TeamID: cbbTeam!.ID,
     };
-
     await RecruitService.BBASaveRecruitingBoard(dto);
+    enqueueSnackbar(`Recruiting Board Saved for ${cbbTeam?.Team}!`, {
+      variant: "success",
+      autoHideDuration: 3000,
+    });
   }, [teamProfileMap, recruitProfiles, cbbTeam]);
 
   const SaveAIRecruitingSettings = useCallback(
-    async (dto: UpdateRecruitingBoardDto) => {
+    async (dto: TeamRecruitingProfile) => {
       const res = await RecruitService.BBASaveAISettings(dto);
       if (res) {
         enqueueSnackbar("AI Recruiting Settings Saved!", {
@@ -962,6 +981,10 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
     }
   }, []);
 
+  const ExportCBBRecruits = useCallback(async () => {
+    await RecruitService.ExportCBBCroots();
+  }, []);
+
   return (
     <SimBBAContext.Provider
       value={{
@@ -1041,6 +1064,7 @@ export const SimBBAProvider: React.FC<SimBBAProviderProps> = ({ children }) => {
         CancelWaiverWireOffer,
         SearchBasketballStats,
         ExportBasketballStats,
+        ExportCBBRecruits,
       }}
     >
       {children}

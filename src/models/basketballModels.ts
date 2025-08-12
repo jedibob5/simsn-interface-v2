@@ -2767,6 +2767,7 @@ export class PlayerRecruitProfile {
   }
 }
 export class TeamRecruitingProfile {
+  [key: string]: any;
   ID: number;
   CreatedAt: Time;
   UpdatedAt: Time;

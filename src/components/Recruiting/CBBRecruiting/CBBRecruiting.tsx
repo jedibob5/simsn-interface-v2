@@ -1,17 +1,18 @@
 import {
-  FootballArchetypeOptions,
-  FootballPositionOptions,
+  BasketballArchetypeOptions,
+  BasketballPositionOptions,
+  cbbCountryOptions,
   Help1,
   navyBlueColor,
   Overview,
   RecruitingClassView,
   RecruitingRankings,
   RecruitingTeamBoard,
-  SimCFB,
+  SimCBB,
   StarOptions,
   StatusOptions,
 } from "../../../_constants/constants";
-import { CFBRecruitLockedMessages } from "../../../_constants/loadMessages";
+import { CBBRecruitLockedMessages } from "../../../_constants/loadMessages";
 import { Border } from "../../../_design/Borders";
 import { Button, ButtonGroup } from "../../../_design/Buttons";
 import { Text } from "../../../_design/Typography";
@@ -19,7 +20,7 @@ import { useLoadMessage } from "../../../_hooks/useLoadMessage";
 import { useResponsive } from "../../../_hooks/useMobile";
 import { useModal } from "../../../_hooks/useModal";
 import { useTeamColors } from "../../../_hooks/useTeamColors";
-import { useSimFBAStore } from "../../../context/SimFBAContext";
+import { useSimBBAStore } from "../../../context/SimBBAContext";
 import { ActionModal } from "../../Common/ActionModal";
 import { RecruitingAISettingsModal } from "../Common/RecruitingAISettingsModal";
 import { CategoryDropdown } from "../Common/RecruitingCategoryDropdown";
@@ -29,23 +30,24 @@ import { RecruitingSideBar } from "../Common/RecruitingSideBar";
 import { RecruitProfileTable } from "../Common/RecruitProfileTable";
 import { RecruitTable } from "../Common/RecruitTable";
 import { TeamRankingsTable } from "../Common/TeamRankingsTable";
-import { useCFBRecruiting } from "./useCFBRecruiting";
+import { useCBBRecruiting } from "./useCBBRecruiting";
 
-export const CFBRecruiting = () => {
-  const fbStore = useSimFBAStore();
+export const CBBRecruiting = () => {
+  const bbStore = useSimBBAStore();
   const {
-    cfbTeam,
-    cfbTeamMap,
-    cfbTeamOptions,
-    cfbConferenceOptions,
+    cbbTeam,
+    cbbTeamMap,
+    cbbTeamOptions,
+    cbbConferenceOptions,
     addRecruitToBoard,
     removeRecruitFromBoard,
     toggleScholarship,
     updatePointsOnRecruit,
     SaveRecruitingBoard,
     SaveAIRecruitingSettings,
-    ExportCFBRecruits,
-  } = fbStore;
+    ExportCBBRecruits,
+  } = bbStore;
+
   const {
     teamProfile,
     sortedCrootProfiles,
@@ -79,18 +81,21 @@ export const CFBRecruiting = () => {
     recruitingLocked,
     filteredClass,
     SelectClass,
-  } = useCFBRecruiting();
+    country,
+    SelectCountryOptions,
+  } = useCBBRecruiting();
+
   const { isMobile } = useResponsive();
   const teamColors = useTeamColors(
-    cfbTeam?.ColorOne,
-    cfbTeam?.ColorTwo,
-    cfbTeam?.ColorThree
+    cbbTeam?.ColorOne,
+    cbbTeam?.ColorTwo,
+    cbbTeam?.ColorThree
   );
   const helpModal = useModal();
   const aiSettingsModal = useModal();
-  const lockMessage = useLoadMessage(CFBRecruitLockedMessages, 5000);
+  const lockMessage = useLoadMessage(CBBRecruitLockedMessages, 5000);
   const recruitsExport = async () => {
-    await ExportCFBRecruits();
+    await ExportCBBRecruits();
   };
 
   return (
@@ -101,8 +106,8 @@ export const CFBRecruiting = () => {
           onClose={handleCloseModal}
           playerID={modalPlayer.ID}
           playerLabel={`${modalPlayer.Position} ${modalPlayer.Archetype} ${modalPlayer.FirstName} ${modalPlayer.LastName}`}
-          teamID={cfbTeam!.ID}
-          league={SimCFB}
+          teamID={cbbTeam!.ID}
+          league={SimCBB}
           modalAction={modalAction}
           player={modalPlayer}
           attribute={attribute}
@@ -114,14 +119,14 @@ export const CFBRecruiting = () => {
       <RecruitingHelpModal
         isOpen={helpModal.isModalOpen}
         onClose={helpModal.handleCloseModal}
-        league={SimCFB}
+        league={SimCBB}
         modalAction={Help1}
       />
       {teamProfile && (
         <RecruitingAISettingsModal
           isOpen={aiSettingsModal.isModalOpen}
           onClose={aiSettingsModal.handleCloseModal}
-          league={SimCFB}
+          league={SimCBB}
           teamProfile={teamProfile}
           SaveSettings={SaveAIRecruitingSettings}
         />
@@ -129,10 +134,10 @@ export const CFBRecruiting = () => {
       <div className="grid grid-flow-row grid-auto-rows-auto w-full h-full max-[1024px]:grid-cols-1 max-[1024px]:gap-y-2 grid-cols-[2fr_10fr] max-[1024px]:gap-x-1 gap-x-2 mb-2">
         {teamProfile && (
           <RecruitingSideBar
-            Team={cfbTeam!!}
+            Team={cbbTeam!!}
             TeamProfile={teamProfile!!}
             teamColors={teamColors}
-            league={SimCFB}
+            league={SimCBB}
           />
         )}
         <div className="flex flex-col w-full max-[1024px]:gap-y-2">
@@ -278,14 +283,14 @@ export const CFBRecruiting = () => {
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                   <CategoryDropdown
                     label="Positions"
-                    options={FootballPositionOptions}
+                    options={BasketballPositionOptions}
                     change={SelectPositionOptions}
                     isMulti={true}
                     isMobile={isMobile}
                   />
                   <CategoryDropdown
                     label="Archetype"
-                    options={FootballArchetypeOptions}
+                    options={BasketballArchetypeOptions}
                     change={SelectArchetypeOptions}
                     isMulti={true}
                     isMobile={isMobile}
@@ -299,6 +304,14 @@ export const CFBRecruiting = () => {
                       isMobile={isMobile}
                     />
                   )}
+
+                  <CategoryDropdown
+                    label="Country"
+                    options={cbbCountryOptions}
+                    change={SelectCountryOptions}
+                    isMulti={true}
+                    isMobile={isMobile}
+                  />
                   <CategoryDropdown
                     label="Stars"
                     options={StarOptions}
@@ -328,10 +341,10 @@ export const CFBRecruiting = () => {
                   colorOne={teamColors.One}
                   colorTwo={teamColors.Two}
                   colorThree={teamColors.Three}
-                  teamMap={cfbTeamMap}
+                  teamMap={cbbTeamMap}
                   category={tableViewType}
-                  league={SimCFB}
-                  team={cfbTeam}
+                  league={SimCBB}
+                  team={cbbTeam}
                   openModal={openModal}
                   isMobile={isMobile}
                   recruitOnBoardMap={recruitOnBoardMap}
@@ -376,9 +389,9 @@ export const CFBRecruiting = () => {
                   colorThree={teamColors.Three}
                   recruitProfiles={sortedCrootProfiles}
                   recruitMap={recruitMap}
-                  teamMap={cfbTeamMap}
-                  team={cfbTeam}
-                  league={SimCFB}
+                  teamMap={cbbTeamMap}
+                  team={cbbTeam}
+                  league={SimCBB}
                   category={tableViewType}
                   isMobile={isMobile}
                   ChangeInput={updatePointsOnRecruit}
@@ -402,14 +415,14 @@ export const CFBRecruiting = () => {
                 <div className="flex flex-row flex-nowrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                   <CategoryDropdown
                     label="Conferences"
-                    options={cfbConferenceOptions}
+                    options={cbbConferenceOptions}
                     change={SelectConferences}
                     isMulti={true}
                     isMobile={isMobile}
                   />
                   <CategoryDropdown
                     label="Teams"
-                    options={cfbTeamOptions}
+                    options={cbbTeamOptions}
                     change={SelectTeams}
                     isMulti={true}
                     isMobile={isMobile}
@@ -429,9 +442,9 @@ export const CFBRecruiting = () => {
                   colorTwo={teamColors.Two}
                   colorThree={teamColors.Three}
                   teamProfiles={teamRankList}
-                  teamMap={cfbTeamMap}
-                  team={cfbTeam}
-                  league={SimCFB}
+                  teamMap={cbbTeamMap}
+                  team={cbbTeam}
+                  league={SimCBB}
                   isMobile={isMobile}
                 />
               </Border>
@@ -450,7 +463,7 @@ export const CFBRecruiting = () => {
                 <div className="flex flex-row flex-wrap gap-x-1 sm:gap-x-2 gap-y-2 px-2 w-full">
                   <CategoryDropdown
                     label="Team"
-                    options={cfbTeamOptions}
+                    options={cbbTeamOptions}
                     change={SelectClass}
                     isMobile={isMobile}
                     isMulti={false}
@@ -471,9 +484,9 @@ export const CFBRecruiting = () => {
                   colorThree={teamColors.Three}
                   crootingClass={filteredClass}
                   openModal={openModal}
-                  teamMap={cfbTeamMap!!}
-                  team={cfbTeam}
-                  league={SimCFB}
+                  teamMap={cbbTeamMap!!}
+                  team={cbbTeam}
+                  league={SimCBB}
                   isMobile={isMobile}
                 />
               </Border>

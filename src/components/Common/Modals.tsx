@@ -37,6 +37,7 @@ import {
   getAdditionalCBBAttributes,
   getPriorityCBBAttributes,
   getPriorityNBAAttributes,
+  getPriorityCBBCrootAttributes,
 } from "../Team/TeamPageUtils";
 import { HeightToFeetAndInches } from "../../_utility/getHeightByFeetAndInches";
 import { getYear } from "../../_utility/getYear";
@@ -45,6 +46,7 @@ import PlayerPicture from "../../_utility/usePlayerFaces";
 import { GetNFLOverall } from "../Team/TeamPageUtils";
 import {
   CollegePlayer as CBBPlayer,
+  Croot,
   NBAPlayer,
 } from "../../models/basketballModels";
 import { useSimBBAStore } from "../../context/SimBBAContext";
@@ -874,7 +876,7 @@ export const NFLPlayerInfoModalBody: FC<NFLPlayerInfoModalBodyProps> = ({
     if (!contract) return 0;
     return ((contract.Y1BaseSalary || 0) + (contract.Y1Bonus || 0)).toFixed(2);
   }, [contract]);
-console.log(contract)
+  console.log(contract);
   const totalValue = `${rawValue.toFixed(2)}`;
   return (
     <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full">
@@ -976,9 +978,11 @@ console.log(contract)
             </Text>
           </>
         )}
-        {cfbTeam && <Text variant="xs" classes="whitespace-nowrap text-small">
-          from {cfbTeam?.TeamAbbr}
-        </Text>}
+        {cfbTeam && (
+          <Text variant="xs" classes="whitespace-nowrap text-small">
+            from {cfbTeam?.TeamAbbr}
+          </Text>
+        )}
       </div>
       {contract && (
         <>
@@ -1182,6 +1186,9 @@ export const RecruitInfoModalBody: FC<PlayerInfoModalBodyProps> = ({
   }
   if (league === SimCFB) {
     return <CFBCrootInfoModalBody player={player as CFBCroot} />;
+  }
+  if (league === SimCBB) {
+    return <CBBCrootInfoModalBody player={player as Croot} />;
   }
 
   return <>Unsupported League.</>;
@@ -1743,6 +1750,183 @@ export const CFBCrootInfoModalBody: FC<CFBCrootInfoModalBodyProps> = ({
         </>
       )}
     </div>
+  );
+};
+
+interface CBBCrootInfoModalBodyProps {
+  player: Croot;
+}
+
+export const CBBCrootInfoModalBody: FC<CBBCrootInfoModalBodyProps> = ({
+  player,
+}) => {
+  const { currentUser } = useAuthStore();
+  const { cbbTeamMap } = useSimBBAStore();
+  const team = cbbTeamMap ? cbbTeamMap[player.TeamID] : null;
+  const teamLogo = getLogo(SimCBB, player.TeamID, currentUser?.isRetro);
+  const priorityAttributes = getPriorityCBBCrootAttributes(player);
+  const hasSigned = player.TeamID > 0;
+  return (
+    <>
+      <div className="grid grid-cols-4 grid-rows-[auto auto auto auto] gap-4 w-full mb-2">
+        <div className="row-span-3 flex flex-col items-center">
+          <div className="flex items-center justify-center h-[6rem] w-[6rem] sm:h-[8rem] sm:w-[8rem] px-5 rounded-lg border-2 bg-white">
+            <PlayerPicture playerID={player.ID} league={SimCBB} team={team} />
+          </div>
+          {team && (
+            <Logo
+              url={teamLogo}
+              label={team.Team}
+              classes="h-[5rem] max-h-[5rem]"
+              containerClass="p-4"
+              textClass="text-small"
+            />
+          )}
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Hometown
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Country.length > 0 && player.Country !== USA
+              ? `${player.Country}`
+              : player.State}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Age
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            18
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Height
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Height}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Weight
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            ???
+          </Text>
+        </div>
+        <div className="flex flex-col items-center">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Personality
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.Personality}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Overall
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.OverallGrade}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Potential
+          </Text>
+          <Text variant="small" classes="whitespace-nowrap">
+            {player.PotentialGrade}
+          </Text>
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body" classes="mb-1 whitespace-nowrap font-semibold">
+            Stars
+          </Text>
+          <Text variant="xs" classes="whitespace-nowrap pt-0.5">
+            {player.Stars > 0
+              ? Array(player.Stars).fill("⭐").join("")
+              : player.Stars}
+          </Text>
+        </div>
+        <div className="flex flex-wrap col-span-4 gap-3 border-t-[0.1em] pt-4">
+          <div className="grid w-full grid-cols-4 gap-3">
+            {priorityAttributes.map((attr, idx) => (
+              <div key={idx} className="flex flex-col px-1 gap-1">
+                <Text
+                  variant="small"
+                  classes="mb-1 whitespace-nowrap font-semibold"
+                >
+                  {attr.label}
+                </Text>
+                <Text variant="small">{attr.value}</Text>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {player.LeadingTeams && (
+        <>
+          <div className="w-full mt-2 justify-center border-t-[0.1em]">
+            <Text variant="h6">Leading Teams</Text>
+          </div>
+          <div className={`w-full grid grid-cols-${hasSigned ? "4" : "3"}`}>
+            <Text variant="body" classes="font-semibold">
+              Team
+            </Text>
+            <Text variant="body" classes="font-semibold">
+              Scholarship
+            </Text>
+            <Text variant="body" classes="font-semibold">
+              {hasSigned ? "Results" : "Prediction"}
+            </Text>
+            {hasSigned && (
+              <Text variant="body" classes="font-semibold">
+                Odds
+              </Text>
+            )}
+          </div>
+          <div
+            className={`w-full grid grid-cols-${
+              hasSigned ? "4" : "3"
+            } gap-y-2 overflow-y-auto max-h-[10rem] lg:max-h-[15rem]`}
+          >
+            {player.LeadingTeams &&
+              player.LeadingTeams.map((team) => {
+                const logo = getLogo(SimCFB, team.TeamID, false);
+                const fullOdds = Math.round(team.Odds * 100);
+                const displayStatus = getDisplayStatus(fullOdds);
+                return (
+                  <>
+                    <div className="flex flex-row justify-center">
+                      <Logo url={logo} variant="tiny" />{" "}
+                      <span className="ms-4 font-semibold">
+                        {team.TeamAbbr}
+                      </span>
+                    </div>
+
+                    <Text variant="body-small" classes="font-semibold">
+                      {team.Scholarship ? "Yes" : "No"}
+                    </Text>
+                    <Text variant="body-small" classes="font-semibold">
+                      {team.TeamID === player.TeamID
+                        ? "Committed!"
+                        : displayStatus}
+                    </Text>
+                    {hasSigned && (
+                      <Text variant="body-small" classes="font-semibold">
+                        {fullOdds}%
+                      </Text>
+                    )}
+                  </>
+                );
+              })}
+          </div>
+        </>
+      )}
+    </>
   );
 };
 
