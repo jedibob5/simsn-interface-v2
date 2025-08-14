@@ -13,7 +13,7 @@ import { useSimFBAStore } from "../../../../context/SimFBAContext";
 import { useAuthStore } from "../../../../context/AuthContext";
 import { Button } from "../../../../_design/Buttons";
 import { SingleValue } from "react-select";
-import { GameplanData } from "./GameplanHelper";
+import { GameplanData, transformGameplanForSave } from "./GameplanHelper";
 import { GameplanTab, GameplanTabs } from "../Constants/GameplanConstants";
 import { useGameplanValidation } from "./useGameplanValidation";
 import OffensiveFormationsPanel from "./OffensiveFormationsPanel";
@@ -146,10 +146,10 @@ const GameplanView: React.FC<GameplanViewProps> = ({
       };
 
       if (league === SimCFB) {
-        dto.UpdatedGameplan = localGameplan;
+        dto.UpdatedGameplan = transformGameplanForSave(localGameplan);
         result = await saveCFBGameplan(dto, { ...gameplan, ...localGameplan });
       } else {
-        dto.UpdatedNFLGameplan = localGameplan;
+        dto.UpdatedNFLGameplan = transformGameplanForSave(localGameplan);
         result = await saveNFLGameplan(dto, { ...gameplan, ...localGameplan });
       }
 

@@ -625,8 +625,18 @@ export const SimFBAProvider: React.FC<SimFBAProviderProps> = ({ children }) => {
       setTopCFBReceivers(res.TopCFBReceivers);
       setCFBRosterMap(res.CollegeRosterMap);
       setPortalPlayers(res.PortalPlayers);
-      setCollegeGameplan(res.CollegeGameplan || null);
-      setNFLGameplan(res.NFLGameplan || null);
+      setCollegeGameplan(res.CollegeGameplan ? {
+        ...res.CollegeGameplan,
+        PassShort: (res.CollegeGameplan as any).PassQuick,
+        PassMedium: (res.CollegeGameplan as any).PassShort,
+        PassPAMedium: (res.CollegeGameplan as any).PassPAShort,
+      } as any : null);
+      setNFLGameplan(res.NFLGameplan ? {
+        ...res.NFLGameplan,
+        PassShort: (res.NFLGameplan as any).PassQuick,
+        PassMedium: (res.NFLGameplan as any).PassShort,
+        PassPAMedium: (res.NFLGameplan as any).PassPAShort,
+      } as any : null);
       setCollegeDepthChart(res.CollegeDepthChart || null);
       setNFLDepthChart(res.NFLDepthChart || null);
     }
