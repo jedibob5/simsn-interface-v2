@@ -37,6 +37,7 @@ export const GameplanInput: React.FC<GameplanInputProps> = ({
         name={name}
         value={value}
         onChange={onChange}
+        gameplan
         min={min}
         max={max}
         disabled={disabled}
@@ -92,6 +93,7 @@ export const GameplanInputSmall: React.FC<GameplanInputSmallProps> = ({
           onChange={onChange}
           min={min}
           max={max}
+          gameplan
           disabled={disabled}
           className={`${sizeClasses[size]} ${error ? 'border-red-500' : warning ? 'border-yellow-500' : ''}`}
         />
